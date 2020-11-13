@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'maven'
+apply from: 'publish.gradle'
 
 android {
     compileSdkVersion rootProject.ext.compile_sdk_version
@@ -37,7 +37,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
 
-        kotlinOptions.freeCompilerArgs += ['-module-name', "$group_id.$project_name"]
+        kotlinOptions.freeCompilerArgs += ['-module-name', "$group_id.$artifact_id"]
     }
 
     kotlinOptions {
@@ -115,27 +115,4 @@ dependencies {
     androidTestImplementation "androidx.test:runner:$test_core_version"
     androidTestImplementation "androidx.test.ext:junit:$test_junit_version"
     api "androidx.room:room-testing:$room_version"
-}
-
-group rootProject.ext.group_id
-version rootProject.ext.version_name
-
-configurations {
-    deployerJars
-}
-
-dependencies {
-    deployerJars "org.apache.maven.wagon:wagon-ftp:$apache_maven_wagon_version"
-}
-
-uploadArchives {
-    delete "$rootProject.projectDir/mavenBuilds/"
-    repositories {
-        mavenDeployer {
-            configuration = configurations.deployerJars
-            pom.groupId = rootProject.ext.group_id
-            pom.artifactId = rootProject.ext.project_name
-            repository(url: 'file://mavenBuilds')
-        }
-    }
 }

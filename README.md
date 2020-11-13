@@ -1,5 +1,27 @@
 # PACE Cloud SDK
 
+## Setup
+
+Add JCenter to your top-level `build.gradle` (if not yet):
+
+```groovy
+allprojects {
+    repositories {
+        ...
+        jcenter()
+    }
+}
+```
+
+Add the **PACE Cloud SDK** dependency to your module's `build.gradle`:
+
+```groovy
+dependencies {
+    ...
+    implementation "cloud.pace:sdk:$pace_cloud_sdk_version"
+}
+```
+
 Because the PACE Cloud SDK uses [AppAuth for Android](https://github.com/openid/AppAuth-Android) for the IDKit, the AppAuth redirect scheme must be registered in your app's `build.gradle` file:
 ```groovy
 android {

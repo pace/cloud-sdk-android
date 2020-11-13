@@ -44,17 +44,14 @@ library_review:
     only:
         - merge_requests
 
-upload_archives:
+bintray_upload:
     extends: .android_version
     stage: build
     script:
         - export TAG_COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
         - export BUILD_NUMBER=$(TZ=Etc/Utc date -j -f '%s' ${TAG_COMMIT_TIME} "+%Y%m%d%H")
         - export BUILD_VERSION_NAME=`echo $CI_COMMIT_TAG | cut -d '-' -f2`
-        - ./gradlew clean uploadArchives -PbuildNumber=$BUILD_NUMBER -PversionName=$BUILD_VERSION_NAME
-        - cd ./mavenBuilds/cloud/pace/sdk/$BUILD_VERSION_NAME
-        - zip -r framework.zip ./*
-        - 'curl --fail --http1.1 -H "authorization: $REPO_SERVER_API_SECRET" -F id=$REPO_SERVER_ARTIFACT_ID -F platform=android -F version=$BUILD_VERSION_NAME -F files=@framework.zip -X POST $REPO_SERVER_API_URL'
+        - ./gradlew bintrayUpload -Puser=$BINTRAY_USER -Pkey=$BINTRAY_KEY
     only:
         - tags
     except:
