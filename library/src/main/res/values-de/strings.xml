@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="connection_problem_network_headline">Internetverbindung nicht ausreichend</string>
+    <string name="connection_problem_network_description">PACE benötigt eine stabile und ausreichend schnelle Internetverbindung, um fortzufahren.\n\nBitte stelle sicher, dass die App auf mobile Daten zugreifen darf, oder nutze eine WLAN-Verbindung.</string>
+    <string name="try_again">Erneut versuchen</string>
+    <string name="general_cancel">Abbrechen</string>
+    <string name="biometric_totp_title">Jetzt bezahlen</string>
+    <string name="biometric_secure_data_title">Jetzt autorisieren, um auf Daten zuzugreifen</string>
+    <string name="geofence_notification_title">Mobiles Bezahlen verfügbar</string>
+    <string name="geofence_notification_text">Bei einer Tankstelle in deiner Nähe kann mobil bezahlt werden</string>
+</resources>

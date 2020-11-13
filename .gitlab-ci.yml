@@ -1,0 +1,62 @@
+variables:
+    PROJECT_NAME: "PACECloudSDK"
+
+stages:
+    - test
+    - build
+
+.android_version:
+    tags:
+        - android-latest
+
+.testing:
+    extends: .android_version
+    stage: test
+    only:
+        - merge_requests
+
+code_style:
+    extends: .testing
+    script:
+        - ./gradlew clean lint
+
+unit_test:
+    extends: .testing
+    script:
+        - ./gradlew clean library:testDebugUnitTest
+
+android_test:
+    extends: .testing
+    before_script:
+        - "/usr/local/share/android-sdk/tools/bin/sdkmanager 'system-images;android-28;google_apis;x86_64'"
+        - "/usr/local/share/android-sdk/tools/bin/sdkmanager 'emulator'"
+        - "echo no | /usr/local/share/android-sdk/tools/bin/avdmanager create avd --force --name api28 --package 'system-images;android-28;google_apis;x86_64' --abi 'x86_64' --device '5.4in FWVGA'"
+        - "/usr/local/share/android-sdk/tools/emulator -avd api28 > /dev/null 2>&1 -skin 480x854 -no-audio -no-boot-anim -no-snapshot -memory 2048 &"
+        - "/usr/local/share/android-sdk/platform-tools/adb wait-for-device"
+    script:
+        - ./gradlew clean library:connectedAndroidTest
+
+library_review:
+    extends: .android_version
+    stage: build
+    script:
+        - ./gradlew clean library:assemble
+    only:
+        - merge_requests
+
+upload_archives:
+    extends: .android_version
+    stage: build
+    script:
+        - export TAG_COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
+        - export BUILD_NUMBER=$(TZ=Etc/Utc date -j -f '%s' ${TAG_COMMIT_TIME} "+%Y%m%d%H")
+        - export BUILD_VERSION_NAME=`echo $CI_COMMIT_TAG | cut -d '-' -f2`
+        - ./gradlew clean uploadArchives -PbuildNumber=$BUILD_NUMBER -PversionName=$BUILD_VERSION_NAME
+        - cd ./mavenBuilds/cloud/pace/sdk/$BUILD_VERSION_NAME
+        - zip -r framework.zip ./*
+        - 'curl --fail --http1.1 -H "authorization: $REPO_SERVER_API_SECRET" -F id=$REPO_SERVER_ARTIFACT_ID -F platform=android -F version=$BUILD_VERSION_NAME -F files=@framework.zip -X POST $REPO_SERVER_API_URL'
+    only:
+        - tags
+    except:
+        variables:
+            - $CI_COMMIT_TAG !~ /^pacecloudsdk-/

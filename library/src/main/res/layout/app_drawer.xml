@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipToPadding="false"
+    android:paddingStart="@dimen/app_drawer_padding_bottom"
+    android:paddingEnd="0dp"
+    android:paddingBottom="@dimen/app_drawer_padding_bottom">
+
+    <ImageButton
+        android:id="@+id/expanded_background"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/app_drawer_height"
+        android:background="@drawable/app_drawer_background"
+        android:elevation="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/icon_button"
+        android:layout_width="@dimen/app_drawer_height"
+        android:layout_height="@dimen/app_drawer_height"
+        android:background="@drawable/app_drawer_background"
+        android:elevation="6dp"
+        android:outlineProvider="none"
+        android:padding="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/expanded_background"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/title_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="76dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:elevation="10dp"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textColor="@color/text_light"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@id/expanded_background"
+        app:layout_constraintEnd_toStartOf="@id/close_button"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/expanded_background"
+        app:layout_constraintTop_toBottomOf="@+id/subtitle_view"
+        tools:text="Tanken und mobil bezahlen" />
+
+    <TextView
+        android:id="@+id/subtitle_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="10dp"
+        android:elevation="10dp"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textColor="@color/text_light"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@id/close_button"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/title_view"
+        app:layout_constraintTop_toTopOf="@id/expanded_background"
+        tools:text="Tankstelle am Marktplatz" />
+
+    <LinearLayout
+        android:id="@+id/close_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:elevation="10dp"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/close_button_icon"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
+            android:clickable="false"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_close"
+            android:tint="@color/highlight_dark"
+            tools:ignore="UseAppTint" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

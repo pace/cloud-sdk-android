@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="connection_problem_network_headline">Insufficient network connection</string>
+    <string name="connection_problem_network_description">PACE needs a stable and sufficiently fast network connection to continue.\n\nPlease make sure that your app is allowed to access your phone’s mobile data. You can also use Wi-Fi.</string>
+    <string name="try_again">Try again</string>
+    <string name="general_cancel">Cancel</string>
+    <string name="biometric_totp_title">Pay now</string>
+    <string name="biometric_secure_data_title">Authorize to access secured data</string>
+    <string name="geofence_notification_title">Mobile Payment available</string>
+    <string name="geofence_notification_text">A nearby gas station supports mobile payment</string>
+</resources>

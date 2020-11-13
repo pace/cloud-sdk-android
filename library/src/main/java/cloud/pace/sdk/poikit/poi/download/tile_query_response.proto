@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+message TileQueryResponse {
+  message VectorTile {
+    Coordinate geo = 1;
+    bytes vector_tiles = 3;
+  }
+
+  message Coordinate {
+    uint32 x = 1;
+    uint32 y = 2;
+  }
+
+  uint32 zoom = 1;
+  repeated VectorTile vector_tiles = 2;
+  uint64 invalidation_token = 3;
+}

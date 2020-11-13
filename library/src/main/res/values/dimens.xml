@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="app_margin_big">42dp</dimen>
+    <dimen name="app_textSize_subheading">19sp</dimen>
+    <dimen name="app_textSize_button">18sp</dimen>
+    <dimen name="app_drawer_icon_radius">35dp</dimen>
+    <dimen name="app_drawer_height">64dp</dimen>
+    <dimen name="app_drawer_padding_bottom">12dp</dimen>
+    <dimen name="app_button_height">54dp</dimen>
+    <dimen name="app_button_corner_radius">4dp</dimen>
+</resources>

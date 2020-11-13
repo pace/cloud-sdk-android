@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+message TileQueryRequest {
+  message AreaQuery {
+    Coordinate north_east = 1;
+    Coordinate south_west = 2;
+    uint64 invalidation_token = 3;
+  }
+
+  message IndividualTileQuery {
+    Coordinate geo = 1;
+    uint64 invalidation_token = 3;
+  }
+
+  message Coordinate {
+    uint32 x = 1;
+    uint32 y = 2;
+  }
+
+  uint32 zoom = 1;
+  repeated AreaQuery areas = 2;
+  repeated IndividualTileQuery tiles = 3;
+}

@@ -1,0 +1,2 @@
+include ':library', ':app'
+rootProject.name = "PACECloudSDK"
