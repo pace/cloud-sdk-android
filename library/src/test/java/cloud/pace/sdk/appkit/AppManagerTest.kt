@@ -11,7 +11,7 @@ import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.utils.*
-import cloud.pace.sdk.utils.CustomKoinComponent
+import cloud.pace.sdk.utils.AppKitKoinComponent
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.KoinConfig
 import cloud.pace.sdk.utils.Success
@@ -28,7 +28,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import java.util.concurrent.CompletableFuture
 
 @RunWith(MockitoJUnitRunner::class)
-class AppManagerTest : CustomKoinComponent {
+class AppManagerTest : AppKitKoinComponent {
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
@@ -53,7 +53,7 @@ class AppManagerTest : CustomKoinComponent {
         setupKoinForTests(testModule)
 
         val future = CompletableFuture<Throwable>()
-        AppManager(mockContext).requestLocalApps {
+        AppManager().requestLocalApps {
             if (it is Failure) {
                 future.complete(it.throwable)
             }
@@ -73,7 +73,7 @@ class AppManagerTest : CustomKoinComponent {
         setupKoinForTests(testModule)
 
         val future = CompletableFuture<Throwable>()
-        AppManager(mockContext).requestLocalApps {
+        AppManager().requestLocalApps {
             if (it is Failure) {
                 future.complete(it.throwable)
             }
@@ -103,7 +103,7 @@ class AppManagerTest : CustomKoinComponent {
         setupKoinForTests(testModule)
 
         val future = CompletableFuture<Throwable>()
-        AppManager(mockContext).requestLocalApps {
+        AppManager().requestLocalApps {
             if (it is Failure) {
                 future.complete(it.throwable)
             }
@@ -145,7 +145,7 @@ class AppManagerTest : CustomKoinComponent {
         setupKoinForTests(testModule)
 
         val future = CompletableFuture<List<App>>()
-        AppManager(mockContext).requestLocalApps {
+        AppManager().requestLocalApps {
             if (it is Success) {
                 future.complete(it.result)
             }
@@ -203,7 +203,7 @@ class AppManagerTest : CustomKoinComponent {
         setupKoinForTests(testModule)
 
         val future = CompletableFuture<List<App>>()
-        AppManager(mockContext).requestLocalApps {
+        AppManager().requestLocalApps {
             if (it is Success) {
                 future.complete(it.result)
             }
@@ -260,7 +260,7 @@ class AppManagerTest : CustomKoinComponent {
         setupKoinForTests(testModule)
 
         val future = CompletableFuture<Boolean>()
-        AppManager(mockContext).isPoiInRange(id) {
+        AppManager().isPoiInRange(id) {
             future.complete(it)
         }
 
@@ -306,7 +306,7 @@ class AppManagerTest : CustomKoinComponent {
         setupKoinForTests(testModule)
 
         val future = CompletableFuture<Boolean>()
-        AppManager(mockContext).isPoiInRange(id2) {
+        AppManager().isPoiInRange(id2) {
             future.complete(it)
         }
 

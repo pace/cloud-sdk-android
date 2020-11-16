@@ -28,8 +28,9 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
 
-internal class AppManager(private val context: Context) : CustomKoinComponent {
+internal class AppManager : AppKitKoinComponent {
 
+    private val context: Context by inject()
     private val appLocationManager: AppLocationManager by inject()
     private val appRepository: AppRepository by inject()
     private val networkChangeListener: NetworkChangeListener by inject()
@@ -50,7 +51,7 @@ internal class AppManager(private val context: Context) : CustomKoinComponent {
         }
         checkRunning = true
 
-        appLocationManager.getLocation { result ->
+        appLocationManager.start { result ->
             result.onSuccess {
                 getAppsByLocation(it, completion)
             }

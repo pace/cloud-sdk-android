@@ -21,7 +21,7 @@ import io.reactivex.rxjava3.core.Observable
 import org.koin.core.inject
 import java.util.*
 
-object POIKit : CustomKoinComponent, LifecycleObserver {
+object POIKit : POIKitKoinComponent, LifecycleObserver {
 
     private val database: POIKitDatabase by inject()
     private val navigationApi: NavigationApiClient by inject()
@@ -34,13 +34,17 @@ object POIKit : CustomKoinComponent, LifecycleObserver {
     var maxPoiSearchBoxSize = 15000.0
 
     fun setup(context: Context, environment: Environment, deviceId: String) {
-        KoinConfig.setup(context, environment, deviceId)
+        KoinConfig.setupPOIKit(context, environment, deviceId)
         TileDownloader.env = environment
     }
 
     fun startLocationListener(): LocationProvider {
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         return locationProvider.also { it.requestLocationUpdates() }
+    }
+
+    fun stopLocationListener() {
+        locationProvider.removeLocationUpdates()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -50,7 +54,7 @@ object POIKit : CustomKoinComponent, LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun onLifecycleStop() {
-        locationProvider.removeLocationUpdates()
+        stopLocationListener()
     }
 
     @JvmOverloads

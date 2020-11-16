@@ -8,7 +8,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.utils.NotificationUtils
-import cloud.pace.sdk.utils.CustomKoinComponent
+import cloud.pace.sdk.utils.AppKitKoinComponent
 import cloud.pace.sdk.utils.Log
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
@@ -17,7 +17,7 @@ import com.google.android.gms.location.GeofencingRequest
 import org.koin.core.inject
 import java.util.*
 
-abstract class GeofenceManager : CustomKoinComponent {
+abstract class GeofenceManager : AppKitKoinComponent {
 
     abstract fun enable(locations: List<GeofenceLocation>, callback: (event: GeofencingEvent) -> Unit, setupCallback: (Result<Void>) -> Unit = {})
 

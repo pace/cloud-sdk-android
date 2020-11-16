@@ -12,12 +12,12 @@ import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.Car
 import cloud.pace.sdk.appkit.model.Configuration
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
+import cloud.pace.sdk.utils.AppKitKoinComponent
 import cloud.pace.sdk.utils.Completion
-import cloud.pace.sdk.utils.CustomKoinComponent
 import cloud.pace.sdk.utils.KoinConfig
 import org.koin.core.inject
 
-object AppKit : CustomKoinComponent {
+object AppKit : AppKitKoinComponent {
 
     private val sharedPreferencesModel: SharedPreferencesModel by inject()
     private val appManager: AppManager by inject()
@@ -44,8 +44,8 @@ object AppKit : CustomKoinComponent {
             )
         )
 
+        KoinConfig.setupAppKit(context)
         setUserAgent(configuration)
-        KoinConfig.setup(context, configuration.environment, configuration.deviceId)
         sharedPreferencesModel.deleteAllAppStates()
     }
 

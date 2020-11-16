@@ -3,7 +3,7 @@ package cloud.pace.sdk.appkit.geofences
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import cloud.pace.sdk.utils.CustomKoinComponent
+import cloud.pace.sdk.utils.AppKitKoinComponent
 import com.google.android.gms.location.GeofencingEvent
 import org.koin.core.inject
 
@@ -16,7 +16,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
     }
 }
 
-class BroadcastReceiverHelper : CustomKoinComponent {
+class BroadcastReceiverHelper : AppKitKoinComponent {
 
     private val eventCallback: GeofenceCallback by inject()
 

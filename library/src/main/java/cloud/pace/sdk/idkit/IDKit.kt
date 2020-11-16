@@ -9,21 +9,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
-import cloud.pace.sdk.utils.Completion
+import cloud.pace.sdk.utils.*
 import cloud.pace.sdk.utils.Constants.TAG
-import cloud.pace.sdk.utils.Failure
-import cloud.pace.sdk.utils.SharedPreferenceUtils
-import cloud.pace.sdk.utils.Success
 import net.openid.appauth.*
+import org.koin.core.inject
 
-object IDKit : LifecycleObserver {
+object IDKit : IDKitKoinComponent, LifecycleObserver {
 
-    private lateinit var context: Context
+    private val context: Context by inject()
+    private val authorizationService: AuthorizationService by inject()
     private lateinit var configuration: OIDConfiguration
-    private var additionalCaching = true
-    private lateinit var authorizationService: AuthorizationService
     private lateinit var authorizationRequest: AuthorizationRequest
     private lateinit var session: AuthState
+    private var additionalCaching = true
 
     /**
      * Sets up [IDKit] with the passed [configuration].
@@ -34,17 +32,11 @@ object IDKit : LifecycleObserver {
      */
     @JvmOverloads
     fun setup(context: Context, configuration: OIDConfiguration, additionalCaching: Boolean = true) {
+        KoinConfig.setupIDKit(context)
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 
-        this.context = context
         this.configuration = configuration
         this.additionalCaching = additionalCaching
-
-        if (::authorizationService.isInitialized) {
-            Log.i(TAG, "Discarding existing AuthService instance")
-            dispose()
-        }
-        authorizationService = AuthorizationService(context)
         authorizationRequest = createAuthorizationRequest()
 
         if (additionalCaching) {
