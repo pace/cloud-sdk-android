@@ -199,6 +199,6 @@ class MainActivity : AppCompatActivity() {
         private const val AUTHORIZE_CODE = 100
         private const val PAYMENT_APP_URL = "YOUR_PAYMENT_APP_URL"    // TODO: Replace with your payment app URL
         private const val FUELING_APP_URL = "YOUR_FUELING_APP_URL"    // TODO: Replace with your fueling app URL
-        private const val APP_DISTANCE_THRESHOLD = 200
+        private const val APP_DISTANCE_THRESHOLD = 15
     }
 }

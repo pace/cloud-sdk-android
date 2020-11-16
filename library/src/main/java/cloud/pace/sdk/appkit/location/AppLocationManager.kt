@@ -1,6 +1,8 @@
 package cloud.pace.sdk.appkit.location
 
 import android.location.Location
+import android.os.Handler
+import androidx.lifecycle.Observer
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.utils.NoLocationFound
 import cloud.pace.sdk.appkit.utils.PermissionDenied
@@ -11,7 +13,8 @@ import cloud.pace.sdk.utils.SystemManager
 
 interface AppLocationManager {
 
-    fun getLocation(callback: (Result<Location>) -> Unit)
+    fun start(callback: (Result<Location>) -> Unit)
+    fun stop()
 }
 
 class AppLocationManagerImpl(
@@ -19,36 +22,44 @@ class AppLocationManagerImpl(
     private val systemManager: SystemManager
 ) : AppLocationManager {
 
-    override fun getLocation(callback: (Result<Location>) -> Unit) {
-        val startTime = systemManager.getCurrentTimeMillis()
-        val handler = systemManager.getHandler()
-        val locationTimeoutRunnable = Runnable {
+    private var callback: ((Result<Location>) -> Unit)? = null
+    private var startTime = 0L
+    private val handler: Handler by lazy { systemManager.getHandler() }
+    private val locationTimeoutRunnable: Runnable by lazy {
+        Runnable {
             Log.w("AppLocationManager timeout after $LOCATION_TIMEOUT ms")
-            callback(Result.failure(NoLocationFound))
+            callback?.invoke(Result.failure(NoLocationFound))
         }
-        handler.postDelayed(locationTimeoutRunnable, LOCATION_TIMEOUT)
-
-        locationProvider.location.observeForever {
+    }
+    private val locationObserver: Observer<Location> by lazy {
+        Observer<Location> {
             if (isLocationValid(it, startTime)) {
-                locationProvider.removeLocationUpdates()
-                handler.removeCallbacks(locationTimeoutRunnable)
-                callback(Result.success(it))
+                callback?.invoke(Result.success(it))
+                stop()
             }
         }
-
-        locationProvider.locationState.observeForever {
+    }
+    private val locationStateObserver: Observer<LocationState> by lazy {
+        Observer<LocationState> {
             if (it == LocationState.PERMISSION_DENIED) {
-                locationProvider.removeLocationUpdates()
-                handler.removeCallbacks(locationTimeoutRunnable)
-                callback(Result.failure(PermissionDenied))
+                callback?.invoke(Result.failure(PermissionDenied))
+                stop()
             } else if (it == LocationState.NO_LOCATION_FOUND) {
-                locationProvider.removeLocationUpdates()
-                handler.removeCallbacks(locationTimeoutRunnable)
-                callback(Result.failure(NoLocationFound))
+                callback?.invoke(Result.failure(NoLocationFound))
+                stop()
             }
         }
+    }
 
-        locationProvider.requestLocationUpdates()
+    override fun start(callback: (Result<Location>) -> Unit) {
+        this.callback = callback
+        startTime = systemManager.getCurrentTimeMillis()
+        handler.postDelayed(locationTimeoutRunnable, LOCATION_TIMEOUT)
+        locationProvider.apply {
+            location.observeForever(locationObserver)
+            locationState.observeForever(locationStateObserver)
+            requestLocationUpdates()
+        }
     }
 
     private fun isLocationValid(location: Location?, startTime: Long): Boolean {
@@ -83,6 +94,15 @@ class AppLocationManagerImpl(
             requestedTime <= segmentTime -> BEST_ACCURACY
             requestedTime <= segmentTime * 2 -> MEDIUM_ACCURACY
             else -> AppKit.configuration.locationAccuracy ?: LOW_ACCURACY
+        }
+    }
+
+    override fun stop() {
+        handler.removeCallbacks(locationTimeoutRunnable)
+        locationProvider.apply {
+            location.removeObserver(locationObserver)
+            locationState.removeObserver(locationStateObserver)
+            removeLocationUpdates()
         }
     }
 

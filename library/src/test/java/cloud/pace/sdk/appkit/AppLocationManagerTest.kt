@@ -56,7 +56,7 @@ class AppLocationManagerTest {
         val locationProvider = TestLocationProvider(LocationState.LOCATION_HIGH_ACCURACY, location)
         val appLocationListener = AppLocationManagerImpl(locationProvider, systemManager)
         val locationFuture = CompletableFutureCompat<Result<Location>>()
-        appLocationListener.getLocation {
+        appLocationListener.start {
             locationFuture.complete(it)
         }
 
@@ -83,7 +83,7 @@ class AppLocationManagerTest {
         val locationProvider = TestLocationProvider(LocationState.LOCATION_HIGH_ACCURACY, location)
         val appLocationListener = AppLocationManagerImpl(locationProvider, systemManager)
         val locationFuture = CompletableFutureCompat<Result<Location>>()
-        appLocationListener.getLocation {
+        appLocationListener.start {
             locationFuture.complete(it)
         }
 
@@ -110,7 +110,7 @@ class AppLocationManagerTest {
         val locationProvider = TestLocationProvider(LocationState.LOCATION_LOW_ACCURACY, location)
         val appLocationListener = AppLocationManagerImpl(locationProvider, systemManager)
         val locationFuture = CompletableFutureCompat<Result<Location>>()
-        appLocationListener.getLocation {
+        appLocationListener.start {
             locationFuture.complete(it)
         }
 
@@ -130,7 +130,7 @@ class AppLocationManagerTest {
         val locationProvider = TestLocationProvider(LocationState.LOCATION_LOW_ACCURACY, location)
         val appLocationListener = AppLocationManagerImpl(locationProvider, systemManager)
         val locationFuture = CompletableFutureCompat<Result<Location>>()
-        appLocationListener.getLocation {
+        appLocationListener.start {
             locationFuture.complete(it)
         }
 
@@ -150,7 +150,7 @@ class AppLocationManagerTest {
         val locationProvider = TestLocationProvider(LocationState.LOCATION_LOW_ACCURACY, null)
         val appLocationListener = AppLocationManagerImpl(locationProvider, systemManager)
         val locationFuture = CompletableFutureCompat<Result<Location>>()
-        appLocationListener.getLocation {
+        appLocationListener.start {
             locationFuture.complete(it)
         }
 
@@ -178,7 +178,7 @@ class AppLocationManagerTest {
         val locationProvider = TestLocationProvider(LocationState.LOCATION_LOW_ACCURACY, location)
         val appLocationListener = AppLocationManagerImpl(locationProvider, systemManager)
         val locationFuture = CompletableFutureCompat<Result<Location>>()
-        appLocationListener.getLocation {
+        appLocationListener.start {
             locationFuture.complete(it)
         }
 
@@ -202,7 +202,7 @@ class AppLocationManagerTest {
         val locationProvider = TestLocationProvider(LocationState.NO_LOCATION_FOUND, null)
         val appLocationListener = AppLocationManagerImpl(locationProvider, systemManager)
         val locationFuture = CompletableFutureCompat<Result<Location>>()
-        appLocationListener.getLocation {
+        appLocationListener.start {
             locationFuture.complete(it)
         }
 

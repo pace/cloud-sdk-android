@@ -45,13 +45,15 @@ open class TestLocationProvider(private val mockedLocationState: LocationState, 
 
 open class TestAppLocationManager(private val location: Location? = null, private val throwable: Throwable? = null) : AppLocationManager {
 
-    override fun getLocation(callback: (Result<Location>) -> Unit) {
+    override fun start(callback: (Result<Location>) -> Unit) {
         if (location != null) {
             callback(Result.success(location))
         } else if (throwable != null) {
             callback(Result.failure(throwable))
         }
     }
+
+    override fun stop() {}
 }
 
 open class TestAppRepository : AppRepository {

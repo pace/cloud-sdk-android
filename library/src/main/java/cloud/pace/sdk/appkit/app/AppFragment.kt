@@ -9,11 +9,11 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
 import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.app.webview.AppWebViewClient
-import cloud.pace.sdk.utils.CustomKoinComponent
+import cloud.pace.sdk.utils.AppKitKoinComponent
 import kotlinx.android.synthetic.main.fragment_app.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class AppFragment : Fragment(), CustomKoinComponent {
+class AppFragment : Fragment(), AppKitKoinComponent {
 
     private val viewModel: AppFragmentViewModel by viewModel()
 

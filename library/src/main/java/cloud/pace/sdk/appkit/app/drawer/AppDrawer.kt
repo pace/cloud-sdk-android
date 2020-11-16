@@ -18,13 +18,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.model.App
-import cloud.pace.sdk.utils.CustomKoinComponent
+import cloud.pace.sdk.utils.AppKitKoinComponent
 import cloud.pace.sdk.utils.Event
 import cloud.pace.sdk.utils.dp
 import kotlinx.android.synthetic.main.app_drawer.view.*
 import org.koin.core.inject
 
-class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs), CustomKoinComponent {
+class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs), AppKitKoinComponent {
 
     private val viewModel: AppDrawerViewModel by inject()
     private val minBackgroundWidth = context.resources.getDimension(R.dimen.app_drawer_height).toInt()

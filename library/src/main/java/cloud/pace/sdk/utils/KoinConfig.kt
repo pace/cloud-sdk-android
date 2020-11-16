@@ -34,6 +34,7 @@ import cloud.pace.sdk.poikit.poi.download.PriceHistoryApiClient
 import cloud.pace.sdk.poikit.routing.NavigationApiClient
 import cloud.pace.sdk.poikit.search.AddressSearchClient
 import com.google.android.gms.location.LocationServices
+import net.openid.appauth.AuthorizationService
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.KoinApplication
@@ -43,55 +44,73 @@ import org.koin.dsl.module
 
 object KoinConfig {
 
-    internal lateinit var koinApplication: KoinApplication
+    internal lateinit var idKitKoinApp: KoinApplication
+    internal lateinit var appKitKoinApp: KoinApplication
+    internal lateinit var poiKitKoinApp: KoinApplication
 
     @Synchronized
-    internal fun setup(context: Context, environment: Environment, deviceId: String) {
-        koinApplication = koinApplication {
+    internal fun setupIDKit(context: Context) {
+        idKitKoinApp = koinApplication {
             androidContext(context)
-            modules(listOf(appKitModules(), poiKitModules(environment, deviceId)))
+            modules(module {
+                single { AuthorizationService(get()) }
+            })
+        }
+    }
+
+    @Synchronized
+    internal fun setupAppKit(context: Context) {
+        appKitKoinApp = koinApplication {
+            androidContext(context)
+            modules(module {
+                single<SharedPreferencesModel> { SharedPreferencesImpl(PreferenceManager.getDefaultSharedPreferences(get())) }
+                single<CacheModel> { CacheModelImpl() }
+                single<AppRepository> { AppRepositoryImpl(get(), get(), get(), get()) }
+                single<NetworkChangeListener> { NetworkChangeListenerImpl(get()) }
+                single<AppEventManager> { AppEventManagerImpl() }
+                single<PayAuthenticationManager> { PayAuthenticationManagerImpl(get()) }
+                single<UriManager> { UriManagerImpl() }
+                single<SystemManager> { SystemManagerImpl(get()) }
+                single<LocationProvider> { LocationProviderImpl(get(), get()) }
+                single<AppLocationManager> { AppLocationManagerImpl(get(), get()) }
+                single<AppCloudApi> { AppCloudApiImpl() }
+                single { GeofenceCallback() }
+                single { LocationServices.getGeofencingClient(get<Context>()) }
+                single<AppModel> { AppModelImpl() }
+                single { AppManager() }
+                viewModel<AppFragmentViewModel> { AppFragmentViewModelImpl(get(), get()) }
+                viewModel<AppWebViewModel> { AppWebViewModelImpl(get(), get(), get(), get(), get()) }
+                viewModel<AppDrawerViewModel> { AppDrawerViewModelImpl(get()) }
+            })
+        }
+    }
+
+    @Synchronized
+    internal fun setupPOIKit(context: Context, environment: Environment, deviceId: String) {
+        poiKitKoinApp = koinApplication {
+            androidContext(context)
+            modules(module {
+                single {
+                    Room.databaseBuilder(get(), POIKitDatabase::class.java, POIKitDatabase.DATABASE_NAME)
+                        .addMigrations(POIKitDatabase.migration1to2, POIKitDatabase.migration2to3, POIKitDatabase.migration3to4, POIKitDatabase.migration4to5)
+                        .build()
+                }
+                single { NavigationApiClient(environment) }
+                single { PoiApiClient(environment) }
+                single { AddressSearchClient(environment) }
+                single { DynamicFilterApiClient(environment) }
+                single { PriceHistoryApiClient(environment, deviceId) }
+                single { GasStationApiClient(environment, deviceId) }
+                single<SystemManager> { SystemManagerImpl(get()) }
+                single<LocationProvider> { LocationProviderImpl(get(), get()) }
+            })
         }
     }
 
     fun setupForTests(context: Context, module: Module) {
-        koinApplication = koinApplication {
+        appKitKoinApp = koinApplication {
             androidContext(context)
             modules(module)
         }
-    }
-
-    private fun appKitModules() = module {
-        single<SharedPreferencesModel> { SharedPreferencesImpl(PreferenceManager.getDefaultSharedPreferences(get())) }
-        single<CacheModel> { CacheModelImpl() }
-        single<AppRepository> { AppRepositoryImpl(get(), get(), get(), get()) }
-        single<NetworkChangeListener> { NetworkChangeListenerImpl(get()) }
-        single<AppEventManager> { AppEventManagerImpl() }
-        single<PayAuthenticationManager> { PayAuthenticationManagerImpl(get()) }
-        single<UriManager> { UriManagerImpl() }
-        single<SystemManager> { SystemManagerImpl(get()) }
-        factory<LocationProvider> { LocationProviderImpl(get(), get()) }
-        single<AppLocationManager> { AppLocationManagerImpl(get(), get()) }
-        single<AppCloudApi> { AppCloudApiImpl() }
-        single { GeofenceCallback() }
-        single { LocationServices.getGeofencingClient(get<Context>()) }
-        single<AppModel> { AppModelImpl() }
-        single { AppManager(get()) }
-        viewModel<AppFragmentViewModel> { AppFragmentViewModelImpl(get(), get()) }
-        viewModel<AppWebViewModel> { AppWebViewModelImpl(get(), get(), get(), get(), get()) }
-        viewModel<AppDrawerViewModel> { AppDrawerViewModelImpl(get()) }
-    }
-
-    private fun poiKitModules(environment: Environment, deviceId: String) = module {
-        single {
-            Room.databaseBuilder(get(), POIKitDatabase::class.java, POIKitDatabase.DATABASE_NAME)
-                .addMigrations(POIKitDatabase.migration1to2, POIKitDatabase.migration2to3, POIKitDatabase.migration3to4, POIKitDatabase.migration4to5)
-                .build()
-        }
-        single { NavigationApiClient(environment) }
-        single { PoiApiClient(environment) }
-        single { AddressSearchClient(environment) }
-        single { DynamicFilterApiClient(environment) }
-        single { PriceHistoryApiClient(environment, deviceId) }
-        single { GasStationApiClient(environment, deviceId) }
     }
 }

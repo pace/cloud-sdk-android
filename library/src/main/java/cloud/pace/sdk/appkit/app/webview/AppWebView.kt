@@ -15,12 +15,12 @@ import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.model.AuthenticationMode
 import cloud.pace.sdk.appkit.utils.BiometricUtils
-import cloud.pace.sdk.utils.CustomKoinComponent
+import cloud.pace.sdk.utils.AppKitKoinComponent
 import cloud.pace.sdk.utils.Event
 import kotlinx.android.synthetic.main.app_web_view.view.*
 import org.koin.core.inject
 
-class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(context, attributeSet), CustomKoinComponent {
+class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(context, attributeSet), AppKitKoinComponent {
 
     private val webViewModel: AppWebViewModel by inject()
     private var fragment: Fragment? = null
