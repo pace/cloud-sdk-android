@@ -1,0 +1,66 @@
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    archiveClassifier.set('sources')
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name "The MIT License (MIT)"
+            url "https://opensource.org/licenses/MIT"
+            distribution "repo"
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = rootProject.ext.group_id
+                artifactId = rootProject.ext.artifact_id
+                version = rootProject.ext.version_name
+
+                from components.release
+
+                artifact sourcesJar {
+                    classifier "sources"
+                }
+
+                pom.withXml {
+                    def root = asNode()
+                    root.appendNode('name', 'PACE Cloud SDK')
+                    root.appendNode('description', 'PACE Cloud SDK is a client SDK that allows your app to easily connect to PACE’s Connected Fueling. The SDK consists of the IDKit to manage the OpenID (OID) authorization and general session flow with its token handling. It also consists of the AppKit, with which you can fetch and display location based apps, apps by URL or ID. Furthermore it contains the POIKit, which allows you to fetch Point of Interests (e.g. gas stations), request routes and search for locations.')
+                    root.appendNode('url', 'https://github.com/pace/cloud-sdk-android')
+                    root.children().last() + pomConfig
+                }
+            }
+        }
+    }
+}
+
+bintray {
+    user = rootProject.ext.user
+    key = rootProject.ext.key
+    publications = ['release']
+
+    pkg {
+        repo = rootProject.ext.group_id
+        name = rootProject.ext.artifact_id
+        version {
+            name = rootProject.ext.version_name
+            desc = "PACE Cloud SDK version $rootProject.ext.version_name"
+            released = new Date()
+            vcsTag = rootProject.ext.version_name
+        }
+    }
+
+    publish = true
+}
