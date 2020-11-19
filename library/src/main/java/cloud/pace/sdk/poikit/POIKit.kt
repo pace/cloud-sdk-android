@@ -33,8 +33,8 @@ object POIKit : POIKitKoinComponent, LifecycleObserver {
     private val locationProvider: LocationProvider by inject()
     var maxPoiSearchBoxSize = 15000.0
 
-    fun setup(context: Context, environment: Environment, deviceId: String) {
-        KoinConfig.setupPOIKit(context, environment, deviceId)
+    fun setup(context: Context, environment: Environment, apiKey: String) {
+        KoinConfig.setupPOIKit(context, environment, apiKey)
         TileDownloader.env = environment
     }
 

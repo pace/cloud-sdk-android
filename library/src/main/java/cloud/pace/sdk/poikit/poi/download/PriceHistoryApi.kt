@@ -15,8 +15,8 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import java.util.*
 
-class PriceHistoryApiClient(environment: Environment, deviceId: String) {
-    private var api = PriceHistoryApi.create(environment.apiUrl, deviceId)
+class PriceHistoryApiClient(environment: Environment, apiKey: String) {
+    private var api = PriceHistoryApi.create(environment.apiUrl, apiKey)
 
     fun getPriceHistory(id: String, fuelType: String, from: Date, to: Date, completion: (Completion<PriceHistoryApiResponse?>) -> Unit) {
         val formattedFrom = from.toIso8601().dropLast(9) + 'Z'
@@ -48,7 +48,7 @@ interface PriceHistoryApi {
     ): Call<PriceHistoryApiResponse>
 
     companion object Factory {
-        fun create(baseUrl: String, deviceId: String): PriceHistoryApi {
+        fun create(baseUrl: String, apiKey: String): PriceHistoryApi {
             val retrofit: Retrofit = Retrofit.Builder()
                 .client(
                     OkHttpClient.Builder()
@@ -57,7 +57,7 @@ interface PriceHistoryApi {
                                 it.request()
                                     .newBuilder()
                                     .header(ApiUtils.USER_AGENT_HEADER, ApiUtils.getUserAgent())
-                                    .header(ApiUtils.DEVICE_ID, deviceId)
+                                    .header(ApiUtils.API_KEY, apiKey)
                                     .build()
                             )
                         }

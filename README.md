@@ -163,14 +163,12 @@ A new authorization will be required afterwards.
 ### Setup
 
 This code example shows how to setup AppKit. This can be done in the `Application` class.
-You can use `DeviceUtils.generateDeviceId()` of the PACE Cloud SDK to generate a device ID and store it in the `SharedPreferences`.
 ```kotlin
 val config = Configuration(
     clientAppName = "PACECloudSDKExample",
     clientAppVersion = BuildConfig.VERSION_NAME,
     clientAppBuild = BuildConfig.VERSION_CODE.toString(),
-    apiKey = "Missing api key",
-    deviceId = getDeviceId(),
+    apiKey = "Your API key",
     isDarkTheme = false,
     environment = Environment.DEVELOPMENT
 )

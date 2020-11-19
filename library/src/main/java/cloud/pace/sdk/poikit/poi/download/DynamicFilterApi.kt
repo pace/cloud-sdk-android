@@ -13,8 +13,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-class DynamicFilterApiClient(environment: Environment) {
-    private var api = FilterApi.create(environment.apiUrl)
+class DynamicFilterApiClient(environment: Environment, apiKey: String) {
+    private var api = FilterApi.create(environment.apiUrl, apiKey)
 
     fun getDynamicFilters(lat: Double, lon: Double, completion: (Completion<DynamicFilterResponse?>) -> Unit) {
         api.dynamicFilters(lat, lon).enqueue {
@@ -42,7 +42,7 @@ interface FilterApi {
     ): Call<DynamicFilterResponse>
 
     companion object Factory {
-        fun create(baseUrl: String): FilterApi {
+        fun create(baseUrl: String, apiKey: String): FilterApi {
             val retrofit: Retrofit = Retrofit.Builder()
                 .client(
                     OkHttpClient.Builder()
@@ -51,6 +51,7 @@ interface FilterApi {
                                 it.request()
                                     .newBuilder()
                                     .header(ApiUtils.USER_AGENT_HEADER, ApiUtils.getUserAgent())
+                                    .header(ApiUtils.API_KEY, apiKey)
                                     .build()
                             )
                         }

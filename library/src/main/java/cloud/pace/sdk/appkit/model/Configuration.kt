@@ -7,7 +7,6 @@ data class Configuration @JvmOverloads constructor(
     var clientAppVersion: String,
     var clientAppBuild: String,
     var apiKey: String,
-    var deviceId: String,
     var isDarkTheme: Boolean,
     var clientId: String? = null,
     var accessToken: String? = null,

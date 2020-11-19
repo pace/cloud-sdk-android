@@ -18,7 +18,7 @@ class UriManagerTest {
 
     @Before
     fun init() {
-        AppKit.configuration = Configuration("", "", "", "", "", false, environment = Environment.DEVELOPMENT)
+        AppKit.configuration = Configuration("", "", "", "", false, environment = Environment.DEVELOPMENT)
     }
 
     @Test
