@@ -61,8 +61,7 @@ open class TestAppRepository : AppRepository {
     override fun getAppsByUrl(context: Context, url: String, references: List<String>, completion: (Result<List<App>>) -> Unit) {}
     override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, retry: Boolean, completion: (Result<List<App>>) -> Unit) {}
     override fun getAllApps(context: Context, retry: Boolean, completion: (Result<List<App>>) -> Unit) {}
-    override fun getAppsById(context: Context, uuid: String, references: List<String>, completion: (Result<List<App>>) -> Unit) {}
-    override fun getUrlById(uuid: String, completion: (Result<String?>) -> Unit) {}
+    override fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit) {}
 }
 
 open class TestSharedPreferencesModel(private val appStates: List<SharedPreferencesModel.AppState> = listOf()) : SharedPreferencesModel {
@@ -208,7 +207,7 @@ open class TestWebClientCallback : AppWebViewClient.WebClientCallback {
 open class TestAppCloudApi : AppCloudApi {
 
     override fun getAllApps(retry: Boolean, completion: (Result<Array<LocationBasedApp>?>) -> Unit) {}
-    override fun getAppByUuid(uuid: String, completion: (Result<LocationBasedApp?>) -> Unit) {}
+    override fun getAppByAppId(appId: String, completion: (Result<LocationBasedApp?>) -> Unit) {}
     override fun getLocationBasedApps(latitude: Double, longitude: Double, retry: Boolean, completion: (Result<Array<LocationBasedApp>?>) -> Unit) {}
 }
 

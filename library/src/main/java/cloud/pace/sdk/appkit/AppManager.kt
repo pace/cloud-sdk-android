@@ -134,13 +134,6 @@ internal class AppManager : AppKitKoinComponent {
         }
     }
 
-    internal fun fetchAppsById(id: String, references: List<String>, completion: (Completion<List<App>>) -> Unit) {
-        appRepository.getAppsById(context, id, references) { result ->
-            result.onSuccess { completion(Success(it)) }
-            result.onFailure { completion(Failure(it)) }
-        }
-    }
-
     internal fun fetchAppsByUrl(url: String, references: List<String>, completion: (Completion<List<App>>) -> Unit) {
         appRepository.getAppsByUrl(context, url, references) { result ->
             result.onSuccess { completion(Success(it)) }
@@ -148,8 +141,8 @@ internal class AppManager : AppKitKoinComponent {
         }
     }
 
-    internal fun fetchUrlById(id: String, completion: (Completion<String?>) -> Unit) {
-        appRepository.getUrlById(id) { result ->
+    internal fun fetchUrlByAppId(appId: String, completion: (Completion<String?>) -> Unit) {
+        appRepository.getUrlByAppId(appId) { result ->
             result.onSuccess { completion(Success(it)) }
             result.onFailure { completion(Failure(it)) }
         }

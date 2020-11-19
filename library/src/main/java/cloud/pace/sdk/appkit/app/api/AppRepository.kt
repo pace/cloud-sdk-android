@@ -18,9 +18,8 @@ interface AppRepository {
 
     fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, retry: Boolean, completion: (Result<List<App>>) -> Unit)
     fun getAllApps(context: Context, retry: Boolean, completion: (Result<List<App>>) -> Unit)
-    fun getAppsById(context: Context, uuid: String, references: List<String>, completion: (Result<List<App>>) -> Unit)
     fun getAppsByUrl(context: Context, url: String, references: List<String>, completion: (Result<List<App>>) -> Unit)
-    fun getUrlById(uuid: String, completion: (Result<String?>) -> Unit)
+    fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit)
 }
 
 class AppRepositoryImpl(
@@ -54,29 +53,6 @@ class AppRepositoryImpl(
         }
     }
 
-    override fun getAppsById(context: Context, uuid: String, references: List<String>, completion: (Result<List<App>>) -> Unit) {
-        appCloudApi.getAppByUuid(uuid) { response ->
-            response.onSuccess { app ->
-                if (app != null) {
-                    app.references = references
-                    val apps = castLocationBasedApp(context, app)
-
-                    if (apps != null) {
-                        completion(Result.success(apps))
-                    } else {
-                        completion(Result.failure(Exception("Could not load Apps for UUID $uuid")))
-                    }
-                } else {
-                    completion(Result.failure(Exception("Could not load Apps for UUID $uuid")))
-                }
-            }
-
-            response.onFailure { throwable ->
-                completion(Result.failure(throwable))
-            }
-        }
-    }
-
     override fun getAppsByUrl(context: Context, url: String, references: List<String>, completion: (Result<List<App>>) -> Unit) {
         val locationBasedApp = LocationBasedApp().apply {
             pwaUrl = url
@@ -91,8 +67,8 @@ class AppRepositoryImpl(
         }
     }
 
-    override fun getUrlById(uuid: String, completion: (Result<String?>) -> Unit) {
-        appCloudApi.getAppByUuid(uuid) { response ->
+    override fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit) {
+        appCloudApi.getAppByAppId(appId) { response ->
             response.onSuccess { app ->
                 completion(Result.success(app?.pwaUrl))
             }

@@ -113,15 +113,6 @@ object AppKit : AppKitKoinComponent {
     }
 
     /**
-     * Fetches the app with the given [id] and [references] (as PRNs/URNs).
-     *
-     * @param completion Returns a list of [App]s on success or a [Throwable] on failure.
-     */
-    fun fetchAppsById(id: String, vararg references: String, completion: (Completion<List<App>>) -> Unit) {
-        appManager.fetchAppsById(id, references.toList(), completion)
-    }
-
-    /**
      * Fetches the app with the given [url] and [references] (as PRNs/URNs).
      *
      * @param completion Returns a list of [App]s on success or a [Throwable] on failure.
@@ -131,12 +122,12 @@ object AppKit : AppKitKoinComponent {
     }
 
     /**
-     * Fetches the app's URL for the given app by [id].
+     * Fetches the app's URL for the given [appId] (not gas station ID).
      *
      * @param completion Returns the App's URL on success or a [Throwable] on failure.
      */
-    fun fetchUrlById(id: String, completion: (Completion<String?>) -> Unit) {
-        appManager.fetchUrlById(id, completion)
+    fun fetchUrlByAppId(appId: String, completion: (Completion<String?>) -> Unit) {
+        appManager.fetchUrlByAppId(appId, completion)
     }
 
     /**

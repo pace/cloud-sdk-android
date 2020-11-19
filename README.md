@@ -153,7 +153,7 @@ A new authorization will be required afterwards.
 
 ## Main features
 
-* Get apps by location, URL or ID
+* Get apps by location or URL
 * Shows an `AppDrawer` for each app
 * Opens the app in the `AppActivity` (recommended) or `AppWebView`
 * Checks if there is an app for the given POI ID at the current location
@@ -240,39 +240,6 @@ AppKit.INSTANCE.fetchAppsByUrl(url, new String[]{"prn:poi:gas-stations:c977190d-
     if (result instanceof Success) {
         List<App> apps = ((Success<List<App>>) result).getResult();
         // `Apps` contains the app objects
-    } else {
-        Throwable throwable = ((Failure<List<App>>) result).getThrowable();
-        // `throwable` contains the Throwable of the failed request
-    }
-    
-    return null;
-});
-```
-
-### Fetch apps by ID
-
-You can also get apps by ID and references (e.g. gas station references).
-
-**_Note:_** The reference starts with a specific namespace identifier followed by the gas station ID in this case it has to conform to the URN format.
-
-##### Kotlin example
-
-```kotlin
-AppKit.fetchAppsById(uuid, "prn:poi:gas-stations:c977190d-049b-4023-bcbd-1dab88f02924", "prn:poi:gas-stations:f86a1818-353c-425f-a92b-705cc6ec5259") {
-    when (it) {
-        is Success -> // `it.result` contains the app objects
-        is Failure -> // `it.throwable` contains the Throwable of the failed request
-    }
-}
-```
-
-##### Java example
-
-```java
-AppKit.INSTANCE.fetchAppsById(id, new String[]{"prn:poi:gas-stations:c977190d-049b-4023-bcbd-1dab88f02924", "prn:poi:gas-stations:f86a1818-353c-425f-a92b-705cc6ec5259"}, result -> {
-    if (result instanceof Success) {
-        List<App> apps = ((Success<List<App>>) result).getResult();
-        // `apps` contains the app objects
     } else {
         Throwable throwable = ((Failure<List<App>>) result).getThrowable();
         // `throwable` contains the Throwable of the failed request
