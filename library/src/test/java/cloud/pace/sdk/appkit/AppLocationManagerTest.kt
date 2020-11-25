@@ -35,7 +35,7 @@ class AppLocationManagerTest {
 
     @Before
     fun init() {
-        AppKit.configuration = Configuration("", "", "", "", "", false, environment = Environment.DEVELOPMENT, locationAccuracy = 150)
+        AppKit.configuration = Configuration("", "", "", "", false, environment = Environment.DEVELOPMENT, locationAccuracy = 150)
     }
 
     @Test

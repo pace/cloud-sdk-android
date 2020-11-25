@@ -17,7 +17,7 @@ class AppCloudApiImpl : AppCloudApi {
 
     override fun getLocationBasedApps(latitude: Double, longitude: Double, retry: Boolean, completion: (Result<Array<LocationBasedApp>?>) -> Unit) {
         APIRequestWrapper.execute(
-            CloudApi.instance.withPoiAPI(null, AppKit.configuration.apiKey, AppKit.configuration.deviceId).getLocationBasedApps(
+            CloudApi.instance.withPoiAPI(null, AppKit.configuration.apiKey).getLocationBasedApps(
                 latitude,
                 longitude
             ),
@@ -36,7 +36,7 @@ class AppCloudApiImpl : AppCloudApi {
 
     override fun getAllApps(retry: Boolean, completion: (Result<Array<LocationBasedApp>?>) -> Unit) {
         APIRequestWrapper.execute(
-            CloudApi.instance.withPoiAPI(null, AppKit.configuration.apiKey, AppKit.configuration.deviceId).getLocationBasedApps(""),
+            CloudApi.instance.withPoiAPI(null, AppKit.configuration.apiKey).getLocationBasedApps(""),
             retry
         ) {
             it.onSuccess { response ->
@@ -52,7 +52,7 @@ class AppCloudApiImpl : AppCloudApi {
 
     override fun getAppByAppId(appId: String, completion: (Result<LocationBasedApp?>) -> Unit) {
         APIRequestWrapper.execute(
-            CloudApi.instance.withPoiAPI(null, AppKit.configuration.apiKey, AppKit.configuration.deviceId).getLocationBasedApp(appId),
+            CloudApi.instance.withPoiAPI(null, AppKit.configuration.apiKey).getLocationBasedApp(appId),
             true
         ) {
             it.onSuccess { response ->

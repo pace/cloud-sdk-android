@@ -2,7 +2,6 @@ package cloud.pace.sdk.utils
 
 import android.os.Build
 import okio.Buffer
-import java.security.SecureRandom
 
 /**
  * Utils for device attributes.
@@ -10,16 +9,6 @@ import java.security.SecureRandom
  * Most of this is a copy from PACEKitConfig.
  */
 object DeviceUtils {
-
-    @JvmOverloads
-    fun generateDeviceId(stringLength: Int = 64): String {
-        val secureRandom = SecureRandom()
-        val stringBuilder = StringBuffer()
-        repeat(stringLength) {
-            stringBuilder.append(Integer.toHexString(secureRandom.nextInt()))
-        }
-        return stringBuilder.toString().substring(0, stringLength)
-    }
 
     /**
      * Returns the device name formatted the following way:

@@ -13,8 +13,8 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-class GasStationApiClient(environment: Environment, deviceId: String) {
-    private var api = GasStationApi.create(environment.apiUrl, deviceId)
+class GasStationApiClient(environment: Environment, apiKey: String) {
+    private var api = GasStationApi.create(environment.apiUrl, apiKey)
 
     fun getGasStation(id: String, compileOpeningHours: Boolean, forMovedGasStation: Boolean, completion: (Completion<GasStationMovedResponse>) -> Unit) {
         api.getGasStation(id, compileOpeningHours).enqueue {
@@ -82,7 +82,7 @@ interface GasStationApi {
     ): Call<GasStationApiResponse>
 
     companion object Factory {
-        fun create(baseUrl: String, deviceId: String): GasStationApi {
+        fun create(baseUrl: String, apiKey: String): GasStationApi {
             val retrofit: Retrofit = Retrofit.Builder()
                 .client(
                     OkHttpClient.Builder()
@@ -91,7 +91,7 @@ interface GasStationApi {
                                 it.request()
                                     .newBuilder()
                                     .header(ApiUtils.USER_AGENT_HEADER, ApiUtils.getUserAgent())
-                                    .header(ApiUtils.DEVICE_ID, deviceId)
+                                    .header(ApiUtils.API_KEY, apiKey)
                                     .build()
                             )
                         }

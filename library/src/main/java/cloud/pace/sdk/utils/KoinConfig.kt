@@ -86,7 +86,7 @@ object KoinConfig {
     }
 
     @Synchronized
-    internal fun setupPOIKit(context: Context, environment: Environment, deviceId: String) {
+    internal fun setupPOIKit(context: Context, environment: Environment, apiKey: String) {
         poiKitKoinApp = koinApplication {
             androidContext(context)
             modules(module {
@@ -95,12 +95,12 @@ object KoinConfig {
                         .addMigrations(POIKitDatabase.migration1to2, POIKitDatabase.migration2to3, POIKitDatabase.migration3to4, POIKitDatabase.migration4to5)
                         .build()
                 }
-                single { NavigationApiClient(environment) }
-                single { PoiApiClient(environment) }
-                single { AddressSearchClient(environment) }
-                single { DynamicFilterApiClient(environment) }
-                single { PriceHistoryApiClient(environment, deviceId) }
-                single { GasStationApiClient(environment, deviceId) }
+                single { NavigationApiClient(environment, apiKey) }
+                single { PoiApiClient(environment, apiKey) }
+                single { AddressSearchClient(environment, apiKey) }
+                single { DynamicFilterApiClient(environment, apiKey) }
+                single { PriceHistoryApiClient(environment, apiKey) }
+                single { GasStationApiClient(environment, apiKey) }
                 single<SystemManager> { SystemManagerImpl(get()) }
                 single<LocationProvider> { LocationProviderImpl(get(), get()) }
             })

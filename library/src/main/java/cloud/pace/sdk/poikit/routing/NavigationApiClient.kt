@@ -22,8 +22,8 @@ import retrofit2.http.Query
  * API to handle navigation requests, calling backend on OSRM server.
  */
 
-internal class NavigationApiClient(private val environment: Environment) {
-    private val api = NavigationApi.create(environment.routingBaseUrl)
+internal class NavigationApiClient(environment: Environment, apiKey: String) {
+    private val api = NavigationApi.create(environment.routingBaseUrl, apiKey)
 
     fun getRoute(request: NavigationRequest, completion: (Completion<Route?>) -> Unit) {
         val coordPairs = request.coordinates.map { point -> point.lon.toString() + "," + point.lat.toString() }
@@ -89,7 +89,7 @@ interface NavigationApi {
     ): Call<NavigationResponse>
 
     companion object Factory {
-        fun create(baseUrl: String): NavigationApi {
+        fun create(baseUrl: String, apiKey: String): NavigationApi {
             val loggingInterceptor = HttpLoggingInterceptor()
             loggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
 
@@ -102,6 +102,7 @@ interface NavigationApi {
                                 it.request()
                                     .newBuilder()
                                     .header(ApiUtils.USER_AGENT_HEADER, ApiUtils.getUserAgent())
+                                    .header(ApiUtils.API_KEY, apiKey)
                                     .build()
                             )
                         }

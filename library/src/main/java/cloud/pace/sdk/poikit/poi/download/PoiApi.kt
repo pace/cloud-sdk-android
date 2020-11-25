@@ -16,8 +16,8 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import java.util.concurrent.TimeUnit
 
-class PoiApiClient(environment: Environment) {
-    private var api = PoiApi.create(environment.apiUrl)
+class PoiApiClient(environment: Environment, apiKey: String) {
+    private var api = PoiApi.create(environment.apiUrl, apiKey)
 
     fun getRegionalPrices(lat: Double, long: Double, completion: (Completion<List<RegionalPriceResponse>?>) -> Unit) {
         api.getRegionalPrices(lat, long).enqueue {
@@ -56,7 +56,7 @@ interface PoiApi {
             .add(jsonApiAdapterFactory)
             .build()
 
-        fun create(baseUrl: String): PoiApi {
+        fun create(baseUrl: String, apiKey: String): PoiApi {
             val okHttpClient = OkHttpClient.Builder()
                 .connectTimeout(CONNECT_TIMEOUT, TimeUnit.MILLISECONDS)
                 .readTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS)
@@ -67,6 +67,7 @@ interface PoiApi {
                             .header(ApiUtils.ACCEPT_HEADER, "application/vnd.api+json")
                             .header(ApiUtils.CONTENT_TYPE_HEADER, "application/vnd.api+json")
                             .header(ApiUtils.USER_AGENT_HEADER, ApiUtils.getUserAgent())
+                            .header(ApiUtils.API_KEY, apiKey)
                             .build()
                     )
                 }

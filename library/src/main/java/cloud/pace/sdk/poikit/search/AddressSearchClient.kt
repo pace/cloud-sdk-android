@@ -11,8 +11,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-internal class AddressSearchClient(environment: Environment) {
-    private val api = AddressSearchApi.create(environment.searchBaseUrl)
+internal class AddressSearchClient(environment: Environment, apiKey: String) {
+    private val api = AddressSearchApi.create(environment.searchBaseUrl, apiKey)
 
     fun searchAddress(request: AddressSearchRequest): Observable<PhotonResult> {
         val osmTag = ArrayList(request.includeKeys?.map { it } ?: listOf())
@@ -46,7 +46,7 @@ interface AddressSearchApi {
     ): Observable<PhotonResult>
 
     companion object Factory {
-        fun create(baseUrl: String): AddressSearchApi {
+        fun create(baseUrl: String, apiKey: String): AddressSearchApi {
             val loggingInterceptor = HttpLoggingInterceptor()
             loggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
 
@@ -59,6 +59,7 @@ interface AddressSearchApi {
                                 it.request()
                                     .newBuilder()
                                     .header(ApiUtils.USER_AGENT_HEADER, ApiUtils.getUserAgent())
+                                    .header(ApiUtils.API_KEY, apiKey)
                                     .build()
                             )
                         }
