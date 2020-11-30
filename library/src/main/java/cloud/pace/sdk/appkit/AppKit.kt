@@ -87,7 +87,7 @@ object AppKit : AppKitKoinComponent {
             "${config.clientAppName}/${config.clientAppVersion}_${config.clientAppBuild}",
             "(${DeviceUtils.getDeviceName()} Android/${DeviceUtils.getAndroidVersion()})",
             "PWA-SDK/${BuildConfig.VERSION_NAME}",
-            if (config.clientId != null) "(clientid:${config.clientId})" else "",
+            if (config.clientId != null) "(clientid:${config.clientId};)" else "",
             if (config.isDarkTheme) "PWASDK-Theme/Dark" else "PWASDK-Theme/Light",
             "IdentityManagement/${config.authenticationMode.value}",
             config.extensions.joinToString(" ")

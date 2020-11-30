@@ -51,7 +51,7 @@ bintray_upload:
         - export TAG_COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
         - export BUILD_NUMBER=$(TZ=Etc/Utc date -j -f '%s' ${TAG_COMMIT_TIME} "+%Y%m%d%H")
         - export BUILD_VERSION_NAME=`echo $CI_COMMIT_TAG | cut -d '-' -f2`
-        - ./gradlew bintrayUpload -Puser=$BINTRAY_USER -Pkey=$BINTRAY_KEY
+        - ./gradlew bintrayUpload -Puser=$BINTRAY_USER -Pkey=$BINTRAY_KEY -PbuildNumber=$BUILD_NUMBER -PversionName=$BUILD_VERSION_NAME
     only:
         - tags
     except:
