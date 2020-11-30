@@ -10,7 +10,6 @@ import android.view.View
 import android.widget.RadioButton
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.PreferenceManager
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.model.AuthenticationMode
@@ -19,7 +18,6 @@ import cloud.pace.sdk.idkit.FailedRetrievingSessionWhileAuthorizing
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.OIDConfiguration
 import cloud.pace.sdk.poikit.POIKit
-import cloud.pace.sdk.utils.DeviceUtils
 import cloud.pace.sdk.utils.Environment
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
@@ -54,14 +52,13 @@ class MainActivity : AppCompatActivity() {
                 clientAppVersion = BuildConfig.VERSION_NAME,
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),
                 apiKey = "Missing api key",
-                deviceId = getDeviceId(),
                 isDarkTheme = false,
                 authenticationMode = AuthenticationMode.NATIVE,
                 environment = Environment.DEVELOPMENT
             )
         )
 
-        POIKit.setup(this, Environment.DEVELOPMENT, getDeviceId())
+        POIKit.setup(this, Environment.DEVELOPMENT, "YOUR API KEY")
 
         payment_app.setOnClickListener {
             authorize(PAYMENT_APP_URL)
@@ -183,19 +180,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun getDeviceId(): String {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        var deviceId = sharedPreferences.getString(DEVICE_ID_KEY, null)
-        if (deviceId == null) {
-            deviceId = DeviceUtils.generateDeviceId()
-            sharedPreferences.edit().putString(DEVICE_ID_KEY, deviceId).apply()
-        }
-
-        return deviceId
-    }
-
     companion object {
-        private const val DEVICE_ID_KEY = "DEVICE_ID"
         private const val AUTHORIZE_CODE = 100
         private const val PAYMENT_APP_URL = "YOUR_PAYMENT_APP_URL"    // TODO: Replace with your payment app URL
         private const val FUELING_APP_URL = "YOUR_FUELING_APP_URL"    // TODO: Replace with your fueling app URL
