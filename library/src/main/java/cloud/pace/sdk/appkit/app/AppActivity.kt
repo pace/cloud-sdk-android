@@ -71,5 +71,6 @@ class AppActivity : AppCompatActivity(), AppKitKoinComponent {
     companion object {
         const val APP_URL = "APP_URL"
         const val BACK_TO_FINISH = "BACK_TO_FINISH"
+        const val AUTO_CLOSE = "AUTO_CLOSE"
     }
 }

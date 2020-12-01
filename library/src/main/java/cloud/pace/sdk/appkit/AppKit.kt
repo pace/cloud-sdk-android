@@ -144,11 +144,12 @@ object AppKit : AppKitKoinComponent {
      *
      * @param context Context which should be used to start the [AppActivity].
      * @param enableBackToFinish True if the [AppActivity] should be finished or false if the [cloud.pace.sdk.appkit.app.webview.AppWebView] should navigate back on back press.
+     * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or no apps come back from the API, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
     @JvmOverloads
-    fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, callback: AppCallbackImpl? = null) {
-        appManager.openAppActivity(context, url, enableBackToFinish, callback)
+    fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl? = null) {
+        appManager.openAppActivity(context, url, enableBackToFinish, autoClose, callback)
     }
 
     /**
@@ -158,23 +159,38 @@ object AppKit : AppKitKoinComponent {
      * @param context Context which should be used to start the [AppActivity].
      * @param isDarkBackground True, if the background of the [AppDrawer] should be dark, false otherwise.
      * @param bottomMargin The margin with which the [AppDrawer]s should be drawn to the bottom edge.
+     * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or no apps come back from the API, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
     @JvmOverloads
-    fun openApps(context: Context, apps: List<App>, isDarkBackground: Boolean, buttonContainer: ConstraintLayout, bottomMargin: Float = 16f, callback: AppCallbackImpl? = null) {
-        appManager.openApps(context, apps, isDarkBackground, buttonContainer, bottomMargin, callback)
+    fun openApps(
+        context: Context,
+        apps: List<App>,
+        isDarkBackground: Boolean,
+        buttonContainer: ConstraintLayout,
+        bottomMargin: Float = 16f,
+        autoClose: Boolean = true,
+        callback: AppCallbackImpl? = null
+    ) {
+        appManager.openApps(context, apps, isDarkBackground, buttonContainer, bottomMargin, autoClose, callback)
     }
 
     /**
      * Closes (removes) all [AppDrawer]s in the [buttonContainer] parent layout.
-     * Also closes (finishes) the [AppActivity] if it was open.
+     * Also closes (finishes) the [AppActivity] if it was started with autoClose = true.
+     *
+     * @see openAppActivity
+     * @see openApps
      */
     fun closeApps(buttonContainer: ConstraintLayout) {
         appManager.closeApps(buttonContainer)
     }
 
     /**
-     * Closes (finishes) the [AppActivity].
+     * Closes (finishes) the [AppActivity], even if it was started with autoClose = false.
+     *
+     * @see openAppActivity
+     * @see openApps
      */
     fun closeAppActivity() {
         appManager.closeAppActivity()

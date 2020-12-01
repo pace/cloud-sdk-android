@@ -168,7 +168,7 @@ val config = Configuration(
     clientAppName = "PACECloudSDKExample",
     clientAppVersion = BuildConfig.VERSION_NAME,
     clientAppBuild = BuildConfig.VERSION_CODE.toString(),
-    apiKey = "Your API key",
+    apiKey = "YOUR_API_KEY",
     isDarkTheme = false,
     environment = Environment.DEVELOPMENT
 )
@@ -395,4 +395,4 @@ AppKit.INSTANCE.openAppActivity(context, url, false, new AppCallbackImpl() {
 
 In case you want to remove the `AppActivity`, simply call `AppKit.closeAppActivity()`.
 
-If you want to remove all `AppDrawer`s *and* the `AppActivity`, you can call the `AppKit.closeApps(buttonContainer: ConstraintLayout)` method and pass your `ConstraintLayout` where you've added the `AppDrawer`s to (see [AppDrawer](#appdrawer)).
+If you want to remove all `AppDrawer`s *and* the `AppActivity` (only if it was started with autoClose = true), you can call the `AppKit.closeApps(buttonContainer: ConstraintLayout)` method and pass your `ConstraintLayout` where you've added the `AppDrawer`s to (see [AppDrawer](#appdrawer)).

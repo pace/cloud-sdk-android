@@ -51,14 +51,14 @@ class MainActivity : AppCompatActivity() {
                 clientAppName = "PACECloudSDKExample",
                 clientAppVersion = BuildConfig.VERSION_NAME,
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),
-                apiKey = "Missing api key",
+                apiKey = "YOUR_API_KEY",
                 isDarkTheme = false,
                 authenticationMode = AuthenticationMode.NATIVE,
                 environment = Environment.DEVELOPMENT
             )
         )
 
-        POIKit.setup(this, Environment.DEVELOPMENT, "YOUR API KEY")
+        POIKit.setup(this, Environment.DEVELOPMENT, "YOUR_API_KEY")
 
         payment_app.setOnClickListener {
             authorize(PAYMENT_APP_URL)
