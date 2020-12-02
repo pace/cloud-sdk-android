@@ -3,6 +3,7 @@ package cloud.pace.sdk.appkit.app.webview
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.location.Location
 import android.util.Base64
 import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
@@ -18,6 +19,7 @@ import cloud.pace.sdk.appkit.app.webview.AppWebViewClient.Companion.TOTP
 import cloud.pace.sdk.appkit.app.webview.AppWebViewClient.Companion.VALUE
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
+import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.pay.PayAuthenticationManager
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
@@ -41,12 +43,20 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     abstract val showLoadingIndicator: LiveData<Event<Boolean>>
     abstract val biometricRequest: LiveData<Event<BiometricRequest>>
     abstract val newToken: LiveData<Event<String>>
+    abstract val verifyLocationResponse: LiveData<Event<VerifyLocationResponse>>
 
     abstract fun init(url: String)
     abstract fun handleInvalidToken(message: String)
     abstract fun handleImageData(message: String)
+    abstract fun handleVerifyLocation(latitude: Double, longitude: Double, threshold: Double)
 
     class BiometricRequest(@StringRes val title: Int, val onSuccess: () -> Unit, val onFailure: () -> Unit)
+
+    enum class VerifyLocationResponse(val value: String) {
+        TRUE("true"),
+        FALSE("false"),
+        UNKNOWN("unknown")
+    }
 }
 
 class AppWebViewModelImpl(
@@ -54,7 +64,8 @@ class AppWebViewModelImpl(
     private val uriManager: UriManager,
     private val eventManager: AppEventManager,
     private val payAuthenticationManager: PayAuthenticationManager,
-    private val appModel: AppModel
+    private val appModel: AppModel,
+    private val appLocationManager: AppLocationManager
 ) : AppWebViewModel() {
 
     override val touchEnable = MutableLiveData<Boolean>()
@@ -64,6 +75,7 @@ class AppWebViewModelImpl(
     override val showLoadingIndicator = MutableLiveData<Event<Boolean>>()
     override val biometricRequest = MutableLiveData<Event<BiometricRequest>>()
     override val newToken = MutableLiveData<Event<String>>()
+    override val verifyLocationResponse = MutableLiveData<Event<VerifyLocationResponse>>()
 
     private lateinit var initialUrl: String
 
@@ -281,6 +293,20 @@ class AppWebViewModelImpl(
                 newToken.postValue(Event(token))
             } else {
                 sendOnTokenInvalid()
+            }
+        }
+    }
+
+    override fun handleVerifyLocation(latitude: Double, longitude: Double, threshold: Double) {
+        appLocationManager.start { result ->
+            val targetLocation = Location("").apply {
+                this.latitude = latitude
+                this.longitude = longitude
+            }
+            verifyLocationResponse.value = when (result.getOrNull()?.distanceTo(targetLocation)?.let { it <= threshold }) {
+                true -> Event(VerifyLocationResponse.TRUE)
+                false -> Event(VerifyLocationResponse.FALSE)
+                else -> Event(VerifyLocationResponse.UNKNOWN)
             }
         }
     }
