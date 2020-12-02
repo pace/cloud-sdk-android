@@ -40,6 +40,10 @@ open class TestLocationProvider(private val mockedLocationState: LocationState, 
         completion(mockedLocation)
     }
 
+    override fun getLocationState(): LocationState {
+        return mockedLocationState
+    }
+
     override fun removeLocationUpdates() {}
 }
 

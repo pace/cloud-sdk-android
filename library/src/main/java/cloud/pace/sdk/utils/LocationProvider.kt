@@ -22,6 +22,7 @@ interface LocationProvider {
 
     fun requestLocationUpdates()
     fun getLastKnownLocation(completion: (Location?) -> Unit)
+    fun getLocationState(): LocationState
     fun removeLocationUpdates()
 }
 
@@ -125,6 +126,23 @@ class LocationProviderImpl(
             else -> {
                 poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
                 null
+            }
+        }
+    }
+
+    override fun getLocationState(): LocationState {
+        return when {
+            !systemManager.isLocationPermissionGranted() -> {
+                LocationState.PERMISSION_DENIED
+            }
+            locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true -> {
+                LocationState.LOCATION_HIGH_ACCURACY
+            }
+            locationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true -> {
+                LocationState.LOCATION_LOW_ACCURACY
+            }
+            else -> {
+                LocationState.NO_LOCATION_FOUND
             }
         }
     }
