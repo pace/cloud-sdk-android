@@ -157,17 +157,18 @@ internal class AppManager : AppKitKoinComponent {
         }
     }
 
-    internal fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, callback: AppCallbackImpl? = null) {
+    internal fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, autoClose: Boolean, callback: AppCallbackImpl? = null) {
         callback?.onOpen()
         appModel.callback = callback
 
         val intent = Intent(context, AppActivity::class.java)
         intent.putExtra(AppActivity.BACK_TO_FINISH, enableBackToFinish)
         intent.putExtra(AppActivity.APP_URL, url)
+        intent.putExtra(AppActivity.AUTO_CLOSE, autoClose)
         context.startActivity(intent)
     }
 
-    internal fun openApps(context: Context, apps: List<App>, isDarkBackground: Boolean, buttonContainer: ConstraintLayout, bottomMargin: Float, callback: AppCallbackImpl?) {
+    internal fun openApps(context: Context, apps: List<App>, isDarkBackground: Boolean, buttonContainer: ConstraintLayout, bottomMargin: Float, autoClose: Boolean, callback: AppCallbackImpl?) {
         closeApps(buttonContainer)
 
         var topAppDrawerId: Int? = null
@@ -178,7 +179,7 @@ internal class AppManager : AppKitKoinComponent {
             appDrawer.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
 
             appDrawer.setApp(app, isDarkBackground) {
-                openAppActivity(context, app.url, callback = callback)
+                openAppActivity(context, app.url, autoClose = autoClose, callback = callback)
             }
             appDrawer.expand()
 
@@ -215,7 +216,7 @@ internal class AppManager : AppKitKoinComponent {
         appModel.close()
     }
 
-    internal fun closeAppActivity() = appModel.close()
+    internal fun closeAppActivity() = appModel.close(true)
 
     internal fun setCarData(car: Car) = sharedPreferencesModel.setCar(car)
 }

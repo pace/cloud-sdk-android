@@ -8,12 +8,12 @@ import androidx.lifecycle.MutableLiveData
 interface AppModel {
 
     var callback: AppCallbackImpl?
-    val close: LiveData<Unit>
+    val close: LiveData<Boolean>
     val openUrlInNewTab: LiveData<String>
     val disable: LiveData<String>
 
     fun reset()
-    fun close()
+    fun close(force: Boolean = false)
     fun openUrlInNewTab(url: String)
     fun disable(host: String)
     fun onTokenInvalid(onResult: (String) -> Unit)
@@ -24,7 +24,7 @@ interface AppModel {
 class AppModelImpl : AppModel {
 
     override var callback: AppCallbackImpl? = null
-    override var close = MutableLiveData<Unit>()
+    override var close = MutableLiveData<Boolean>()
     override var openUrlInNewTab = MutableLiveData<String>()
     override var disable = MutableLiveData<String>()
 
@@ -34,8 +34,8 @@ class AppModelImpl : AppModel {
         disable = MutableLiveData()
     }
 
-    override fun close() {
-        close.value = Unit
+    override fun close(force: Boolean) {
+        close.value = force
         callback?.onClose()
     }
 

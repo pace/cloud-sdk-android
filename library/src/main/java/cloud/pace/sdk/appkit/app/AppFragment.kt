@@ -28,11 +28,13 @@ class AppFragment : Fragment(), AppKitKoinComponent {
             ?: activity?.intent?.data?.getQueryParameter(AppWebViewClient.TO)
             ?: throw RuntimeException("Missing app URL")
 
+        val autoClose = activity?.intent?.extras?.getBoolean(AppActivity.AUTO_CLOSE) ?: true
+
         appWebView.loadApp(this, url)
 
         viewModel.closeEvent.observe(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let {
-                if (activity is AppActivity) {
+            it.getContentIfNotHandled()?.let { force ->
+                if (activity is AppActivity && force || autoClose) {
                     activity?.finish()
                 }
             }

@@ -99,7 +99,7 @@ class AppWebViewModelImpl(
 
         eventManager.onAppDrawerChanged(initialUrl, reopenRequest?.reopenTitle, reopenRequest?.reopenSubtitle)
 
-        appModel.close()
+        appModel.close(true)
     }
 
     override fun getBiometricStatus(redirectUri: String?, state: String?) {
