@@ -39,26 +39,25 @@ class AppLocationManagerImpl(
             }
         }
     }
-    private val locationStateObserver: Observer<LocationState> by lazy {
-        Observer<LocationState> {
-            if (it == LocationState.PERMISSION_DENIED) {
-                callback?.invoke(Result.failure(PermissionDenied))
-                stop()
-            } else if (it == LocationState.NO_LOCATION_FOUND) {
-                callback?.invoke(Result.failure(NoLocationFound))
-                stop()
-            }
-        }
-    }
 
     override fun start(callback: (Result<Location>) -> Unit) {
         this.callback = callback
         startTime = systemManager.getCurrentTimeMillis()
         handler.postDelayed(locationTimeoutRunnable, LOCATION_TIMEOUT)
-        locationProvider.apply {
-            location.observeForever(locationObserver)
-            locationState.observeForever(locationStateObserver)
-            requestLocationUpdates()
+
+        when (locationProvider.getLocationState()) {
+            LocationState.PERMISSION_DENIED -> {
+                callback(Result.failure(PermissionDenied))
+                stop()
+            }
+            LocationState.NO_LOCATION_FOUND -> {
+                callback(Result.failure(NoLocationFound))
+                stop()
+            }
+            else -> {
+                locationProvider.location.observeForever(locationObserver)
+                locationProvider.requestLocationUpdates()
+            }
         }
     }
 
@@ -99,11 +98,8 @@ class AppLocationManagerImpl(
 
     override fun stop() {
         handler.removeCallbacks(locationTimeoutRunnable)
-        locationProvider.apply {
-            location.removeObserver(locationObserver)
-            locationState.removeObserver(locationStateObserver)
-            removeLocationUpdates()
-        }
+        locationProvider.location.removeObserver(locationObserver)
+        locationProvider.removeLocationUpdates()
     }
 
     companion object {
