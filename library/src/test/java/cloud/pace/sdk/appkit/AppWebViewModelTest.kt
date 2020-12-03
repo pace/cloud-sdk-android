@@ -8,6 +8,7 @@ import cloud.pace.sdk.appkit.app.webview.AppWebViewModel
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModelImpl
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.communication.AppModelImpl
+import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.pay.PayAuthenticationManager
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
@@ -52,7 +53,7 @@ class AppWebViewModelTest {
     private val uriUtils = TestUriUtils()
     private val appCallback = mock(AppCallbackImpl::class.java)
     private val appModel = AppModelImpl()
-    private val viewModel = AppWebViewModelImpl(sharedPreferencesModel, uriUtils, eventManager, payManager, appModel)
+    private val viewModel = AppWebViewModelImpl(sharedPreferencesModel, uriUtils, eventManager, payManager, appModel, mock(AppLocationManager::class.java))
 
     @Before
     fun init() {

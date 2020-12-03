@@ -32,8 +32,14 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
     private val newTokenObserver = Observer<Event<String>> {
         it.getContentIfNotHandled()?.let { newToken ->
             if (AppKit.configuration.authenticationMode == AuthenticationMode.NATIVE) {
-                webView.evaluateJavascript("window.messageCallback('$newToken')") {}
+                sendMessageCallback(newToken)
             }
+        }
+    }
+
+    private val verifyLocationResponseObserver = Observer<Event<AppWebViewModel.VerifyLocationResponse>> {
+        it.getContentIfNotHandled()?.let { response ->
+            sendMessageCallback(response.value)
         }
     }
 
@@ -104,6 +110,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
 
         webView.addJavascriptInterface(InvalidTokenInterface(), "pace_invalidToken")
         webView.addJavascriptInterface(ImageDataInterface(), "pace_imageData")
+        webView.addJavascriptInterface(VerifyLocationInterface(), "pace_verifyLocation")
 
         setOnTouchListener { _, _ -> !touchEnabled }
 
@@ -123,6 +130,13 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         @JavascriptInterface
         fun postMessage(message: String) {
             webViewModel.handleImageData(message)
+        }
+    }
+
+    inner class VerifyLocationInterface {
+        @JavascriptInterface
+        fun postMessage(latitude: Double, longitude: Double, threshold: Double) {
+            webViewModel.handleVerifyLocation(latitude, longitude, threshold)
         }
     }
 
@@ -159,5 +173,10 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         webViewModel.showLoadingIndicator.observe(lifecycleOwner, loadingIndicatorObserver)
         webViewModel.biometricRequest.observe(lifecycleOwner, biometricRequestObserver)
         webViewModel.newToken.observe(lifecycleOwner, newTokenObserver)
+        webViewModel.verifyLocationResponse.observe(lifecycleOwner, verifyLocationResponseObserver)
+    }
+
+    private fun sendMessageCallback(message: String) {
+        webView.evaluateJavascript("window.messageCallback('$message')") {}
     }
 }
