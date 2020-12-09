@@ -5,6 +5,7 @@ import net.openid.appauth.ResponseTypeValues
 data class OIDConfiguration @JvmOverloads constructor(
     val authorizationEndpoint: String,
     val tokenEndpoint: String,
+    val userInfoEndpoint: String? = null,
     val clientId: String,
     val clientSecret: String? = null,
     val scopes: List<String>? = null,
