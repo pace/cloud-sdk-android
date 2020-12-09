@@ -4,7 +4,6 @@ import android.os.Parcelable
 import android.text.TextUtils
 import cloud.pace.sdk.poikit.poi.LocationPoint
 import cloud.pace.sdk.poikit.utils.ApiException
-import cloud.pace.sdk.poikit.utils.ApiUtils
 import cloud.pace.sdk.utils.*
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.IgnoredOnParcel
@@ -102,7 +101,7 @@ interface NavigationApi {
                                 it.request()
                                     .newBuilder()
                                     .header(ApiUtils.USER_AGENT_HEADER, ApiUtils.getUserAgent())
-                                    .header(ApiUtils.API_KEY, apiKey)
+                                    .header(ApiUtils.API_KEY_HEADER, apiKey)
                                     .build()
                             )
                         }

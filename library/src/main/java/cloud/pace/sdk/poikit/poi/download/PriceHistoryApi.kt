@@ -2,7 +2,6 @@ package cloud.pace.sdk.poikit.poi.download
 
 import android.os.Parcelable
 import cloud.pace.sdk.poikit.utils.ApiException
-import cloud.pace.sdk.poikit.utils.ApiUtils
 import cloud.pace.sdk.utils.*
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
@@ -57,7 +56,7 @@ interface PriceHistoryApi {
                                 it.request()
                                     .newBuilder()
                                     .header(ApiUtils.USER_AGENT_HEADER, ApiUtils.getUserAgent())
-                                    .header(ApiUtils.API_KEY, apiKey)
+                                    .header(ApiUtils.API_KEY_HEADER, apiKey)
                                     .build()
                             )
                         }
