@@ -2,7 +2,6 @@ package cloud.pace.sdk.poikit.poi.download
 
 import cloud.pace.sdk.poikit.poi.FuelType
 import cloud.pace.sdk.poikit.utils.ApiException
-import cloud.pace.sdk.poikit.utils.ApiUtils
 import cloud.pace.sdk.utils.*
 import com.squareup.moshi.Moshi
 import moe.banana.jsonapi2.JsonApi
@@ -67,7 +66,7 @@ interface PoiApi {
                             .header(ApiUtils.ACCEPT_HEADER, "application/vnd.api+json")
                             .header(ApiUtils.CONTENT_TYPE_HEADER, "application/vnd.api+json")
                             .header(ApiUtils.USER_AGENT_HEADER, ApiUtils.getUserAgent())
-                            .header(ApiUtils.API_KEY, apiKey)
+                            .header(ApiUtils.API_KEY_HEADER, apiKey)
                             .build()
                     )
                 }

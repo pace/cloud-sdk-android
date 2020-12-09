@@ -4,13 +4,13 @@ import android.util.Log
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.Geometry
 import cloud.pace.sdk.poikit.poi.LocationPoint
-import cloud.pace.sdk.poikit.utils.ApiUtils
 import cloud.pace.sdk.poikit.utils.GeoMathUtils
 import cloud.pace.sdk.poikit.utils.OSMKeys
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_GAS_STATION
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_ID
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_TYPE
 import cloud.pace.sdk.poikit.utils.POIKitConfig
+import cloud.pace.sdk.utils.ApiUtils
 import cloud.pace.sdk.utils.Environment
 import com.google.protobuf.InvalidProtocolBufferException
 import okhttp3.*
