@@ -64,8 +64,9 @@ class CacheModelImpl : CacheModel {
     }
 
     override fun getManifest(context: Context, url: String, completion: (Result<AppManifest>) -> Unit) {
-        val baseUri = Uri.parse(url).buildUpon()
-        val manifestUrl = baseUri.appendPath(MANIFEST_FILE_NAME).build().toString()
+        val fullUri = Uri.parse(url)
+        val baseUrl = "${fullUri.scheme}://${fullUri.host}"
+        val manifestUrl = Uri.parse(baseUrl).buildUpon().appendPath(MANIFEST_FILE_NAME).build().toString()
         getUri(context, manifestUrl) { result ->
             result.onSuccess {
                 try {
