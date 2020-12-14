@@ -95,6 +95,22 @@ object IDKit : IDKitKoinComponent, LifecycleObserver {
     }
 
     /**
+     * Retrieves the currently authorized user's information.
+     *
+     * @param accessToken The user's access token for which to retrieve the user info.
+     * @param completion The block to be called when the request is complete including either valid `userInfo` or a [Throwable].
+     */
+    fun userInfo(accessToken: String, completion: (Completion<UserInfoResponse>) -> Unit) {
+        configuration.userInfoEndpoint.let {
+            if (it != null) {
+                UserInfoApiClient(it, accessToken).getUserInfo(completion)
+            } else {
+                completion(Failure(UserEndpointNotDefined))
+            }
+        }
+    }
+
+    /**
      * Creates an authorization request [Intent] that can be started with [android.app.Activity.startActivityForResult]
      * to open a [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs).
      *

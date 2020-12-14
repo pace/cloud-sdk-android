@@ -42,7 +42,8 @@ This code example shows how to setup IDKit. The parameter `additionalCaching` de
 ```kotlin
 val config = OIDConfiguration(
     authorizationEndpoint, 
-    tokenEndpoint, 
+    tokenEndpoint,
+    userInfoEndpoint, // optional
     clientId, 
     clientSecret, // optional
     scopes, // optional
@@ -125,6 +126,17 @@ Call the following function when an `intent` is passed to the `completedActivity
 IDKit.handleAuthorizationResponse(intent) {
     when (it) {
         is Success -> // it.result contains accessToken
+        is Failure -> // it.throwable contains error
+    }
+}
+```
+
+### Access user information
+In case you want to fetch the current access token's user info, you need to make sure to set the `userInfoEndpoint` during the [setup](#setup), and then you can call: 
+```kotlin
+IDKit.userInfo(accessToken = it) {
+    when (it) {
+        is Success -> // it.result contains UserInfoResponse object
         is Failure -> // it.throwable contains error
     }
 }

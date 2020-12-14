@@ -12,7 +12,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="testing" />
+                <data android:scheme="pace" />
             </intent-filter>
         </activity>
     </application>

@@ -68,6 +68,28 @@ class MainActivity : AppCompatActivity() {
             authorize(FUELING_APP_URL)
         }
 
+        user_info.setOnClickListener {
+            if (IDKit.isAuthorizationValid()) {
+                IDKit.refreshToken { completion ->
+                    when (completion) {
+                        is Success -> completion.result?.let {
+                            IDKit.userInfo(accessToken = it) {
+                                if (it is Success) {
+                                    info_label.text = "User email: ${it.result.email}"
+                                }
+                            }
+                        }
+                        is Failure -> info_label.text = "Refresh error: ${completion.throwable.message}"
+                    }
+                }
+            } else {
+                when (radioButtonId) {
+                    R.id.radio_start_activity_for_result -> startActivityForResult(IDKit.authorize(), AUTHORIZE_CODE)
+                    R.id.radio_pending_intents -> IDKit.authorize(MainActivity::class.java, MainActivity::class.java)
+                }
+            }
+        }
+
         reset_session.setOnClickListener {
             IDKit.resetSession()
             info_label.text = "Session reset successful"
@@ -95,6 +117,22 @@ class MainActivity : AppCompatActivity() {
                 AppKit.requestLocalApps { completion ->
                     if (completion is Success) {
                         AppKit.openApps(this, completion.result, false, root_layout, callback = object : AppCallbackImpl() {
+                            override fun onTokenInvalid(onResult: (String) -> Unit) {
+                                IDKit.refreshToken { response ->
+                                    when (response) {
+                                        is Success -> {
+                                            val accessToken = response.result
+                                            if (accessToken != null) {
+                                                onResult(accessToken)
+                                            } else {
+                                                AppKit.closeAppActivity()
+                                            }
+                                        }
+                                        is Failure -> AppKit.closeAppActivity()
+                                    }
+                                }
+                            }
+
                             override fun onCustomSchemeError(context: Context?, scheme: String) {
                                 context ?: return
                                 AlertDialog.Builder(context)
@@ -168,7 +206,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun openApp() {
         info_label.text = "Open app"
-        AppKit.openAppActivity(context = this, url = appUrl, callback = object : AppCallbackImpl() {
+        AppKit.openAppActivity(context = this, url = appUrl, autoClose = false, callback = object : AppCallbackImpl() {
             override fun onTokenInvalid(onResult: (String) -> Unit) {
                 IDKit.refreshToken { completion ->
                     when (completion) {

@@ -15,8 +15,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        // TODO: Replace with your redirect URI scheme
-        manifestPlaceholders = ['appAuthRedirectScheme': 'YOUR_REDIRECT_URI_SCHEME_OR_EMPTY']
+        manifestPlaceholders = ['appAuthRedirectScheme': 'pace']
     }
 
     buildTypes {
@@ -34,7 +33,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "cloud.pace:sdk:$pace_cloud_sdk_version"
+    implementation project(':library')
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

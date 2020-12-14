@@ -75,6 +75,16 @@
                 app:layout_constraintTop_toBottomOf="@id/payment_app" />
 
             <Button
+                android:id="@+id/user_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@android:color/holo_purple"
+                android:text="Get user info"
+                android:textColor="@android:color/white"
+                app:layout_constraintTop_toBottomOf="@+id/fueling_app" />
+
+            <Button
                 android:id="@+id/discover_configuration"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -82,7 +92,7 @@
                 android:background="@android:color/holo_green_dark"
                 android:text="Discover configuration"
                 android:textColor="@android:color/white"
-                app:layout_constraintTop_toBottomOf="@id/fueling_app" />
+                app:layout_constraintTop_toBottomOf="@id/user_info" />
 
             <TextView
                 android:id="@+id/authorization_endpoint"
