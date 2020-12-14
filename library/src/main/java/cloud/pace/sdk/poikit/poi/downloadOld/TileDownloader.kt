@@ -1,4 +1,4 @@
-package cloud.pace.sdk.poikit.poi.download
+package cloud.pace.sdk.poikit.poi.downloadOld
 
 import android.util.Log
 import cloud.pace.sdk.poikit.poi.GasStation

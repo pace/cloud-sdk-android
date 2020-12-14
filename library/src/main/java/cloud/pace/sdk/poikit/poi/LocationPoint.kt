@@ -2,7 +2,7 @@ package cloud.pace.sdk.poikit.poi
 
 import android.location.Location
 import android.os.Parcelable
-import cloud.pace.sdk.poikit.poi.download.TileInformation
+import cloud.pace.sdk.poikit.poi.downloadOld.TileInformation
 import cloud.pace.sdk.poikit.utils.GeoMathUtils
 import cloud.pace.sdk.poikit.utils.GeoMathUtils.toDegrees
 import cloud.pace.sdk.poikit.utils.GeoMathUtils.toRadian

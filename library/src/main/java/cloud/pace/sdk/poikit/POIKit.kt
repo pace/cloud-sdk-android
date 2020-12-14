@@ -5,9 +5,20 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
+import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.model.Categories
+import cloud.pace.sdk.api.model.Fuel
+import cloud.pace.sdk.api.model.PriceHistory
+import cloud.pace.sdk.api.model.RegionalPrices
+import cloud.pace.sdk.api.request.gasStations.getGasStation
+import cloud.pace.sdk.api.request.metadataFilters.getMetadataFilters
+import cloud.pace.sdk.api.request.priceHistories.getPriceHistory
+import cloud.pace.sdk.api.request.prices.getRegionalPrices
 import cloud.pace.sdk.poikit.database.POIKitDatabase
 import cloud.pace.sdk.poikit.poi.*
-import cloud.pace.sdk.poikit.poi.download.*
+import cloud.pace.sdk.poikit.poi.download.GasStationCodes
+import cloud.pace.sdk.poikit.poi.download.GasStationMovedResponse
+import cloud.pace.sdk.poikit.poi.downloadOld.TileDownloader
 import cloud.pace.sdk.poikit.routing.NavigationApiClient
 import cloud.pace.sdk.poikit.routing.NavigationMode
 import cloud.pace.sdk.poikit.routing.NavigationRequest
@@ -15,6 +26,7 @@ import cloud.pace.sdk.poikit.routing.Route
 import cloud.pace.sdk.poikit.search.AddressSearchClient
 import cloud.pace.sdk.poikit.search.AddressSearchRequest
 import cloud.pace.sdk.poikit.search.PhotonResult
+import cloud.pace.sdk.poikit.utils.ApiException
 import cloud.pace.sdk.utils.*
 import com.google.android.gms.maps.model.VisibleRegion
 import io.reactivex.rxjava3.core.Observable
@@ -25,11 +37,7 @@ object POIKit : POIKitKoinComponent, LifecycleObserver {
 
     private val database: POIKitDatabase by inject()
     private val navigationApi: NavigationApiClient by inject()
-    private val poiApi: PoiApiClient by inject()
     private val addressSearchApi: AddressSearchClient by inject()
-    private val dynamicFilterApi: DynamicFilterApiClient by inject()
-    private val priceHistoryApi: PriceHistoryApiClient by inject()
-    private val gasStationApi: GasStationApiClient by inject()
     private val locationProvider: LocationProvider by inject()
     var maxPoiSearchBoxSize = 15000.0
 
@@ -82,24 +90,109 @@ object POIKit : POIKitKoinComponent, LifecycleObserver {
         }
     }
 
-    fun getRegionalPrice(latitude: Double, longitude: Double, completion: (Completion<List<RegionalPriceResponse>?>) -> Unit) {
-        poiApi.getRegionalPrices(latitude, longitude, completion)
+    fun getRegionalPrice(latitude: Float, longitude: Float, completion: (Completion<List<RegionalPrices>?>) -> Unit) {
+        API.prices.getRegionalPrices(latitude, longitude).enqueue {
+            onResponse = {
+                val body = it.body()
+                if (it.isSuccessful && body != null) {
+                    completion(Success(body))
+                } else {
+                    completion(Failure(ApiException(it.code(), it.message())))
+                }
+            }
+
+            onFailure = {
+                completion(Failure(it ?: Exception("Unknown exception")))
+            }
+        }
     }
 
     fun searchAddress(request: AddressSearchRequest): Observable<PhotonResult> {
         return addressSearchApi.searchAddress(request)
     }
 
-    fun getDynamicFilters(latitude: Double, longitude: Double, completion: (Completion<DynamicFilterResponse?>) -> Unit) {
-        dynamicFilterApi.getDynamicFilters(latitude, longitude, completion)
+    fun getDynamicFilters(latitude: Double, longitude: Double, completion: (Completion<Categories?>) -> Unit) {
+        API.metadataFilters.getMetadataFilters(latitude.toFloat(), longitude.toFloat()).enqueue {
+            onResponse = {
+                val body = it.body()
+                if (it.isSuccessful && body != null) {
+                    completion(Success(body))
+                } else {
+                    completion(Failure(ApiException(it.code(), it.message())))
+                }
+            }
+
+            onFailure = {
+                completion(Failure(it ?: Exception("Unknown exception")))
+            }
+        }
     }
 
-    fun getPriceHistory(id: String, fuelType: FuelType, from: Date, to: Date, completion: (Completion<PriceHistoryApiResponse?>) -> Unit) {
-        priceHistoryApi.getPriceHistory(id, fuelType.value, from, to, completion)
+    fun getPriceHistory(id: String, fuelType: Fuel, from: Date, to: Date, completion: (Completion<PriceHistory?>) -> Unit) {
+        API.priceHistories.getPriceHistory(id, fuelType, from, to).enqueue {
+            onResponse = {
+                val body = it.body()
+                if (it.isSuccessful && body != null) {
+                    completion(Success(body))
+                } else {
+                    completion(Failure(ApiException(it.code(), it.message())))
+                }
+            }
+
+            onFailure = {
+                completion(Failure(it ?: Exception("Unknown exception")))
+            }
+        }
     }
 
     fun getGasStation(id: String, compileOpeningHours: Boolean, forMovedGasStation: Boolean, completion: (Completion<GasStationMovedResponse>) -> Unit) {
-        gasStationApi.getGasStation(id, compileOpeningHours, forMovedGasStation, completion)
+        API.gasStations.getGasStation(id, compileOpeningHours).enqueue {
+            onResponse = {
+                when (it.code()) {
+                    GasStationCodes.STATUS_MOVED -> {
+                        val newUuid: String? = it.headers().values(GasStationCodes.HEADER_LOCATION).first()?.split("/")?.last()
+                        if (newUuid.isNotNullOrEmpty()) {
+                            completion(Success(GasStationMovedResponse(newUuid, true, null, null)))
+                        } else {
+                            completion(Success(GasStationMovedResponse(null, true, null, null)))
+                        }
+                    }
+                    GasStationCodes.STATUS_OK -> {
+                        val priorResponse = it.raw().priorResponse()
+                        if (priorResponse != null) {
+                            val newUuid = priorResponse.headers().values(GasStationCodes.HEADER_LOCATION).first()?.split("/")?.last()
+                            if (newUuid.isNotNullOrEmpty()) {
+                                completion(Success(GasStationMovedResponse(newUuid, true, null, null)))
+                            } else {
+                                completion(Success(GasStationMovedResponse(null, false, null, null)))
+                            }
+                        } else {
+                            if (forMovedGasStation)
+                                completion(
+                                    Success(
+                                        GasStationMovedResponse(
+                                            null, true, it.body()?.latitude?.toDouble(),
+                                            it.body()?.longitude?.toDouble()
+                                        )
+                                    )
+                                )
+                            else
+                                completion(Success(GasStationMovedResponse(null, false, null, null)))
+                        }
+                    }
+                    GasStationCodes.STATUS_NOT_FOUND -> {
+                        completion(Success(GasStationMovedResponse(null, true, null, null)))
+                    }
+                    else -> {
+                        completion(Failure(Exception("Server error")))
+                    }
+                }
+            }
+
+            onFailure = {
+                completion(Failure(it ?: Exception("Unknown exception")))
+            }
+        }
     }
 
     fun getGasStationLocal(vararg ids: String, completion: (Completion<List<GasStation>>) -> Unit) {
