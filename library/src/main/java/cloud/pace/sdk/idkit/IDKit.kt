@@ -225,6 +225,11 @@ object IDKit : IDKitKoinComponent, LifecycleObserver {
      */
     fun isAuthorizationValid() = session.isAuthorized
 
+    /**
+     * Returns the cached accessToken of the current [session] or null if the session is not initialized or has no accessToken.
+     */
+    fun cachedToken() = if (::session.isInitialized) session.accessToken else null
+
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private fun dispose() {
         // This must be called to avoid memory leaks.
