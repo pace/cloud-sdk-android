@@ -154,6 +154,12 @@ IDKit.refreshToken(force) {
 ```
 If the refresh attempt fails an error will be returned.
 
+### Cached token
+You can get the cached (last refreshed) access token (nullable) as follows:
+```kotlin
+IDKit.cachedToken()
+```
+
 ### Reset session
 Resetting the current session works as follows:
 ```kotlin
