@@ -27,10 +27,6 @@ import cloud.pace.sdk.appkit.persistence.CacheModelImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.poikit.database.POIKitDatabase
-import cloud.pace.sdk.poikit.poi.download.DynamicFilterApiClient
-import cloud.pace.sdk.poikit.poi.download.GasStationApiClient
-import cloud.pace.sdk.poikit.poi.download.PoiApiClient
-import cloud.pace.sdk.poikit.poi.download.PriceHistoryApiClient
 import cloud.pace.sdk.poikit.routing.NavigationApiClient
 import cloud.pace.sdk.poikit.search.AddressSearchClient
 import com.google.android.gms.location.LocationServices
@@ -96,11 +92,7 @@ object KoinConfig {
                         .build()
                 }
                 single { NavigationApiClient(environment, apiKey) }
-                single { PoiApiClient(environment, apiKey) }
                 single { AddressSearchClient(environment, apiKey) }
-                single { DynamicFilterApiClient(environment, apiKey) }
-                single { PriceHistoryApiClient(environment, apiKey) }
-                single { GasStationApiClient(environment, apiKey) }
                 single<SystemManager> { SystemManagerImpl(get()) }
                 single<LocationProvider> { LocationProviderImpl(get(), get()) }
             })
