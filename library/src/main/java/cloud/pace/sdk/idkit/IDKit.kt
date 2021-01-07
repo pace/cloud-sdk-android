@@ -111,10 +111,11 @@ object IDKit : IDKitKoinComponent, LifecycleObserver {
     }
 
     /**
-     * Creates an authorization request [Intent] that can be started with [android.app.Activity.startActivityForResult]
+     * Creates an authorization request [Intent] that can be launched using the Activity Result API and a StartActivityForResult contract or with [android.app.Activity.startActivityForResult]
      * to open a [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs).
      *
-     * Note: Call [handleAuthorizationResponse] in [android.app.Activity.onActivityResult] when the authorization result is returned from Chrome Custom Tab.
+     * Note: Call [handleAuthorizationResponse] in ActivityResultCallback if Activity Result API was used or in [android.app.Activity.onActivityResult] if
+     * [android.app.Activity.startActivityForResult] was used when the authorization result is returned from Chrome Custom Tab.
      */
     fun authorize(): Intent {
         return authorizationService.getAuthorizationRequestIntent(authorizationRequest)

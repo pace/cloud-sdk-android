@@ -88,13 +88,44 @@ IDKit.discoverConfiguration(issuerUri) {
 ### Authorization
 The authorization request to the authorization service can be dispatched using **one** of the following two approaches:
 
-##### 1. Starting the authorization intent via `startActivityForResult` and handle the response in `onActivityResult`:
+#### 1. Getting result from an activity
+
+##### a. Using `Activity Result API` and a `StartActivityForResult` contract and handle the result in `ActivityResultCallback` inline:
 
 ```kotlin
-if (IDKit.isAuthorizationValid()) {
-    // No login required
-} else {
-    startActivityForResult(IDKit.authorize(), REQUEST_CODE)
+val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    if (result.resultCode == Activity.RESULT_OK) {
+        val intent = result.data
+        if (intent != null) {
+            // Pass result to IDKit to retrieve the access token
+            IDKit.handleAuthorizationResponse(intent) {
+                when (it) {
+                    is Success -> // it.result contains accessToken
+                    is Failure -> // it.throwable contains error
+                }
+            }
+        }
+    }
+}
+
+login_button.setOnClickListener {
+    if (IDKit.isAuthorizationValid()) {
+        // No login required
+    } else {
+        startForResult.launch(IDKit.authorize())
+    }
+}
+```
+
+##### b. Using `Activity.startActivityForResult` and handle the response in `Activity.onActivityResult` callback:
+
+```kotlin
+login_button.setOnClickListener {
+    if (IDKit.isAuthorizationValid()) {
+        // No login required
+    } else {
+        startActivityForResult(IDKit.authorize(), REQUEST_CODE)
+    }
 }
 ```
 Upon completion of this authorization request, `onActivityResult` will be invoked with the authorization result intent.
@@ -109,7 +140,7 @@ IDKit.handleAuthorizationResponse(intent) {
 }
 ```
 
-##### 2. Using `PendingIntent` and providing completion and cancelation handling activities:
+#### 2. Using `PendingIntent` and providing completion and cancellation handling activities:
 
 ```kotlin
 if (IDKit.isAuthorizationValid()) {
@@ -308,9 +339,10 @@ The button can be added dynamically by the AppKit or statically as view.
 The following code shows an example of how `AppDrawer` can be displayed dynamically. You can pass an optional `AppCallbackImpl` to communicate with the app.
 ```kotlin
 AppKit.openApps(context, apps, isDarkBackground, parentLayout, callback = object : AppCallbackImpl() {
-    override fun onOpen() {
+    override fun onOpen(app: App?) {
         // AppDrawer clicked
     }
+    // Override more needed callbacks
 })
 ```
 

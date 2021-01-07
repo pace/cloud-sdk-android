@@ -201,6 +201,10 @@ class AppManagerTest : AppKitKoinComponent {
             single<AppEventManager> {
                 TestAppEventManager()
             }
+
+            single<AppModel> {
+                AppModelImpl()
+            }
         }
 
         setupKoinForTests(testModule)
@@ -259,6 +263,10 @@ class AppManagerTest : AppKitKoinComponent {
             single<AppEventManager> {
                 TestAppEventManager()
             }
+
+            single<AppModel> {
+                AppModelImpl()
+            }
         }
 
         setupKoinForTests(testModule)
@@ -305,6 +313,10 @@ class AppManagerTest : AppKitKoinComponent {
 
             single<AppEventManager> {
                 TestAppEventManager()
+            }
+
+            single<AppModel> {
+                AppModelImpl()
             }
         }
 

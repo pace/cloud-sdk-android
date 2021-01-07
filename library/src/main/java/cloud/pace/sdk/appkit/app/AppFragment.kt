@@ -33,8 +33,8 @@ class AppFragment : Fragment(), AppKitKoinComponent {
         appWebView.loadApp(this, url)
 
         viewModel.closeEvent.observe(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let { force ->
-                if (activity is AppActivity && force || autoClose) {
+            it.getContentIfNotHandled()?.let { (force, urls) ->
+                if (force || autoClose && (urls == null || urls.contains(url))) {
                     activity?.finish()
                 }
             }

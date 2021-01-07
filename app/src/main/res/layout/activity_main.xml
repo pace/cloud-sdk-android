@@ -31,16 +31,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
-                android:checkedButton="@id/radio_start_activity_for_result"
+                android:checkedButton="@id/radio_activity_result_api"
                 android:orientation="vertical"
                 app:layout_constraintTop_toBottomOf="@id/info_label">
 
                 <RadioButton
-                    android:id="@+id/radio_start_activity_for_result"
+                    android:id="@+id/radio_activity_result_api"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="onRadioButtonClicked"
-                    android:text="Use startActivityForResult"
+                    android:text="Use Activity Result API"
                     android:textSize="18sp" />
 
                 <RadioButton
