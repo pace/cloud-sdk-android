@@ -158,21 +158,24 @@ class AppManagerTest : AppKitKoinComponent {
         val app1 = App(
             url = "http://test1",
             name = "App #1",
-            shortName = "Subtitle app #1",
+            shortName = "Connected Fueling",
+            description = "Subtitle app #1",
             logo = null
         )
 
         val app2 = App(
             url = "http://test2",
             name = "App #2",
-            shortName = "Subtitle app #2",
+            shortName = "Connected Fueling",
+            description = "Subtitle app #2",
             logo = null
         )
 
         val app3 = App(
             url = "http://test3",
             name = "App #3",
-            shortName = "Subtitle app #3",
+            shortName = "Connected Fueling",
+            description = "Subtitle app #3",
             logo = null
         )
 
@@ -211,15 +214,15 @@ class AppManagerTest : AppKitKoinComponent {
 
         val response1 = future.get()[0]
         assertEquals(app1.name, response1.name)
-        assertEquals(app1.shortName, response1.shortName)
+        assertEquals(app1.description, response1.description)
 
         val response2 = future.get()[1]
         assertEquals(app2.name, response2.name)
-        assertEquals(app2.shortName, response2.shortName)
+        assertEquals(app2.description, response2.description)
 
         val response3 = future.get()[2]
         assertEquals(app3.name, response3.name)
-        assertEquals(app3.shortName, response3.shortName)
+        assertEquals(app3.description, response3.description)
     }
 
     @Test
@@ -228,7 +231,8 @@ class AppManagerTest : AppKitKoinComponent {
         val app = App(
             url = "http://test1",
             name = "App #1",
-            shortName = "Subtitle app #1",
+            shortName = "Connected Fueling",
+            description = "Subtitle app #1",
             logo = null,
             gasStationId = id
         )
@@ -274,7 +278,8 @@ class AppManagerTest : AppKitKoinComponent {
         val app = App(
             url = "http://test1",
             name = "App #1",
-            shortName = "Subtitle app #1",
+            shortName = "Connected Fueling",
+            description = "Subtitle app #1",
             logo = null,
             gasStationId = id1
         )
