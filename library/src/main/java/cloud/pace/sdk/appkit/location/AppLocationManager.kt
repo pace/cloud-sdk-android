@@ -1,15 +1,13 @@
 package cloud.pace.sdk.appkit.location
 
 import android.location.Location
-import android.os.Handler
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.switchMap
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.utils.NoLocationFound
 import cloud.pace.sdk.appkit.utils.PermissionDenied
-import cloud.pace.sdk.utils.LocationProvider
-import cloud.pace.sdk.utils.LocationState
-import cloud.pace.sdk.utils.Log
-import cloud.pace.sdk.utils.SystemManager
+import cloud.pace.sdk.utils.*
 
 interface AppLocationManager {
 
@@ -24,17 +22,18 @@ class AppLocationManagerImpl(
 
     private var callback: ((Result<Location>) -> Unit)? = null
     private var startTime = 0L
-    private val handler: Handler by lazy { systemManager.getHandler() }
-    private val locationTimeoutRunnable: Runnable by lazy {
-        Runnable {
-            Log.w("AppLocationManager timeout after $LOCATION_TIMEOUT ms")
-            callback?.invoke(Result.failure(NoLocationFound))
-        }
+    private val handler = systemManager.getHandler()
+    private val locationTimeoutRunnable = Runnable {
+        Log.w("AppLocationManager timeout after $LOCATION_TIMEOUT ms")
+        callback?.invoke(Result.failure(NoLocationFound))
     }
-    private val locationObserver: Observer<Location> by lazy {
-        Observer<Location> {
-            if (isLocationValid(it, startTime)) {
-                callback?.invoke(Result.success(it))
+    private val locationEvent = locationProvider.location.switchMap {
+        MutableLiveData(Event(it))
+    }
+    private val locationObserver = Observer<Event<Location>> {
+        it.getContentIfNotHandled()?.let { location ->
+            if (isLocationValid(location, startTime)) {
+                callback?.invoke(Result.success(location))
                 stop()
             }
         }
@@ -55,7 +54,7 @@ class AppLocationManagerImpl(
                 stop()
             }
             else -> {
-                locationProvider.location.observeForever(locationObserver)
+                locationEvent.observeForever(locationObserver)
                 locationProvider.requestLocationUpdates()
             }
         }
@@ -98,7 +97,7 @@ class AppLocationManagerImpl(
 
     override fun stop() {
         handler.removeCallbacks(locationTimeoutRunnable)
-        locationProvider.location.removeObserver(locationObserver)
+        locationEvent.removeObserver(locationObserver)
         locationProvider.removeLocationUpdates()
     }
 
