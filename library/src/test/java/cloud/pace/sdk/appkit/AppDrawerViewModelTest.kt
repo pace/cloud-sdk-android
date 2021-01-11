@@ -49,11 +49,11 @@ class AppDrawerViewModelTest {
 
     @Test
     fun `set app`() {
-        val app = App(name = "Jetzt tanken", shortName = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null)
+        val app = App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null)
         viewModel.init(app, false)
 
         Assert.assertEquals(app.name, viewModel.title.value)
-        Assert.assertEquals(app.shortName, viewModel.subtitle.value)
+        Assert.assertEquals(app.description, viewModel.subtitle.value)
         Assert.assertEquals(Color.WHITE, viewModel.background.value)
         Assert.assertEquals(Color.BLACK, viewModel.textColor.value)
         Assert.assertNull(viewModel.iconBackground.value)
@@ -62,7 +62,7 @@ class AppDrawerViewModelTest {
 
     @Test
     fun `set app with icon`() {
-        val app = App(name = "Jetzt tanken", shortName = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = logo)
+        val app = App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = logo)
         viewModel.init(app, true)
 
         Assert.assertEquals(app.logo, viewModel.logo.value)
@@ -70,7 +70,7 @@ class AppDrawerViewModelTest {
 
     @Test
     fun `set app with dark theme`() {
-        val app = App(name = "Jetzt tanken", shortName = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null)
+        val app = App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null)
         viewModel.init(app, true)
 
         Assert.assertEquals(Color.BLACK, viewModel.background.value)
@@ -79,7 +79,7 @@ class AppDrawerViewModelTest {
 
     @Test
     fun `set app with icon background`() {
-        val app = App(name = "Jetzt tanken", shortName = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null, iconBackgroundColor = "#ffffff")
+        val app = App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null, iconBackgroundColor = "#ffffff")
         viewModel.init(app, false)
 
         Assert.assertNotNull(viewModel.iconBackground.value)
@@ -88,16 +88,16 @@ class AppDrawerViewModelTest {
     @Test
     fun `change app infos`() {
         val url = "https://pace.tanke.emma.net"
-        viewModel.init(App(name = "Jetzt tanken", shortName = "Tanke Emma", url = url, logo = null), false)
+        viewModel.init(App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = url, logo = null), false)
 
         viewModel.onCreate()
 
         val newName = "Jetzt weiter tanken"
-        val newShortName = "Tanken unterbrochen"
-        eventManager.onAppDrawerChanged(url, newName, newShortName)
+        val newDescription = "Tanken unterbrochen"
+        eventManager.onAppDrawerChanged(url, newName, newDescription)
 
         Assert.assertEquals(newName, viewModel.title.value)
-        Assert.assertEquals(newShortName, viewModel.subtitle.value)
+        Assert.assertEquals(newDescription, viewModel.subtitle.value)
 
         viewModel.onDestroy()
     }
@@ -106,15 +106,15 @@ class AppDrawerViewModelTest {
     fun `do not change app infos`() {
         val url = "https://pace.tanke.emma.net"
         val name = "Jetzt tanken"
-        val shortName = "Tanke Emma"
-        viewModel.init(App(name = name, shortName = shortName, url = url, logo = null), false)
+        val description = "Tanke Emma"
+        viewModel.init(App(name = name, shortName = "Connected Fueling", description = description, url = url, logo = null), false)
 
         viewModel.onCreate()
 
         eventManager.onAppDrawerChanged("https://app.test.net", "Jetzt weiter tanken", "Tanken unterbrochen")
 
         Assert.assertEquals(name, viewModel.title.value)
-        Assert.assertEquals(shortName, viewModel.subtitle.value)
+        Assert.assertEquals(description, viewModel.subtitle.value)
 
         viewModel.onDestroy()
     }
@@ -123,8 +123,8 @@ class AppDrawerViewModelTest {
     fun `only title changed`() {
         val url = "https://pace.tanke.emma.net"
         val oldName = "Jetzt tanken"
-        val oldShortName = "Tanke Emma"
-        viewModel.init(App(name = oldName, shortName = oldShortName, url = url, logo = null), false)
+        val oldDescription = "Tanke Emma"
+        viewModel.init(App(name = oldName, shortName = "Connected Fueling", description = oldDescription, url = url, logo = null), false)
 
         viewModel.onCreate()
 
@@ -132,7 +132,7 @@ class AppDrawerViewModelTest {
         eventManager.onAppDrawerChanged(url, newName, null)
 
         Assert.assertEquals(newName, viewModel.title.value)
-        Assert.assertEquals(oldShortName, viewModel.subtitle.value)
+        Assert.assertEquals(oldDescription, viewModel.subtitle.value)
 
         viewModel.onDestroy()
     }
@@ -141,16 +141,16 @@ class AppDrawerViewModelTest {
     fun `only subtitle changed`() {
         val url = "https://pace.tanke.emma.net"
         val oldName = "Jetzt tanken"
-        val oldShortName = "Tanke Emma"
-        viewModel.init(App(name = oldName, shortName = oldShortName, url = url, logo = null), false)
+        val oldDescription = "Tanke Emma"
+        viewModel.init(App(name = oldName, shortName = "Connected Fueling", description = oldDescription, url = url, logo = null), false)
 
         viewModel.onCreate()
 
-        val newShortName = "Jetzt weiter tanken"
-        eventManager.onAppDrawerChanged(url, null, newShortName)
+        val newDescription = "Jetzt weiter tanken"
+        eventManager.onAppDrawerChanged(url, null, newDescription)
 
         Assert.assertEquals(oldName, viewModel.title.value)
-        Assert.assertEquals(newShortName, viewModel.subtitle.value)
+        Assert.assertEquals(newDescription, viewModel.subtitle.value)
 
         viewModel.onDestroy()
     }
@@ -158,7 +158,7 @@ class AppDrawerViewModelTest {
     @Test
     fun `close app`() {
         val url = "https://pace.tanke.emma.net"
-        viewModel.init(App(name = "Jetzt tanken", shortName = "Tanke Emma", url = url, logo = null), false)
+        viewModel.init(App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = url, logo = null), false)
 
         viewModel.onCreate()
 
@@ -171,7 +171,7 @@ class AppDrawerViewModelTest {
 
     @Test
     fun `do not close app`() {
-        viewModel.init(App(name = "Jetzt tanken", shortName = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null), false)
+        viewModel.init(App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null), false)
 
         viewModel.onCreate()
 
@@ -186,21 +186,21 @@ class AppDrawerViewModelTest {
     fun `reset title and subtitle with close action`() {
         val url = "https://pace.tanke.emma.net"
         val oldName = "Jetzt tanken"
-        val oldShortName = "Tanke Emma"
-        viewModel.init(App(name = oldName, shortName = oldShortName, url = url, logo = null), false)
+        val oldDescription = "Tanke Emma"
+        viewModel.init(App(name = oldName, shortName = "Connected Fueling", description = oldDescription, url = url, logo = null), false)
 
         viewModel.onCreate()
 
         val newName = "Jetzt weiter tanken"
-        val newShortName = "Tanken unterbrochen"
-        eventManager.onAppDrawerChanged(url, newName, newShortName)
+        val newDescription = "Tanken unterbrochen"
+        eventManager.onAppDrawerChanged(url, newName, newDescription)
         Assert.assertEquals(newName, viewModel.title.value)
-        Assert.assertEquals(newShortName, viewModel.subtitle.value)
+        Assert.assertEquals(newDescription, viewModel.subtitle.value)
 
         eventManager.onAppDrawerChanged(url, null, null)
 
         Assert.assertEquals(oldName, viewModel.title.value)
-        Assert.assertEquals(oldShortName, viewModel.subtitle.value)
+        Assert.assertEquals(oldDescription, viewModel.subtitle.value)
 
         viewModel.onDestroy()
     }
@@ -209,7 +209,7 @@ class AppDrawerViewModelTest {
     fun `disable app`() {
         val host = "pace.tanke.emma.net"
         val url = "https://$host"
-        viewModel.init(App(name = "Jetzt tanken", shortName = "Tanke Emma", url = url, logo = null), false)
+        viewModel.init(App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = url, logo = null), false)
 
         viewModel.onCreate()
 

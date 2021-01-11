@@ -68,9 +68,9 @@ class AppDrawerViewModelImpl(private val eventManager: AppEventManager) : AppDra
     override fun init(app: App, darkBackground: Boolean) {
         url = app.url
         initialTitle = app.name
-        initialSubtitle = app.shortName
+        initialSubtitle = app.description
         title.value = app.name
-        subtitle.value = app.shortName
+        subtitle.value = app.description
 
         app.iconBackgroundColor?.let {
             try {

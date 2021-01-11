@@ -10,7 +10,7 @@ import cloud.pace.sdk.utils.Event
 
 abstract class AppFragmentViewModel : ViewModel() {
 
-    abstract val closeEvent: LiveData<Event<Boolean>>
+    abstract val closeEvent: LiveData<Event<Pair<Boolean, List<String>?>>>
     abstract val openUrlInNewTab: LiveData<Event<String>>
     abstract val redirectEvent: LiveData<Event<String>>
 }
@@ -20,11 +20,11 @@ class AppFragmentViewModelImpl(
     private val appModel: AppModel
 ) : AppFragmentViewModel() {
 
-    override val closeEvent = MutableLiveData<Event<Boolean>>()
+    override val closeEvent = MutableLiveData<Event<Pair<Boolean, List<String>?>>>()
     override val redirectEvent = MutableLiveData<Event<String>>()
     override val openUrlInNewTab = MutableLiveData<Event<String>>()
 
-    private val closeObserver = Observer<Boolean> {
+    private val closeObserver = Observer<Pair<Boolean, List<String>?>> {
         closeEvent.value = Event(it)
     }
 

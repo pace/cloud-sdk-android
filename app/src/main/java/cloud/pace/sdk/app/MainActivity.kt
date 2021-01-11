@@ -1,6 +1,7 @@
 package cloud.pace.sdk.app
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -8,10 +9,13 @@ import android.location.Location
 import android.os.Bundle
 import android.view.View
 import android.widget.RadioButton
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
+import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AuthenticationMode
 import cloud.pace.sdk.appkit.model.Configuration
 import cloud.pace.sdk.idkit.FailedRetrievingSessionWhileAuthorizing
@@ -25,17 +29,19 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private var appUrl = PAYMENT_APP_URL
-    private var radioButtonId = R.id.radio_start_activity_for_result
+    private var appUrl: String? = null
+    private var radioButtonId = R.id.radio_activity_result_api
     private var lastLocation: Location? = null
+    private var authorizationRequested: Boolean = false
+    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == Activity.RESULT_OK) {
+            handleIntent(it.data)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-        }
 
         IDKit.setup(
             this, OIDConfiguration(
@@ -60,6 +66,16 @@ class MainActivity : AppCompatActivity() {
 
         POIKit.setup(this, Environment.DEVELOPMENT, "YOUR_API_KEY")
 
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+                if (it) {
+                    startLocationListener()
+                }
+            }.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        } else {
+            startLocationListener()
+        }
+
         payment_app.setOnClickListener {
             authorize(PAYMENT_APP_URL)
         }
@@ -83,10 +99,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             } else {
-                when (radioButtonId) {
-                    R.id.radio_start_activity_for_result -> startActivityForResult(IDKit.authorize(), AUTHORIZE_CODE)
-                    R.id.radio_pending_intents -> IDKit.authorize(MainActivity::class.java, MainActivity::class.java)
-                }
+                authorize(null)
             }
         }
 
@@ -110,25 +123,91 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
 
+    override fun onStart() {
+        super.onStart()
+        handleIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
+    }
+
+    fun onRadioButtonClicked(view: View) {
+        if (view is RadioButton) {
+            radioButtonId = view.id
+        }
+    }
+
+    private fun authorize(url: String?) {
+        if (authorizationRequested) return
+        authorizationRequested = true
+
+        appUrl = url
+
+        if (IDKit.isAuthorizationValid()) {
+            openApp()
+        } else {
+            when (radioButtonId) {
+                R.id.radio_activity_result_api -> startForResult.launch(IDKit.authorize())
+                R.id.radio_pending_intents -> IDKit.authorize(MainActivity::class.java, MainActivity::class.java)
+            }
+        }
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        if (intent != null) {
+            IDKit.handleAuthorizationResponse(intent) {
+                when (it) {
+                    is Success -> openApp()
+                    is Failure -> {
+                        authorizationRequested = false
+
+                        if (it.throwable != FailedRetrievingSessionWhileAuthorizing) {
+                            info_label.text = "Unauthorized"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun openApp() {
+        authorizationRequested = false
+        val url = appUrl ?: return
+
+        info_label.text = "Open app"
+        AppKit.openAppActivity(context = this, url = url, autoClose = false, callback = object : AppCallbackImpl() {
+            override fun onTokenInvalid(onResult: (String) -> Unit) {
+                IDKit.refreshToken { completion ->
+                    when (completion) {
+                        is Success -> completion.result?.let { onResult(it) }
+                        is Failure -> info_label.text = "Refresh error: ${completion.throwable.message}"
+                    }
+                }
+            }
+        })
+    }
+
+    private fun startLocationListener() {
         POIKit.startLocationListener().location.observe(this) {
             val lastLocation = lastLocation
             if (lastLocation == null || lastLocation.distanceTo(it) > APP_DISTANCE_THRESHOLD) {
                 AppKit.requestLocalApps { completion ->
                     if (completion is Success) {
                         AppKit.openApps(this, completion.result, false, root_layout, callback = object : AppCallbackImpl() {
+                            override fun onOpen(app: App?) {
+                                appUrl = app?.url
+                                Toast.makeText(this@MainActivity, "Gas station ID = ${app?.gasStationId}", Toast.LENGTH_SHORT).show()
+                            }
+
                             override fun onTokenInvalid(onResult: (String) -> Unit) {
                                 IDKit.refreshToken { response ->
-                                    when (response) {
-                                        is Success -> {
-                                            val accessToken = response.result
-                                            if (accessToken != null) {
-                                                onResult(accessToken)
-                                            } else {
-                                                AppKit.closeAppActivity()
-                                            }
-                                        }
-                                        is Failure -> AppKit.closeAppActivity()
+                                    (response as? Success)?.result?.let { token -> onResult(token) } ?: run {
+                                        radioButtonId = R.id.radio_pending_intents
+                                        authorize(appUrl)
                                     }
                                 }
                             }
@@ -147,79 +226,13 @@ class MainActivity : AppCompatActivity() {
                         })
                     }
                 }
+
                 this.lastLocation = it
             }
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        handleIntent(intent)
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        handleIntent(intent)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == AUTHORIZE_CODE) {
-            handleIntent(data)
-        }
-    }
-
-    fun onRadioButtonClicked(view: View) {
-        if (view is RadioButton) {
-            radioButtonId = view.id
-        }
-    }
-
-    private fun authorize(url: String) {
-        appUrl = url
-
-        if (IDKit.isAuthorizationValid()) {
-            openApp()
-        } else {
-            when (radioButtonId) {
-                R.id.radio_start_activity_for_result -> startActivityForResult(IDKit.authorize(), AUTHORIZE_CODE)
-                R.id.radio_pending_intents -> IDKit.authorize(MainActivity::class.java, MainActivity::class.java)
-            }
-        }
-    }
-
-    private fun handleIntent(intent: Intent?) {
-        if (intent != null) {
-            IDKit.handleAuthorizationResponse(intent) {
-                when (it) {
-                    is Success -> openApp()
-                    is Failure -> {
-                        if (it.throwable != FailedRetrievingSessionWhileAuthorizing) {
-                            info_label.text = "Unauthorized"
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun openApp() {
-        info_label.text = "Open app"
-        AppKit.openAppActivity(context = this, url = appUrl, autoClose = false, callback = object : AppCallbackImpl() {
-            override fun onTokenInvalid(onResult: (String) -> Unit) {
-                IDKit.refreshToken { completion ->
-                    when (completion) {
-                        is Success -> completion.result?.let { onResult(it) }
-                        is Failure -> info_label.text = "Refresh error: ${completion.throwable.message}"
-                    }
-                }
-            }
-        })
-    }
-
     companion object {
-        private const val AUTHORIZE_CODE = 100
         private const val PAYMENT_APP_URL = "YOUR_PAYMENT_APP_URL"    // TODO: Replace with your payment app URL
         private const val FUELING_APP_URL = "YOUR_FUELING_APP_URL"    // TODO: Replace with your fueling app URL
         private const val APP_DISTANCE_THRESHOLD = 15

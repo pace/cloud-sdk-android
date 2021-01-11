@@ -98,10 +98,9 @@ internal class AppManager : AppKitKoinComponent {
                     }
 
                 val notDisabledUrls = notDisabled.map { it.url }
-                appEventManager.setInvalidApps(lastApps.minus(notDisabledUrls))
-
-                if (notDisabledUrls.isEmpty())
-                    appModel.close()
+                val invalidUrls = lastApps.minus(notDisabledUrls)
+                appEventManager.setInvalidApps(invalidUrls)
+                appModel.close(urls = invalidUrls)
 
                 lastApps = notDisabledUrls
 
@@ -158,7 +157,16 @@ internal class AppManager : AppKitKoinComponent {
     }
 
     internal fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, autoClose: Boolean, callback: AppCallbackImpl? = null) {
-        callback?.onOpen()
+        callback?.onOpen(null)
+        startAppActivity(context, url, enableBackToFinish, autoClose, callback)
+    }
+
+    internal fun openAppActivity(context: Context, app: App, enableBackToFinish: Boolean = false, autoClose: Boolean, callback: AppCallbackImpl? = null) {
+        callback?.onOpen(app)
+        startAppActivity(context, app.url, enableBackToFinish, autoClose, callback)
+    }
+
+    private fun startAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, autoClose: Boolean, callback: AppCallbackImpl? = null) {
         appModel.callback = callback
 
         val intent = Intent(context, AppActivity::class.java)
@@ -179,7 +187,7 @@ internal class AppManager : AppKitKoinComponent {
             appDrawer.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
 
             appDrawer.setApp(app, isDarkBackground) {
-                openAppActivity(context, app.url, autoClose = autoClose, callback = callback)
+                openAppActivity(context, app, autoClose = autoClose, callback = callback)
             }
             appDrawer.expand()
 

@@ -30,7 +30,8 @@ class AppRepositoryTest {
     private val locationBasedApp = LocationBasedApp().apply { pwaUrl = urlLocationBasedApp }
     private val manifest = AppManifest(
         name = "Tanke Emma",
-        shortName = "Jetzt tanken",
+        shortName = "Connected Fueling",
+        description = "Jetzt tanken",
         startUrl = "",
         sdkStartUrl = "",
         display = "",
@@ -81,7 +82,7 @@ class AppRepositoryTest {
         assertEquals(1, apps.size)
         val app = apps.get(0)
         assertEquals(manifest.name, app.name)
-        assertEquals(manifest.shortName, app.shortName)
+        assertEquals(manifest.description, app.description)
         assertEquals(manifest.backgroundColor, app.iconBackgroundColor)
         assertEquals(startUrl, app.url)
         assertNull(app.logo)
@@ -172,7 +173,7 @@ class AppRepositoryTest {
 
         val app1 = apps.get(0)
         assertEquals(manifest.name, app1.name)
-        assertEquals(manifest.shortName, app1.shortName)
+        assertEquals(manifest.description, app1.description)
         assertEquals(manifest.backgroundColor, app1.iconBackgroundColor)
         assertEquals(id1, app1.gasStationId)
         assertEquals("$startUrl/?references=prn%3Apoi%3Agas-stations%3A$id1", app1.url)
@@ -180,7 +181,7 @@ class AppRepositoryTest {
 
         val app2 = apps.get(1)
         assertEquals(manifest.name, app2.name)
-        assertEquals(manifest.shortName, app2.shortName)
+        assertEquals(manifest.description, app2.description)
         assertEquals(manifest.backgroundColor, app2.iconBackgroundColor)
         assertEquals(id2, app2.gasStationId)
         assertEquals("$startUrl/?references=prn%3Apoi%3Agas-stations%3A$id2", app2.url)

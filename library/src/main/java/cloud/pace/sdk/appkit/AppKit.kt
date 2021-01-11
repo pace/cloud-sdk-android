@@ -144,12 +144,25 @@ object AppKit : AppKitKoinComponent {
      *
      * @param context Context which should be used to start the [AppActivity].
      * @param enableBackToFinish True if the [AppActivity] should be finished or false if the [cloud.pace.sdk.appkit.app.webview.AppWebView] should navigate back on back press.
-     * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or no apps come back from the API, false otherwise.
+     * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
     @JvmOverloads
     fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl? = null) {
         appManager.openAppActivity(context, url, enableBackToFinish, autoClose, callback)
+    }
+
+    /**
+     * Starts an [AppActivity] and loads the URL of the [app] in the [cloud.pace.sdk.appkit.app.webview.AppWebView].
+     *
+     * @param context Context which should be used to start the [AppActivity].
+     * @param enableBackToFinish True if the [AppActivity] should be finished or false if the [cloud.pace.sdk.appkit.app.webview.AppWebView] should navigate back on back press.
+     * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
+     * @param callback Via this callback the client app can subscribe to certain app events.
+     */
+    @JvmOverloads
+    fun openAppActivity(context: Context, app: App, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl? = null) {
+        appManager.openAppActivity(context, app, enableBackToFinish, autoClose, callback)
     }
 
     /**

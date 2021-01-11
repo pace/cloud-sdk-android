@@ -55,13 +55,13 @@ class AppFragmentViewModelTest : KoinTest {
     @Test
     fun `force close`() {
         appModel.close(true)
-        assertEquals(true, viewModel.closeEvent.value?.peekContent())
+        assertEquals(true to null, viewModel.closeEvent.value?.peekContent())
     }
 
     @Test
     fun `no force close`() {
         appModel.close()
-        assertEquals(false, viewModel.closeEvent.value?.peekContent())
+        assertEquals(false to null, viewModel.closeEvent.value?.peekContent())
     }
 
     @Test

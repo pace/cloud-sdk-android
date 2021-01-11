@@ -6,6 +6,7 @@ class AppManifest(
     var name: String,
     @SerializedName("short_name")
     var shortName: String,
+    var description: String,
     @SerializedName("start_url")
     var startUrl: String,
     var display: String,

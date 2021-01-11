@@ -113,6 +113,7 @@ class AppRepositoryImpl(
                 App(
                     name = manifest.name,
                     shortName = manifest.shortName,
+                    description = manifest.description,
                     url = it.value,
                     logo = logo,
                     iconBackgroundColor = manifest.backgroundColor,
