@@ -1,7 +1,7 @@
 package cloud.pace.sdk.poikit.poi
 
 import android.util.Log
-import cloud.pace.sdk.poikit.poi.downloadOld.VectorTile
+import cloud.pace.sdk.poikit.poi.download.VectorTile
 
 class Geometry {
 

@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import cloud.pace.sdk.poikit.POIKit
 import cloud.pace.sdk.poikit.database.GasStationDAO
-import cloud.pace.sdk.poikit.poi.downloadOld.TileDownloader
-import cloud.pace.sdk.poikit.poi.downloadOld.TileQueryRequestOuterClass.TileQueryRequest.*
+import cloud.pace.sdk.poikit.poi.download.TileDownloader
+import cloud.pace.sdk.poikit.poi.download.TileQueryRequestOuterClass.TileQueryRequest.*
 import cloud.pace.sdk.poikit.utils.POIKitConfig
 import cloud.pace.sdk.poikit.utils.ZoomException
 import cloud.pace.sdk.poikit.utils.diameter
