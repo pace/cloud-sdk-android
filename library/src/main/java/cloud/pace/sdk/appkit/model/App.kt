@@ -8,9 +8,9 @@ import kotlinx.android.parcel.Parcelize
 data class App(
     var name: String,
     var shortName: String,
-    var description: String,
+    var description: String? = null,
     var url: String,
-    var logo: Bitmap?,
+    var logo: Bitmap? = null,
     var iconBackgroundColor: String? = null,
     var textBackgroundColor: String? = null,
     var textColor: String? = null,

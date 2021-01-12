@@ -18,13 +18,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.model.App
-import cloud.pace.sdk.utils.AppKitKoinComponent
+import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Event
 import cloud.pace.sdk.utils.dp
 import kotlinx.android.synthetic.main.app_drawer.view.*
 import org.koin.core.inject
 
-class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs), AppKitKoinComponent {
+class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs), CloudSDKKoinComponent {
 
     private val viewModel: AppDrawerViewModel by inject()
     private val minBackgroundWidth = context.resources.getDimension(R.dimen.app_drawer_height).toInt()
@@ -43,7 +43,7 @@ class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
             requestLayout()
         }
 
-    var subtitle: String = ""
+    var subtitle: String? = null
         set(value) {
             field = value
             subtitle_view.text = value
@@ -77,7 +77,7 @@ class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
         title = it
     }
 
-    private val subtitleObserver = Observer<String> {
+    private val subtitleObserver = Observer<String?> {
         subtitle = it
     }
 
@@ -115,7 +115,7 @@ class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
 
             try {
                 title = getString(R.styleable.AppDrawer_title) ?: ""
-                subtitle = getString(R.styleable.AppDrawer_subtitle) ?: ""
+                subtitle = getString(R.styleable.AppDrawer_subtitle)
                 icon = getResourceId(R.styleable.AppDrawer_icon, R.drawable.ic_default)
                 iconTint = context.getColor(getResourceId(R.styleable.AppDrawer_iconTint, R.color.highlight))
                 backgroundTint = context.getColor(R.color.highlight)

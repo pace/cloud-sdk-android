@@ -2,7 +2,6 @@ package cloud.pace.sdk.appkit
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import car.pace.cloudsdk.extensions.random
 import cloud.pace.sdk.appkit.app.webview.AppWebViewClient
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModel
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModelImpl
@@ -16,6 +15,7 @@ import cloud.pace.sdk.appkit.utils.EncryptionUtils
 import cloud.pace.sdk.appkit.utils.TestAppEventManager
 import cloud.pace.sdk.appkit.utils.TestUriUtils
 import cloud.pace.sdk.utils.Event
+import cloud.pace.sdk.utils.random
 import com.nhaarman.mockitokotlin2.anyOrNull
 import io.mockk.every
 import io.mockk.mockkObject

@@ -11,7 +11,7 @@ import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.utils.*
-import cloud.pace.sdk.utils.AppKitKoinComponent
+import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.KoinConfig
 import cloud.pace.sdk.utils.Success
@@ -28,7 +28,7 @@ import org.mockito.junit.MockitoJUnitRunner
 import java.util.concurrent.CompletableFuture
 
 @RunWith(MockitoJUnitRunner::class)
-class AppManagerTest : AppKitKoinComponent {
+class AppManagerTest : CloudSDKKoinComponent {
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
@@ -85,7 +85,7 @@ class AppManagerTest : AppKitKoinComponent {
     @Test
     fun `no app due to network error`() {
         val appRepository = object : TestAppRepository() {
-            override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, retry: Boolean, completion: (Result<List<App>>) -> Unit) {
+            override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {
                 completion(Result.failure(Exception()))
             }
         }
@@ -115,7 +115,7 @@ class AppManagerTest : AppKitKoinComponent {
     @Test
     fun `no app available`() {
         val appRepository = object : TestAppRepository() {
-            override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, retry: Boolean, completion: (Result<List<App>>) -> Unit) {
+            override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {
                 completion(Result.success(emptyList()))
             }
         }
@@ -180,7 +180,7 @@ class AppManagerTest : AppKitKoinComponent {
         )
 
         val appRepository = object : TestAppRepository() {
-            override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, retry: Boolean, completion: (Result<List<App>>) -> Unit) {
+            override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {
                 completion(Result.success(listOf(app1, app2, app3)))
             }
         }
@@ -242,7 +242,7 @@ class AppManagerTest : AppKitKoinComponent {
         )
 
         val appRepository = object : TestAppRepository() {
-            override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, retry: Boolean, completion: (Result<List<App>>) -> Unit) {
+            override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {
                 completion(Result.success(listOf(app)))
             }
         }
@@ -293,7 +293,7 @@ class AppManagerTest : AppKitKoinComponent {
         )
 
         val appRepository = object : TestAppRepository() {
-            override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, retry: Boolean, completion: (Result<List<App>>) -> Unit) {
+            override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {
                 completion(Result.success(listOf(app)))
             }
         }

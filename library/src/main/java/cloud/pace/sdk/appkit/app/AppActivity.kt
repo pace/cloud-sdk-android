@@ -7,11 +7,11 @@ import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.app.webview.AppWebViewClient
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
-import cloud.pace.sdk.utils.AppKitKoinComponent
+import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import kotlinx.android.synthetic.main.fragment_app.*
 import org.koin.android.ext.android.inject
 
-class AppActivity : AppCompatActivity(), AppKitKoinComponent {
+class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
 
     private var backToFinish = true
     private val eventManager: AppEventManager by inject()

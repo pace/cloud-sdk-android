@@ -12,7 +12,6 @@ buildscript {
         user = properties.get("user")
         key = properties.get("key")
 
-        cloudsdk_version = "99578622"
         gradle_version = "4.0.2"
         kotlin_version = "1.4.10"
         bintray_version = "1.8.5"

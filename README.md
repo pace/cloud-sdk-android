@@ -1,9 +1,39 @@
 # PACE Cloud SDK
 
-## Setup
+This framework combines multipe functionalities provided by PACE i.e. authorizing via **PACE ID** or requesting and displaying **Apps**. These functionalities are separated and structured into different ***Kits*** by namespaces, i.e. [IDKit](#idkit), [AppKit](#appkit).
 
+- [PACE Cloud SDK](#pace-cloud-sdk)
+    * [Specifications](#specifications)
+    * [Installation](#installation)
+    * [Setup](#setup)
+    * [Migration](#migration)
+        + [2.x.x -> 3.x.x](#from-2xx-to-3xx)
+    * [IDKit](#idkit)
+        + [Setup](#setup-1)
+        + [Discover configuration](#discover-configuration)
+        + [Authorization](#authorization)
+        + [Access user information](#access-user-information)
+        + [Token refresh](#token-refresh)
+        + [Cached token](#cached-token)
+        + [Reset session](#reset-session)
+    * [AppKit](#appkit)
+        + [Main Features](#main-features)
+        + [Setup](#setup-2)
+        + [Request local apps](#request-local-apps)
+        + [Fetch apps by URL](#fetch-apps-by-url)
+        + [Is POI in range?](#is-poi-in-range)
+        + [AppActivity](#appactivity)
+        + [AppWebView](#appwebview)
+        + [AppDrawer](#appdrawer)
+        + [Deep Linking](#deep-linking)
+        + [Native login](#native-login)
+        + [Removal of Apps](#removal-of-apps)
+
+## Specifications
+**PACECloudSDK** currently supports Android 6.0 (API level 23) and above.
+
+## Installation
 Add JCenter to your top-level `build.gradle` (if not yet):
-
 ```groovy
 allprojects {
     repositories {
@@ -14,7 +44,6 @@ allprojects {
 ```
 
 Add the **PACE Cloud SDK** dependency to your module's `build.gradle`:
-
 ```groovy
 dependencies {
     ...
@@ -22,7 +51,7 @@ dependencies {
 }
 ```
 
-Because the PACE Cloud SDK uses [AppAuth for Android](https://github.com/openid/AppAuth-Android) for the IDKit, the AppAuth redirect scheme must be registered in your app's `build.gradle` file:
+Because the PACE Cloud SDK uses [AppAuth for Android](https://github.com/openid/AppAuth-Android) for the *IDKit*, the AppAuth redirect scheme must be registered in your app's `build.gradle` file:
 ```groovy
 android {
     ...
@@ -34,11 +63,39 @@ android {
 }
 ```
 
+## Setup
+The `PACECloudSDK` needs to be setup before any of its `Kits` can be used. Therefore you *must* call `PACECloudSDK.setup(context: Context, configuration: Configuration)`. The best way to do this is inside your `Application` class. It will automatically authorize your application with the provided api key.
+
+The `Configuration` only has `clientAppName`, `clientAppVersion`, `clientAppBuild` and `apiKey` as mandatory properties. All others are optional and can be passed as necessary.
+
+**Note**: `PACECloudSDK` is using the `PRODUCTION` environment as default. In case you are still doing tests, you probably want to change it to `SANDBOX` or `STAGING`.
+
+Available parameters:
+
+```kotlin
+clientAppName: String
+clientAppVersion: String
+clientAppBuild: String
+apiKey: String
+clientId: String? // Default: null
+accessToken: String? // Default: null
+authenticationMode: AuthenticationMode // Default: AuthenticationMode.WEB
+environment: Environment // Default: Environment.PRODUCTION
+extensions: List<String> // Default: emptyList()
+locationAccuracy: Int? // Default: null
+```
+
+## Migration
+### From 2.x.x to 3.x.x
+In `3.0.0` we've introduced a universal setup method: `PACECloudSDK.setup(context: Context, configuration: Configuration)` and removed the setup for `AppKit` and `POIKit`.
+
+The universal `Configuration` almost has the same signature as the previous *AppKit* `Configuration`, only the `isDarkTheme` parameter has been removed, which is now an enum instead of a Boolean and defaults to `Theme.LIGHT`. In case you want to change it, you can set it via `AppKit`'s `theme` property: `AppKit.theme = Theme.LIGHT/Theme.DARK`.
+
 ## IDKit
-This framework manages the OpenID (OID) authorization and the general session flow with its token handling.
+**IDKit** manages the OpenID (OID) authorization and the general session flow with its token handling via **PACE ID**.
 
 ### Setup
-This code example shows how to setup IDKit. The parameter `additionalCaching` defines if IDKit persists the session additionally to the native WebView/Browser caching.
+This code example shows how to setup *IDKit*. The parameter `additionalCaching` defines if *IDKit* persists the session additionally to the native WebView/Browser caching.
 ```kotlin
 val config = OIDConfiguration(
     authorizationEndpoint, 
@@ -48,7 +105,7 @@ val config = OIDConfiguration(
     clientSecret, // optional
     scopes, // optional
     redirectUri,
-    responseType, // Default `ResponseTypeValues.CODE`
+    responseType, // Default: `ResponseTypeValues.CODE`
     additionalParameters // optional
 )
 IDKit.setup(context, config, true)
@@ -74,7 +131,7 @@ From Android API 30 (R) and above, set queries in the your app's manifest, to en
 ```
 
 ### Discover configuration
-The IDKit offers a function to discover the authorization service configuration by an issuer URI. For example:
+The *IDKit* offers a function to discover the authorization service configuration by an issuer URI. For example:
 
 ```kotlin
 IDKit.discoverConfiguration(issuerUri) {
@@ -198,46 +255,24 @@ IDKit.resetSession()
 ```
 A new authorization will be required afterwards.
 
-# AppKit
-
-## Main features
-
-* Get apps by location or URL
+## AppKit
+### Main features
+* Get apps at the current location or by URL
 * Shows an `AppDrawer` for each app
 * Opens the app in the `AppActivity` (recommended) or `AppWebView`
 * Checks if there is an app for the given POI ID at the current location
 
-## Usage
-
 ### Setup
 
-This code example shows how to setup AppKit. This can be done in the `Application` class.
-```kotlin
-val config = Configuration(
-    clientAppName = "PACECloudSDKExample",
-    clientAppVersion = BuildConfig.VERSION_NAME,
-    clientAppBuild = BuildConfig.VERSION_CODE.toString(),
-    apiKey = "YOUR_API_KEY",
-    isDarkTheme = false,
-    environment = Environment.DEVELOPMENT
-)
-AppKit.setup(context, config)
-```
-
-### Requirements
-
-Please make sure that the user grants the following permission.
-
+Please make sure that the user grants the following permission:
 * `Manifest.permission.ACCESS_FINE_LOCATION`
 
-**_Note:_** AppKit needs this permission to get the user location but it will not request the permission.
+**_Note:_** *AppKit* needs this permission to get the user location but it will not request the permission.
 
 ### Request local apps
-
 Location based apps can be requested with the following function. The completion contains a list with the available apps as `App` objects or a `Throwable`, if an error occurs.
 
 ##### Kotlin example
-
 ```kotlin
 AppKit.requestLocalApps {
     when (it) {
@@ -248,7 +283,6 @@ AppKit.requestLocalApps {
 ```
 
 ##### Java example
-
 ```java
 AppKit.INSTANCE.requestLocalApps(result -> {
     if (result instanceof Success) {
@@ -264,13 +298,11 @@ AppKit.INSTANCE.requestLocalApps(result -> {
 ```
 
 ### Fetch apps by URL
-
 You can also fetch apps by URL and references (e.g. gas station references).
 
-**_Note:_** The reference starts with a specific namespace identifier followed by the gas station ID in this case it has to conform to the URN format.
+**_Note:_** The reference starts with a specific namespace identifier followed by the gas station ID in this case it has to conform the URN format.
 
 ##### Kotlin example
-
 ```kotlin
 AppKit.fetchAppsByUrl(url, "prn:poi:gas-stations:c977190d-049b-4023-bcbd-1dab88f02924", "prn:poi:gas-stations:f86a1818-353c-425f-a92b-705cc6ec5259") {
     when (it) {
@@ -281,7 +313,6 @@ AppKit.fetchAppsByUrl(url, "prn:poi:gas-stations:c977190d-049b-4023-bcbd-1dab88f
 ```
 
 ##### Java example
-
 ```java
 AppKit.INSTANCE.fetchAppsByUrl(url, new String[]{"prn:poi:gas-stations:c977190d-049b-4023-bcbd-1dab88f02924", "prn:poi:gas-stations:f86a1818-353c-425f-a92b-705cc6ec5259"}, result -> {
     if (result instanceof Success) {
@@ -297,11 +328,9 @@ AppKit.INSTANCE.fetchAppsByUrl(url, new String[]{"prn:poi:gas-stations:c977190d-
 ```
 
 ### Is POI in range?
-
 To check if there is an app for the given POI ID at the current location, call `AppKit.isPoiInRange(...)`.
 
 ##### Kotlin example
-
 ```kotlin
 AppKit.isPoiInRange(poiId) {
     // True or false
@@ -309,7 +338,6 @@ AppKit.isPoiInRange(poiId) {
 ```
 
 ##### Java example
-
 ```java
 AppKit.isPoiInRange(poiId, result -> {
     // True or false
@@ -319,26 +347,22 @@ AppKit.isPoiInRange(poiId, result -> {
 ```
 
 ### AppActivity
-
-The AppKit contains a default `Activity` which can be used to display an app. To open an app in the `AppActivity` you have to call `AppKit.openAppActivity(...)`. The `AppActivity` will be closed when the user clicks the close button in the app.
+The *AppKit* contains a default `Activity` which can be used to display an app. To open an app in the `AppActivity` you have to call `AppKit.openAppActivity(...)`. The `AppActivity` will be closed when the user clicks the close button in the app.
 
 ### AppWebView
-
-Moreover the AppKit contains a default `AppWebView`. To display an app in this WebView you have to call `AppWebView.loadApp(parent: Fragment, url: String)`. The `AppWebView`s parent needs to be a fragment as that's the needed context for the integrated `Android Biometric API`.
+Moreover the *AppKit* contains a default `AppWebView`. To display an app in this WebView you have to call `AppWebView.loadApp(parent: Fragment, url: String)`. The `AppWebView`s parent needs to be a fragment as that's the needed context for the integrated `Android Biometric API`.
 
 ### AppDrawer
-
-The `AppDrawer` is an expandable button that can be used to display a AppDrawer. It shows an icon in collapsed state and additionally a title and subtitle in expanded state. By default it will be opened in expanded mode. To fade in the button with an animation, use `appDrawer.show()`. The AppDrawer will be removed if the App is not returned on the next App check again.
+The `AppDrawer` is an expandable button that can be used to display an app. It shows an icon in collapsed state and additionally a title and subtitle in expanded state. By default it will be opened in expanded mode. To fade in the button with an animation, use `appDrawer.show()`. The AppDrawer will be removed if the app is not returned on the next App check again.
 
 **_Note:_** You need to call `AppKit.requestLocalApps(...)` periodically to make sure that Apps get closed when they are not longer available. This can be done when the app comes into the foreground or the location changes.
 
-The button can be added dynamically by the AppKit or statically as view.
+The button can be added dynamically by the *AppKit* or statically as view.
 
 ##### Dynamic example
-
 The following code shows an example of how `AppDrawer` can be displayed dynamically. You can pass an optional `AppCallbackImpl` to communicate with the app.
 ```kotlin
-AppKit.openApps(context, apps, isDarkBackground, parentLayout, callback = object : AppCallbackImpl() {
+AppKit.openApps(context, apps, parentLayout, callback = object : AppCallbackImpl() {
     override fun onOpen(app: App?) {
         // AppDrawer clicked
     }
@@ -346,11 +370,10 @@ AppKit.openApps(context, apps, isDarkBackground, parentLayout, callback = object
 })
 ```
 
-The AppKit will now create an `AppDrawer` for each app in `apps` and add it to the given `parentLayout`.
+The *AppKit* will now create an `AppDrawer` for each app in `apps` and add it to the given `parentLayout`.
 Clicking on the button opens the `AppActivity` with the app in the `AppWebView`.
 
 ##### Static example
-
 ```xml
 <cloud.pace.sdk.appkit.app.drawer.AppDrawer
     android:id="@+id/app_drawer"
@@ -368,7 +391,7 @@ Clicking on the button opens the `AppActivity` with the app in the `AppWebView`.
 ```kotlin
 fun showAppDrawer(app: App) {
     app_drawer.setApp(app, isDarkBackground) {
-        AppKit.openAppActivity(context, app.appUrl)
+        AppKit.openAppActivity(context, app)
     }
 
     app_drawer.show()
@@ -376,13 +399,11 @@ fun showAppDrawer(app: App) {
 ```
 
 ### Deep Linking
+Some of our services (e.g. `PayPal`) do not open the URL in the WebView, but in a Chrome Custom Tab within the app, due to security reasons. After completion of the process the user is redirected back to the WebView via deep linking. In order to set the redirect URL correctly and to ensure that the client app intercepts the deep link, the following requirements must be met:
 
-Some of our services (e.g. PayPal) do not open the URL in the WebView, but in a Chrome Custom Tab within the app. After completion of the process the user is redirected back to the WebView via a Deep Link. In order to set the redirect URL correctly and to ensure that the client app intercepts the Deep Link, the following requirements must be met:
-
-* Set `clientId` in AppKit configuration in `setup(...)`, because it is needed for the redirect URL
-* Specify the `AppActivity` as Deep Link intent filter in your app manifest. **`pace.${clientId}` (same `clientId` as passed in the AppKit configuration) must be passed to `android:scheme`:**
-* If the scheme is not set, the `AppKit` calls the `onCustomSchemeError(context: Context?, scheme: String)` callback
-
+* Set `clientId` in *PACECloudSDK's* configuration during the [setup](#setup), because it is needed for the redirect URL
+* Specify the `AppActivity` as deep link intent filter in your app manifest. **`pace.${clientId}` (same `clientId` as passed in the configuration) must be passed to `android:scheme`:**
+* If the scheme is not set, the *AppKit* calls the `onCustomSchemeError(context: Context?, scheme: String)` callback
 
 ```xml
 <activity
@@ -403,19 +424,17 @@ Some of our services (e.g. PayPal) do not open the URL in the WebView, but in a 
 </activity>
 ```
 
-### Native login communication
-
+### Native login
 If the client app uses its own login and wants to pass an access token to the apps, follow these steps:
 
-1. Initialize the `AppKit` with `authenticationMode = AuthenticationMode.NATIVE` and an optional start `accessToken = "Your access token"`.
+1. Initialize the `PACECloudSDK` with `authenticationMode = AuthenticationMode.NATIVE` and an optional start `accessToken = "Your access token"`.
 2. Pass an `AppCallbackImpl` instance to `AppKit.openApps(...)` or `AppKit.openAppActivity(...)` and override the required callbacks (`onTokenInvalid(onResult: (String) -> Unit) {}` in this case)
-3. If the access token is invalid, the `AppKit` calls the `onTokenInvalid` function. The client app needs to call the `onResult` function to set a new access token. In case that you can't retrieve a new valid token, don't call `onResult`, otherwise you will most likely end up
+3. If the access token is invalid, the *AppKit* calls the `onTokenInvalid` function. The client app needs to call the `onResult` function to set a new access token. In case that you can't retrieve a new valid token, don't call `onResult`, otherwise you will most likely end up
 in an endless loop. Make sure to clean up all the app related views as well (see [Removal of Apps](#removal-of-apps)).
 
 ##### Kotlin example
-
 ```kotlin
-AppKit.openAppActivity(context, url, false, object : AppCallbackImpl() {
+AppKit.openAppActivity(context, url, object : AppCallbackImpl() {
     override fun onTokenInvalid(onResult: (String) -> Unit) {
         // Token is invalid, call your function to request a new one (async or not)
         // and pass the new token to onResult
@@ -427,9 +446,8 @@ AppKit.openAppActivity(context, url, false, object : AppCallbackImpl() {
 ```
 
 ##### Java example
-
 ```java
-AppKit.INSTANCE.openAppActivity(context, url, false, new AppCallbackImpl() {
+AppKit.INSTANCE.openAppActivity(context, url, true, false, new AppCallbackImpl() {
     @Override
     public void onTokenInvalid(@NotNull Function1<? super String, Unit> onResult) {
         // Token is invalid, call your function to request a new one (async or not)
@@ -442,7 +460,6 @@ AppKit.INSTANCE.openAppActivity(context, url, false, new AppCallbackImpl() {
 ```
 
 ### Removal of Apps
-
 In case you want to remove the `AppActivity`, simply call `AppKit.closeAppActivity()`.
 
-If you want to remove all `AppDrawer`s *and* the `AppActivity` (only if it was started with autoClose = true), you can call the `AppKit.closeApps(buttonContainer: ConstraintLayout)` method and pass your `ConstraintLayout` where you've added the `AppDrawer`s to (see [AppDrawer](#appdrawer)).
+If you want to remove all `AppDrawer`s *and* the `AppActivity` (only if it was started with `autoClose = true`), you can call the `AppKit.closeApps(buttonContainer: ConstraintLayout)` method and pass your `ConstraintLayout` where you've added the `AppDrawer`s to (see [AppDrawer](#appdrawer)).

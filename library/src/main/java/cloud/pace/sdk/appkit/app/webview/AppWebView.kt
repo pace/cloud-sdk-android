@@ -11,16 +11,17 @@ import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.AppKit
-import cloud.pace.sdk.appkit.model.AuthenticationMode
 import cloud.pace.sdk.appkit.utils.BiometricUtils
-import cloud.pace.sdk.utils.AppKitKoinComponent
+import cloud.pace.sdk.utils.AuthenticationMode
+import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Event
 import kotlinx.android.synthetic.main.app_web_view.view.*
 import org.koin.core.inject
 
-class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(context, attributeSet), AppKitKoinComponent {
+class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(context, attributeSet), CloudSDKKoinComponent {
 
     private val webViewModel: AppWebViewModel by inject()
     private var fragment: Fragment? = null
@@ -31,7 +32,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
 
     private val newTokenObserver = Observer<Event<String>> {
         it.getContentIfNotHandled()?.let { newToken ->
-            if (AppKit.configuration.authenticationMode == AuthenticationMode.NATIVE) {
+            if (PACECloudSDK.configuration.authenticationMode == AuthenticationMode.NATIVE) {
                 sendMessageCallback(newToken)
             }
         }

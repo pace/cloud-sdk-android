@@ -7,10 +7,10 @@ import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
-import car.pace.cloudsdk.extensions.random
 import cloud.pace.sdk.appkit.app.webview.AppWebViewClient
 import cloud.pace.sdk.appkit.utils.TestWebClientCallback
 import cloud.pace.sdk.utils.CompletableFutureCompat
+import cloud.pace.sdk.utils.random
 import junit.framework.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith

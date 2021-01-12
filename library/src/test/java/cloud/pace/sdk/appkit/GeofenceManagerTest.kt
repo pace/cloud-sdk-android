@@ -6,7 +6,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import cloud.pace.sdk.appkit.geofences.GeofenceCallback
 import cloud.pace.sdk.appkit.geofences.GeofenceManager
 import cloud.pace.sdk.appkit.geofences.GeofenceManagerImpl
-import cloud.pace.sdk.utils.AppKitKoinComponent
+import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.KoinConfig
 import com.google.android.gms.location.GeofencingClient
 import io.mockk.every
@@ -27,7 +27,7 @@ import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
-class GeofenceManagerTest : AppKitKoinComponent {
+class GeofenceManagerTest : CloudSDKKoinComponent {
 
     @get:Rule
     val rule = InstantTaskExecutorRule()

@@ -3,7 +3,6 @@ package cloud.pace.sdk.appkit.app.api
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import car.pace.cloudsdk.api.poi.LocationBasedApp
 import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
@@ -16,8 +15,8 @@ import java.util.concurrent.TimeoutException
 
 interface AppRepository {
 
-    fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, retry: Boolean, completion: (Result<List<App>>) -> Unit)
-    fun getAllApps(context: Context, retry: Boolean, completion: (Result<List<App>>) -> Unit)
+    fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit)
+    fun getAllApps(context: Context, completion: (Result<List<App>>) -> Unit)
     fun getAppsByUrl(context: Context, url: String, references: List<String>, completion: (Result<List<App>>) -> Unit)
     fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit)
 }
@@ -29,10 +28,10 @@ class AppRepositoryImpl(
     private val uriUtil: UriManager
 ) : AppRepository {
 
-    override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, retry: Boolean, completion: (Result<List<App>>) -> Unit) {
-        appCloudApi.getLocationBasedApps(latitude, longitude, retry) { response ->
+    override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {
+        appCloudApi.getLocationBasedApps(latitude, longitude) { response ->
             response.onSuccess { apps ->
-                completion(Result.success(apps?.mapNotNull { castLocationBasedApp(context, it) }?.flatten() ?: emptyList()))
+                completion(Result.success(apps.mapNotNull { castLocationBasedApp(context, it.pwaUrl, it.references) }.flatten()))
             }
 
             response.onFailure { throwable ->
@@ -41,10 +40,10 @@ class AppRepositoryImpl(
         }
     }
 
-    override fun getAllApps(context: Context, retry: Boolean, completion: (Result<List<App>>) -> Unit) {
-        appCloudApi.getAllApps(retry) { response ->
+    override fun getAllApps(context: Context, completion: (Result<List<App>>) -> Unit) {
+        appCloudApi.getAllApps { response ->
             response.onSuccess { apps ->
-                completion(Result.success(apps?.mapNotNull { castLocationBasedApp(context, it) }?.flatten() ?: emptyList()))
+                completion(Result.success(apps.mapNotNull { castLocationBasedApp(context, it.pwaUrl, null) }.flatten()))
             }
 
             response.onFailure { throwable ->
@@ -54,12 +53,7 @@ class AppRepositoryImpl(
     }
 
     override fun getAppsByUrl(context: Context, url: String, references: List<String>, completion: (Result<List<App>>) -> Unit) {
-        val locationBasedApp = LocationBasedApp().apply {
-            pwaUrl = url
-            this.references = references.toList()
-        }
-        val apps = castLocationBasedApp(context, locationBasedApp)
-
+        val apps = castLocationBasedApp(context, url, references)
         if (apps != null) {
             completion(Result.success(apps))
         } else {
@@ -70,7 +64,7 @@ class AppRepositoryImpl(
     override fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit) {
         appCloudApi.getAppByAppId(appId) { response ->
             response.onSuccess { app ->
-                completion(Result.success(app?.pwaUrl))
+                completion(Result.success(app.pwaUrl))
             }
 
             response.onFailure { throwable ->
@@ -79,8 +73,8 @@ class AppRepositoryImpl(
         }
     }
 
-    private fun castLocationBasedApp(context: Context, app: LocationBasedApp): List<App>? {
-        val appUrl = app.pwaUrl ?: return null
+    private fun castLocationBasedApp(context: Context, appUrl: String?, references: List<String>?): List<App>? {
+        appUrl ?: return null
 
         val manifestFuture = CompletableFutureCompat<AppManifest?>()
         cache.getManifest(context, appUrl) { result ->
@@ -108,7 +102,7 @@ class AppRepositoryImpl(
         }
 
         return uriUtil
-            .getStartUrls(appUrl, appUrl, manifest.sdkStartUrl, app.references)
+            .getStartUrls(appUrl, appUrl, manifest.sdkStartUrl, references)
             .map {
                 App(
                     name = manifest.name,

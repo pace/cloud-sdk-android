@@ -13,18 +13,15 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.model.App
-import cloud.pace.sdk.appkit.model.AuthenticationMode
-import cloud.pace.sdk.appkit.model.Configuration
 import cloud.pace.sdk.idkit.FailedRetrievingSessionWhileAuthorizing
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.OIDConfiguration
 import cloud.pace.sdk.poikit.POIKit
-import cloud.pace.sdk.utils.Environment
-import cloud.pace.sdk.utils.Failure
-import cloud.pace.sdk.utils.Success
+import cloud.pace.sdk.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -52,19 +49,16 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
-        AppKit.setup(
+        PACECloudSDK.setup(
             this, Configuration(
                 clientAppName = "PACECloudSDKExample",
                 clientAppVersion = BuildConfig.VERSION_NAME,
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),
                 apiKey = "YOUR_API_KEY",
-                isDarkTheme = false,
                 authenticationMode = AuthenticationMode.NATIVE,
                 environment = Environment.DEVELOPMENT
             )
         )
-
-        POIKit.setup(this, Environment.DEVELOPMENT, "YOUR_API_KEY")
 
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -197,7 +191,7 @@ class MainActivity : AppCompatActivity() {
             if (lastLocation == null || lastLocation.distanceTo(it) > APP_DISTANCE_THRESHOLD) {
                 AppKit.requestLocalApps { completion ->
                     if (completion is Success) {
-                        AppKit.openApps(this, completion.result, false, root_layout, callback = object : AppCallbackImpl() {
+                        AppKit.openApps(this, completion.result, root_layout, callback = object : AppCallbackImpl() {
                             override fun onOpen(app: App?) {
                                 appUrl = app?.url
                                 Toast.makeText(this@MainActivity, "Gas station ID = ${app?.gasStationId}", Toast.LENGTH_SHORT).show()

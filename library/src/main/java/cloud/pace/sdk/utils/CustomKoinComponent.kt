@@ -7,12 +7,7 @@ interface IDKitKoinComponent : KoinComponent {
     override fun getKoin() = KoinConfig.idKitKoinApp.koin
 }
 
-interface AppKitKoinComponent : KoinComponent {
+interface CloudSDKKoinComponent : KoinComponent {
 
-    override fun getKoin() = KoinConfig.appKitKoinApp.koin
-}
-
-interface POIKitKoinComponent : KoinComponent {
-
-    override fun getKoin() = KoinConfig.poiKitKoinApp.koin
+    override fun getKoin() = KoinConfig.cloudSDKKoinApp.koin
 }

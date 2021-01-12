@@ -2,15 +2,17 @@ package cloud.pace.sdk.appkit
 
 import android.content.Context
 import android.location.Location
-import car.pace.cloudsdk.api.poi.LocationBasedApp
+import cloud.pace.sdk.PACECloudSDK
+import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppWithRefs
+import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppsWithRefs
 import cloud.pace.sdk.appkit.app.api.AppRepositoryImpl
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
-import cloud.pace.sdk.appkit.model.Configuration
 import cloud.pace.sdk.appkit.utils.TestAppCloudApi
 import cloud.pace.sdk.appkit.utils.TestCacheModel
 import cloud.pace.sdk.appkit.utils.TestUriUtils
 import cloud.pace.sdk.utils.CompletableFutureCompat
+import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.Environment
 import junit.framework.Assert.*
 import org.junit.Before
@@ -27,7 +29,7 @@ class AppRepositoryTest {
     }
     private val urlLocationBasedApp = "https://app.test"
     private val startUrl = "https://app.test.start"
-    private val locationBasedApp = LocationBasedApp().apply { pwaUrl = urlLocationBasedApp }
+    private val locationBasedApp = LocationBasedAppWithRefs().apply { pwaUrl = urlLocationBasedApp }
     private val manifest = AppManifest(
         name = "Tanke Emma",
         shortName = "Connected Fueling",
@@ -42,11 +44,11 @@ class AppRepositoryTest {
     )
 
     private val appCloudApi = object : TestAppCloudApi() {
-        override fun getLocationBasedApps(latitude: Double, longitude: Double, retry: Boolean, completion: (Result<Array<LocationBasedApp>?>) -> Unit) {
+        override fun getLocationBasedApps(latitude: Double, longitude: Double, completion: (Result<LocationBasedAppsWithRefs>) -> Unit) {
             if (latitude == locationWithApp.latitude && longitude == locationWithApp.longitude) {
-                completion(Result.success(arrayOf(locationBasedApp)))
+                completion(Result.success(listOf(locationBasedApp)))
             } else {
-                completion(Result.success(arrayOf()))
+                completion(Result.success(emptyList()))
             }
         }
     }
@@ -67,13 +69,13 @@ class AppRepositoryTest {
 
     @Before
     fun init() {
-        AppKit.configuration = Configuration("", "", "", "", false, environment = Environment.DEVELOPMENT)
+        PACECloudSDK.configuration = Configuration("", "", "", "", environment = Environment.DEVELOPMENT)
     }
 
     @Test
     fun `get local available apps`() {
         val appsFuture = CompletableFutureCompat<List<App>>()
-        appRepository.getLocationBasedApps(mock(Context::class.java), locationWithApp.latitude, locationWithApp.longitude, false) {
+        appRepository.getLocationBasedApps(mock(Context::class.java), locationWithApp.latitude, locationWithApp.longitude) {
             it.onSuccess { appsFuture.complete(it) }
             it.onFailure { throw it }
         }
@@ -91,7 +93,7 @@ class AppRepositoryTest {
     @Test
     fun `no local apps available`() {
         val appsFuture = CompletableFutureCompat<List<App>>()
-        appRepository.getLocationBasedApps(mock(Context::class.java), 40.0, 7.0, false) {
+        appRepository.getLocationBasedApps(mock(Context::class.java), 40.0, 7.0) {
             it.onSuccess { appsFuture.complete(it) }
             it.onFailure { throw it }
         }
@@ -110,7 +112,7 @@ class AppRepositoryTest {
 
         val appRepository = AppRepositoryImpl(context, cacheModel, appCloudApi, uriUtil)
         val appsFuture = CompletableFutureCompat<List<App>>()
-        appRepository.getLocationBasedApps(mock(Context::class.java), locationWithApp.latitude, locationWithApp.longitude, false) {
+        appRepository.getLocationBasedApps(mock(Context::class.java), locationWithApp.latitude, locationWithApp.longitude) {
             it.onSuccess { appsFuture.complete(it) }
             it.onFailure { throw it }
         }
@@ -122,13 +124,13 @@ class AppRepositoryTest {
     @Test
     fun `pass error when something failed`() {
         val appCloudApi = object : TestAppCloudApi() {
-            override fun getLocationBasedApps(latitude: Double, longitude: Double, retry: Boolean, completion: (Result<Array<LocationBasedApp>?>) -> Unit) {
+            override fun getLocationBasedApps(latitude: Double, longitude: Double, completion: (Result<LocationBasedAppsWithRefs>) -> Unit) {
                 completion(Result.failure(RuntimeException()))
             }
         }
         val appRepository = AppRepositoryImpl(context, cache, appCloudApi, uriUtil)
         val exceptionFuture = CompletableFutureCompat<Throwable?>()
-        appRepository.getLocationBasedApps(mock(Context::class.java), locationWithApp.latitude, locationWithApp.longitude, false) {
+        appRepository.getLocationBasedApps(mock(Context::class.java), locationWithApp.latitude, locationWithApp.longitude) {
             it.onSuccess { exceptionFuture.complete(null) }
             it.onFailure { exceptionFuture.complete(it) }
         }
@@ -140,16 +142,16 @@ class AppRepositoryTest {
     fun `return two apps when one app references two pois`() {
         val id1 = "c34a78bc-de0a-4daa-9f5e-8cc7103cf55e"
         val id2 = "2069125c-b65b-4514-81f9-3d09779b175f"
-        val locationBasedApp = LocationBasedApp().apply {
+        val locationBasedApp = LocationBasedAppWithRefs().apply {
             pwaUrl = urlLocationBasedApp
             references = listOf("prn:poi:gas-stations:$id1", "prn:poi:gas-stations:$id2")
         }
         val appCloudApi = object : TestAppCloudApi() {
-            override fun getLocationBasedApps(latitude: Double, longitude: Double, retry: Boolean, completion: (Result<Array<LocationBasedApp>?>) -> Unit) {
+            override fun getLocationBasedApps(latitude: Double, longitude: Double, completion: (Result<LocationBasedAppsWithRefs>) -> Unit) {
                 if (latitude == locationWithApp.latitude && longitude == locationWithApp.longitude) {
-                    completion(Result.success(arrayOf(locationBasedApp)))
+                    completion(Result.success(listOf(locationBasedApp)))
                 } else {
-                    completion(Result.success(arrayOf()))
+                    completion(Result.success(emptyList()))
                 }
             }
         }
@@ -163,7 +165,7 @@ class AppRepositoryTest {
         }
         val appRepository = AppRepositoryImpl(context, cache, appCloudApi, uriUtil)
         val appsFuture = CompletableFutureCompat<List<App>>()
-        appRepository.getLocationBasedApps(mock(Context::class.java), locationWithApp.latitude, locationWithApp.longitude, false) {
+        appRepository.getLocationBasedApps(mock(Context::class.java), locationWithApp.latitude, locationWithApp.longitude) {
             it.onSuccess { appsFuture.complete(it) }
             it.onFailure { throw it }
         }

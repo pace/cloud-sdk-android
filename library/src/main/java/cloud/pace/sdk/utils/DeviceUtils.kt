@@ -11,6 +11,13 @@ import okio.Buffer
 object DeviceUtils {
 
     /**
+     * Returns the release version
+     */
+    fun getAndroidVersion(): String {
+        return Build.VERSION.RELEASE
+    }
+
+    /**
      * Returns the device name formatted the following way:
      * `[BRAND or MANUFACTURER] MODEL ([PRODUCT or DEVICE])`
      *

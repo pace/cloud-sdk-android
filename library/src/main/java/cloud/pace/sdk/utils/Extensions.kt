@@ -4,6 +4,7 @@ import android.content.res.Resources
 import android.util.TypedValue
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.random.Random
 
 /**
  * Converts integer to density-independent pixels (dp).
@@ -54,4 +55,14 @@ fun Date.toRfc3339Short(): String {
         timeZone = TimeZone.getTimeZone("UTC")
         format(this@toRfc3339Short)
     }
+}
+
+fun String.Companion.random(length: Int, pool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')): String {
+    if (length < 0) {
+        throw IllegalArgumentException("Length can't be less than 0")
+    }
+
+    return (1..length)
+        .map { pool[Random.nextInt(0, pool.size)] }
+        .joinToString("")
 }

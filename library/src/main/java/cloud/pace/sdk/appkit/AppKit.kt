@@ -2,93 +2,50 @@ package cloud.pace.sdk.appkit
 
 import android.content.Context
 import androidx.constraintlayout.widget.ConstraintLayout
-import car.pace.cloudsdk.CloudSDK
-import car.pace.cloudsdk.util.DeviceUtils
 import cloud.pace.sdk.BuildConfig
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.app.AppActivity
 import cloud.pace.sdk.appkit.app.drawer.AppDrawer
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.Car
-import cloud.pace.sdk.appkit.model.Configuration
-import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
-import cloud.pace.sdk.utils.AppKitKoinComponent
+import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Completion
-import cloud.pace.sdk.utils.KoinConfig
+import cloud.pace.sdk.utils.DeviceUtils
+import cloud.pace.sdk.utils.Theme
 import org.koin.core.inject
 
-object AppKit : AppKitKoinComponent {
+object AppKit : CloudSDKKoinComponent {
 
-    private val sharedPreferencesModel: SharedPreferencesModel by inject()
     private val appManager: AppManager by inject()
-
-    internal lateinit var configuration: Configuration
     internal lateinit var userAgent: String
 
     /**
-     * Sets up [AppKit] with the passed [configuration].
-     *
-     * @param context The context.
+     * Specifies whether the light or dark theme should be used for the apps.
      */
-    fun setup(context: Context, configuration: Configuration) {
-        this.configuration = configuration
-
-        CloudSDK.initialize(
-            context, CloudSDK.Configuration(
-                idBaseUrl = configuration.environment.idUrl,
-                apiBaseUrl = configuration.environment.apiUrl,
-                clientId = configuration.clientId ?: "",
-                clientVersion = configuration.clientAppVersion,
-                clientBuild = configuration.clientAppBuild,
-                isDarkTheme = configuration.isDarkTheme
-            )
-        )
-
-        KoinConfig.setupAppKit(context)
-        setUserAgent(configuration)
-        sharedPreferencesModel.deleteAllAppStates()
-    }
-
-    fun setThemeSetting(isDarkTheme: Boolean) {
-        if (::configuration.isInitialized) {
-            configuration.isDarkTheme = isDarkTheme
-            setUserAgent(configuration)
+    var theme: Theme = Theme.LIGHT
+        set(value) {
+            field = value
+            updateUserAgent()
         }
-    }
 
-    fun setUserAgentExtensions(extensions: List<String>) {
-        if (::configuration.isInitialized) {
-            configuration.extensions = extensions
-            setUserAgent(configuration)
+    /**
+     * Specifies the minimum location accuracy in meters to request location based apps.
+     */
+    var locationAccuracy: Int? = null
+        set(value) {
+            field = value
+            PACECloudSDK.setLocationAccuracy(value)
         }
-    }
 
-    fun setLocationAccuracy(locationAccuracy: Int?) {
-        if (::configuration.isInitialized) {
-            configuration.locationAccuracy = locationAccuracy
-        }
-    }
-
-    internal fun setAccessToken(accessToken: String?) {
-        if (::configuration.isInitialized) {
-            configuration.accessToken = accessToken
-            setUserAgent(configuration)
-        }
-    }
-
-    internal fun resetAccessToken() {
-        if (::configuration.isInitialized) {
-            configuration.accessToken = null
-        }
-    }
-
-    private fun setUserAgent(config: Configuration) {
+    internal fun updateUserAgent() {
+        val config = PACECloudSDK.configuration
         userAgent = listOf(
             "${config.clientAppName}/${config.clientAppVersion}_${config.clientAppBuild}",
             "(${DeviceUtils.getDeviceName()} Android/${DeviceUtils.getAndroidVersion()})",
             "PWA-SDK/${BuildConfig.VERSION_NAME}",
             if (config.clientId != null) "(clientid:${config.clientId};)" else "",
-            if (config.isDarkTheme) "PWASDK-Theme/Dark" else "PWASDK-Theme/Light",
+            if (theme == Theme.LIGHT) "PWASDK-Theme/Light" else "PWASDK-Theme/Dark",
             "IdentityManagement/${config.authenticationMode.value}",
             config.extensions.joinToString(" ")
         ).filter { it.isNotEmpty() }.joinToString(separator = " ")
@@ -170,7 +127,7 @@ object AppKit : AppKitKoinComponent {
      * Clicking on the [AppDrawer] opens the [AppActivity] and shows the App.
      *
      * @param context Context which should be used to start the [AppActivity].
-     * @param isDarkBackground True, if the background of the [AppDrawer] should be dark, false otherwise.
+     * @param theme The [Theme] of the [AppDrawer].
      * @param bottomMargin The margin with which the [AppDrawer]s should be drawn to the bottom edge.
      * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or no apps come back from the API, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
@@ -179,13 +136,13 @@ object AppKit : AppKitKoinComponent {
     fun openApps(
         context: Context,
         apps: List<App>,
-        isDarkBackground: Boolean,
         buttonContainer: ConstraintLayout,
+        theme: Theme = Theme.LIGHT,
         bottomMargin: Float = 16f,
         autoClose: Boolean = true,
         callback: AppCallbackImpl? = null
     ) {
-        appManager.openApps(context, apps, isDarkBackground, buttonContainer, bottomMargin, autoClose, callback)
+        appManager.openApps(context, apps, buttonContainer, theme, bottomMargin, autoClose, callback)
     }
 
     /**

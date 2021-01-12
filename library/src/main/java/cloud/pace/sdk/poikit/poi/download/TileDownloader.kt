@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.atan
 import kotlin.math.exp
 
-internal object TileDownloader {
+internal class TileDownloader(environment: Environment) {
     private val client =
         OkHttpClient.Builder()
             .addInterceptor {
@@ -34,13 +34,7 @@ internal object TileDownloader {
             .readTimeout(POIKitConfig.READ_TIMEOUT, TimeUnit.SECONDS)
             .build()
 
-    var env = Environment.DEVELOPMENT
-        set(value) {
-            field = value
-            poiTileBaseUrl = "${value.apiUrl}/poi/v1/tiles/query"
-        }
-
-    private var poiTileBaseUrl = "${env.apiUrl}/poi/v1/tiles/query"
+    private var poiTileBaseUrl = "${environment.apiUrl}/poi/v1/tiles/query"
     private val mediaType = MediaType.parse("application/protobuf")
 
     fun load(job: TileQueryRequestOuterClass.TileQueryRequest, handler: (Result<List<GasStation>>) -> Unit): Call {

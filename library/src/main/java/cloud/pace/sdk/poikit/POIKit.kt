@@ -1,13 +1,10 @@
 package cloud.pace.sdk.poikit
 
-import android.content.Context
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import cloud.pace.sdk.api.API
-import cloud.pace.sdk.poikit.database.POIKitDatabase
-import cloud.pace.sdk.poikit.poi.*
 import cloud.pace.sdk.api.poi.GasStationCodes
 import cloud.pace.sdk.api.poi.GasStationMovedResponse
 import cloud.pace.sdk.api.poi.generated.model.Categories
@@ -18,7 +15,8 @@ import cloud.pace.sdk.api.poi.generated.request.gasStations.getGasStation
 import cloud.pace.sdk.api.poi.generated.request.metadataFilters.getMetadataFilters
 import cloud.pace.sdk.api.poi.generated.request.priceHistories.getPriceHistory
 import cloud.pace.sdk.api.poi.generated.request.prices.getRegionalPrices
-import cloud.pace.sdk.poikit.poi.download.TileDownloader
+import cloud.pace.sdk.poikit.database.POIKitDatabase
+import cloud.pace.sdk.poikit.poi.*
 import cloud.pace.sdk.poikit.routing.NavigationApiClient
 import cloud.pace.sdk.poikit.routing.NavigationMode
 import cloud.pace.sdk.poikit.routing.NavigationRequest
@@ -33,18 +31,13 @@ import io.reactivex.rxjava3.core.Observable
 import org.koin.core.inject
 import java.util.*
 
-object POIKit : POIKitKoinComponent, LifecycleObserver {
+object POIKit : CloudSDKKoinComponent, LifecycleObserver {
 
     private val database: POIKitDatabase by inject()
     private val navigationApi: NavigationApiClient by inject()
     private val addressSearchApi: AddressSearchClient by inject()
     private val locationProvider: LocationProvider by inject()
     var maxPoiSearchBoxSize = 15000.0
-
-    fun setup(context: Context, environment: Environment, apiKey: String) {
-        KoinConfig.setupPOIKit(context, environment, apiKey)
-        TileDownloader.env = environment
-    }
 
     fun startLocationListener(): LocationProvider {
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
@@ -90,8 +83,8 @@ object POIKit : POIKitKoinComponent, LifecycleObserver {
         }
     }
 
-    fun getRegionalPrice(latitude: Float, longitude: Float, completion: (Completion<List<RegionalPrices>?>) -> Unit) {
-        API.prices.getRegionalPrices(latitude, longitude).enqueue {
+    fun getRegionalPrice(latitude: Double, longitude: Double, completion: (Completion<List<RegionalPrices>?>) -> Unit) {
+        API.prices.getRegionalPrices(latitude.toFloat(), longitude.toFloat()).enqueue {
             onResponse = {
                 val body = it.body()
                 if (it.isSuccessful && body != null) {

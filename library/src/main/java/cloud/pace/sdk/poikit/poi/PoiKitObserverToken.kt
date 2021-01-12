@@ -11,6 +11,7 @@ import cloud.pace.sdk.poikit.utils.POIKitConfig
 import cloud.pace.sdk.poikit.utils.ZoomException
 import cloud.pace.sdk.poikit.utils.diameter
 import cloud.pace.sdk.poikit.utils.zoomToDiameter
+import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Completion
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
@@ -19,10 +20,12 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import okhttp3.Call
+import org.koin.core.inject
 import java.util.*
 
-open class PoiKitObserverToken {
+open class PoiKitObserverToken : CloudSDKKoinComponent {
 
+    internal val tileDownloader: TileDownloader by inject()
     val loading = MutableLiveData<Boolean>()
     var lastRefreshTime: Date? = null
 
@@ -89,7 +92,7 @@ class VisibleRegionNotificationToken(
             .setZoom(zoomLevel)
             .build()
 
-        downloadTask = TileDownloader.load(tileRequest) {
+        downloadTask = tileDownloader.load(tileRequest) {
             it.onSuccess { stations ->
                 stations.forEach { station -> station.updatedAt = Date() }
                 gasStationDao.insertGasStations(stations)
@@ -160,7 +163,7 @@ class IDsNotificationToken(
                 .setZoom(zoomLevel)
                 .build()
 
-            downloadTask = TileDownloader.load(tileRequest) {
+            downloadTask = tileDownloader.load(tileRequest) {
                 it.onSuccess { stations ->
                     stations.forEach { station -> station.updatedAt = Date() }
                     gasStationDao.insertGasStations(stations)
