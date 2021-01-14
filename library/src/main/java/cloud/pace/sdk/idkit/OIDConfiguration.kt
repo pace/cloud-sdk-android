@@ -11,5 +11,5 @@ data class OIDConfiguration @JvmOverloads constructor(
     val scopes: List<String>? = null,
     val redirectUri: String,
     val responseType: String = ResponseTypeValues.CODE,
-    val additionalParameters: Map<String, String>? = null
+    var additionalParameters: Map<String, String>? = null
 )

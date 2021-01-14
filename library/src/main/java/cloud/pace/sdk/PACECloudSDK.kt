@@ -13,6 +13,7 @@ object PACECloudSDK : CloudSDKKoinComponent {
 
     private val sharedPreferencesModel: SharedPreferencesModel by inject()
     internal lateinit var configuration: Configuration
+    var additionalQueryParams: Map<String, String> = mapOf()
 
     /**
      * Sets up [PACECloudSDK] with the passed [configuration].
