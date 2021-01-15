@@ -4,7 +4,7 @@ import android.location.Location
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.switchMap
-import cloud.pace.sdk.appkit.AppKit
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.utils.NoLocationFound
 import cloud.pace.sdk.appkit.utils.PermissionDenied
 import cloud.pace.sdk.utils.*
@@ -91,7 +91,7 @@ class AppLocationManagerImpl(
         return when {
             requestedTime <= segmentTime -> BEST_ACCURACY
             requestedTime <= segmentTime * 2 -> MEDIUM_ACCURACY
-            else -> AppKit.configuration.locationAccuracy ?: LOW_ACCURACY
+            else -> PACECloudSDK.configuration.locationAccuracy ?: LOW_ACCURACY
         }
     }
 

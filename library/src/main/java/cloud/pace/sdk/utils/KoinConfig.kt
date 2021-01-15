@@ -27,6 +27,7 @@ import cloud.pace.sdk.appkit.persistence.CacheModelImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.poikit.database.POIKitDatabase
+import cloud.pace.sdk.poikit.poi.download.TileDownloader
 import cloud.pace.sdk.poikit.routing.NavigationApiClient
 import cloud.pace.sdk.poikit.search.AddressSearchClient
 import com.google.android.gms.location.LocationServices
@@ -41,8 +42,7 @@ import org.koin.dsl.module
 object KoinConfig {
 
     internal lateinit var idKitKoinApp: KoinApplication
-    internal lateinit var appKitKoinApp: KoinApplication
-    internal lateinit var poiKitKoinApp: KoinApplication
+    internal lateinit var cloudSDKKoinApp: KoinApplication
 
     @Synchronized
     internal fun setupIDKit(context: Context) {
@@ -55,10 +55,20 @@ object KoinConfig {
     }
 
     @Synchronized
-    internal fun setupAppKit(context: Context) {
-        appKitKoinApp = koinApplication {
+    internal fun setupCloudSDK(context: Context, environment: Environment, apiKey: String) {
+        cloudSDKKoinApp = koinApplication {
             androidContext(context)
             modules(module {
+                single {
+                    Room.databaseBuilder(get(), POIKitDatabase::class.java, POIKitDatabase.DATABASE_NAME)
+                        .addMigrations(POIKitDatabase.migration1to2, POIKitDatabase.migration2to3, POIKitDatabase.migration3to4, POIKitDatabase.migration4to5)
+                        .build()
+                }
+                single { TileDownloader(environment) }
+                single { NavigationApiClient(environment, apiKey) }
+                single { AddressSearchClient(environment, apiKey) }
+                single<SystemManager> { SystemManagerImpl(get()) }
+                factory<LocationProvider> { LocationProviderImpl(get(), get()) }
                 single<SharedPreferencesModel> { SharedPreferencesImpl(PreferenceManager.getDefaultSharedPreferences(get())) }
                 single<CacheModel> { CacheModelImpl() }
                 single<AppRepository> { AppRepositoryImpl(get(), get(), get(), get()) }
@@ -66,8 +76,6 @@ object KoinConfig {
                 single<AppEventManager> { AppEventManagerImpl() }
                 single<PayAuthenticationManager> { PayAuthenticationManagerImpl(get()) }
                 single<UriManager> { UriManagerImpl() }
-                single<SystemManager> { SystemManagerImpl(get()) }
-                single<LocationProvider> { LocationProviderImpl(get(), get()) }
                 single<AppLocationManager> { AppLocationManagerImpl(get(), get()) }
                 single<AppCloudApi> { AppCloudApiImpl() }
                 single { GeofenceCallback() }
@@ -81,26 +89,8 @@ object KoinConfig {
         }
     }
 
-    @Synchronized
-    internal fun setupPOIKit(context: Context, environment: Environment, apiKey: String) {
-        poiKitKoinApp = koinApplication {
-            androidContext(context)
-            modules(module {
-                single {
-                    Room.databaseBuilder(get(), POIKitDatabase::class.java, POIKitDatabase.DATABASE_NAME)
-                        .addMigrations(POIKitDatabase.migration1to2, POIKitDatabase.migration2to3, POIKitDatabase.migration3to4, POIKitDatabase.migration4to5)
-                        .build()
-                }
-                single { NavigationApiClient(environment, apiKey) }
-                single { AddressSearchClient(environment, apiKey) }
-                single<SystemManager> { SystemManagerImpl(get()) }
-                single<LocationProvider> { LocationProviderImpl(get(), get()) }
-            })
-        }
-    }
-
     fun setupForTests(context: Context, module: Module) {
-        appKitKoinApp = koinApplication {
+        cloudSDKKoinApp = koinApplication {
             androidContext(context)
             modules(module)
         }

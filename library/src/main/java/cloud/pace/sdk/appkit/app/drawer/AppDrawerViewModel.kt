@@ -15,7 +15,7 @@ import java.net.URL
 abstract class AppDrawerViewModel : ViewModel() {
 
     abstract val title: LiveData<String>
-    abstract val subtitle: LiveData<String>
+    abstract val subtitle: LiveData<String?>
     abstract val background: LiveData<Int>
     abstract val iconBackground: LiveData<Int>
     abstract val textColor: LiveData<Int>
@@ -30,7 +30,7 @@ abstract class AppDrawerViewModel : ViewModel() {
 class AppDrawerViewModelImpl(private val eventManager: AppEventManager) : AppDrawerViewModel() {
 
     override val title = MutableLiveData<String>()
-    override val subtitle = MutableLiveData<String>()
+    override val subtitle = MutableLiveData<String?>()
     override val background = MutableLiveData<Int>()
     override val iconBackground = MutableLiveData<Int>()
     override val textColor = MutableLiveData<Int>()

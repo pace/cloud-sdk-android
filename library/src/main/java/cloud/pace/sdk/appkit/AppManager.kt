@@ -28,7 +28,7 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
 
-internal class AppManager : AppKitKoinComponent {
+internal class AppManager : CloudSDKKoinComponent {
 
     private val context: Context by inject()
     private val appLocationManager: AppLocationManager by inject()
@@ -71,7 +71,7 @@ internal class AppManager : AppKitKoinComponent {
      * @param completion Returns a list of [App]s on success or a [Throwable] on failure
      */
     private fun getAppsByLocation(location: Location, completion: (Completion<List<App>>) -> Unit) {
-        appRepository.getLocationBasedApps(context, location.latitude, location.longitude, true) { result ->
+        appRepository.getLocationBasedApps(context, location.latitude, location.longitude) { result ->
             result.onSuccess { apps ->
                 Log.d("Received ${apps.size} Apps: ${apps.map { it.url }}")
 
@@ -127,7 +127,7 @@ internal class AppManager : AppKitKoinComponent {
     }
 
     internal fun requestApps(completion: (Completion<List<App>>) -> Unit) {
-        appRepository.getAllApps(context, true) { result ->
+        appRepository.getAllApps(context) { result ->
             result.onSuccess { completion(Success(it)) }
             result.onFailure { completion(Failure(it)) }
         }
@@ -176,7 +176,7 @@ internal class AppManager : AppKitKoinComponent {
         context.startActivity(intent)
     }
 
-    internal fun openApps(context: Context, apps: List<App>, isDarkBackground: Boolean, buttonContainer: ConstraintLayout, bottomMargin: Float, autoClose: Boolean, callback: AppCallbackImpl?) {
+    internal fun openApps(context: Context, apps: List<App>, buttonContainer: ConstraintLayout, theme: Theme, bottomMargin: Float, autoClose: Boolean, callback: AppCallbackImpl?) {
         closeApps(buttonContainer)
 
         var topAppDrawerId: Int? = null
@@ -186,7 +186,7 @@ internal class AppManager : AppKitKoinComponent {
             appDrawer.id = View.generateViewId()
             appDrawer.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
 
-            appDrawer.setApp(app, isDarkBackground) {
+            appDrawer.setApp(app, theme == Theme.DARK) {
                 openAppActivity(context, app, autoClose = autoClose, callback = callback)
             }
             appDrawer.expand()

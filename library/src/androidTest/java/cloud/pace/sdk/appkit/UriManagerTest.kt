@@ -1,10 +1,11 @@
 package cloud.pace.sdk.appkit
 
 import androidx.test.runner.AndroidJUnit4
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.app.api.UriManagerImpl
 import cloud.pace.sdk.appkit.app.api.UriManagerImpl.Companion.PARAM_R
 import cloud.pace.sdk.appkit.app.api.UriManagerImpl.Companion.PARAM_REFERENCES
-import cloud.pace.sdk.appkit.model.Configuration
+import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.Environment
 import junit.framework.Assert.assertEquals
 import org.junit.Before
@@ -18,7 +19,7 @@ class UriManagerTest {
 
     @Before
     fun init() {
-        AppKit.configuration = Configuration("", "", "", "", false, environment = Environment.DEVELOPMENT)
+        PACECloudSDK.configuration = Configuration("", "", "", "", environment = Environment.DEVELOPMENT)
     }
 
     @Test

@@ -11,7 +11,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Message
 import android.webkit.*
-import cloud.pace.sdk.appkit.AppKit
+import cloud.pace.sdk.PACECloudSDK
 
 class AppWebViewClient(var url: String, val callback: WebClientCallback, val context: Context? = null) : WebViewClient() {
 
@@ -225,7 +225,7 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
         val url = newUrl.getQueryParameter(URL) ?: return
         val cancelUrl = newUrl.getQueryParameter(CANCEL_URL) ?: return
 
-        val customScheme = "pace.${AppKit.configuration.clientId}://redirect"
+        val customScheme = "pace.${PACECloudSDK.configuration.clientId}://redirect"
         val intent = Intent(ACTION_VIEW, Uri.parse(customScheme))
         val resolveInfo: List<ResolveInfo>? = context?.packageManager?.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)?.toList()
 

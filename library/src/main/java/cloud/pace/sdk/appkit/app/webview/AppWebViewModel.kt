@@ -9,8 +9,8 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.R
-import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.app.api.UriManager
 import cloud.pace.sdk.appkit.app.webview.AppWebViewClient.Companion.BIOMETRIC_METHOD
 import cloud.pace.sdk.appkit.app.webview.AppWebViewClient.Companion.STATE
@@ -267,9 +267,9 @@ class AppWebViewModelImpl(
     }
 
     override fun handleInvalidToken(message: String) {
-        val initialToken = AppKit.configuration.accessToken
+        val initialToken = PACECloudSDK.configuration.accessToken
         if (initialToken != null && TokenValidator.isTokenValid(initialToken)) {
-            AppKit.resetAccessToken()
+            PACECloudSDK.resetAccessToken()
             newToken.postValue(Event(initialToken))
         } else {
             sendOnTokenInvalid()
@@ -289,7 +289,7 @@ class AppWebViewModelImpl(
     private fun sendOnTokenInvalid() {
         appModel.onTokenInvalid { token ->
             if (TokenValidator.isTokenValid(token)) {
-                AppKit.setAccessToken(token)
+                PACECloudSDK.setAccessToken(token)
                 newToken.postValue(Event(token))
             } else {
                 sendOnTokenInvalid()

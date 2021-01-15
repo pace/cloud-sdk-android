@@ -3,15 +3,12 @@ package cloud.pace.sdk.appkit
 import android.location.Location
 import android.os.Handler
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.location.AppLocationManagerImpl
-import cloud.pace.sdk.appkit.model.Configuration
 import cloud.pace.sdk.appkit.utils.NoLocationFound
 import cloud.pace.sdk.appkit.utils.TestLocationProvider
 import cloud.pace.sdk.appkit.utils.TestSystemManager
-import cloud.pace.sdk.utils.CompletableFutureCompat
-import cloud.pace.sdk.utils.Environment
-import cloud.pace.sdk.utils.LocationState
-import cloud.pace.sdk.utils.SystemManager
+import cloud.pace.sdk.utils.*
 import junit.framework.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -35,7 +32,7 @@ class AppLocationManagerTest {
 
     @Before
     fun init() {
-        AppKit.configuration = Configuration("", "", "", "", false, environment = Environment.DEVELOPMENT, locationAccuracy = 150)
+        PACECloudSDK.configuration = Configuration("", "", "", "", environment = Environment.DEVELOPMENT, locationAccuracy = 150)
     }
 
     @Test

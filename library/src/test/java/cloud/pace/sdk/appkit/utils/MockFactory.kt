@@ -6,7 +6,9 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Handler
 import androidx.lifecycle.MutableLiveData
-import car.pace.cloudsdk.api.poi.LocationBasedApp
+import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
+import cloud.pace.sdk.api.poi.generated.model.LocationBasedApps
+import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppsWithRefs
 import cloud.pace.sdk.appkit.app.api.AppCloudApi
 import cloud.pace.sdk.appkit.app.api.AppRepository
 import cloud.pace.sdk.appkit.app.api.UriManager
@@ -63,8 +65,8 @@ open class TestAppLocationManager(private val location: Location? = null, privat
 open class TestAppRepository : AppRepository {
 
     override fun getAppsByUrl(context: Context, url: String, references: List<String>, completion: (Result<List<App>>) -> Unit) {}
-    override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, retry: Boolean, completion: (Result<List<App>>) -> Unit) {}
-    override fun getAllApps(context: Context, retry: Boolean, completion: (Result<List<App>>) -> Unit) {}
+    override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {}
+    override fun getAllApps(context: Context, completion: (Result<List<App>>) -> Unit) {}
     override fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit) {}
 }
 
@@ -210,9 +212,9 @@ open class TestWebClientCallback : AppWebViewClient.WebClientCallback {
 
 open class TestAppCloudApi : AppCloudApi {
 
-    override fun getAllApps(retry: Boolean, completion: (Result<Array<LocationBasedApp>?>) -> Unit) {}
-    override fun getAppByAppId(appId: String, completion: (Result<LocationBasedApp?>) -> Unit) {}
-    override fun getLocationBasedApps(latitude: Double, longitude: Double, retry: Boolean, completion: (Result<Array<LocationBasedApp>?>) -> Unit) {}
+    override fun getLocationBasedApps(latitude: Double, longitude: Double, completion: (Result<LocationBasedAppsWithRefs>) -> Unit) {}
+    override fun getAllApps(completion: (Result<LocationBasedApps>) -> Unit) {}
+    override fun getAppByAppId(appId: String, completion: (Result<LocationBasedApp>) -> Unit) {}
 }
 
 open class TestCacheModel : CacheModel {
