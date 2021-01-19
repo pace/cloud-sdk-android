@@ -129,10 +129,42 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
-                android:background="@android:color/holo_red_dark"
+                android:background="@android:color/black"
                 android:text="Reset session"
                 android:textColor="@android:color/white"
                 app:layout_constraintTop_toBottomOf="@id/registration_endpoint" />
+
+            <Button
+                android:id="@+id/show_app_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:background="@android:color/holo_red_light"
+                android:text="Show App list"
+                android:textColor="@android:color/white"
+                app:layout_constraintTop_toBottomOf="@id/reset_session" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/app_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/show_app_list"
+                tools:listitem="@layout/app_item" />
+
+            <TextView
+                android:id="@+id/empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp"
+                android:text="No apps available at the current location"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/show_app_list" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

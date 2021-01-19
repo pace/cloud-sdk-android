@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
@@ -33,6 +34,33 @@ class MainActivity : AppCompatActivity() {
     private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == Activity.RESULT_OK) {
             handleIntent(it.data)
+        }
+    }
+    private val defaultAppCallback = object : AppCallbackImpl() {
+        override fun onOpen(app: App?) {
+            appUrl = app?.url
+            Toast.makeText(this@MainActivity, "Gas station ID = ${app?.gasStationId}", Toast.LENGTH_SHORT).show()
+        }
+
+        override fun onTokenInvalid(onResult: (String) -> Unit) {
+            IDKit.refreshToken { response ->
+                (response as? Success)?.result?.let { token -> onResult(token) } ?: run {
+                    radioButtonId = R.id.radio_pending_intents
+                    authorize(appUrl)
+                }
+            }
+        }
+
+        override fun onCustomSchemeError(context: Context?, scheme: String) {
+            context ?: return
+            AlertDialog.Builder(context)
+                .setTitle("Payment method not available")
+                .setMessage("Sorry, this payment method is not supported by this app.")
+                .setNeutralButton("Close") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+                .show()
         }
     }
 
@@ -97,11 +125,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        reset_session.setOnClickListener {
-            IDKit.resetSession()
-            info_label.text = "Session reset successful"
-        }
-
         discover_configuration.setOnClickListener {
             // TODO: Replace with your issuerUri
             IDKit.discoverConfiguration("YOUR_ISSUER_URI") {
@@ -115,6 +138,32 @@ class MainActivity : AppCompatActivity() {
                         authorization_endpoint.text = it.throwable.message
                     }
                 }
+            }
+        }
+
+        reset_session.setOnClickListener {
+            IDKit.resetSession()
+            info_label.text = "Session reset successful"
+        }
+
+        val appListAdapter = AppListAdapter {
+            AppKit.openAppActivity(this, it, autoClose = false, callback = defaultAppCallback)
+        }
+        app_list.adapter = appListAdapter
+        show_app_list.setOnClickListener { button ->
+            button.isEnabled = false
+            AppKit.requestLocalApps {
+                when (it) {
+                    is Success -> {
+                        appListAdapter.entries = it.result
+                        empty_view.isVisible = it.result.isEmpty()
+                    }
+                    is Failure -> {
+                        appListAdapter.entries = emptyList()
+                        empty_view.visibility = View.VISIBLE
+                    }
+                }
+                button.isEnabled = true
             }
         }
     }
@@ -191,33 +240,7 @@ class MainActivity : AppCompatActivity() {
             if (lastLocation == null || lastLocation.distanceTo(it) > APP_DISTANCE_THRESHOLD) {
                 AppKit.requestLocalApps { completion ->
                     if (completion is Success) {
-                        AppKit.openApps(this, completion.result, root_layout, callback = object : AppCallbackImpl() {
-                            override fun onOpen(app: App?) {
-                                appUrl = app?.url
-                                Toast.makeText(this@MainActivity, "Gas station ID = ${app?.gasStationId}", Toast.LENGTH_SHORT).show()
-                            }
-
-                            override fun onTokenInvalid(onResult: (String) -> Unit) {
-                                IDKit.refreshToken { response ->
-                                    (response as? Success)?.result?.let { token -> onResult(token) } ?: run {
-                                        radioButtonId = R.id.radio_pending_intents
-                                        authorize(appUrl)
-                                    }
-                                }
-                            }
-
-                            override fun onCustomSchemeError(context: Context?, scheme: String) {
-                                context ?: return
-                                AlertDialog.Builder(context)
-                                    .setTitle("Payment method not available")
-                                    .setMessage("Sorry, this payment method is not supported by this app.")
-                                    .setNeutralButton("Close") { dialog, _ ->
-                                        dialog.dismiss()
-                                    }
-                                    .create()
-                                    .show()
-                            }
-                        })
+                        AppKit.openApps(this, completion.result, root_layout, bottomMargin = 100f, callback = defaultAppCallback)
                     }
                 }
 

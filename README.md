@@ -25,6 +25,8 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [AppActivity](#appactivity)
         + [AppWebView](#appwebview)
         + [AppDrawer](#appdrawer)
+            + [Default AppDrawer](#default-appdrawer)
+            + [Custom AppDrawer](#custom-appdrawer)
         + [Deep Linking](#deep-linking)
         + [Native login](#native-login)
         + [Removal of Apps](#removal-of-apps)
@@ -258,8 +260,8 @@ A new authorization will be required afterwards.
 ## AppKit
 ### Main features
 * Get apps at the current location or by URL
-* Shows an `AppDrawer` for each app
-* Opens the app in the `AppActivity` (recommended) or `AppWebView`
+* Shows an [AppDrawer](#appdrawer) for each app
+* Opens the app in the [AppActivity](#appactivity) (recommended) or [AppWebView](#appwebview)
 * Checks if there is an app for the given POI ID at the current location
 
 ### Setup
@@ -353,7 +355,8 @@ The *AppKit* contains a default `Activity` which can be used to display an app. 
 Moreover the *AppKit* contains a default `AppWebView`. To display an app in this WebView you have to call `AppWebView.loadApp(parent: Fragment, url: String)`. The `AppWebView`s parent needs to be a fragment as that's the needed context for the integrated `Android Biometric API`.
 
 ### AppDrawer
-The `AppDrawer` is an expandable button that can be used to display an app. It shows an icon in collapsed state and additionally a title and subtitle in expanded state. By default it will be opened in expanded mode. To fade in the button with an animation, use `appDrawer.show()`. The AppDrawer will be removed if the app is not returned on the next App check again.
+#### Default AppDrawer
+The default `AppDrawer` is an expandable button that can be used to display an app. It shows an icon in collapsed state and additionally a title and subtitle in expanded state. By default it will be opened in expanded mode. To fade in the button with an animation, use `appDrawer.show()`. The `AppDrawer` will be removed if the app is not returned on the next App check again.
 
 **_Note:_** You need to call `AppKit.requestLocalApps(...)` periodically to make sure that Apps get closed when they are not longer available. This can be done when the app comes into the foreground or the location changes.
 
@@ -371,7 +374,7 @@ AppKit.openApps(context, apps, parentLayout, callback = object : AppCallbackImpl
 ```
 
 The *AppKit* will now create an `AppDrawer` for each app in `apps` and add it to the given `parentLayout`.
-Clicking on the button opens the `AppActivity` with the app in the `AppWebView`.
+Clicking on the button opens the [AppActivity](#appactivity) with the app in the [AppWebView](#appwebview).
 
 ##### Static example
 ```xml
@@ -398,11 +401,101 @@ fun showAppDrawer(app: App) {
 }
 ```
 
+#### Custom AppDrawer
+If you don't want to use the [default AppDrawer](#default-appdrawer), you can also create your own app drawer/button. To create a custom app drawer/button you need the `App` object that you can request from the *AppKit* using the `AppKit.requestLocalApps()`, `AppKit.requestApps()` or `AppKit.fetchAppsByUrl(...)` methods. All texts are returned in the system language, if available. The app object consists of the following properties:
+```kotlin
+name: String // e.g. "PACE Connected Fueling"
+shortName: String // e.g. "Connected Fueling"
+description: String? // e.g. "Pay at the pump"
+url: String // App URL
+logo: Bitmap? // App logo e.g. from the gas station
+iconBackgroundColor: String? // App icon/logo background color e.g. #57C2E4
+textBackgroundColor: String? // App background color e.g. #222424
+textColor: String? // App text color e.g. #121414
+display: String? // Not relevant
+gasStationId: String? // Referenced gas station ID, if available
+```
+
+You can now display this data in your own views, e.g. your app drawer/button consists of a **title**, **description** and **icon** as in the following XML layout:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/custom_app_button"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:padding="16dp"
+    tools:background="@android:color/black">
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toStartOf="@id/icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="PACE Connected Fueling" />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toStartOf="@id/icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/name"
+        tools:text="Pay at the pump" />
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="64dp"
+        android:layout_height="0dp"
+        android:src="@drawable/ic_default"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+The texts and the icon of the above views can now be set programmatically. When clicking the app drawer/button the app is opened in the [AppActivity](#appactivity) via `AppKit.openAppActivity(...)`:
+```kotlin
+AppKit.requestLocalApps { app ->
+    name.text = app.name
+    description.text = app.description
+    app.textColor?.let {
+        val textColor = Color.parseColor(it) // Parses hex color string to color int
+        name.setTextColor(textColor)
+        description.setTextColor(textColor)
+    }
+
+    app.logo?.let { icon.setImageBitmap(it) }
+    app.iconBackgroundColor?.let { icon.setBackgroundColor(Color.parseColor(it)) }
+    app.textBackgroundColor?.let { itemView.setBackgroundColor(Color.parseColor(it)) }
+
+    custom_app_button.setOnClickListener {
+        AppKit.openAppActivity(context, app, autoClose = false, callback = yourAppCallback)
+    }
+}
+```
+**Note**: For a more detailed example, where the apps are displayed in a `RecyclerView`, see the `PACECloudSDK` example app.
+  
 ### Deep Linking
 Some of our services (e.g. `PayPal`) do not open the URL in the WebView, but in a Chrome Custom Tab within the app, due to security reasons. After completion of the process the user is redirected back to the WebView via deep linking. In order to set the redirect URL correctly and to ensure that the client app intercepts the deep link, the following requirements must be met:
 
 * Set `clientId` in *PACECloudSDK's* configuration during the [setup](#setup), because it is needed for the redirect URL
-* Specify the `AppActivity` as deep link intent filter in your app manifest. **`pace.${clientId}` (same `clientId` as passed in the configuration) must be passed to `android:scheme`:**
+* Specify the [AppActivity](#appactivity) as deep link intent filter in your app manifest. **`pace.${clientId}` (same `clientId` as passed in the configuration) must be passed to `android:scheme`:**
 * If the scheme is not set, the *AppKit* calls the `onCustomSchemeError(context: Context?, scheme: String)` callback
 
 ```xml
@@ -460,6 +553,6 @@ AppKit.INSTANCE.openAppActivity(context, url, true, false, new AppCallbackImpl()
 ```
 
 ### Removal of Apps
-In case you want to remove the `AppActivity`, simply call `AppKit.closeAppActivity()`.
+In case you want to remove the [AppActivity](#appactivity), simply call `AppKit.closeAppActivity()`.
 
-If you want to remove all `AppDrawer`s *and* the `AppActivity` (only if it was started with `autoClose = true`), you can call the `AppKit.closeApps(buttonContainer: ConstraintLayout)` method and pass your `ConstraintLayout` where you've added the `AppDrawer`s to (see [AppDrawer](#appdrawer)).
+If you want to remove all [AppDrawers](#appdrawer) *and* the [AppActivity](#appactivity) (only if it was started with `autoClose = true`), you can call the `AppKit.closeApps(buttonContainer: ConstraintLayout)` method and pass your `ConstraintLayout` where you've added the `AppDrawer`s to (see [AppDrawer](#appdrawer)).
