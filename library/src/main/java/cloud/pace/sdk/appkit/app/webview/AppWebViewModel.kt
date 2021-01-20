@@ -2,8 +2,10 @@ package cloud.pace.sdk.appkit.app.webview
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.location.Location
+import android.net.Uri
 import android.util.Base64
 import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
@@ -11,12 +13,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.R
-import cloud.pace.sdk.appkit.app.api.UriManager
-import cloud.pace.sdk.appkit.app.webview.AppWebViewClient.Companion.BIOMETRIC_METHOD
-import cloud.pace.sdk.appkit.app.webview.AppWebViewClient.Companion.STATE
-import cloud.pace.sdk.appkit.app.webview.AppWebViewClient.Companion.STATUS_CODE
-import cloud.pace.sdk.appkit.app.webview.AppWebViewClient.Companion.TOTP
-import cloud.pace.sdk.appkit.app.webview.AppWebViewClient.Companion.VALUE
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.location.AppLocationManager
@@ -27,6 +23,8 @@ import cloud.pace.sdk.appkit.utils.EncryptionUtils
 import cloud.pace.sdk.appkit.utils.TokenValidator
 import cloud.pace.sdk.utils.Event
 import cloud.pace.sdk.utils.Log
+import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import dev.turingcomplete.kotlinonetimepassword.HmacAlgorithm
 import dev.turingcomplete.kotlinonetimepassword.TimeBasedOneTimePasswordConfig
 import dev.turingcomplete.kotlinonetimepassword.TimeBasedOneTimePasswordGenerator
@@ -36,226 +34,82 @@ import java.util.concurrent.TimeUnit
 
 abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback {
 
-    abstract val touchEnable: LiveData<Boolean>
     abstract val url: LiveData<Event<String>>
     abstract val isInErrorState: LiveData<Event<Boolean>>
-    abstract val broadcastIntent: LiveData<Event<Intent>>
     abstract val showLoadingIndicator: LiveData<Event<Boolean>>
     abstract val biometricRequest: LiveData<Event<BiometricRequest>>
     abstract val newToken: LiveData<Event<String>>
     abstract val verifyLocationResponse: LiveData<Event<VerifyLocationResponse>>
+    abstract val isBiometricAvailable: LiveData<Event<Boolean>>
+    abstract val statusCode: LiveData<Event<StatusCodeResponse>>
+    abstract val totpResponse: LiveData<Event<TOTPResponse>>
+    abstract val secureData: LiveData<Event<Map<String, String>>>
 
     abstract fun init(url: String)
     abstract fun handleInvalidToken(message: String)
     abstract fun handleImageData(message: String)
-    abstract fun handleVerifyLocation(latitude: Double, longitude: Double, threshold: Double)
+    abstract fun handleVerifyLocation(message: String)
+    abstract fun handleClose(message: String)
+    abstract fun handleGetBiometricStatus(message: String)
+    abstract fun handleSetTOTPSecret(message: String)
+    abstract fun handleGetTOTP(message: String)
+    abstract fun handleSetSecureData(message: String)
+    abstract fun handleGetSecureData(message: String)
+    abstract fun handleDisable(message: String)
+    abstract fun handleOpenURLInNewTab(message: String)
 
-    class BiometricRequest(@StringRes val title: Int, val onSuccess: () -> Unit, val onFailure: () -> Unit)
+    class VerifyLocationRequest(val lat: Double, val lon: Double, val threshold: Double)
+    class BiometricRequest(@StringRes val title: Int, val onSuccess: () -> Unit, val onFailure: (errorCode: Int, errString: CharSequence) -> Unit)
+    class SetTOTPRequest(val secret: String, val period: Int, val digits: Int, val algorithm: String, val key: String)
+    class GetTOTPRequest(val serverTime: Int, val key: String)
+    class SetSecureDataRequest(val key: String, val value: String)
+    class GetSecureDataRequest(val key: String)
+    class DisableRequest(val until: Long)
+    class OpenURLInNewTabRequest(val url: String, val cancelUrl: String)
+    class TOTPResponse(val totp: String, val biometryMethod: String)
+
+    sealed class StatusCodeResponse(val statusCode: Int) {
+        object Success : StatusCodeResponse(StatusCode.Ok.code)
+        class Failure(val error: String, statusCode: Int) : StatusCodeResponse(statusCode)
+    }
 
     enum class VerifyLocationResponse(val value: String) {
         TRUE("true"),
         FALSE("false"),
         UNKNOWN("unknown")
     }
+
+    enum class BiometryMethod(val value: String) {
+        FINGERPRINT("fingerprint"),
+        FACE("face"),
+        OTHER("other")
+    }
 }
 
 class AppWebViewModelImpl(
+    private val context: Context,
     private val sharedPreferencesModel: SharedPreferencesModel,
-    private val uriManager: UriManager,
     private val eventManager: AppEventManager,
     private val payAuthenticationManager: PayAuthenticationManager,
     private val appModel: AppModel,
     private val appLocationManager: AppLocationManager
 ) : AppWebViewModel() {
 
-    override val touchEnable = MutableLiveData<Boolean>()
     override val url = MutableLiveData<Event<String>>()
     override val isInErrorState = MutableLiveData<Event<Boolean>>()
-    override val broadcastIntent = MutableLiveData<Event<Intent>>()
     override val showLoadingIndicator = MutableLiveData<Event<Boolean>>()
     override val biometricRequest = MutableLiveData<Event<BiometricRequest>>()
     override val newToken = MutableLiveData<Event<String>>()
     override val verifyLocationResponse = MutableLiveData<Event<VerifyLocationResponse>>()
+    override val isBiometricAvailable = MutableLiveData<Event<Boolean>>()
+    override val statusCode = MutableLiveData<Event<StatusCodeResponse>>()
+    override val totpResponse = MutableLiveData<Event<TOTPResponse>>()
+    override val secureData = MutableLiveData<Event<Map<String, String>>>()
 
-    private lateinit var initialUrl: String
+    private val gson = Gson()
 
     override fun init(url: String) {
-        initialUrl = url
-
-        // Check whether reopen url exists
-        val allStates = sharedPreferencesModel.getAppStates()
-        val appState = try {
-            allStates.first { it.url == url }
-        } catch (e: NoSuchElementException) {
-            null
-        }
-
-        val baseUrl = appState?.reopenUrl ?: initialUrl
-
-        val startUrl = when {
-            appState?.state != null -> uriManager.getURI(baseUrl, mapOf(Pair("state", appState.state)))
-            else -> baseUrl
-        }
-
-        this.url.value = Event(startUrl)
-    }
-
-    override fun close(reopenRequest: AppWebViewClient.WebClientCallback.ReopenRequest?) {
-        if (reopenRequest?.reopenUrl != null || reopenRequest?.state != null) {
-            sharedPreferencesModel.saveAppState(SharedPreferencesModel.AppState(initialUrl, reopenRequest.reopenUrl ?: initialUrl, reopenRequest.state))
-        }
-
-        if (reopenRequest == null) {
-            sharedPreferencesModel.deleteAppState(initialUrl)
-        }
-
-        eventManager.onAppDrawerChanged(initialUrl, reopenRequest?.reopenTitle, reopenRequest?.reopenSubtitle)
-
-        appModel.close(true)
-    }
-
-    override fun getBiometricStatus(redirectUri: String?, state: String?) {
-        if (redirectUri == null) return
-
-        val status = payAuthenticationManager.isFingerprintAvailable()
-        respond(redirectUri, if (status) StatusCode.Ok.code else StatusCode.NotFound.code, state)
-    }
-
-    override fun saveTotpSecret(request: AppWebViewClient.WebClientCallback.TotpSecretRequest) {
-        if (request.host == null || request.redirectUri == null) return
-
-        if (request.secret == null || request.key == null || request.algorithm == null || request.digits == null || request.period == null || stringToAlgorithm(request.algorithm) == null) {
-            respond(request.redirectUri, StatusCode.InternalError.code, request.state)
-            return
-        }
-
-        sharedPreferencesModel.putInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, request.host, request.key), request.digits)
-        sharedPreferencesModel.putInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, request.host, request.key), request.period)
-        sharedPreferencesModel.putString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, request.host, request.key), request.algorithm)
-
-        val encryptedSecret = EncryptionUtils.encrypt(request.secret)
-        sharedPreferencesModel.putString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, request.host, request.key), encryptedSecret)
-
-        respond(request.redirectUri, StatusCode.Ok.code, request.state)
-    }
-
-    override fun getTotp(host: String?, key: String?, serverTime: Long?, redirectUri: String?, state: String?) {
-        if (host == null || redirectUri == null) return
-
-        if (!payAuthenticationManager.isFingerprintAvailable()) {
-            respond(redirectUri, StatusCode.NotAllowed.code, state)
-            return
-        }
-
-        if (serverTime == null || key == null) {
-            respond(redirectUri, StatusCode.InternalError.code, state)
-            return
-        }
-
-        val encryptedSecret = sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, key))
-        val digits = sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, key))
-        val period = sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, key))
-        val algorithm = sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, key))
-
-        if (encryptedSecret == null || digits == null || period == null || algorithm == null || stringToAlgorithm(algorithm) == null) {
-            respond(redirectUri, StatusCode.NotFound.code, state)
-            return
-        }
-
-        biometricRequest.value = Event(
-            BiometricRequest(
-                R.string.biometric_totp_title,
-                onSuccess = {
-                    val secret = EncryptionUtils.decrypt(encryptedSecret)
-                    val config = TimeBasedOneTimePasswordConfig(
-                        codeDigits = digits,
-                        hmacAlgorithm = stringToAlgorithm(algorithm) ?: HmacAlgorithm.SHA1,
-                        timeStep = period.toLong(),
-                        timeStepUnit = TimeUnit.SECONDS
-                    )
-                    val timeBasedOneTimePasswordGenerator = TimeBasedOneTimePasswordGenerator(Base32().decode(secret), config)
-                    val otp = timeBasedOneTimePasswordGenerator.generate(Date(serverTime * 1000))
-
-                    val uri = uriManager.getURI(
-                        redirectUri, listOfNotNull(
-                            TOTP to otp,
-                            // the biometric lib currently doesn't tell which method was used; set "other" for consistency
-                            BIOMETRIC_METHOD to "other",
-                            if (state != null) STATE to state else null
-                        ).toMap()
-                    )
-                    url.value = Event(uri)
-                },
-                onFailure = {
-                    respond(redirectUri, StatusCode.Unauthorized.code, state)
-                })
-        )
-    }
-
-    override fun setSecureData(host: String?, key: String?, value: String?, redirectUri: String?, state: String?) {
-        if (host == null || redirectUri == null) return
-
-        if (key == null || value == null) {
-            respond(redirectUri, StatusCode.InternalError.code, state)
-            return
-        }
-
-        val preferenceKey = getSecureDataPreferenceKey(host, key)
-        val encryptedValue = EncryptionUtils.encrypt(value)
-        sharedPreferencesModel.putString(preferenceKey, encryptedValue)
-
-        respond(redirectUri, StatusCode.Ok.code, state)
-    }
-
-    override fun getSecureData(host: String?, key: String?, redirectUri: String?, state: String?) {
-        if (host == null || redirectUri == null) return
-
-        if (key == null) {
-            respond(redirectUri, StatusCode.InternalError.code, state)
-            return
-        }
-
-        if (!payAuthenticationManager.isFingerprintAvailable()) {
-            respond(redirectUri, StatusCode.NotAllowed.code, state)
-            return
-        }
-
-        val encryptedValue = sharedPreferencesModel.getString(getSecureDataPreferenceKey(host, key))
-
-        if (encryptedValue == null) {
-            respond(redirectUri, StatusCode.NotFound.code, state)
-            return
-        }
-
-        biometricRequest.value = Event(BiometricRequest(
-            R.string.biometric_secure_data_title,
-            onSuccess = {
-                val value = EncryptionUtils.decrypt(encryptedValue)
-                val uri = uriManager.getURI(redirectUri, listOfNotNull(VALUE to value, if (state != null) STATE to state else null).toMap())
-                url.value = Event(uri)
-            },
-            onFailure = {
-                respond(redirectUri, StatusCode.Unauthorized.code, state)
-            }
-        ))
-    }
-
-    override fun setDisableTime(host: String?, until: Long?) {
-        if (host == null || until == null) return
-
-        sharedPreferencesModel.putLong(getDisableTimePreferenceKey(host), until)
-        eventManager.setDisabledHost(host)
-        appModel.disable(host)
-    }
-
-    override fun openInNewTab(url: String, cancelUrl: String) {
-        appModel.openUrlInNewTab(url)
-        this.url.value = Event(cancelUrl)
-    }
-
-    override fun onCustomSchemeError(context: Context?, cancelUrl: String, scheme: String) {
-        url.value = Event(cancelUrl)
-        appModel.onCustomSchemeError(context, scheme)
+        this.url.value = Event(url)
     }
 
     override fun onSwitchErrorState(isError: Boolean, isHttpError: Boolean) {
@@ -270,9 +124,9 @@ class AppWebViewModelImpl(
         val initialToken = PACECloudSDK.configuration.accessToken
         if (initialToken != null && TokenValidator.isTokenValid(initialToken)) {
             PACECloudSDK.resetAccessToken()
-            newToken.postValue(Event(initialToken))
+            newToken.value = Event(initialToken)
         } else {
-            sendOnTokenInvalid()
+            sendOnTokenInvalid(message)
         }
     }
 
@@ -286,34 +140,225 @@ class AppWebViewModelImpl(
         }
     }
 
-    private fun sendOnTokenInvalid() {
+    private fun sendOnTokenInvalid(message: String) {
         appModel.onTokenInvalid { token ->
             if (TokenValidator.isTokenValid(token)) {
                 PACECloudSDK.setAccessToken(token)
-                newToken.postValue(Event(token))
+                newToken.value = Event(token)
             } else {
-                sendOnTokenInvalid()
+                sendOnTokenInvalid(message)
             }
         }
     }
 
-    override fun handleVerifyLocation(latitude: Double, longitude: Double, threshold: Double) {
-        appLocationManager.start { result ->
-            val targetLocation = Location("").apply {
-                this.latitude = latitude
-                this.longitude = longitude
+    override fun handleVerifyLocation(message: String) {
+        try {
+            val verifyLocationRequest = gson.fromJson(message, VerifyLocationRequest::class.java)
+
+            appLocationManager.start { result ->
+                val targetLocation = Location("").apply {
+                    latitude = verifyLocationRequest.lat
+                    longitude = verifyLocationRequest.lon
+                }
+                val value = when (result.getOrNull()?.distanceTo(targetLocation)?.let { it <= verifyLocationRequest.threshold }) {
+                    true -> Event(VerifyLocationResponse.TRUE)
+                    false -> Event(VerifyLocationResponse.FALSE)
+                    else -> Event(VerifyLocationResponse.UNKNOWN)
+                }
+                verifyLocationResponse.value = value
             }
-            verifyLocationResponse.value = when (result.getOrNull()?.distanceTo(targetLocation)?.let { it <= threshold }) {
-                true -> Event(VerifyLocationResponse.TRUE)
-                false -> Event(VerifyLocationResponse.FALSE)
-                else -> Event(VerifyLocationResponse.UNKNOWN)
-            }
+        } catch (e: JsonSyntaxException) {
+            Log.e(e, "The verifyLocation JSON $message could not be deserialized.")
+            verifyLocationResponse.value = Event(VerifyLocationResponse.UNKNOWN)
         }
     }
 
-    private fun respond(redirect: String, statusCode: Int, state: String? = null) {
-        val uri = uriManager.getURI(redirect, listOfNotNull(STATUS_CODE to statusCode.toString(), if (state != null) STATE to state else null).toMap())
-        url.value = Event(uri)
+    override fun handleClose(message: String) {
+        appModel.close(true)
+    }
+
+    override fun handleGetBiometricStatus(message: String) {
+        isBiometricAvailable.value = Event(payAuthenticationManager.isFingerprintAvailable())
+    }
+
+    override fun handleSetTOTPSecret(message: String) {
+        try {
+            val totpRequest = gson.fromJson(message, SetTOTPRequest::class.java)
+            val hmacAlgorithm = stringToAlgorithm(totpRequest.algorithm)
+
+            if (hmacAlgorithm == null) {
+                statusCode.value = Event(StatusCodeResponse.Failure("Invalid HMAC algorithm: ${totpRequest.algorithm}", StatusCode.InternalError.code))
+                return
+            }
+
+            val host = getHost()
+            if (host != null) {
+                sharedPreferencesModel.putInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, totpRequest.key), totpRequest.digits)
+                sharedPreferencesModel.putInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, totpRequest.key), totpRequest.period)
+                sharedPreferencesModel.putString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, totpRequest.key), totpRequest.algorithm)
+
+                try {
+                    val encryptedSecret = EncryptionUtils.encrypt(totpRequest.secret)
+                    sharedPreferencesModel.putString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, totpRequest.key), encryptedSecret)
+                    statusCode.value = Event(StatusCodeResponse.Success)
+                } catch (e: Exception) {
+                    statusCode.value = Event(StatusCodeResponse.Failure("Could not encrypt the TOTP secret.", StatusCode.InternalError.code))
+                }
+            } else {
+                statusCode.value = Event(StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
+            }
+        } catch (e: JsonSyntaxException) {
+            statusCode.value = Event(StatusCodeResponse.Failure("The setTOTPSecret JSON $message could not be deserialized.", StatusCode.InternalError.code))
+        }
+    }
+
+    override fun handleGetTOTP(message: String) {
+        if (!payAuthenticationManager.isFingerprintAvailable()) {
+            statusCode.value = Event(StatusCodeResponse.Failure("No biometric authentication is available or none has been set.", StatusCode.NotAllowed.code))
+            return
+        }
+
+        try {
+            val getTOTPRequest = gson.fromJson(message, GetTOTPRequest::class.java)
+            val host = getHost()
+
+            if (host != null) {
+                val encryptedSecret = sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, getTOTPRequest.key))
+                val digits = sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, getTOTPRequest.key))
+                val period = sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, getTOTPRequest.key))
+                val algorithm = sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, getTOTPRequest.key))
+
+                if (encryptedSecret == null || digits == null || period == null || algorithm == null || stringToAlgorithm(algorithm) == null) {
+                    statusCode.value = Event(StatusCodeResponse.Failure("No encrypted secret, digits, period or algorithm was found in the SharedPreferences.", StatusCode.NotFound.code))
+                    return
+                }
+
+                biometricRequest.value = Event(BiometricRequest(
+                    R.string.biometric_totp_title,
+                    onSuccess = {
+                        try {
+                            val secret = EncryptionUtils.decrypt(encryptedSecret)
+                            val config = TimeBasedOneTimePasswordConfig(
+                                codeDigits = digits,
+                                hmacAlgorithm = stringToAlgorithm(algorithm) ?: HmacAlgorithm.SHA1,
+                                timeStep = period.toLong(),
+                                timeStepUnit = TimeUnit.SECONDS
+                            )
+                            val otp = TimeBasedOneTimePasswordGenerator(Base32().decode(secret), config).generate(Date(getTOTPRequest.serverTime * 1000L))
+
+                            // the biometric lib currently doesn't tell which method was used; set "other" for consistency
+                            totpResponse.value = Event(TOTPResponse(otp, BiometryMethod.OTHER.value))
+                        } catch (e: Exception) {
+                            statusCode.value = Event(StatusCodeResponse.Failure("Could not decrypt the encrypted TOTP secret.", StatusCode.InternalError.code))
+                        }
+                    },
+                    onFailure = { errorCode, errString ->
+                        statusCode.value = Event(StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", StatusCode.Unauthorized.code))
+
+                    }
+                ))
+            } else {
+                statusCode.value = Event(StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
+            }
+        } catch (e: JsonSyntaxException) {
+            statusCode.value = Event(StatusCodeResponse.Failure("The getTOTP JSON $message could not be deserialized.", StatusCode.InternalError.code))
+        }
+    }
+
+    override fun handleSetSecureData(message: String) {
+        try {
+            val host = getHost()
+            if (host != null) {
+                val setSecureDataRequest = gson.fromJson(message, SetSecureDataRequest::class.java)
+                val preferenceKey = getSecureDataPreferenceKey(host, setSecureDataRequest.key)
+                val encryptedValue = EncryptionUtils.encrypt(setSecureDataRequest.value)
+                sharedPreferencesModel.putString(preferenceKey, encryptedValue)
+                statusCode.value = Event(StatusCodeResponse.Success)
+            } else {
+                statusCode.value = Event(StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
+            }
+        } catch (e: JsonSyntaxException) {
+            statusCode.value = Event(StatusCodeResponse.Failure("The setSecureData JSON $message could not be deserialized.", StatusCode.InternalError.code))
+        } catch (e: Exception) {
+            statusCode.value = Event(StatusCodeResponse.Failure("Could not encrypt the secure data value.", StatusCode.InternalError.code))
+        }
+    }
+
+    override fun handleGetSecureData(message: String) {
+        if (!payAuthenticationManager.isFingerprintAvailable()) {
+            statusCode.value = Event(StatusCodeResponse.Failure("No biometric authentication is available or none has been set.", StatusCode.NotAllowed.code))
+            return
+        }
+
+        try {
+            val host = getHost()
+            if (host != null) {
+                val getSecureDataRequest = gson.fromJson(message, GetSecureDataRequest::class.java)
+                val preferenceKey = getSecureDataPreferenceKey(host, getSecureDataRequest.key)
+                val encryptedValue = sharedPreferencesModel.getString(preferenceKey)
+                if (encryptedValue == null) {
+                    statusCode.value = Event(StatusCodeResponse.Failure("No encrypted value with the key $preferenceKey was found in the SharedPreferences.", StatusCode.NotFound.code))
+                    return
+                }
+
+                biometricRequest.value = Event(BiometricRequest(
+                    R.string.biometric_secure_data_title,
+                    onSuccess = {
+                        try {
+                            val value = EncryptionUtils.decrypt(encryptedValue)
+                            secureData.value = Event(mapOf("value" to value))
+                        } catch (e: Exception) {
+                            statusCode.value = Event(StatusCodeResponse.Failure("Could not decrypt the encrypted secure data value.", StatusCode.InternalError.code))
+                        }
+                    },
+                    onFailure = { errorCode, errString ->
+                        statusCode.value = Event(StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", StatusCode.Unauthorized.code))
+                    }
+                ))
+            } else {
+                statusCode.value = Event(StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
+            }
+        } catch (e: JsonSyntaxException) {
+            statusCode.value = Event(StatusCodeResponse.Failure("The getSecureData JSON $message could not be deserialized.", StatusCode.InternalError.code))
+        }
+    }
+
+    override fun handleDisable(message: String) {
+        try {
+            val disableRequest = gson.fromJson(message, DisableRequest::class.java)
+            val host = getHost()
+            if (host != null) {
+                sharedPreferencesModel.putLong(getDisableTimePreferenceKey(host), disableRequest.until)
+                eventManager.setDisabledHost(host)
+                appModel.disable(host)
+                statusCode.value = Event(StatusCodeResponse.Success)
+            } else {
+                statusCode.value = Event(StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
+            }
+        } catch (e: JsonSyntaxException) {
+            statusCode.value = Event(StatusCodeResponse.Failure("The disable JSON $message could not be deserialized.", StatusCode.InternalError.code))
+        } finally {
+            handleClose(message)
+        }
+    }
+
+    override fun handleOpenURLInNewTab(message: String) {
+        try {
+            val openURLInNewTabRequest = gson.fromJson(message, OpenURLInNewTabRequest::class.java)
+            val customScheme = "pace.${PACECloudSDK.configuration.clientId}://redirect"
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(customScheme))
+            val resolveInfo = context.packageManager?.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)?.toList()
+
+            url.value = Event(openURLInNewTabRequest.cancelUrl)
+
+            if (!resolveInfo.isNullOrEmpty()) {
+                appModel.openUrlInNewTab(openURLInNewTabRequest.url)
+            } else {
+                appModel.onCustomSchemeError(context, customScheme)
+            }
+        } catch (e: JsonSyntaxException) {
+            Log.e(e, "The openURLInNewTab JSON $message could not be deserialized.")
+        }
     }
 
     private fun stringToAlgorithm(algorithm: String): HmacAlgorithm? {
@@ -324,6 +369,8 @@ class AppWebViewModelImpl(
             else -> null
         }
     }
+
+    private fun getHost() = url.value?.peekContent()?.let { Uri.parse(it).host }
 
     companion object {
 

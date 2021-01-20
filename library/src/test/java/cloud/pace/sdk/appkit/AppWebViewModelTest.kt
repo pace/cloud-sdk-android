@@ -1,10 +1,14 @@
 package cloud.pace.sdk.appkit
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import android.content.Context
+import android.os.Build
 import androidx.lifecycle.Observer
-import cloud.pace.sdk.appkit.app.webview.AppWebViewClient
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModel
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModelImpl
+import cloud.pace.sdk.appkit.app.webview.AppWebViewModelImpl.Companion.getDisableTimePreferenceKey
+import cloud.pace.sdk.appkit.app.webview.AppWebViewModelImpl.Companion.getTotpSecretPreferenceKey
+import cloud.pace.sdk.appkit.app.webview.StatusCode
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.communication.AppModelImpl
 import cloud.pace.sdk.appkit.location.AppLocationManager
@@ -13,52 +17,46 @@ import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.utils.EncryptionUtils
 import cloud.pace.sdk.appkit.utils.TestAppEventManager
-import cloud.pace.sdk.appkit.utils.TestUriUtils
+import cloud.pace.sdk.utils.Configuration
+import cloud.pace.sdk.utils.Environment
 import cloud.pace.sdk.utils.Event
-import cloud.pace.sdk.utils.random
-import com.nhaarman.mockitokotlin2.anyOrNull
+import com.google.gson.Gson
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.slot
 import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertTrue
-import org.junit.Assert
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
-import org.mockito.junit.MockitoJUnitRunner
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-@RunWith(MockitoJUnitRunner::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [Build.VERSION_CODES.O_MR1])
 class AppWebViewModelTest {
 
-    @get:Rule
-    val rule = InstantTaskExecutorRule()
-
+    private val context = mock(Context::class.java)
     private val sharedPreferencesModel = mock(SharedPreferencesModel::class.java)
     private val payManager = mock(PayAuthenticationManager::class.java)
-    private var onAppDrawerChangedCalled = false
     private var disabled = ""
+    private val clientId = "c4b48d7a-5b36-11eb-ae93-0242ac130002"
+    private val host = "app.test.net"
+    private val url = "https://$host"
     private val eventManager = object : TestAppEventManager() {
-        override fun onAppDrawerChanged(url: String, title: String?, subtitle: String?) {
-            onAppDrawerChangedCalled = true
-        }
-
         override fun setDisabledHost(host: String) {
-            disabled = "fueling-app"
+            disabled = "app.test.net"
         }
     }
-    private val uriUtils = TestUriUtils()
     private val appCallback = mock(AppCallbackImpl::class.java)
     private val appModel = AppModelImpl()
-    private val viewModel = AppWebViewModelImpl(sharedPreferencesModel, uriUtils, eventManager, payManager, appModel, mock(AppLocationManager::class.java))
+    private val viewModel = AppWebViewModelImpl(context, sharedPreferencesModel, eventManager, payManager, appModel, mock(AppLocationManager::class.java))
 
     @Before
     fun init() {
+        PACECloudSDK.configuration = Configuration("", "", "", "", clientId = clientId, environment = Environment.DEVELOPMENT)
+
         appModel.callback = appCallback
-        onAppDrawerChangedCalled = false
         disabled = ""
 
         // mock encryption so that it does not do anything
@@ -67,115 +65,79 @@ class AppWebViewModelTest {
         val slot2 = slot<String>()
         every { EncryptionUtils.encrypt(capture(slot)) } answers { slot.captured }
         every { EncryptionUtils.decrypt(capture(slot2)) } answers { slot2.captured }
+
+        viewModel.init(url)
     }
 
     @Test
     fun `open app with passed URL`() {
-        val url = "https://app.test.net"
-        viewModel.init(url)
-
         assertEquals(url, viewModel.url.value?.getContentIfNotHandled())
     }
 
     @Test
-    fun `reopen app with stored state`() {
-        val url = "https://app.test.net"
-        val reopenUrl = "https://app.continue.net"
-        val state = String.random(8)
-
-        `when`(sharedPreferencesModel.getAppStates()).thenReturn(listOf(SharedPreferencesModel.AppState(url, reopenUrl, state)))
-        viewModel.init(url)
-
-        assertEquals("$reopenUrl/state=$state", viewModel.url.value?.getContentIfNotHandled())
-    }
-
-    @Test
-    fun `close without reopening request`() {
-        val url = "https://app.test.net"
-        viewModel.init(url)
-
-        viewModel.close(null)
+    fun `close app`() {
+        viewModel.handleClose("")
 
         verify(appCallback, times(1)).onClose()
-        verify(sharedPreferencesModel, times(0)).saveAppState(anyOrNull())
-        verify(sharedPreferencesModel, times(1)).deleteAppState(url)
     }
 
     @Test
-    fun `close with reopening request`() {
-        val url = "https://app.test.net"
-        viewModel.init(url)
-
-        val reopenUrl = "https://app.continue.net"
-        val state = String.random(8)
-        val title = "Reopen"
-        val subtitle = "Continue"
-        viewModel.close(AppWebViewClient.WebClientCallback.ReopenRequest(reopenUrl, state, title, subtitle))
-
-        verify(appCallback, times(1)).onClose()
-        assertTrue(onAppDrawerChangedCalled)
-        verify(sharedPreferencesModel, times(1)).saveAppState(anyOrNull())
-    }
-
-    @Test
-    fun `App loading successful`() {
-        viewModel.onSwitchErrorState(false, false)
+    fun `app loading successful`() {
+        viewModel.onSwitchErrorState(isError = false, isHttpError = false)
 
         assertEquals(false, viewModel.isInErrorState.value?.getContentIfNotHandled())
     }
 
     @Test
-    fun `App loading failed`() {
-        viewModel.onSwitchErrorState(true, false)
+    fun `app loading failed`() {
+        viewModel.onSwitchErrorState(isError = true, isHttpError = false)
 
         assertEquals(true, viewModel.isInErrorState.value?.getContentIfNotHandled())
     }
 
     @Test
     fun `has biometrics`() {
-        val redirectUri = "https://app.pay.redirect.net"
-        val state = String.random(8)
-
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
 
-        viewModel.getBiometricStatus(redirectUri, state)
+        viewModel.handleGetBiometricStatus("")
 
-        assertEquals("$redirectUri/status_code=200&state=$state", viewModel.url.value?.getContentIfNotHandled())
+        assertEquals(true, viewModel.isBiometricAvailable.value?.getContentIfNotHandled())
     }
 
     @Test
     fun `does not have biometrics`() {
-        val redirectUri = "https://app.pay.redirect.net"
-        val state = String.random(8)
-
         `when`(payManager.isFingerprintAvailable()).thenReturn(false)
 
-        viewModel.getBiometricStatus(redirectUri, state)
+        viewModel.handleGetBiometricStatus("")
 
-        assertEquals("$redirectUri/status_code=404&state=$state", viewModel.url.value?.getContentIfNotHandled())
+        assertEquals(false, viewModel.isBiometricAvailable.value?.getContentIfNotHandled())
     }
 
     @Test
     fun `secret is saved`() {
-        val host = "fueling-app"
-        val redirectUri = "https://app.pay.redirect.net"
-        val state = String.random(8)
+        val secret = "KRUGS4ZANFZSAYJAOZSXE6JAONSWG4TFOQQHGZLDOJSXIIJB"
+        val key = "fueling-app"
+        val period = 3600
+        val digits = 14
+        val algorithm = "SHA1"
 
-        viewModel.saveTotpSecret(AppWebViewClient.WebClientCallback.TotpSecretRequest(host, "secret", "foo", 30, 8, "SHA1", redirectUri, state))
+        val totpRequest = Gson().toJson(AppWebViewModel.SetTOTPRequest(secret, period, digits, algorithm, key))
+        viewModel.handleSetTOTPSecret(totpRequest)
 
-        verify(sharedPreferencesModel, times(1)).putString(ArgumentMatchers.contains("foo"), ArgumentMatchers.contains("secret"))
-        verify(sharedPreferencesModel, times(1)).putString(ArgumentMatchers.contains(host), ArgumentMatchers.contains("secret"))
-        verify(sharedPreferencesModel, times(1)).putString(ArgumentMatchers.anyString(), ArgumentMatchers.contains("SHA1"))
-        verify(sharedPreferencesModel, times(1)).putInt(ArgumentMatchers.anyString(), ArgumentMatchers.intThat { it == 30 })
-        verify(sharedPreferencesModel, times(1)).putInt(ArgumentMatchers.anyString(), ArgumentMatchers.intThat { it == 8 })
-        assertEquals("$redirectUri/status_code=200&state=$state", viewModel.url.value?.getContentIfNotHandled())
+        verify(sharedPreferencesModel, times(1)).putString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, key), secret)
+        verify(sharedPreferencesModel, times(1)).putInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, key), digits)
+        verify(sharedPreferencesModel, times(1)).putInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, key), period)
+        verify(sharedPreferencesModel, times(1)).putString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, key), algorithm)
+        assertEquals(AppWebViewModel.StatusCodeResponse.Success, viewModel.statusCode.value?.getContentIfNotHandled())
     }
 
     @Test
     fun `secret is fetched`() {
-        val host = "fueling-app"
-        val redirectUri = "https://app.pay.redirect.net"
-        val state = String.random(8)
+        val secret = "KRUGS4ZANFZSAYJAOZSXE6JAONSWG4TFOQQHGZLDOJSXIIJB"
+        val key = "fueling-app"
+        val period = 3600
+        val digits = 14
+        val algorithm = "SHA1"
 
         val observer: Observer<Event<AppWebViewModel.BiometricRequest>> = Observer {
             val event = it.getContentIfNotHandled() ?: return@Observer
@@ -184,51 +146,56 @@ class AppWebViewModelTest {
         viewModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
-        `when`(sharedPreferencesModel.getString(ArgumentMatchers.contains(SharedPreferencesImpl.SECRET), any())).thenReturn("secret")
-        `when`(sharedPreferencesModel.getString(ArgumentMatchers.contains(SharedPreferencesImpl.ALGORITHM), any())).thenReturn("SHA1")
-        `when`(sharedPreferencesModel.getInt(ArgumentMatchers.contains(SharedPreferencesImpl.DIGITS), any())).thenReturn(8)
-        `when`(sharedPreferencesModel.getInt(ArgumentMatchers.contains(SharedPreferencesImpl.PERIOD), any())).thenReturn(30)
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, key))).thenReturn(secret)
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, key))).thenReturn(algorithm)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, key))).thenReturn(digits)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, key))).thenReturn(period)
 
-        viewModel.getTotp(host, "foo", 0, redirectUri, state)
+        val totpRequest = Gson().toJson(AppWebViewModel.GetTOTPRequest(1611158191, key))
+        viewModel.handleGetTOTP(totpRequest)
 
-        verify(sharedPreferencesModel, times(2)).getString(ArgumentMatchers.contains("foo"), any())
-        verify(sharedPreferencesModel, times(2)).getInt(ArgumentMatchers.contains("foo"), any())
-        assertEquals("$redirectUri/totp=48857148&biometric_method=other&state=$state", viewModel.url.value?.getContentIfNotHandled())
+        assertEquals("00000865350714", viewModel.totpResponse.value?.peekContent()?.totp)
+        assertEquals(AppWebViewModel.BiometryMethod.OTHER.value, viewModel.totpResponse.value?.peekContent()?.biometryMethod)
 
         viewModel.biometricRequest.removeObserver(observer)
     }
 
     @Test
     fun `biometric authentication failed`() {
-        val host = "fueling-app"
-        val redirectUri = "https://app.pay.redirect.net"
-        val state = String.random(8)
+        val secret = "KRUGS4ZANFZSAYJAOZSXE6JAONSWG4TFOQQHGZLDOJSXIIJB"
+        val key = "fueling-app"
+        val period = 3600
+        val digits = 14
+        val algorithm = "SHA1"
+        val errorCode = 500
+        val errString = "What a terrible failure!"
 
         val observer: Observer<Event<AppWebViewModel.BiometricRequest>> = Observer {
             val event = it.getContentIfNotHandled() ?: return@Observer
-            event.onFailure()
+            event.onFailure(errorCode, errString)
         }
         viewModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
-        `when`(sharedPreferencesModel.getString(ArgumentMatchers.contains(SharedPreferencesImpl.SECRET), any())).thenReturn("secret")
-        `when`(sharedPreferencesModel.getString(ArgumentMatchers.contains(SharedPreferencesImpl.ALGORITHM), any())).thenReturn("SHA1")
-        `when`(sharedPreferencesModel.getInt(ArgumentMatchers.contains(SharedPreferencesImpl.DIGITS), any())).thenReturn(8)
-        `when`(sharedPreferencesModel.getInt(ArgumentMatchers.contains(SharedPreferencesImpl.PERIOD), any())).thenReturn(30)
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, key))).thenReturn(secret)
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, key))).thenReturn(algorithm)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, key))).thenReturn(digits)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, key))).thenReturn(period)
 
-        viewModel.getTotp(host, "foo", 0, redirectUri, state)
+        val totpRequest = Gson().toJson(AppWebViewModel.GetTOTPRequest(1611158191, key))
+        viewModel.handleGetTOTP(totpRequest)
 
-        assertEquals("$redirectUri/status_code=401&state=$state", viewModel.url.value?.getContentIfNotHandled())
+        assertEquals(
+            "Biometric authentication failed: errorCode was $errorCode, errString was $errString",
+            (viewModel.statusCode.value?.peekContent() as? AppWebViewModel.StatusCodeResponse.Failure)?.error
+        )
+        assertEquals(StatusCode.Unauthorized.code, viewModel.statusCode.value?.peekContent()?.statusCode)
 
         viewModel.biometricRequest.removeObserver(observer)
     }
 
     @Test
     fun `secret exists but biometry not available`() {
-        val host = "fueling-app"
-        val redirectUri = "https://app.pay.redirect.net"
-        val state = String.random(8)
-
         val observer: Observer<Event<AppWebViewModel.BiometricRequest>> = Observer {
             val event = it.getContentIfNotHandled() ?: return@Observer
             event.onSuccess()
@@ -237,20 +204,21 @@ class AppWebViewModelTest {
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(false)
 
-        viewModel.getTotp(host, "foo", 0, redirectUri, state)
+        val totpRequest = Gson().toJson(AppWebViewModel.GetTOTPRequest(1611158191, "fueling-app"))
+        viewModel.handleGetTOTP(totpRequest)
 
-        verify(sharedPreferencesModel, times(0)).getString(ArgumentMatchers.contains("foo"), any())
-        verify(sharedPreferencesModel, times(0)).getInt(ArgumentMatchers.contains("foo"), any())
-        assertEquals("$redirectUri/status_code=405&state=$state", viewModel.url.value?.getContentIfNotHandled())
+        assertEquals("No biometric authentication is available or none has been set.", (viewModel.statusCode.value?.peekContent() as? AppWebViewModel.StatusCodeResponse.Failure)?.error)
+        assertEquals(StatusCode.NotAllowed.code, viewModel.statusCode.value?.peekContent()?.statusCode)
 
         viewModel.biometricRequest.removeObserver(observer)
     }
 
     @Test
     fun `secret not found`() {
-        val host = "fueling-app"
-        val redirectUri = "https://app.pay.redirect.net"
-        val state = String.random(8)
+        val key = "fueling-app"
+        val period = 3600
+        val digits = 14
+        val algorithm = "SHA1"
 
         val observer: Observer<Event<AppWebViewModel.BiometricRequest>> = Observer {
             val event = it.getContentIfNotHandled() ?: return@Observer
@@ -259,35 +227,39 @@ class AppWebViewModelTest {
         viewModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
-        `when`(sharedPreferencesModel.getString(ArgumentMatchers.contains(SharedPreferencesImpl.SECRET), any())).thenReturn(null)
-        `when`(sharedPreferencesModel.getString(ArgumentMatchers.contains(SharedPreferencesImpl.ALGORITHM), any())).thenReturn("SHA1")
-        `when`(sharedPreferencesModel.getInt(ArgumentMatchers.contains(SharedPreferencesImpl.DIGITS), any())).thenReturn(8)
-        `when`(sharedPreferencesModel.getInt(ArgumentMatchers.contains(SharedPreferencesImpl.PERIOD), any())).thenReturn(30)
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, key))).thenReturn(null)
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, key))).thenReturn(algorithm)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, key))).thenReturn(digits)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, key))).thenReturn(period)
 
-        viewModel.getTotp(host, "foo", 0, redirectUri, state)
+        val totpRequest = Gson().toJson(AppWebViewModel.GetTOTPRequest(1611158191, key))
+        viewModel.handleGetTOTP(totpRequest)
 
-        assertEquals("$redirectUri/status_code=404&state=$state", viewModel.url.value?.getContentIfNotHandled())
+        assertEquals(
+            "No encrypted secret, digits, period or algorithm was found in the SharedPreferences.",
+            (viewModel.statusCode.value?.peekContent() as? AppWebViewModel.StatusCodeResponse.Failure)?.error
+        )
+        assertEquals(StatusCode.NotFound.code, viewModel.statusCode.value?.peekContent()?.statusCode)
 
         viewModel.biometricRequest.removeObserver(observer)
     }
 
     @Test
     fun `save secure data`() {
-        val host = "fueling-app"
-        val redirectUri = "https://app.pay.redirect.net"
-        val state = String.random(8)
+        val key = "fueling-app"
+        val value = "encryptedValue"
 
-        viewModel.setSecureData(host, "foo", "bar", redirectUri, state)
+        val secureDataRequest = Gson().toJson(AppWebViewModel.SetSecureDataRequest(key, value))
+        viewModel.handleSetSecureData(secureDataRequest)
 
-        verify(sharedPreferencesModel, times(1)).putString(ArgumentMatchers.contains("foo"), ArgumentMatchers.contains("bar"))
-        assertEquals("$redirectUri/status_code=200&state=$state", viewModel.url.value?.getContentIfNotHandled())
+        verify(sharedPreferencesModel, times(1)).putString(AppWebViewModelImpl.getSecureDataPreferenceKey(host, key), value)
+        assertEquals(AppWebViewModel.StatusCodeResponse.Success, viewModel.statusCode.value?.getContentIfNotHandled())
     }
 
     @Test
     fun `get secure data`() {
-        val host = "fueling-app"
-        val redirectUri = "https://app.pay.redirect.net"
-        val state = String.random(8)
+        val key = "fueling-app"
+        val value = "encryptedValue"
 
         val observer: Observer<Event<AppWebViewModel.BiometricRequest>> = Observer {
             val event = it.getContentIfNotHandled() ?: return@Observer
@@ -296,26 +268,24 @@ class AppWebViewModelTest {
         viewModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
-        `when`(sharedPreferencesModel.getString(ArgumentMatchers.contains(SharedPreferencesImpl.SECURE_DATA), any())).thenReturn("bar")
+        `when`(sharedPreferencesModel.getString(AppWebViewModelImpl.getSecureDataPreferenceKey(host, key))).thenReturn(value)
 
-        viewModel.getSecureData(host, "foo", redirectUri, state)
+        viewModel.handleGetSecureData(Gson().toJson(mapOf("key" to key)))
 
-        verify(sharedPreferencesModel).getString(ArgumentMatchers.contains("foo"), any())
-        verify(sharedPreferencesModel).getString(ArgumentMatchers.contains(host), any())
-        assertEquals("$redirectUri/value=bar&state=$state", viewModel.url.value?.getContentIfNotHandled())
+        assertEquals(mapOf("value" to value), viewModel.secureData.value?.getContentIfNotHandled())
 
         viewModel.biometricRequest.removeObserver(observer)
     }
 
     @Test
     fun `set disable timestamp`() {
-        val host = "fueling-app"
         val until = 1597143588148L
 
-        viewModel.setDisableTime(host, until)
+        viewModel.handleDisable(Gson().toJson(mapOf("until" to until)))
 
-        verify(sharedPreferencesModel, times(1)).putLong(ArgumentMatchers.contains(host), ArgumentMatchers.anyLong())
-        Assert.assertEquals(host, disabled)
+        verify(sharedPreferencesModel, times(1)).putLong(getDisableTimePreferenceKey(host), until)
+        assertEquals(host, disabled)
+        assertEquals(AppWebViewModel.StatusCodeResponse.Success, viewModel.statusCode.value?.getContentIfNotHandled())
     }
 
     @Test
@@ -323,7 +293,10 @@ class AppWebViewModelTest {
         val redirectUri = "https://app.pay.redirect.net"
         val cancelUrl = "https://cancel.url.net"
 
-        viewModel.openInNewTab(redirectUri, cancelUrl)
+        val openURLInNewTabRequest = Gson().toJson(AppWebViewModel.OpenURLInNewTabRequest(redirectUri, cancelUrl))
+        viewModel.handleOpenURLInNewTab(openURLInNewTabRequest)
+
         assertEquals(cancelUrl, viewModel.url.value?.getContentIfNotHandled())
+        verify(appCallback, times(1)).onCustomSchemeError(context, "pace.$clientId://redirect")
     }
 }

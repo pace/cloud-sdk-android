@@ -3,15 +3,11 @@ package cloud.pace.sdk
 import android.content.Context
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.appkit.AppKit
-import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
-import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.KoinConfig
-import org.koin.core.inject
 
-object PACECloudSDK : CloudSDKKoinComponent {
+object PACECloudSDK {
 
-    private val sharedPreferencesModel: SharedPreferencesModel by inject()
     internal lateinit var configuration: Configuration
     var additionalQueryParams: Map<String, String> = mapOf()
 
@@ -28,7 +24,6 @@ object PACECloudSDK : CloudSDKKoinComponent {
         AppKit.locationAccuracy = configuration.locationAccuracy
         KoinConfig.setupCloudSDK(context, configuration.environment, configuration.apiKey)
         AppKit.updateUserAgent()
-        sharedPreferencesModel.deleteAllAppStates()
     }
 
     /**

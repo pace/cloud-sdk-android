@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
 import cloud.pace.sdk.R
-import cloud.pace.sdk.appkit.app.webview.AppWebViewClient
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import kotlinx.android.synthetic.main.fragment_app.*
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -25,7 +24,7 @@ class AppFragment : Fragment(), CloudSDKKoinComponent {
         super.onViewCreated(view, savedInstanceState)
 
         val url = activity?.intent?.extras?.getString(AppActivity.APP_URL)
-            ?: activity?.intent?.data?.getQueryParameter(AppWebViewClient.TO)
+            ?: activity?.intent?.data?.getQueryParameter(AppActivity.TO)
             ?: throw RuntimeException("Missing app URL")
 
         val autoClose = activity?.intent?.extras?.getBoolean(AppActivity.AUTO_CLOSE) ?: true

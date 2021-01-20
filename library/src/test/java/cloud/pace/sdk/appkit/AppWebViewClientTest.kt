@@ -10,8 +10,8 @@ import android.webkit.WebView
 import cloud.pace.sdk.appkit.app.webview.AppWebViewClient
 import cloud.pace.sdk.appkit.utils.TestWebClientCallback
 import cloud.pace.sdk.utils.CompletableFutureCompat
-import cloud.pace.sdk.utils.random
-import junit.framework.Assert.*
+import junit.framework.Assert.assertFalse
+import junit.framework.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.`when`
@@ -25,69 +25,6 @@ import java.util.concurrent.TimeUnit
 class AppWebViewClientTest {
 
     private val startUrl = "https://app.test"
-
-    @Test
-    fun `intercept close request`() {
-        val closeFuture = CompletableFutureCompat<AppWebViewClient.WebClientCallback.ReopenRequest?>()
-        val callback = object : TestWebClientCallback() {
-            override fun close(reopenRequest: AppWebViewClient.WebClientCallback.ReopenRequest?) {
-                closeFuture.complete(reopenRequest)
-            }
-
-            override fun onLoadingChanged(isLoading: Boolean) {}
-        }
-
-        val webViewClient = AppWebViewClient(startUrl, callback)
-        val request = mock(WebResourceRequest::class.java)
-        val uri = mock(Uri::class.java)
-        val webView = mock(WebView::class.java)
-        `when`(uri.toString()).thenReturn("pacepwasdk://action/close")
-        `when`(request.url).thenReturn(uri)
-        `when`(webView.url).thenReturn("https://www.pace.car")
-
-        webViewClient.shouldOverrideUrlLoading(webView, request)
-
-        val reopenRequest = closeFuture.get()
-        assertNull(reopenRequest)
-    }
-
-    @Test
-    fun `intercept minimize request`() {
-        val reopenUrl = "https://app.test.reopen"
-        val state = String.random(8)
-        val reopenTitle = "Continue app"
-        val reopenSubtitle = "Open to continue"
-
-        val closeFuture = CompletableFutureCompat<AppWebViewClient.WebClientCallback.ReopenRequest?>()
-        val callback = object : TestWebClientCallback() {
-            override fun close(reopenRequest: AppWebViewClient.WebClientCallback.ReopenRequest?) {
-                closeFuture.complete(reopenRequest)
-            }
-
-            override fun onLoadingChanged(isLoading: Boolean) {}
-        }
-
-        val webViewClient = AppWebViewClient(startUrl, callback)
-        val request = mock(WebResourceRequest::class.java)
-        val uri = mock(Uri::class.java)
-        val webView = mock(WebView::class.java)
-        `when`(uri.toString()).thenReturn("pacepwasdk://action/close?reopen_url=$reopenUrl&state=$state&reopen_title=$reopenTitle&reopen_subtitle=$reopenSubtitle")
-        `when`(uri.getQueryParameter(AppWebViewClient.REOPEN_URL)).thenReturn(reopenUrl)
-        `when`(uri.getQueryParameter(AppWebViewClient.STATE)).thenReturn(state)
-        `when`(uri.getQueryParameter(AppWebViewClient.REOPEN_TITLE)).thenReturn(reopenTitle)
-        `when`(uri.getQueryParameter(AppWebViewClient.REOPEN_SUBTITLE)).thenReturn(reopenSubtitle)
-        `when`(request.url).thenReturn(uri)
-        `when`(webView.url).thenReturn("https://www.pace.car")
-
-        webViewClient.shouldOverrideUrlLoading(webView, request)
-
-        val reopenRequest = closeFuture.get()
-        assertNotNull(reopenRequest)
-        assertEquals(reopenUrl, reopenRequest?.reopenUrl)
-        assertEquals(state, reopenRequest?.state)
-        assertEquals(reopenTitle, reopenRequest?.reopenTitle)
-        assertEquals(reopenSubtitle, reopenRequest?.reopenSubtitle)
-    }
 
     @Test
     fun `intercept network error`() {

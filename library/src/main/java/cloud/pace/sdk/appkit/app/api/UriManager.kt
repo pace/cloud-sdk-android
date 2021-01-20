@@ -8,7 +8,6 @@ import java.util.regex.Pattern
 interface UriManager {
 
     fun getStartUrls(baseUrl: String, manifestUrl: String, sdkStartUrl: String?, references: List<String>?): Map<String?, String>
-    fun getURI(baseUrl: String, parameters: Map<String, String>): String
     fun buildUrl(baseUrl: String, path: String): String
 }
 
@@ -49,14 +48,6 @@ class UriManagerImpl : UriManager {
     override fun buildUrl(baseUrl: String, path: String): String {
         val baseUri = Uri.parse(baseUrl).buildUpon()
         return baseUri.appendPath(path).build().toString()
-    }
-
-    override fun getURI(baseUrl: String, parameters: Map<String, String>): String {
-        val uriBuilder = Uri.parse(baseUrl).buildUpon()
-        for (parameter in parameters) {
-            uriBuilder.appendQueryParameter(parameter.key, parameter.value)
-        }
-        return uriBuilder.build().toString()
     }
 
     companion object {
