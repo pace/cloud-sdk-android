@@ -20,6 +20,7 @@ import retrofit2.http.*
 import java.util.*
 import cloud.pace.sdk.api.API.toIso8601
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import cloud.pace.sdk.poikit.utils.InterceptorUtils
 
 interface CreateAppService {
 
@@ -29,20 +30,9 @@ interface CreateAppService {
     ): Call<LocationBasedApp>
 }
 
-
 private val service: CreateAppService by lazy {
     Retrofit.Builder()
-        .client(OkHttpClient.Builder().addInterceptor {
-            val builder = it.request()
-                .newBuilder()
-                .header("API-Key", API.apiKey)
-
-            API.additionalHeaders.forEach { header ->
-                builder.header(header.key, header.value)
-            }
-
-            it.proceed(builder.build())
-        }.build())
+        .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(null, null)).build())
         .baseUrl(API.baseUrl)
             .addConverterFactory(
                 JsonApiConverterFactory.create(

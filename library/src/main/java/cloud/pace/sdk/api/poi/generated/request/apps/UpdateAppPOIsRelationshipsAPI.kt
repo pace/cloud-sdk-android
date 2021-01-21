@@ -20,6 +20,7 @@ import retrofit2.http.*
 import java.util.*
 import cloud.pace.sdk.api.API.toIso8601
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import cloud.pace.sdk.poikit.utils.InterceptorUtils
 
 interface UpdateAppPOIsRelationshipsService {
 
@@ -30,22 +31,9 @@ interface UpdateAppPOIsRelationshipsService {
     ): Call<List<AppPOIsRelationships>>
 }
 
-
 private val service: UpdateAppPOIsRelationshipsService by lazy {
     Retrofit.Builder()
-        .client(OkHttpClient.Builder().addInterceptor {
-            val builder = it.request()
-                .newBuilder()
-                .header("Accept", "application/vnd.api+json")
-                .header("Content-Type", "application/vnd.api+json")
-                .header("API-Key", API.apiKey)
-
-            API.additionalHeaders.forEach { header ->
-                builder.header(header.key, header.value)
-            }
-
-            it.proceed(builder.build())
-        }.build())
+        .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
         .baseUrl(API.baseUrl)
             .addConverterFactory(
                 JsonApiConverterFactory.create(
