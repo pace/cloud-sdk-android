@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'org.jetbrains.dokka'
 apply from: 'publish.gradle'
 
 android {
@@ -18,6 +19,17 @@ android {
         kapt {
             arguments {
                 arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
+
+        dokkaHtml {
+            outputDirectory.set(new File(buildDir, 'dokka'))
+
+            moduleName.set("PACECloudSDK")
+            dokkaSourceSets {
+                configureEach {
+                    includeNonPublic.set(false)
+                }
             }
         }
     }
