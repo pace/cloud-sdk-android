@@ -9,7 +9,6 @@ object InterceptorUtils {
     fun getInterceptor(accept: String?, contentType: String?): Interceptor {
         return Interceptor {
             val httpUrl = it.request().url().newBuilder()
-            httpUrl.addQueryParameter("utm_partner_client", PACECloudSDK.configuration.clientAppName)
             PACECloudSDK.additionalQueryParams.forEach {
                 httpUrl.addQueryParameter(it.key, it.value)
             }
