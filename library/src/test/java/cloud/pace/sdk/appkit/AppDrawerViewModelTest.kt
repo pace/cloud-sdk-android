@@ -86,76 +86,6 @@ class AppDrawerViewModelTest {
     }
 
     @Test
-    fun `change app infos`() {
-        val url = "https://pace.tanke.emma.net"
-        viewModel.init(App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = url, logo = null), false)
-
-        viewModel.onCreate()
-
-        val newName = "Jetzt weiter tanken"
-        val newDescription = "Tanken unterbrochen"
-        eventManager.onAppDrawerChanged(url, newName, newDescription)
-
-        Assert.assertEquals(newName, viewModel.title.value)
-        Assert.assertEquals(newDescription, viewModel.subtitle.value)
-
-        viewModel.onDestroy()
-    }
-
-    @Test
-    fun `do not change app infos`() {
-        val url = "https://pace.tanke.emma.net"
-        val name = "Jetzt tanken"
-        val description = "Tanke Emma"
-        viewModel.init(App(name = name, shortName = "Connected Fueling", description = description, url = url, logo = null), false)
-
-        viewModel.onCreate()
-
-        eventManager.onAppDrawerChanged("https://app.test.net", "Jetzt weiter tanken", "Tanken unterbrochen")
-
-        Assert.assertEquals(name, viewModel.title.value)
-        Assert.assertEquals(description, viewModel.subtitle.value)
-
-        viewModel.onDestroy()
-    }
-
-    @Test
-    fun `only title changed`() {
-        val url = "https://pace.tanke.emma.net"
-        val oldName = "Jetzt tanken"
-        val oldDescription = "Tanke Emma"
-        viewModel.init(App(name = oldName, shortName = "Connected Fueling", description = oldDescription, url = url, logo = null), false)
-
-        viewModel.onCreate()
-
-        val newName = "Jetzt weiter tanken"
-        eventManager.onAppDrawerChanged(url, newName, null)
-
-        Assert.assertEquals(newName, viewModel.title.value)
-        Assert.assertEquals(oldDescription, viewModel.subtitle.value)
-
-        viewModel.onDestroy()
-    }
-
-    @Test
-    fun `only subtitle changed`() {
-        val url = "https://pace.tanke.emma.net"
-        val oldName = "Jetzt tanken"
-        val oldDescription = "Tanke Emma"
-        viewModel.init(App(name = oldName, shortName = "Connected Fueling", description = oldDescription, url = url, logo = null), false)
-
-        viewModel.onCreate()
-
-        val newDescription = "Jetzt weiter tanken"
-        eventManager.onAppDrawerChanged(url, null, newDescription)
-
-        Assert.assertEquals(oldName, viewModel.title.value)
-        Assert.assertEquals(newDescription, viewModel.subtitle.value)
-
-        viewModel.onDestroy()
-    }
-
-    @Test
     fun `close app`() {
         val url = "https://pace.tanke.emma.net"
         viewModel.init(App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = url, logo = null), false)
@@ -178,29 +108,6 @@ class AppDrawerViewModelTest {
         eventManager.setInvalidApps(listOf("https://app.test.net"))
 
         Assert.assertNull(viewModel.closeEvent.value)
-
-        viewModel.onDestroy()
-    }
-
-    @Test
-    fun `reset title and subtitle with close action`() {
-        val url = "https://pace.tanke.emma.net"
-        val oldName = "Jetzt tanken"
-        val oldDescription = "Tanke Emma"
-        viewModel.init(App(name = oldName, shortName = "Connected Fueling", description = oldDescription, url = url, logo = null), false)
-
-        viewModel.onCreate()
-
-        val newName = "Jetzt weiter tanken"
-        val newDescription = "Tanken unterbrochen"
-        eventManager.onAppDrawerChanged(url, newName, newDescription)
-        Assert.assertEquals(newName, viewModel.title.value)
-        Assert.assertEquals(newDescription, viewModel.subtitle.value)
-
-        eventManager.onAppDrawerChanged(url, null, null)
-
-        Assert.assertEquals(oldName, viewModel.title.value)
-        Assert.assertEquals(oldDescription, viewModel.subtitle.value)
 
         viewModel.onDestroy()
     }

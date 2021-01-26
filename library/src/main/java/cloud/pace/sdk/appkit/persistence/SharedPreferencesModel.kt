@@ -2,7 +2,6 @@ package cloud.pace.sdk.appkit.persistence
 
 import android.content.SharedPreferences
 import cloud.pace.sdk.appkit.model.Car
-import com.google.gson.Gson
 
 interface SharedPreferencesModel {
 
@@ -16,13 +15,7 @@ interface SharedPreferencesModel {
     fun getLong(key: String, defValue: Long? = null): Long?
     fun setCar(car: Car)
     fun getCar(): Car
-    fun saveAppState(appState: AppState)
-    fun deleteAppState(url: String)
-    fun getAppStates(): List<AppState>
-    fun deleteAllAppStates()
     fun remove(key: String)
-
-    data class AppState(val url: String, val reopenUrl: String?, val state: String?)
 }
 
 class SharedPreferencesImpl(private val sharedPreferences: SharedPreferences) : SharedPreferencesModel {
@@ -78,49 +71,11 @@ class SharedPreferencesImpl(private val sharedPreferences: SharedPreferences) : 
         return Car(getString(VIN), getString(FUEL_TYPE), getInt(EXPECTED_AMOUNT), getInt(MILEAGE))
     }
 
-    @Synchronized
-    override fun saveAppState(appState: SharedPreferencesModel.AppState) {
-        val states = getAppStates()
-        val gson = Gson()
-        val newStates = HashSet<String>(states.map { gson.toJson(it) })
-        newStates.add(gson.toJson(appState))
-        sharedPreferences.edit().apply {
-            remove(APP_STATES)
-            putStringSet(APP_STATES, newStates)
-            apply()
-        }
-    }
-
-    override fun getAppStates(): List<SharedPreferencesModel.AppState> {
-        val stringSet = sharedPreferences.getStringSet(APP_STATES, null)
-        val appStateList = mutableListOf<SharedPreferencesModel.AppState>()
-        val gson = Gson()
-
-        stringSet?.forEach { appStateList.add(gson.fromJson(it, SharedPreferencesModel.AppState::class.java)) }
-        return appStateList
-    }
-
-    override fun deleteAllAppStates() {
-        sharedPreferences.edit().remove(APP_STATES).apply()
-    }
-
-    override fun deleteAppState(url: String) {
-        val states = getAppStates().map { it.url != url }
-        val gson = Gson()
-        val newStates = HashSet<String>(states.map { gson.toJson(it) })
-        sharedPreferences.edit().apply {
-            remove(APP_STATES)
-            putStringSet(APP_STATES, newStates)
-            apply()
-        }
-    }
-
     override fun remove(key: String) {
         sharedPreferences.edit().remove(key).apply()
     }
 
     companion object {
-        private const val APP_STATES = "pwaStates"
         private const val VIN = "vin"
         private const val FUEL_TYPE = "fuelType"
         private const val EXPECTED_AMOUNT = "expectedAmount"

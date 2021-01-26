@@ -70,7 +70,7 @@ open class TestAppRepository : AppRepository {
     override fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit) {}
 }
 
-open class TestSharedPreferencesModel(private val appStates: List<SharedPreferencesModel.AppState> = listOf()) : SharedPreferencesModel {
+open class TestSharedPreferencesModel : SharedPreferencesModel {
 
     override fun getCar(): Car {
         return Car("", "", 0, 0)
@@ -84,10 +84,6 @@ open class TestSharedPreferencesModel(private val appStates: List<SharedPreferen
         return null
     }
 
-    override fun getAppStates(): List<SharedPreferencesModel.AppState> {
-        return appStates
-    }
-
     override fun getString(key: String, defValue: String?): String? {
         return null
     }
@@ -96,32 +92,15 @@ open class TestSharedPreferencesModel(private val appStates: List<SharedPreferen
         return null
     }
 
-    override fun deleteAppState(url: String) {}
-    override fun deleteAllAppStates() {}
     override fun putInt(key: String, value: Int) {}
     override fun putLong(key: String, value: Long) {}
     override fun putString(key: String, value: String) {}
     override fun putStringSet(key: String, values: HashSet<String>) {}
     override fun remove(key: String) {}
-    override fun saveAppState(appState: SharedPreferencesModel.AppState) {}
     override fun setCar(car: Car) {}
 }
 
 open class TestUriUtils(private val id: String? = null, private val startUrl: String = "") : UriManager {
-
-    override fun getURI(baseUrl: String, parameters: Map<String, String>): String {
-        var url = baseUrl
-        var firstParameter = true
-        for (parameter in parameters) {
-            if (firstParameter) {
-                firstParameter = false
-                url += "/${parameter.key}=${parameter.value}"
-            } else {
-                url += "&${parameter.key}=${parameter.value}"
-            }
-        }
-        return url
-    }
 
     override fun getStartUrls(baseUrl: String, manifestUrl: String, sdkStartUrl: String?, references: List<String>?): Map<String?, String> {
         return mapOf(id to startUrl)
@@ -134,14 +113,9 @@ open class TestUriUtils(private val id: String? = null, private val startUrl: St
 
 open class TestAppEventManager : AppEventManager {
 
-    override val appDrawerInfo = MutableLiveData<AppEventManager.AppDrawerInfo>()
     override val invalidApps = MutableLiveData<List<String>>()
     override val disabledHost = MutableLiveData<String>()
     override val redirectUrl = MutableLiveData<Event<String>>()
-
-    override fun onAppDrawerChanged(url: String, title: String?, subtitle: String?) {
-        appDrawerInfo.value = AppEventManager.AppDrawerInfo(url, title, subtitle)
-    }
 
     override fun setInvalidApps(list: List<String>) {
         invalidApps.value = list
@@ -197,17 +171,8 @@ open class TestSystemManager(
 
 open class TestWebClientCallback : AppWebViewClient.WebClientCallback {
 
-    override fun getBiometricStatus(redirectUri: String?, state: String?) {}
-    override fun saveTotpSecret(request: AppWebViewClient.WebClientCallback.TotpSecretRequest) {}
-    override fun getTotp(host: String?, key: String?, serverTime: Long?, redirectUri: String?, state: String?) {}
-    override fun setSecureData(host: String?, key: String?, value: String?, redirectUri: String?, state: String?) {}
-    override fun getSecureData(host: String?, key: String?, redirectUri: String?, state: String?) {}
-    override fun setDisableTime(host: String?, until: Long?) {}
-    override fun openInNewTab(url: String, cancelUrl: String) {}
-    override fun close(reopenRequest: AppWebViewClient.WebClientCallback.ReopenRequest?) {}
     override fun onSwitchErrorState(isError: Boolean, isHttpError: Boolean) {}
     override fun onLoadingChanged(isLoading: Boolean) {}
-    override fun onCustomSchemeError(context: Context?, cancelUrl: String, scheme: String) {}
 }
 
 open class TestAppCloudApi : AppCloudApi {

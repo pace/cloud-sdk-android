@@ -7,7 +7,7 @@ import cloud.pace.sdk.R
 
 object BiometricUtils {
 
-    fun requestAuthentication(fragment: Fragment, title: String, subtitle: String = "", onSuccess: () -> Unit, onFailure: () -> Unit) {
+    fun requestAuthentication(fragment: Fragment, title: String, subtitle: String = "", onSuccess: () -> Unit, onFailure: (errorCode: Int, errString: CharSequence) -> Unit) {
         val callback = object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 super.onAuthenticationSucceeded(result)
@@ -16,7 +16,7 @@ object BiometricUtils {
 
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                 super.onAuthenticationError(errorCode, errString)
-                onFailure()
+                onFailure(errorCode, errString)
             }
         }
 
