@@ -83,7 +83,7 @@ object KoinConfig {
                 single<AppModel> { AppModelImpl() }
                 single { AppManager() }
                 viewModel<AppFragmentViewModel> { AppFragmentViewModelImpl(get(), get()) }
-                viewModel<AppWebViewModel> { AppWebViewModelImpl(get(), get(), get(), get(), get(), get()) }
+                viewModel<AppWebViewModel> { (context: Context) -> AppWebViewModelImpl(context, get(), get(), get(), get(), get()) }
                 viewModel<AppDrawerViewModel> { AppDrawerViewModelImpl(get()) }
             })
         }

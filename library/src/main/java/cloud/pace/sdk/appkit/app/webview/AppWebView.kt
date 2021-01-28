@@ -21,10 +21,11 @@ import cloud.pace.sdk.utils.onMainThread
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.app_web_view.view.*
 import org.koin.core.inject
+import org.koin.core.parameter.parametersOf
 
 class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(context, attributeSet), CloudSDKKoinComponent {
 
-    private val webViewModel: AppWebViewModel by inject()
+    private val webViewModel: AppWebViewModel by inject { parametersOf(context) }
     private var fragment: Fragment? = null
     private val gson = Gson()
     private val loadingIndicatorRunnable = Runnable {
