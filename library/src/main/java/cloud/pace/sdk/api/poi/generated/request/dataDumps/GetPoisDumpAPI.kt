@@ -7,52 +7,68 @@
 
 package cloud.pace.sdk.api.poi.generated.request.dataDumps
 
-import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.poi.POIAPI
 import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.utils.EnumConverterFactory
+import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.utils.toIso8601
+import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.JsonApiConverterFactory
+import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*
+import java.io.File
 import java.util.*
-import cloud.pace.sdk.api.API.toIso8601
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import cloud.pace.sdk.poikit.utils.InterceptorUtils
 
-interface GetPoisDumpService {
+object GetPoisDumpAPI {
 
-    /** Dump all POI data in XLSX format, along with full amenities.
- **/
-    @GET("datadumps/pois")
-    fun getPoisDump(
-        @Query("Accept") accept: String
-    ): Call<Void>
-}
+    interface GetPoisDumpService {
+        /* Create a full POI dump
+ */
+        /* Dump all POI data in XLSX format, along with full amenities.
+ */
+        @GET("datadumps/pois")
+        fun getPoisDump(
+            @Query("Accept") accept: Accept
+        ): Call<Void>
+    }
 
-private val service: GetPoisDumpService by lazy {
-    Retrofit.Builder()
-        .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")).build())
-        .baseUrl(API.baseUrl)
+    /* Dump all POI data in XLSX format, along with full amenities.
+     */
+    enum class Accept(val value: String) {
+        @SerializedName("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        @Json(name = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        APPLICATIONVNDOPENXMLFORMATSOFFICEDOCUMENTSPREADSHEETMLSHEET("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    }
+
+    private val service: GetPoisDumpService by lazy {
+        Retrofit.Builder()
+            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .baseUrl(POIAPI.baseUrl)
+            .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
                 JsonApiConverterFactory.create(
-                    Moshi.Builder().add(
-                        ResourceAdapterFactory.builder()
+                    Moshi.Builder()
+                        .add(ResourceAdapterFactory.builder()
                             .build()
-                    )
-                        .add(KotlinJsonAdapterFactory())
+                        )
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
                         .build()
                 )
             )
-        .build()
-        .create(GetPoisDumpService::class.java)
+            .build()
+            .create(GetPoisDumpService::class.java)
+    }
+
+    fun POIAPI.DataDumpsAPI.getPoisDump(accept: Accept) =
+        service.getPoisDump(accept)
 }
-
-fun API.DataDumpsAPI.getPoisDump(accept: String): Call<Void> {
-    return service.getPoisDump(accept)
-}
-
-

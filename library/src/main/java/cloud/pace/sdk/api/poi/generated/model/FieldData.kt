@@ -7,12 +7,17 @@
 
 package cloud.pace.sdk.api.poi.generated.model
 
+import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import moe.banana.jsonapi2.HasMany
+import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import com.squareup.moshi.Json
 import java.util.*
 
-@JsonApi(type = "fieldData")
-class FieldData : Resource() {
+class FieldData {
+
+    var field: FieldName? = null
+    /* escaped json */
+    var value: String? = null
 }

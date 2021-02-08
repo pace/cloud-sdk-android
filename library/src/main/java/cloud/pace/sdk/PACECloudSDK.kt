@@ -20,7 +20,7 @@ object PACECloudSDK {
     fun setup(context: Context, configuration: Configuration) {
         this.configuration = configuration
 
-        API.setupAPI("${configuration.environment.apiUrl}/poi/2020-4/", configuration.apiKey, emptyMap())
+        API.setup(configuration.environment.apiUrl, configuration.apiKey)
         AppKit.locationAccuracy = configuration.locationAccuracy
         KoinConfig.setupCloudSDK(context, configuration.environment, configuration.apiKey)
         AppKit.updateUserAgent()

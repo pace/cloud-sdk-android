@@ -7,53 +7,62 @@
 
 package cloud.pace.sdk.api.poi.generated.request.prices
 
-import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.poi.POIAPI
 import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.utils.EnumConverterFactory
+import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.utils.toIso8601
+import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.JsonApiConverterFactory
+import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*
+import java.io.File
 import java.util.*
-import cloud.pace.sdk.api.API.toIso8601
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import cloud.pace.sdk.poikit.utils.InterceptorUtils
 
-interface GetRegionalPricesService {
+object GetRegionalPricesAPI {
 
-    /** Search for regional prices in the area centered at input latitude/longitude. Lower/Upper limits are set for each fuel type returned.
- **/
-    @GET("prices/regional")
-    fun getRegionalPrices(
-        @Query("filter[latitude]") filterlatitude: Float,
-        @Query("filter[longitude]") filterlongitude: Float
-    ): Call<List<RegionalPrices>>
-}
+    interface GetRegionalPricesService {
+        /* Search for regional prices in the area */
+        /* Search for regional prices in the area centered at input latitude/longitude. Lower/Upper limits are set for each fuel type returned.
+ */
+        @GET("prices/regional")
+        fun getRegionalPrices(
+            /** Latitude in degrees */
+            @Query("filter[latitude]") filterlatitude: Float,
+            /** Longitude in degrees */
+            @Query("filter[longitude]") filterlongitude: Float
+        ): Call<RegionalPrices>
+    }
 
-private val service: GetRegionalPricesService by lazy {
-    Retrofit.Builder()
-        .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
-        .baseUrl(API.baseUrl)
+    private val service: GetRegionalPricesService by lazy {
+        Retrofit.Builder()
+            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .baseUrl(POIAPI.baseUrl)
+            .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
                 JsonApiConverterFactory.create(
-                    Moshi.Builder().add(
-                        ResourceAdapterFactory.builder()
+                    Moshi.Builder()
+                        .add(ResourceAdapterFactory.builder()
                             .build()
-                    )
-                        .add(KotlinJsonAdapterFactory())
+                        )
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
                         .build()
                 )
             )
-        .build()
-        .create(GetRegionalPricesService::class.java)
+            .build()
+            .create(GetRegionalPricesService::class.java)
+    }
+
+    fun POIAPI.PricesAPI.getRegionalPrices(filterlatitude: Float, filterlongitude: Float) =
+        service.getRegionalPrices(filterlatitude, filterlongitude)
 }
-
-fun API.PricesAPI.getRegionalPrices(filterlatitude: Float, filterlongitude: Float): Call<List<RegionalPrices>> {
-    return service.getRegionalPrices(filterlatitude, filterlongitude)
-}
-
-

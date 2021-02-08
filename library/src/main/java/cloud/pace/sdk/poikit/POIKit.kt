@@ -7,14 +7,18 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.poi.GasStationCodes
 import cloud.pace.sdk.api.poi.GasStationMovedResponse
+import cloud.pace.sdk.api.poi.POIAPI.gasStations
+import cloud.pace.sdk.api.poi.POIAPI.metadataFilters
+import cloud.pace.sdk.api.poi.POIAPI.priceHistories
+import cloud.pace.sdk.api.poi.POIAPI.prices
 import cloud.pace.sdk.api.poi.generated.model.Categories
 import cloud.pace.sdk.api.poi.generated.model.Fuel
 import cloud.pace.sdk.api.poi.generated.model.PriceHistory
 import cloud.pace.sdk.api.poi.generated.model.RegionalPrices
-import cloud.pace.sdk.api.poi.generated.request.gasStations.getGasStation
-import cloud.pace.sdk.api.poi.generated.request.metadataFilters.getMetadataFilters
-import cloud.pace.sdk.api.poi.generated.request.priceHistories.getPriceHistory
-import cloud.pace.sdk.api.poi.generated.request.prices.getRegionalPrices
+import cloud.pace.sdk.api.poi.generated.request.gasStations.GetGasStationAPI.getGasStation
+import cloud.pace.sdk.api.poi.generated.request.metadataFilters.GetMetadataFiltersAPI.getMetadataFilters
+import cloud.pace.sdk.api.poi.generated.request.priceHistories.GetPriceHistoryAPI.getPriceHistory
+import cloud.pace.sdk.api.poi.generated.request.prices.GetRegionalPricesAPI.getRegionalPrices
 import cloud.pace.sdk.poikit.database.POIKitDatabase
 import cloud.pace.sdk.poikit.poi.*
 import cloud.pace.sdk.poikit.routing.NavigationApiClient
@@ -83,7 +87,7 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
         }
     }
 
-    fun getRegionalPrice(latitude: Double, longitude: Double, completion: (Completion<List<RegionalPrices>?>) -> Unit) {
+    fun getRegionalPrice(latitude: Double, longitude: Double, completion: (Completion<RegionalPrices?>) -> Unit) {
         API.prices.getRegionalPrices(latitude.toFloat(), longitude.toFloat()).enqueue {
             onResponse = {
                 val body = it.body()

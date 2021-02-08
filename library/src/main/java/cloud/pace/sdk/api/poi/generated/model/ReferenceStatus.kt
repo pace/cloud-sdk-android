@@ -7,22 +7,30 @@
 
 package cloud.pace.sdk.api.poi.generated.model
 
+import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import moe.banana.jsonapi2.HasMany
+import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import com.squareup.moshi.Json
 import java.util.*
 
 @JsonApi(type = "referenceStatus")
 class ReferenceStatus : Resource() {
-/** Availability status of the referenced resource **/
-   var status: String? = null
-/** Time of status last update (iso8601) **/
-   var updatedAt: Date? = null
 
-    /** Availability status of the referenced resource **/
+    /* Availability status of the referenced resource */
+    var status: Status? = null
+    /* Time of status last update (iso8601) */
+    var updatedAt: Date? = null
+
+    /* Availability status of the referenced resource */
     enum class Status(val value: String) {
+        @SerializedName("online")
+        @Json(name = "online")
         ONLINE("online"),
+        @SerializedName("offline")
+        @Json(name = "offline")
         OFFLINE("offline")
     }
+
 }

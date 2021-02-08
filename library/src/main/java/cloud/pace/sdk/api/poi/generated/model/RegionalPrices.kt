@@ -7,18 +7,13 @@
 
 package cloud.pace.sdk.api.poi.generated.model
 
+import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import moe.banana.jsonapi2.HasMany
+import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import com.squareup.moshi.Json
 import java.util.*
 
-@JsonApi(type = "regionalPrices")
-class RegionalPrices : Resource() {
-/** Type **/
-
-    var average: Double? = null
-    var currency: String? = null
-    var lower: Double? = null
-    var upper: Double? = null
-}
+/* Regional prices */
+typealias RegionalPrices = List<RegionalPrice>

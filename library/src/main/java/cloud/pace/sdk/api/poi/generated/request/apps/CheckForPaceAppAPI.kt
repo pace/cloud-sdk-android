@@ -7,59 +7,77 @@
 
 package cloud.pace.sdk.api.poi.generated.request.apps
 
-import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.poi.POIAPI
 import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.utils.EnumConverterFactory
+import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.utils.toIso8601
+import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.JsonApiConverterFactory
+import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*
+import java.io.File
 import java.util.*
-import cloud.pace.sdk.api.API.toIso8601
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import cloud.pace.sdk.poikit.utils.InterceptorUtils
 
-interface CheckForPaceAppService {
+object CheckForPaceAppAPI {
 
-    /** These location-based PACE apps deliver additional services for PACE customers based on their current position.
+    interface CheckForPaceAppService {
+        /* Query for location-based apps
+ */
+        /* These location-based PACE apps deliver additional services for PACE customers based on their current position.
 You can (or should) trigger this whenever:
 * A longer stand-still is detected
 * The engine is turned off
 * Every 5 seconds if the user "left the road"
 Please note that calling this API is very cheap and can be done regularly.
- **/
-    @GET("apps/query")
-    fun checkForPaceApp(
-        @Query("filter[latitude]") filterlatitude: Float,
-        @Query("filter[longitude]") filterlongitude: Float,
-        @Query("filter[appType]") filterappType: String? = null
-    ): Call<LocationBasedAppsWithRefs>
-}
+ */
+        @GET("apps/query")
+        fun checkForPaceApp(
+            /** Latitude */
+            @Query("filter[latitude]") filterlatitude: Float,
+            /** Longitude */
+            @Query("filter[longitude]") filterlongitude: Float,
+            /** Type of location-based app */
+            @Query("filter[appType]") filterappType: FilterappType? = null
+        ): Call<LocationBasedAppsWithRefs>
+    }
 
-private val service: CheckForPaceAppService by lazy {
-    Retrofit.Builder()
-        .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
-        .baseUrl(API.baseUrl)
+    /* Type of location-based app */
+    enum class FilterappType(val value: String) {
+        @SerializedName("fueling")
+        @Json(name = "fueling")
+        FUELING("fueling")
+    }
+
+    private val service: CheckForPaceAppService by lazy {
+        Retrofit.Builder()
+            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .baseUrl(POIAPI.baseUrl)
+            .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
                 JsonApiConverterFactory.create(
-                    Moshi.Builder().add(
-                        ResourceAdapterFactory.builder()
+                    Moshi.Builder()
+                        .add(ResourceAdapterFactory.builder()
                             .build()
-                    )
-                        .add(KotlinJsonAdapterFactory())
+                        )
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
                         .build()
                 )
             )
-        .build()
-        .create(CheckForPaceAppService::class.java)
+            .build()
+            .create(CheckForPaceAppService::class.java)
+    }
+
+    fun POIAPI.AppsAPI.checkForPaceApp(filterlatitude: Float, filterlongitude: Float, filterappType: FilterappType? = null) =
+        service.checkForPaceApp(filterlatitude, filterlongitude, filterappType)
 }
-
-fun API.AppsAPI.checkForPaceApp(filterlatitude: Float, filterlongitude: Float, filterappType: String? = null): Call<LocationBasedAppsWithRefs> {
-    return service.checkForPaceApp(filterlatitude, filterlongitude, filterappType)
-}
-
-

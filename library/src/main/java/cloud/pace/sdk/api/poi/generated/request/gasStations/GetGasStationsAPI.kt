@@ -7,70 +7,103 @@
 
 package cloud.pace.sdk.api.poi.generated.request.gasStations
 
-import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.poi.POIAPI
 import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.utils.EnumConverterFactory
+import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.utils.toIso8601
+import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.JsonApiConverterFactory
+import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*
+import java.io.File
 import java.util.*
-import cloud.pace.sdk.api.API.toIso8601
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import cloud.pace.sdk.poikit.utils.InterceptorUtils
 
-interface GetGasStationsService {
+object GetGasStationsAPI {
 
-    /** There are two ways to search for gas stations in a geo location. You can use either one, or none, but not both ways.
+    interface GetGasStationsService {
+        /* Query for gas stations */
+        /* There are two ways to search for gas stations in a geo location. You can use either one, or none, but not both ways.
 To search inside a specific radius around a given longitude and latitude provide the following query parameters:
 * latitude
 * longitude
 * radius
 To search inside a bounding box provide the following query parameter:
 * boundingBox
- **/
-    @GET("gas-stations")
-    fun getGasStations(
-        @Query("page[number]") pagenumber: Int? = null,
-        @Query("page[size]") pagesize: Int? = null,
-        @Query("filter[poiType]") filterpoiType: String? = null,
-        @Query("filter[appType]") filterappType: List<String>? = null,
-        @Query("filter[latitude]") filterlatitude: Float? = null,
-        @Query("filter[longitude]") filterlongitude: Float? = null,
-        @Query("filter[radius]") filterradius: Float? = null,
-        @Query("filter[boundingBox]") filterboundingBox: List<Float>? = null,
-        @Query("compile[openingHours]") compileopeningHours: Boolean? = null,
-        @Query("filter[source]") filtersource: String? = null
-    ): Call<GasStations>
-}
+ */
+        @GET("gas-stations")
+        fun getGasStations(
+            /** page number */
+            @Query("page[number]") pagenumber: Int? = null,
+            /** items per page */
+            @Query("page[size]") pagesize: Int? = null,
+            /** POI type you are searching for (in this case gas stations) */
+            @Query("filter[poiType]") filterpoiType: FilterpoiType? = null,
+            /** Search only gas stations with fueling app available */
+            @Query("filter[appType]") filterappType: List<FilterappType>? = null,
+            /** Latitude in degrees */
+            @Query("filter[latitude]") filterlatitude: Float? = null,
+            /** Longitude in degrees */
+            @Query("filter[longitude]") filterlongitude: Float? = null,
+            /** Radius in meters */
+            @Query("filter[radius]") filterradius: Float? = null,
+            /** Bounding box representing left, bottom, right, top in degrees. The query parameters need to be passed 4 times in exactly the order left, bottom, right, top.
+<table> <tr><th>#</th><th>Value</th><th>Lat/Long</th><th>Range</th></tr> <tr><td>0</td><td>left</td><td>Lat</td><td>[-180..180]</td></tr> <tr><td>1</td><td>bottom</td><td>Long</td><td>[-90..90]</td></tr> <tr><td>2</td><td>right</td><td>Lat</td><td>[-180..180]</td></tr> <tr><td>3</td><td>top</td><td>Long</td><td>[-90..90]</td></tr> </table>
+ */
+            @Query("filter[boundingBox]") filterboundingBox: List<Float>? = null,
+            /** Reduces the opening hours rules. After compilation only rules with the action open will remain in the response. */
+            @Query("compile[openingHours]") compileopeningHours: Boolean? = null,
+            /** Filter by source ID */
+            @Query("filter[source]") filtersource: String? = null
+        ): Call<GasStations>
+    }
 
-private val service: GetGasStationsService by lazy {
-    Retrofit.Builder()
-        .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
-        .baseUrl(API.baseUrl)
+    /* POI type you are searching for (in this case gas stations) */
+    enum class FilterpoiType(val value: String) {
+        @SerializedName("gasStation")
+        @Json(name = "gasStation")
+        GASSTATION("gasStation")
+    }
+
+    /* Search only gas stations with fueling app available */
+    enum class FilterappType(val value: String) {
+        @SerializedName("fueling")
+        @Json(name = "fueling")
+        FUELING("fueling")
+    }
+
+    private val service: GetGasStationsService by lazy {
+        Retrofit.Builder()
+            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .baseUrl(POIAPI.baseUrl)
+            .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
                 JsonApiConverterFactory.create(
-                    Moshi.Builder().add(
-                        ResourceAdapterFactory.builder()
+                    Moshi.Builder()
+                        .add(ResourceAdapterFactory.builder()
                             .add(FuelPrice::class.java)
                             .add(LocationBasedApp::class.java)
                             .add(ReferenceStatus::class.java)
                             .build()
-                    )
-                        .add(KotlinJsonAdapterFactory())
+                        )
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
                         .build()
                 )
             )
-        .build()
-        .create(GetGasStationsService::class.java)
+            .build()
+            .create(GetGasStationsService::class.java)
+    }
+
+    fun POIAPI.GasStationsAPI.getGasStations(pagenumber: Int? = null, pagesize: Int? = null, filterpoiType: FilterpoiType? = null, filterappType: List<FilterappType>? = null, filterlatitude: Float? = null, filterlongitude: Float? = null, filterradius: Float? = null, filterboundingBox: List<Float>? = null, compileopeningHours: Boolean? = null, filtersource: String? = null) =
+        service.getGasStations(pagenumber, pagesize, filterpoiType, filterappType, filterlatitude, filterlongitude, filterradius, filterboundingBox, compileopeningHours, filtersource)
 }
-
-fun API.GasStationsAPI.getGasStations(pagenumber: Int? = null, pagesize: Int? = null, filterpoiType: String? = null, filterappType: List<String>? = null, filterlatitude: Float? = null, filterlongitude: Float? = null, filterradius: Float? = null, filterboundingBox: List<Float>? = null, compileopeningHours: Boolean? = null, filtersource: String? = null): Call<GasStations> {
-    return service.getGasStations(pagenumber, pagesize, filterpoiType, filterappType, filterlatitude, filterlongitude, filterradius, filterboundingBox, compileopeningHours, filtersource)
-}
-
-

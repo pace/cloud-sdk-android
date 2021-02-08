@@ -7,57 +7,66 @@
 
 package cloud.pace.sdk.api.poi.generated.request.metadataFilters
 
-import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.poi.POIAPI
 import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.utils.EnumConverterFactory
+import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.utils.toIso8601
+import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.JsonApiConverterFactory
+import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*
+import java.io.File
 import java.util.*
-import cloud.pace.sdk.api.API.toIso8601
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import cloud.pace.sdk.poikit.utils.InterceptorUtils
 
-interface GetMetadataFiltersService {
+object GetMetadataFiltersAPI {
 
-    /** Returns filterable values around the current location on the map, within a certain radius.
+    interface GetMetadataFiltersService {
+        /* Query for filterable values inside a radius */
+        /* Returns filterable values around the current location on the map, within a certain radius.
 For the latitude and longitude values used in the request, returns the available and unavailable values for the following fields:
   * brand
   * payment methods
   * amenities
- **/
-    @GET("meta")
-    fun getMetadataFilters(
-        @Query("latitude") latitude: Float,
-        @Query("longitude") longitude: Float
-    ): Call<Categories>
-}
+ */
+        @GET("meta")
+        fun getMetadataFilters(
+            /** Latitude in degrees */
+            @Query("latitude") latitude: Float,
+            /** Longitude in degrees */
+            @Query("longitude") longitude: Float
+        ): Call<Categories>
+    }
 
-private val service: GetMetadataFiltersService by lazy {
-    Retrofit.Builder()
-        .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
-        .baseUrl(API.baseUrl)
+    private val service: GetMetadataFiltersService by lazy {
+        Retrofit.Builder()
+            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .baseUrl(POIAPI.baseUrl)
+            .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
                 JsonApiConverterFactory.create(
-                    Moshi.Builder().add(
-                        ResourceAdapterFactory.builder()
+                    Moshi.Builder()
+                        .add(ResourceAdapterFactory.builder()
                             .build()
-                    )
-                        .add(KotlinJsonAdapterFactory())
+                        )
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
                         .build()
                 )
             )
-        .build()
-        .create(GetMetadataFiltersService::class.java)
+            .build()
+            .create(GetMetadataFiltersService::class.java)
+    }
+
+    fun POIAPI.MetadataFiltersAPI.getMetadataFilters(latitude: Float, longitude: Float) =
+        service.getMetadataFilters(latitude, longitude)
 }
-
-fun API.MetadataFiltersAPI.getMetadataFilters(latitude: Float, longitude: Float): Call<Categories> {
-    return service.getMetadataFilters(latitude, longitude)
-}
-
-

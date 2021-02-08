@@ -7,50 +7,64 @@
 
 package cloud.pace.sdk.api.poi.generated.request.sources
 
-import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.poi.POIAPI
 import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.utils.EnumConverterFactory
+import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.utils.toIso8601
+import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.JsonApiConverterFactory
+import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*
+import java.io.File
 import java.util.*
-import cloud.pace.sdk.api.API.toIso8601
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import cloud.pace.sdk.poikit.utils.InterceptorUtils
 
-interface CreateSourceService {
+object CreateSourceAPI {
 
-    /** Creates a new source **/
-    @POST("sources")
-    fun createSource(
-    ): Call<Source>
-}
+    interface CreateSourceService {
+        /* Creates a new source */
+        /* Creates a new source */
+        @POST("sources")
+        fun createSource(
+            @retrofit2.http.Body body: Body
+        ): Call<Source>
+    }
 
-private val service: CreateSourceService by lazy {
-    Retrofit.Builder()
-        .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(null, null)).build())
-        .baseUrl(API.baseUrl)
+    /* Creates a new source */
+    class Body {
+
+        var data: Source? = null
+    }
+
+    private val service: CreateSourceService by lazy {
+        Retrofit.Builder()
+            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .baseUrl(POIAPI.baseUrl)
+            .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
                 JsonApiConverterFactory.create(
-                    Moshi.Builder().add(
-                        ResourceAdapterFactory.builder()
+                    Moshi.Builder()
+                        .add(ResourceAdapterFactory.builder()
                             .build()
-                    )
-                        .add(KotlinJsonAdapterFactory())
+                        )
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
                         .build()
                 )
             )
-        .build()
-        .create(CreateSourceService::class.java)
+            .build()
+            .create(CreateSourceService::class.java)
+    }
+
+    fun POIAPI.SourcesAPI.createSource(body: Body) =
+        service.createSource(body)
 }
-
-fun API.SourcesAPI.createSource(): Call<Source> {
-    return service.createSource()
-}
-
-
