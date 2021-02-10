@@ -7,54 +7,65 @@
 
 package cloud.pace.sdk.api.poi.generated.request.sources
 
-import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.poi.POIAPI
 import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.utils.EnumConverterFactory
+import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.utils.toIso8601
+import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.JsonApiConverterFactory
+import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*
+import java.io.File
 import java.util.*
-import cloud.pace.sdk.api.API.toIso8601
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import cloud.pace.sdk.poikit.utils.InterceptorUtils
 
-interface GetSourcesService {
+object GetSourcesAPI {
 
-    /** Returns a paginated list of sources optionally filtered by poi type and/or name **/
-    @GET("sources")
-    fun getSources(
-        @Query("page[number]") pagenumber: Int? = null,
-        @Query("page[size]") pagesize: Int? = null,
-        @Query("filter[poiType]") filterpoiType: POIType? = null,
-        @Query("filter[name]") filtername: String? = null
-    ): Call<Sources>
-}
+    interface GetSourcesService {
+        /* Returns a paginated list of sources */
+        /* Returns a paginated list of sources optionally filtered by poi type and/or name */
+        @GET("sources")
+        fun getSources(
+            /** page number */
+            @Query("page[number]") pagenumber: Int? = null,
+            /** items per page */
+            @Query("page[size]") pagesize: Int? = null,
+            /** Filter for poi type, no filter returns all types */
+            @Query("filter[poiType]") filterpoiType: POIType? = null,
+            /** Filter for all sources with given source name */
+            @Query("filter[name]") filtername: String? = null
+        ): Call<Sources>
+    }
 
-private val service: GetSourcesService by lazy {
-    Retrofit.Builder()
-        .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
-        .baseUrl(API.baseUrl)
+    private val service: GetSourcesService by lazy {
+        Retrofit.Builder()
+            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .baseUrl(POIAPI.baseUrl)
+            .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
                 JsonApiConverterFactory.create(
-                    Moshi.Builder().add(
-                        ResourceAdapterFactory.builder()
+                    Moshi.Builder()
+                        .add(ResourceAdapterFactory.builder()
                             .build()
-                    )
-                        .add(KotlinJsonAdapterFactory())
+                        )
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
                         .build()
                 )
             )
-        .build()
-        .create(GetSourcesService::class.java)
+            .build()
+            .create(GetSourcesService::class.java)
+    }
+
+    fun POIAPI.SourcesAPI.getSources(pagenumber: Int? = null, pagesize: Int? = null, filterpoiType: POIType? = null, filtername: String? = null) =
+        service.getSources(pagenumber, pagesize, filterpoiType, filtername)
 }
-
-fun API.SourcesAPI.getSources(pagenumber: Int? = null, pagesize: Int? = null, filterpoiType: POIType? = null, filtername: String? = null): Call<Sources> {
-    return service.getSources(pagenumber, pagesize, filterpoiType, filtername)
-}
-
-

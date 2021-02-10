@@ -1,12 +1,13 @@
 package cloud.pace.sdk.appkit.app.api
 
 import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.poi.POIAPI.apps
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApps
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppsWithRefs
-import cloud.pace.sdk.api.poi.generated.request.apps.checkForPaceApp
-import cloud.pace.sdk.api.poi.generated.request.apps.getApp
-import cloud.pace.sdk.api.poi.generated.request.apps.getApps
+import cloud.pace.sdk.api.poi.generated.request.apps.CheckForPaceAppAPI.checkForPaceApp
+import cloud.pace.sdk.api.poi.generated.request.apps.GetAppAPI.getApp
+import cloud.pace.sdk.api.poi.generated.request.apps.GetAppsAPI.getApps
 import cloud.pace.sdk.poikit.utils.ApiException
 import cloud.pace.sdk.utils.enqueue
 import retrofit2.Call

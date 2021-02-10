@@ -7,16 +7,20 @@
 
 package cloud.pace.sdk.api.poi.generated.model
 
+import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import moe.banana.jsonapi2.HasMany
+import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import com.squareup.moshi.Json
 import java.util.*
 
 @JsonApi(type = "category")
 class Category : Resource() {
-   var available: List<String>? = null
-   var field: String? = null
-   var fieldName: String? = null
-   var unavailable: List<String>? = null
+
+    var available: List<String>? = null
+    var field: String? = null
+    var fieldName: String? = null
+    var unavailable: List<String>? = null
+
 }

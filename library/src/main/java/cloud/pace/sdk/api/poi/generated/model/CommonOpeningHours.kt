@@ -7,37 +7,65 @@
 
 package cloud.pace.sdk.api.poi.generated.model
 
+import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import moe.banana.jsonapi2.HasMany
+import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import com.squareup.moshi.Json
 import java.util.*
 
-@JsonApi(type = "commonOpeningHours")
-class CommonOpeningHours : Resource() {
-   var action: String? = null
-   var days: List<String>? = null
-   var timespans: List<Timespans>? = null
+class CommonOpeningHours {
 
-    enum class Action(val value: String) {
-        OPEN("open"),
-        CLOSE("close")
-    }
+    var rules: List<Rules>? = null
+    /* As defined by ISO 8601, the timezone */
+    var timezone: String? = null
 
-    enum class Days(val value: String) {
-        MONDAY("monday"),
-        TUESDAY("tuesday"),
-        WEDNESDAY("wednesday"),
-        THURSDAY("thursday"),
-        FRIDAY("friday"),
-        SATURDAY("saturday"),
-        SUNDAY("sunday")
-    }
+    class Rules {
 
-    class Timespans{
-    /** relative to the specified time zone (local time) **/
-       var from: String? = null
-    /** relative to the specified time zone (local time) **/
-       var to: String? = null
+        var action: Action? = null
+        var days: List<Days>? = null
+        var timespans: List<Timespans>? = null
+
+        enum class Action(val value: String) {
+            @SerializedName("open")
+            @Json(name = "open")
+            OPEN("open"),
+            @SerializedName("close")
+            @Json(name = "close")
+            CLOSE("close")
+        }
+
+        enum class Days(val value: String) {
+            @SerializedName("monday")
+            @Json(name = "monday")
+            MONDAY("monday"),
+            @SerializedName("tuesday")
+            @Json(name = "tuesday")
+            TUESDAY("tuesday"),
+            @SerializedName("wednesday")
+            @Json(name = "wednesday")
+            WEDNESDAY("wednesday"),
+            @SerializedName("thursday")
+            @Json(name = "thursday")
+            THURSDAY("thursday"),
+            @SerializedName("friday")
+            @Json(name = "friday")
+            FRIDAY("friday"),
+            @SerializedName("saturday")
+            @Json(name = "saturday")
+            SATURDAY("saturday"),
+            @SerializedName("sunday")
+            @Json(name = "sunday")
+            SUNDAY("sunday")
+        }
+
+        class Timespans {
+
+            /* relative to the specified time zone (local time) */
+            var from: String? = null
+            /* relative to the specified time zone (local time) */
+            var to: String? = null
+        }
     }
 }

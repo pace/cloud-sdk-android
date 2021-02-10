@@ -1,4 +1,4 @@
-package cloud.pace.sdk.poikit.utils
+package cloud.pace.sdk.api.utils
 
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.API

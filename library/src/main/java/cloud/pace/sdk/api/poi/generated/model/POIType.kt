@@ -7,14 +7,20 @@
 
 package cloud.pace.sdk.api.poi.generated.model
 
+import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import moe.banana.jsonapi2.HasMany
+import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import com.squareup.moshi.Json
 import java.util.*
 
-/** POI type this applies to **/
-enum class POIType (val value: String){
-GasStation("GasStation"),
-SpeedCamera("SpeedCamera")
+/* POI type this applies to */
+enum class POIType(val value: String) {
+    @SerializedName("GasStation")
+    @Json(name = "GasStation")
+    GASSTATION("GasStation"),
+    @SerializedName("SpeedCamera")
+    @Json(name = "SpeedCamera")
+    SPEEDCAMERA("SpeedCamera")
 }

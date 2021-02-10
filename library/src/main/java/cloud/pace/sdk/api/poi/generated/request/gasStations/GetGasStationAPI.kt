@@ -7,56 +7,65 @@
 
 package cloud.pace.sdk.api.poi.generated.request.gasStations
 
-import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.poi.POIAPI
 import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.utils.EnumConverterFactory
+import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.utils.toIso8601
+import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.JsonApiConverterFactory
+import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*
+import java.io.File
 import java.util.*
-import cloud.pace.sdk.api.API.toIso8601
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import cloud.pace.sdk.poikit.utils.InterceptorUtils
 
-interface GetGasStationService {
+object GetGasStationAPI {
 
-    /** Returns an individual gas station
- **/
-    @GET("gas-stations/{id}")
-    fun getGasStation(
-        @Path("id") id: String,
-        @Query("compile[openingHours]") compileopeningHours: Boolean? = null
-    ): Call<GasStation>
-}
+    interface GetGasStationService {
+        /* Get a specific gas station */
+        /* Returns an individual gas station
+ */
+        @GET("gas-stations/{id}")
+        fun getGasStation(
+            /** Gas station ID */
+            @Path("id") id: String,
+            /** Reduces the opening hours rules. After compilation, only rules with the action open will remain in the response. */
+            @Query("compile[openingHours]") compileopeningHours: Boolean? = null
+        ): Call<GasStation>
+    }
 
-private val service: GetGasStationService by lazy {
-    Retrofit.Builder()
-        .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
-        .baseUrl(API.baseUrl)
+    private val service: GetGasStationService by lazy {
+        Retrofit.Builder()
+            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .baseUrl(POIAPI.baseUrl)
+            .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
                 JsonApiConverterFactory.create(
-                    Moshi.Builder().add(
-                        ResourceAdapterFactory.builder()
+                    Moshi.Builder()
+                        .add(ResourceAdapterFactory.builder()
                             .add(FuelPrice::class.java)
                             .add(LocationBasedApp::class.java)
                             .add(ReferenceStatus::class.java)
                             .build()
-                    )
-                        .add(KotlinJsonAdapterFactory())
+                        )
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
                         .build()
                 )
             )
-        .build()
-        .create(GetGasStationService::class.java)
+            .build()
+            .create(GetGasStationService::class.java)
+    }
+
+    fun POIAPI.GasStationsAPI.getGasStation(id: String, compileopeningHours: Boolean? = null) =
+        service.getGasStation(id, compileopeningHours)
 }
-
-fun API.GasStationsAPI.getGasStation(id: String, compileopeningHours: Boolean? = null): Call<GasStation> {
-    return service.getGasStation(id, compileopeningHours)
-}
-
-

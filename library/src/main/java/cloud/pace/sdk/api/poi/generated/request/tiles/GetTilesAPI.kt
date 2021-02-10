@@ -7,51 +7,85 @@
 
 package cloud.pace.sdk.api.poi.generated.request.tiles
 
-import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.poi.POIAPI
 import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.utils.EnumConverterFactory
+import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.utils.toIso8601
+import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.JsonApiConverterFactory
+import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*
+import java.io.File
 import java.util.*
-import cloud.pace.sdk.api.API.toIso8601
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import cloud.pace.sdk.poikit.utils.InterceptorUtils
 
-interface GetTilesService {
+object GetTilesAPI {
 
-    /** Get a list of map tiles in the Protobuf binary wire format.
- **/
-    @POST("v1/tiles/query")
-    fun getTiles(
-    ): Call<Void>
+    interface GetTilesService {
+        /* Query for tiles
+ */
+        /* Get a list of map tiles in the Protobuf binary wire format.
+ */
+        @POST("v1/tiles/query")
+        fun getTiles(
+            /** Protobuf binary wire format of the following definition
+```
+syntax = "proto3";
+message TileQueryRequest {
+  uint32 zoom = 1;
+  repeated AreaQuery areas = 2;
+  repeated IndividualTileQuery tiles = 3;
 }
+message AreaQuery {
+  // if NE(1,1) + SW(1,1) == { tile(1,1) }
+  // if NE(2,1) + SW(1,2) == { tile(1,1), tile(2,1), tile(1,2), tile(2,2) }
+  Coordinate north_east = 1;
+  Coordinate south_west = 2;
+  uint64 invalidation_token = 3; // e.g. timestamp or sequence number
+}
+message IndividualTileQuery {
+  Coordinate geo = 1;
+  uint64 invalidation_token = 3; // e.g. timestamp or sequence number
+}
+message Coordinate {
+  uint32 x = 1; // tile coordinate
+  uint32 y = 2; // tile coordinate
+}
+```
+ */
+            @retrofit2.http.Body body: File
+        ): Call<Void>
+    }
 
-private val service: GetTilesService by lazy {
-    Retrofit.Builder()
-        .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/protobuf", "application/protobuf")).build())
-        .baseUrl(API.baseUrl)
+    private val service: GetTilesService by lazy {
+        Retrofit.Builder()
+            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .baseUrl(POIAPI.baseUrl)
+            .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
                 JsonApiConverterFactory.create(
-                    Moshi.Builder().add(
-                        ResourceAdapterFactory.builder()
+                    Moshi.Builder()
+                        .add(ResourceAdapterFactory.builder()
                             .build()
-                    )
-                        .add(KotlinJsonAdapterFactory())
+                        )
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
                         .build()
                 )
             )
-        .build()
-        .create(GetTilesService::class.java)
+            .build()
+            .create(GetTilesService::class.java)
+    }
+
+    fun POIAPI.TilesAPI.getTiles(body: File) =
+        service.getTiles(body)
 }
-
-fun API.TilesAPI.getTiles(): Call<Void> {
-    return service.getTiles()
-}
-
-

@@ -7,52 +7,61 @@
 
 package cloud.pace.sdk.api.poi.generated.request.delivery
 
-import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.poi.POIAPI
 import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.utils.EnumConverterFactory
+import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.utils.toIso8601
+import com.google.gson.annotations.SerializedName
+import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.JsonApiConverterFactory
+import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*
+import java.io.File
 import java.util.*
-import cloud.pace.sdk.api.API.toIso8601
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import cloud.pace.sdk.poikit.utils.InterceptorUtils
 
-interface DeleteGasStationReferenceStatusService {
+object DeleteGasStationReferenceStatusAPI {
 
-    /** Deletes a reference status of a gas station **/
-    @DELETE("delivery/gas-stations/{gasStationId}/reference-status/{reference}")
-    fun deleteGasStationReferenceStatus(
-        @Path("gasStationId") gasStationId: String,
-        @Path("reference") reference: String
-    ): Call<Void>
-}
+    interface DeleteGasStationReferenceStatusService {
+        /* Deletes a reference status of a gas station */
+        /* Deletes a reference status of a gas station */
+        @DELETE("delivery/gas-stations/{gasStationId}/reference-status/{reference}")
+        fun deleteGasStationReferenceStatus(
+            /** Gas station ID */
+            @Path("gasStationId") gasStationId: String,
+            /** Service Provider PRN */
+            @Path("reference") reference: String
+        ): Call<Void>
+    }
 
-private val service: DeleteGasStationReferenceStatusService by lazy {
-    Retrofit.Builder()
-        .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(null, null)).build())
-        .baseUrl(API.baseUrl)
+    private val service: DeleteGasStationReferenceStatusService by lazy {
+        Retrofit.Builder()
+            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .baseUrl(POIAPI.baseUrl)
+            .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
                 JsonApiConverterFactory.create(
-                    Moshi.Builder().add(
-                        ResourceAdapterFactory.builder()
+                    Moshi.Builder()
+                        .add(ResourceAdapterFactory.builder()
                             .build()
-                    )
-                        .add(KotlinJsonAdapterFactory())
+                        )
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
                         .build()
                 )
             )
-        .build()
-        .create(DeleteGasStationReferenceStatusService::class.java)
+            .build()
+            .create(DeleteGasStationReferenceStatusService::class.java)
+    }
+
+    fun POIAPI.DeliveryAPI.deleteGasStationReferenceStatus(gasStationId: String, reference: String) =
+        service.deleteGasStationReferenceStatus(gasStationId, reference)
 }
-
-fun API.DeliveryAPI.deleteGasStationReferenceStatus(gasStationId: String, reference: String): Call<Void> {
-    return service.deleteGasStationReferenceStatus(gasStationId, reference)
-}
-
-
