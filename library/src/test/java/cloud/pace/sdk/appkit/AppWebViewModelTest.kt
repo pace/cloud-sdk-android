@@ -76,7 +76,7 @@ class AppWebViewModelTest {
 
     @Test
     fun `close app`() {
-        viewModel.handleClose("")
+        viewModel.handleClose()
 
         verify(appCallback, times(1)).onClose()
     }
