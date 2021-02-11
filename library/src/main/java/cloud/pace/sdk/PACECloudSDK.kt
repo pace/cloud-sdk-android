@@ -41,17 +41,4 @@ object PACECloudSDK {
             configuration.locationAccuracy = locationAccuracy
         }
     }
-
-    internal fun setAccessToken(accessToken: String?) {
-        if (::configuration.isInitialized) {
-            configuration.accessToken = accessToken
-            AppKit.updateUserAgent()
-        }
-    }
-
-    internal fun resetAccessToken() {
-        if (::configuration.isInitialized) {
-            configuration.accessToken = null
-        }
-    }
 }

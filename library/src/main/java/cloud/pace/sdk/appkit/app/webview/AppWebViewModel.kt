@@ -122,12 +122,12 @@ class AppWebViewModelImpl(
     }
 
     override fun handleInvalidToken(message: String) {
-        val initialToken = PACECloudSDK.configuration.accessToken
-        if (initialToken != null && TokenValidator.isTokenValid(initialToken)) {
-            PACECloudSDK.resetAccessToken()
-            newToken.value = Event(initialToken)
-        } else {
-            sendOnTokenInvalid(message)
+        appModel.onTokenInvalid { token ->
+            if (TokenValidator.isTokenValid(token)) {
+                newToken.value = Event(token)
+            } else {
+                handleInvalidToken(message)
+            }
         }
     }
 
@@ -138,17 +138,6 @@ class AppWebViewModelImpl(
             appModel.onImageDataReceived(bitmap)
         } catch (e: IllegalArgumentException) {
             Log.e(e, "Could not decode the following Base64 image string: $message")
-        }
-    }
-
-    private fun sendOnTokenInvalid(message: String) {
-        appModel.onTokenInvalid { token ->
-            if (TokenValidator.isTokenValid(token)) {
-                PACECloudSDK.setAccessToken(token)
-                newToken.value = Event(token)
-            } else {
-                sendOnTokenInvalid(message)
-            }
         }
     }
 

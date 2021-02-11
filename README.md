@@ -80,7 +80,6 @@ clientAppVersion: String
 clientAppBuild: String
 apiKey: String
 clientId: String? // Default: null
-accessToken: String? // Default: null
 authenticationMode: AuthenticationMode // Default: AuthenticationMode.WEB
 environment: Environment // Default: Environment.PRODUCTION
 extensions: List<String> // Default: emptyList()
@@ -520,7 +519,7 @@ Some of our services (e.g. `PayPal`) do not open the URL in the WebView, but in 
 ### Native login
 If the client app uses its own login and wants to pass an access token to the apps, follow these steps:
 
-1. Initialize the `PACECloudSDK` with `authenticationMode = AuthenticationMode.NATIVE` and an optional start `accessToken = "Your access token"`.
+1. Initialize the `PACECloudSDK` with `authenticationMode = AuthenticationMode.NATIVE`
 2. Pass an `AppCallbackImpl` instance to `AppKit.openApps(...)` or `AppKit.openAppActivity(...)` and override the required callbacks (`onTokenInvalid(onResult: (String) -> Unit) {}` in this case)
 3. If the access token is invalid, the *AppKit* calls the `onTokenInvalid` function. The client app needs to call the `onResult` function to set a new access token. In case that you can't retrieve a new valid token, don't call `onResult`, otherwise you will most likely end up
 in an endless loop. Make sure to clean up all the app related views as well (see [Removal of Apps](#removal-of-apps)).
