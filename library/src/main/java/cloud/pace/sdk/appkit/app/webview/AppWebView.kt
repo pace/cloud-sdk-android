@@ -128,6 +128,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         webView.addJavascriptInterface(InvalidTokenInterface(), "pace_invalidToken")
         webView.addJavascriptInterface(ImageDataInterface(), "pace_imageData")
         webView.addJavascriptInterface(VerifyLocationInterface(), "pace_verifyLocation")
+        webView.addJavascriptInterface(BackInterface(), "pace_back")
         webView.addJavascriptInterface(CloseInterface(), "pace_close")
         webView.addJavascriptInterface(GetBiometricStatusInterface(), "pace_getBiometricStatus")
         webView.addJavascriptInterface(SetTOTPSecretInterface(), "pace_setTOTPSecret")
@@ -180,6 +181,14 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         webViewModel.secureData.observe(lifecycleOwner, secureDataObserver)
     }
 
+    private fun handleBack() {
+        if (webView.canGoBack()) {
+            webView.goBack()
+        } else {
+            webViewModel.handleClose()
+        }
+    }
+
     private fun sendMessageCallback(message: String) {
         webView.evaluateJavascript("window.messageCallback('$message')") {}
     }
@@ -205,10 +214,17 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         }
     }
 
+    inner class BackInterface {
+        @JavascriptInterface
+        fun postMessage(message: String) {
+            onMainThread { handleBack() }
+        }
+    }
+
     inner class CloseInterface {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { webViewModel.handleClose(message) }
+            onMainThread { webViewModel.handleClose() }
         }
     }
 

@@ -28,6 +28,7 @@ import com.google.gson.JsonSyntaxException
 import dev.turingcomplete.kotlinonetimepassword.HmacAlgorithm
 import dev.turingcomplete.kotlinonetimepassword.TimeBasedOneTimePasswordConfig
 import dev.turingcomplete.kotlinonetimepassword.TimeBasedOneTimePasswordGenerator
+import kotlinx.android.synthetic.main.app_web_view.view.*
 import org.apache.commons.codec.binary.Base32
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -49,7 +50,7 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     abstract fun handleInvalidToken(message: String)
     abstract fun handleImageData(message: String)
     abstract fun handleVerifyLocation(message: String)
-    abstract fun handleClose(message: String)
+    abstract fun handleClose()
     abstract fun handleGetBiometricStatus(message: String)
     abstract fun handleSetTOTPSecret(message: String)
     abstract fun handleGetTOTP(message: String)
@@ -173,7 +174,7 @@ class AppWebViewModelImpl(
         }
     }
 
-    override fun handleClose(message: String) {
+    override fun handleClose() {
         appModel.close(true)
     }
 
@@ -338,7 +339,7 @@ class AppWebViewModelImpl(
         } catch (e: JsonSyntaxException) {
             statusCode.value = Event(StatusCodeResponse.Failure("The disable JSON $message could not be deserialized.", StatusCode.InternalError.code))
         } finally {
-            handleClose(message)
+            handleClose()
         }
     }
 
