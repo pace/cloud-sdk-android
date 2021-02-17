@@ -13,6 +13,7 @@ android {
         targetSdkVersion rootProject.ext.target_sdk_version
         versionCode rootProject.ext.build_number
         versionName rootProject.ext.version_name
+        manifestPlaceholders = [pace_redirect_scheme: "\${pace_redirect_scheme}"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

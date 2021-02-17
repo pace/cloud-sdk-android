@@ -44,7 +44,6 @@ object AppKit : CloudSDKKoinComponent {
             "${config.clientAppName}/${config.clientAppVersion}_${config.clientAppBuild}",
             "(${DeviceUtils.getDeviceName()} Android/${DeviceUtils.getAndroidVersion()})",
             "PWA-SDK/${BuildConfig.VERSION_NAME}",
-            if (config.clientId != null) "(clientid:${config.clientId};)" else "",
             if (theme == Theme.LIGHT) "PWASDK-Theme/Light" else "PWASDK-Theme/Dark",
             "IdentityManagement/${config.authenticationMode.value}",
             config.extensions.joinToString(" ")

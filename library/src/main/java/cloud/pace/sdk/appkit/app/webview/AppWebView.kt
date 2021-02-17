@@ -111,6 +111,12 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         }
     }
 
+    private val appInterceptableLinkObserver = Observer<Event<AppWebViewModel.AppInterceptableLinkResponse>> {
+        it.getContentIfNotHandled()?.let { appInterceptableLinkResponse ->
+            sendMessageCallback(gson.toJson(appInterceptableLinkResponse))
+        }
+    }
+
     init {
         addView(View.inflate(context, R.layout.app_web_view, null))
 
@@ -137,6 +143,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         webView.addJavascriptInterface(GetSecureDataInterface(), "pace_getSecureData")
         webView.addJavascriptInterface(DisableInterface(), "pace_disable")
         webView.addJavascriptInterface(OpenURLInNewTabInterface(), "pace_openURLInNewTab")
+        webView.addJavascriptInterface(GetAppInterceptableLinkInterface(), "pace_getAppInterceptableLink")
 
         failureView.setButtonClickListener {
             webView.reload()
@@ -179,6 +186,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         webViewModel.statusCode.observe(lifecycleOwner, statusCodeObserver)
         webViewModel.totpResponse.observe(lifecycleOwner, totpResponseObserver)
         webViewModel.secureData.observe(lifecycleOwner, secureDataObserver)
+        webViewModel.appInterceptableLink.observe(lifecycleOwner, appInterceptableLinkObserver)
     }
 
     private fun handleBack() {
@@ -274,6 +282,13 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         @JavascriptInterface
         fun postMessage(message: String) {
             onMainThread { webViewModel.handleOpenURLInNewTab(message) }
+        }
+    }
+
+    inner class GetAppInterceptableLinkInterface {
+        @JavascriptInterface
+        fun postMessage(message: String) {
+            onMainThread { webViewModel.handleGetAppInterceptableLink(message) }
         }
     }
 }

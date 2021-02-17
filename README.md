@@ -53,18 +53,6 @@ dependencies {
 }
 ```
 
-Because the PACE Cloud SDK uses [AppAuth for Android](https://github.com/openid/AppAuth-Android) for the *IDKit*, the AppAuth redirect scheme must be registered in your app's `build.gradle` file:
-```groovy
-android {
-    ...
-    defaultConfig {
-        ...
-        manifestPlaceholders = ['appAuthRedirectScheme': 'YOUR_REDIRECT_URI_SCHEME_OR_EMPTY']
-    }
-    ...
-}
-```
-
 ## Setup
 The `PACECloudSDK` needs to be setup before any of its `Kits` can be used. Therefore you *must* call `PACECloudSDK.setup(context: Context, configuration: Configuration)`. The best way to do this is inside your `Application` class. It will automatically authorize your application with the provided api key.
 
@@ -79,11 +67,26 @@ clientAppName: String
 clientAppVersion: String
 clientAppBuild: String
 apiKey: String
-clientId: String? // Default: null
 authenticationMode: AuthenticationMode // Default: AuthenticationMode.WEB
 environment: Environment // Default: Environment.PRODUCTION
 extensions: List<String> // Default: emptyList()
 locationAccuracy: Int? // Default: null
+```
+
+PACE Cloud SDK uses [AppAuth for Android](https://github.com/openid/AppAuth-Android) for the native authentication in *IDKit*, which needs `appAuthRedirectScheme` manifest placeholder to be set. PACE Cloud SDK requires `pace_redirect_scheme` for [Deep Linking](#deep-linking) to be set. Both these manifest placeholder must be configured in your app's `build.gradle` file. In case you won't be using native login, you can set an empty string for `appAuthRedirectScheme`.
+
+For the `pace_redirect_scheme` we recommend to use the following pattern to prevent collisions with other apps that might be using PACE Cloud SDK: `pace.$UUID`, where `$UUID` can be any UUID of your choice:
+```groovy
+android {
+    ...
+    defaultConfig {
+        ...
+        manifestPlaceholders = [
+            'appAuthRedirectScheme': 'YOUR_REDIRECT_URI_SCHEME_OR_EMPTY', // e.g. reverse domain name notation: cloud.pace.app
+            'pace_redirect_scheme': 'YOUR_REDIRECT_SCHEME_OR_EMPTY'] // e.g. pace.ad50262a-9c88-4a5f-bc55-00dc31b81e5a
+    }
+    ...
+}
 ```
 
 ## Migration
@@ -102,7 +105,6 @@ val config = OIDConfiguration(
     authorizationEndpoint, 
     tokenEndpoint,
     userInfoEndpoint, // optional
-    clientId, 
     clientSecret, // optional
     scopes, // optional
     redirectUri,
@@ -489,32 +491,12 @@ AppKit.requestLocalApps { app ->
 }
 ```
 **Note**: For a more detailed example, where the apps are displayed in a `RecyclerView`, see the `PACECloudSDK` example app.
-  
+
 ### Deep Linking
 Some of our services (e.g. `PayPal`) do not open the URL in the WebView, but in a Chrome Custom Tab within the app, due to security reasons. After completion of the process the user is redirected back to the WebView via deep linking. In order to set the redirect URL correctly and to ensure that the client app intercepts the deep link, the following requirements must be met:
 
-* Set `clientId` in *PACECloudSDK's* configuration during the [setup](#setup), because it is needed for the redirect URL
-* Specify the [AppActivity](#appactivity) as deep link intent filter in your app manifest. **`pace.${clientId}` (same `clientId` as passed in the configuration) must be passed to `android:scheme`:**
-* If the scheme is not set, the *AppKit* calls the `onCustomSchemeError(context: Context?, scheme: String)` callback
-
-```xml
-<activity
-    android:name="cloud.pace.sdk.appkit.app.AppActivity"
-    android:launchMode="singleTop"
-    android:screenOrientation="portrait"
-    android:theme="@style/AppKitTheme">
-    <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-
-        <data
-            android:host="redirect"
-            android:scheme="pace.$clientId" />
-    </intent-filter>
-</activity>
-```
+* Specify the `pace_redirect_scheme` as manifest placeholder in your app's `build.gradle` file (see [setup](#setup))
+* If the scheme is empty, the *AppKit* calls the `onCustomSchemeError(context: Context?, scheme: String)` callback
 
 ### Native login
 If the client app uses its own login and wants to pass an access token to the apps, follow these steps:

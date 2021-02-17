@@ -40,7 +40,6 @@ class AppWebViewModelTest {
     private val sharedPreferencesModel = mock(SharedPreferencesModel::class.java)
     private val payManager = mock(PayAuthenticationManager::class.java)
     private var disabled = ""
-    private val clientId = "c4b48d7a-5b36-11eb-ae93-0242ac130002"
     private val host = "app.test.net"
     private val url = "https://$host"
     private val eventManager = object : TestAppEventManager() {
@@ -54,7 +53,7 @@ class AppWebViewModelTest {
 
     @Before
     fun init() {
-        PACECloudSDK.configuration = Configuration("", "", "", "", clientId = clientId, environment = Environment.DEVELOPMENT)
+        PACECloudSDK.configuration = Configuration("", "", "", "", environment = Environment.DEVELOPMENT)
 
         appModel.callback = appCallback
         disabled = ""
@@ -297,6 +296,5 @@ class AppWebViewModelTest {
         viewModel.handleOpenURLInNewTab(openURLInNewTabRequest)
 
         assertEquals(cancelUrl, viewModel.url.value?.getContentIfNotHandled())
-        verify(appCallback, times(1)).onCustomSchemeError(context, "pace.$clientId://redirect")
     }
 }
