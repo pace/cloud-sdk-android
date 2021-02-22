@@ -3,14 +3,11 @@ package cloud.pace.sdk.poikit.poi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import cloud.pace.sdk.poikit.POIKit
 import cloud.pace.sdk.poikit.database.GasStationDAO
 import cloud.pace.sdk.poikit.poi.download.TileDownloader
 import cloud.pace.sdk.poikit.poi.download.TileQueryRequestOuterClass.TileQueryRequest.*
 import cloud.pace.sdk.poikit.utils.POIKitConfig
-import cloud.pace.sdk.poikit.utils.ZoomException
-import cloud.pace.sdk.poikit.utils.diameter
-import cloud.pace.sdk.poikit.utils.zoomToDiameter
+import cloud.pace.sdk.poikit.utils.addPadding
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Completion
 import cloud.pace.sdk.utils.Failure
@@ -29,7 +26,7 @@ open class PoiKitObserverToken : CloudSDKKoinComponent {
     val loading = MutableLiveData<Boolean>()
     var lastRefreshTime: Date? = null
 
-    open fun refresh() {
+    open fun refresh(zoomLevel: Int = POIKitConfig.ZOOMLEVEL) {
         lastRefreshTime = Date()
     }
 
@@ -38,7 +35,7 @@ open class PoiKitObserverToken : CloudSDKKoinComponent {
 
 class VisibleRegionNotificationToken(
     val visibleRegion: VisibleRegion,
-    withMaxPoiSearchBoxSize: Boolean,
+    padding: Double,
     private val gasStationDao: GasStationDAO,
     private val completion: (Completion<List<PointOfInterest>>) -> Unit
 ) : PoiKitObserverToken() {
@@ -48,37 +45,28 @@ class VisibleRegionNotificationToken(
     private var downloadTask: Call? = null
 
     init {
-        if (withMaxPoiSearchBoxSize && visibleRegion.diameter() > POIKit.maxPoiSearchBoxSize) {
-            completion(Failure(ZoomException()))
-        } else {
-            // load all the points that are around a certain radius of the visible center
-            val regionToLoad = if (withMaxPoiSearchBoxSize) {
-                visibleRegion.zoomToDiameter(POIKit.maxPoiSearchBoxSize)
-            } else {
-                visibleRegion
-            }
-            gasStations = gasStationDao.getInBoundingBoxLive(
-                minLat = regionToLoad.latLngBounds.southwest.latitude,
-                minLon = regionToLoad.latLngBounds.southwest.longitude,
-                maxLat = regionToLoad.latLngBounds.northeast.latitude,
-                maxLon = regionToLoad.latLngBounds.northeast.longitude
-            )
+        // load all the points that are around a certain radius of the visible center
+        val regionToLoad = visibleRegion.addPadding(padding)
 
-            gasStationsObserver = Observer {
-                completion(Success(it))
-            }
+        gasStations = gasStationDao.getInBoundingBoxLive(
+            minLat = regionToLoad.latLngBounds.southwest.latitude,
+            minLon = regionToLoad.latLngBounds.southwest.longitude,
+            maxLat = regionToLoad.latLngBounds.northeast.latitude,
+            maxLon = regionToLoad.latLngBounds.northeast.longitude
+        )
 
-            gasStationsObserver?.let { gasStations?.observeForever(it) }
+        gasStationsObserver = Observer {
+            completion(Success(it))
         }
+
+        gasStationsObserver?.let { gasStations?.observeForever(it) }
     }
 
-    override fun refresh() {
-        // TODO: Calculate best zoom level based on the diameter of the request + meta data which discribes what is available at what zoom level
+    override fun refresh(zoomLevel: Int) {
         if (gasStationsObserver == null) return
 
         loading.value = true
 
-        val zoomLevel = POIKitConfig.ZOOMLEVEL
         val northEast = visibleRegion.latLngBounds.northeast.toLocationPoint().tileInfo(zoom = zoomLevel)
         val southWest = visibleRegion.latLngBounds.southwest.toLocationPoint().tileInfo(zoom = zoomLevel)
 
@@ -116,7 +104,7 @@ class VisibleRegionNotificationToken(
             }
         }
 
-        super.refresh()
+        super.refresh(zoomLevel)
     }
 
     override fun invalidate() {
@@ -139,11 +127,8 @@ class IDsNotificationToken(
         gasStations.observeForever(gasStationsObserver)
     }
 
-    override fun refresh() {
+    override fun refresh(zoomLevel: Int) {
         loading.value = true
-
-        // TODO: Calculate best zoom level based on the diameter of the request + meta data which discribes what is available at what zoom level
-        val zoomLevel = POIKitConfig.ZOOMLEVEL
 
         GlobalScope.launch {
             // Build request from bounding box
@@ -177,7 +162,7 @@ class IDsNotificationToken(
             }
         }
 
-        super.refresh()
+        super.refresh(zoomLevel)
     }
 
     override fun invalidate() {
