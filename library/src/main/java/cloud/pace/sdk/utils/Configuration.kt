@@ -8,7 +8,9 @@ data class Configuration @JvmOverloads constructor(
     var authenticationMode: AuthenticationMode = AuthenticationMode.WEB,
     var environment: Environment = Environment.PRODUCTION,
     var extensions: List<String> = emptyList(),
-    var locationAccuracy: Int? = null
+    var locationAccuracy: Int? = null,
+    var speedThresholdInKmPerHour: Int = 50,
+    var geoAppsScope: String = "pace"
 )
 
 enum class AuthenticationMode(val value: String) {

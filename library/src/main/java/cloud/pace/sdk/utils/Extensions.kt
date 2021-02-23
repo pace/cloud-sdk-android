@@ -22,15 +22,6 @@ val String.resourceUuid: String?
     get() = split(":").lastOrNull()
 
 /**
- * Checks if [this] matches the [Universal Resource Name](https://www.ietf.org/rfc/rfc2141.txt) (URN) format.
- *
- * @return True if [this] is valid, otherwise false.
- */
-fun String.isUrn(): Boolean {
-    return matches("[a-z0-9][a-z0-9-]{0,31}:[a-z0-9()+,\\-.:=@;\$_!*'%/?#]+".toRegex(RegexOption.IGNORE_CASE))
-}
-
-/**
  * Returns `true` if this nullable char sequence is not `null` or empty.
  */
 @Suppress("NOTHING_TO_INLINE")

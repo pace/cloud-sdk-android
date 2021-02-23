@@ -8,18 +8,25 @@ import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppsWithRefs
 import cloud.pace.sdk.api.poi.generated.request.apps.CheckForPaceAppAPI.checkForPaceApp
 import cloud.pace.sdk.api.poi.generated.request.apps.GetAppAPI.getApp
 import cloud.pace.sdk.api.poi.generated.request.apps.GetAppsAPI.getApps
+import cloud.pace.sdk.appkit.geo.GeoAPIClient
+import cloud.pace.sdk.appkit.geo.GeoAPIResponse
 import cloud.pace.sdk.poikit.utils.ApiException
 import cloud.pace.sdk.utils.enqueue
 import retrofit2.Call
 
-interface AppCloudApi {
+interface AppAPI {
 
+    fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit)
     fun getLocationBasedApps(latitude: Double, longitude: Double, completion: (Result<LocationBasedAppsWithRefs>) -> Unit)
     fun getAllApps(completion: (Result<LocationBasedApps>) -> Unit)
     fun getAppByAppId(appId: String, completion: (Result<LocationBasedApp>) -> Unit)
 }
 
-class AppCloudApiImpl : AppCloudApi {
+class AppAPIImpl(private val geoApiClient: GeoAPIClient) : AppAPI {
+
+    override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
+        geoApiClient.getGeoApiApps(completion)
+    }
 
     override fun getLocationBasedApps(latitude: Double, longitude: Double, completion: (Result<LocationBasedAppsWithRefs>) -> Unit) {
         API.apps.checkForPaceApp(latitude.toFloat(), longitude.toFloat()).executeWithRetry(completion)

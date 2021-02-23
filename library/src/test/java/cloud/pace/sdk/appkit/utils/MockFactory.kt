@@ -9,11 +9,14 @@ import androidx.lifecycle.MutableLiveData
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApps
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppsWithRefs
-import cloud.pace.sdk.appkit.app.api.AppCloudApi
+import cloud.pace.sdk.appkit.app.api.AppAPI
 import cloud.pace.sdk.appkit.app.api.AppRepository
 import cloud.pace.sdk.appkit.app.api.UriManager
 import cloud.pace.sdk.appkit.app.webview.AppWebViewClient
 import cloud.pace.sdk.appkit.communication.AppEventManager
+import cloud.pace.sdk.appkit.geo.GeoAPIManager
+import cloud.pace.sdk.appkit.geo.GeoAPIResponse
+import cloud.pace.sdk.appkit.geo.GeoGasStation
 import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
@@ -175,8 +178,9 @@ open class TestWebClientCallback : AppWebViewClient.WebClientCallback {
     override fun onLoadingChanged(isLoading: Boolean) {}
 }
 
-open class TestAppCloudApi : AppCloudApi {
+open class TestAppAPI : AppAPI {
 
+    override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {}
     override fun getLocationBasedApps(latitude: Double, longitude: Double, completion: (Result<LocationBasedAppsWithRefs>) -> Unit) {}
     override fun getAllApps(completion: (Result<LocationBasedApps>) -> Unit) {}
     override fun getAppByAppId(appId: String, completion: (Result<LocationBasedApp>) -> Unit) {}
@@ -186,4 +190,9 @@ open class TestCacheModel : CacheModel {
 
     override fun getUri(context: Context, url: String, completion: (Result<ByteArray>) -> Unit) {}
     override fun getManifest(context: Context, url: String, completion: (Result<AppManifest>) -> Unit) {}
+}
+
+open class TestGeoAPIManager : GeoAPIManager {
+
+    override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {}
 }

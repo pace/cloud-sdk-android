@@ -15,6 +15,9 @@ import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppEventManagerImpl
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.communication.AppModelImpl
+import cloud.pace.sdk.appkit.geo.GeoAPIClient
+import cloud.pace.sdk.appkit.geo.GeoAPIManager
+import cloud.pace.sdk.appkit.geo.GeoAPIManagerImpl
 import cloud.pace.sdk.appkit.geofences.GeofenceCallback
 import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.location.AppLocationManagerImpl
@@ -67,21 +70,23 @@ object KoinConfig {
                 single { TileDownloader(environment) }
                 single { NavigationApiClient(environment, apiKey) }
                 single { AddressSearchClient(environment, apiKey) }
+                single { GeoAPIClient(environment, get()) }
                 single<SystemManager> { SystemManagerImpl(get()) }
                 factory<LocationProvider> { LocationProviderImpl(get(), get()) }
                 single<SharedPreferencesModel> { SharedPreferencesImpl(PreferenceManager.getDefaultSharedPreferences(get())) }
                 single<CacheModel> { CacheModelImpl() }
-                single<AppRepository> { AppRepositoryImpl(get(), get(), get(), get()) }
+                single<AppRepository> { AppRepositoryImpl(get(), get(), get(), get(), get()) }
                 single<NetworkChangeListener> { NetworkChangeListenerImpl(get()) }
                 single<AppEventManager> { AppEventManagerImpl() }
                 single<PayAuthenticationManager> { PayAuthenticationManagerImpl(get()) }
                 single<UriManager> { UriManagerImpl() }
                 single<AppLocationManager> { AppLocationManagerImpl(get(), get()) }
-                single<AppCloudApi> { AppCloudApiImpl() }
+                single<AppAPI> { AppAPIImpl(get()) }
                 single { GeofenceCallback() }
                 single { LocationServices.getGeofencingClient(get<Context>()) }
                 single<AppModel> { AppModelImpl() }
                 single { AppManager() }
+                single<GeoAPIManager> { GeoAPIManagerImpl(get(), get()) }
                 viewModel<AppFragmentViewModel> { AppFragmentViewModelImpl(get(), get()) }
                 viewModel<AppWebViewModel> { (context: Context) -> AppWebViewModelImpl(context, get(), get(), get(), get(), get()) }
                 viewModel<AppDrawerViewModel> { AppDrawerViewModelImpl(get()) }

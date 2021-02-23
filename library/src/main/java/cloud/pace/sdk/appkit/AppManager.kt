@@ -3,10 +3,12 @@ package cloud.pace.sdk.appkit
 import android.content.Context
 import android.content.Intent
 import android.location.Location
+import android.os.Build
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.children
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.app.AppActivity
 import cloud.pace.sdk.appkit.app.api.AppRepository
 import cloud.pace.sdk.appkit.app.drawer.AppDrawer
@@ -19,6 +21,7 @@ import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.Car
 import cloud.pace.sdk.appkit.network.NetworkChangeListener
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
+import cloud.pace.sdk.appkit.utils.InvalidSpeed
 import cloud.pace.sdk.appkit.utils.NetworkError
 import cloud.pace.sdk.appkit.utils.RunningCheck
 import cloud.pace.sdk.utils.*
@@ -53,7 +56,18 @@ internal class AppManager : CloudSDKKoinComponent {
 
         appLocationManager.start { result ->
             result.onSuccess {
-                getAppsByLocation(it, completion)
+                val metersPerSecond = PACECloudSDK.configuration.speedThresholdInKmPerHour / 3.6
+                var isSpeedValid = it.speed < metersPerSecond
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    isSpeedValid = isSpeedValid && it.speedAccuracyMetersPerSecond < SPEED_ACCURACY_THRESHOLD
+                }
+
+                if (isSpeedValid) {
+                    getAppsByLocation(it, completion)
+                } else {
+                    completion(Failure(InvalidSpeed))
+                }
             }
 
             result.onFailure {
@@ -64,12 +78,6 @@ internal class AppManager : CloudSDKKoinComponent {
         }
     }
 
-    /**
-     * Requests Apps from Cloud API.
-     *
-     * @param location Current location
-     * @param completion Returns a list of [App]s on success or a [Throwable] on failure
-     */
     private fun getAppsByLocation(location: Location, completion: (Completion<List<App>>) -> Unit) {
         appRepository.getLocationBasedApps(context, location.latitude, location.longitude) { result ->
             result.onSuccess { apps ->
@@ -227,4 +235,8 @@ internal class AppManager : CloudSDKKoinComponent {
     internal fun closeAppActivity() = appModel.close(true)
 
     internal fun setCarData(car: Car) = sharedPreferencesModel.setCar(car)
+
+    companion object {
+        private const val SPEED_ACCURACY_THRESHOLD = 3 // in m/s ~= 10km/h
+    }
 }

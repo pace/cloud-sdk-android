@@ -3,8 +3,6 @@ package cloud.pace.sdk.appkit
 import androidx.test.runner.AndroidJUnit4
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.app.api.UriManagerImpl
-import cloud.pace.sdk.appkit.app.api.UriManagerImpl.Companion.PARAM_R
-import cloud.pace.sdk.appkit.app.api.UriManagerImpl.Companion.PARAM_REFERENCES
 import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.Environment
 import junit.framework.Assert.assertEquals
@@ -53,19 +51,5 @@ class UriManagerTest {
 
         val urls = uriManager.getStartUrls(baseUrl, manifestUrl, sdkStartUrl, references)
         assertEquals(mapOf(null to sdkStartUrl), urls)
-    }
-
-    @Test
-    fun urnParser() {
-        val id1 = "c34a78bc-de0a-4daa-9f5e-8cc7103cf55e"
-        val id2 = "2069125c-b65b-4514-81f9-3d09779b175f"
-        val baseUrl = "https://app.test.net/"
-        val manifestUrl = ""
-        val sdkStartUrl = "/?{$PARAM_REFERENCES}"
-        val references = listOf("prn:poi:gas-stations:$id1", "fV§d:ds2%$:$id2")
-
-        val urls = uriManager.getStartUrls(baseUrl, manifestUrl, sdkStartUrl, references)
-        assertEquals(1, urls.size)
-        assertEquals(mapOf(id1 to "$baseUrl?$PARAM_R=prn%3Apoi%3Agas-stations%3A$id1"), urls)
     }
 }
