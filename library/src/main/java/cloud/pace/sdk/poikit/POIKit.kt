@@ -41,7 +41,6 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
     private val navigationApi: NavigationApiClient by inject()
     private val addressSearchApi: AddressSearchClient by inject()
     private val locationProvider: LocationProvider by inject()
-    var maxPoiSearchBoxSize = 15000.0
 
     fun startLocationListener(): LocationProvider {
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
@@ -63,8 +62,8 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
     }
 
     @JvmOverloads
-    fun observe(visibleRegion: VisibleRegion, withMaxPoiSearchBoxSize: Boolean = true, completion: (Completion<List<PointOfInterest>>) -> Unit): VisibleRegionNotificationToken {
-        return VisibleRegionNotificationToken(visibleRegion, withMaxPoiSearchBoxSize, database.gasStationDao(), completion)
+    fun observe(visibleRegion: VisibleRegion, padding: Double = 0.0, completion: (Completion<List<PointOfInterest>>) -> Unit): VisibleRegionNotificationToken {
+        return VisibleRegionNotificationToken(visibleRegion, padding, database.gasStationDao(), completion)
     }
 
     fun observe(vararg ids: String, completion: (Completion<List<PointOfInterest>>) -> Unit): IDsNotificationToken {
