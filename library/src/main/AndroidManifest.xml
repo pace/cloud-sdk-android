@@ -11,9 +11,23 @@
             android:name=".appkit.app.AppActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppKitTheme" />
+            android:theme="@style/AppKitTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="redirect"
+                    android:scheme="${pace_redirect_scheme}" />
+            </intent-filter>
+        </activity>
 
         <receiver android:name=".appkit.geofences.GeofenceBroadcastReceiver" />
+        <meta-data
+            android:name="pace_redirect_scheme"
+            android:value="${pace_redirect_scheme}" />
     </application>
 
 </manifest>

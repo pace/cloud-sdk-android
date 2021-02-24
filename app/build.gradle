@@ -15,7 +15,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        manifestPlaceholders = ['appAuthRedirectScheme': 'pace']
+        manifestPlaceholders = ['appAuthRedirectScheme': 'pace', 'pace_redirect_scheme': '']
     }
 
     buildTypes {

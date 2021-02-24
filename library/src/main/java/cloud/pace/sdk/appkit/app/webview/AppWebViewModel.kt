@@ -1,7 +1,6 @@
 package cloud.pace.sdk.appkit.app.webview
 
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.location.Location
@@ -11,7 +10,6 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
@@ -28,7 +26,6 @@ import com.google.gson.JsonSyntaxException
 import dev.turingcomplete.kotlinonetimepassword.HmacAlgorithm
 import dev.turingcomplete.kotlinonetimepassword.TimeBasedOneTimePasswordConfig
 import dev.turingcomplete.kotlinonetimepassword.TimeBasedOneTimePasswordGenerator
-import kotlinx.android.synthetic.main.app_web_view.view.*
 import org.apache.commons.codec.binary.Base32
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -45,6 +42,7 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     abstract val statusCode: LiveData<Event<StatusCodeResponse>>
     abstract val totpResponse: LiveData<Event<TOTPResponse>>
     abstract val secureData: LiveData<Event<Map<String, String>>>
+    abstract val appInterceptableLink: LiveData<Event<AppInterceptableLinkResponse>>
 
     abstract fun init(url: String)
     abstract fun handleInvalidToken(message: String)
@@ -58,6 +56,7 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     abstract fun handleGetSecureData(message: String)
     abstract fun handleDisable(message: String)
     abstract fun handleOpenURLInNewTab(message: String)
+    abstract fun handleGetAppInterceptableLink(message: String)
 
     class VerifyLocationRequest(val lat: Double, val lon: Double, val threshold: Double)
     class BiometricRequest(@StringRes val title: Int, val onSuccess: () -> Unit, val onFailure: (errorCode: Int, errString: CharSequence) -> Unit)
@@ -68,6 +67,7 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     class DisableRequest(val until: Long)
     class OpenURLInNewTabRequest(val url: String, val cancelUrl: String)
     class TOTPResponse(val totp: String, val biometryMethod: String)
+    class AppInterceptableLinkResponse(val link: String)
 
     sealed class StatusCodeResponse(val statusCode: Int) {
         object Success : StatusCodeResponse(StatusCode.Ok.code)
@@ -106,6 +106,7 @@ class AppWebViewModelImpl(
     override val statusCode = MutableLiveData<Event<StatusCodeResponse>>()
     override val totpResponse = MutableLiveData<Event<TOTPResponse>>()
     override val secureData = MutableLiveData<Event<Map<String, String>>>()
+    override val appInterceptableLink = MutableLiveData<Event<AppInterceptableLinkResponse>>()
 
     private val gson = Gson()
 
@@ -334,21 +335,36 @@ class AppWebViewModelImpl(
 
     override fun handleOpenURLInNewTab(message: String) {
         try {
+            val redirectScheme = getRedirectScheme()
             val openURLInNewTabRequest = gson.fromJson(message, OpenURLInNewTabRequest::class.java)
-            val customScheme = "pace.${PACECloudSDK.configuration.clientId}://redirect"
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(customScheme))
-            val resolveInfo = context.packageManager?.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)?.toList()
-
             url.value = Event(openURLInNewTabRequest.cancelUrl)
 
-            if (!resolveInfo.isNullOrEmpty()) {
+            if (!redirectScheme.isNullOrEmpty()) {
                 appModel.openUrlInNewTab(openURLInNewTabRequest.url)
             } else {
-                appModel.onCustomSchemeError(context, customScheme)
+                appModel.onCustomSchemeError(context, "${redirectScheme}://redirect")
             }
         } catch (e: JsonSyntaxException) {
             Log.e(e, "The openURLInNewTab JSON $message could not be deserialized.")
         }
+    }
+
+    override fun handleGetAppInterceptableLink(message: String) {
+        try {
+            val redirectScheme = getRedirectScheme()
+            if (!redirectScheme.isNullOrEmpty()) {
+                appInterceptableLink.value = Event(AppInterceptableLinkResponse(redirectScheme))
+            } else {
+                statusCode.value = Event(StatusCodeResponse.Failure("Could not retrieve redirect scheme", StatusCode.NotFound.code))
+            }
+        } catch (e: Exception) {
+            statusCode.value = Event(StatusCodeResponse.Failure("Could not retrieve redirect scheme", StatusCode.NotFound.code))
+        }
+    }
+
+    private fun getRedirectScheme(): String? {
+        val applicationInfo = context.packageManager?.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+        return applicationInfo?.metaData?.get("pace_redirect_scheme")?.toString()
     }
 
     private fun stringToAlgorithm(algorithm: String): HmacAlgorithm? {
