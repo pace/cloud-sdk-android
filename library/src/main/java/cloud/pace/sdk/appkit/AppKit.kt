@@ -122,6 +122,42 @@ object AppKit : CloudSDKKoinComponent {
     }
 
     /**
+     * Starts an [AppActivity] and loads PaceID in the [cloud.pace.sdk.appkit.app.webview.AppWebView].
+     *
+     * @param context Context which should be used to start the [AppActivity].
+     * @param enableBackToFinish True if the [AppActivity] should be finished or false if the [cloud.pace.sdk.appkit.app.webview.AppWebView] should navigate back on back press.
+     * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
+     * @param callback Via this callback the client app can subscribe to certain app events.
+     */
+    fun openPaceID(context: Context, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl? = null) {
+        appManager.openAppActivity(context, PACECloudSDK.configuration.environment.idUrl, enableBackToFinish, autoClose, callback)
+    }
+
+    /**
+     * Starts an [AppActivity] and loads the Payment App in the [cloud.pace.sdk.appkit.app.webview.AppWebView].
+     *
+     * @param context Context which should be used to start the [AppActivity].
+     * @param enableBackToFinish True if the [AppActivity] should be finished or false if the [cloud.pace.sdk.appkit.app.webview.AppWebView] should navigate back on back press.
+     * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
+     * @param callback Via this callback the client app can subscribe to certain app events.
+     */
+    fun openPaymentApp(context: Context, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl? = null) {
+        appManager.openAppActivity(context, PACECloudSDK.configuration.environment.payUrl, enableBackToFinish, autoClose, callback)
+    }
+
+    /**
+     * Starts an [AppActivity] and loads Transactions in the [cloud.pace.sdk.appkit.app.webview.AppWebView].
+     *
+     * @param context Context which should be used to start the [AppActivity].
+     * @param enableBackToFinish True if the [AppActivity] should be finished or false if the [cloud.pace.sdk.appkit.app.webview.AppWebView] should navigate back on back press.
+     * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
+     * @param callback Via this callback the client app can subscribe to certain app events.
+     */
+    fun openTransactions(context: Context, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl? = null) {
+        appManager.openAppActivity(context, PACECloudSDK.configuration.environment.transactionUrl, enableBackToFinish, autoClose, callback)
+    }
+
+    /**
      * Adds an [AppDrawer] to the parent view [buttonContainer] for each app in [apps] list.
      * Clicking on the [AppDrawer] opens the [AppActivity] and shows the App.
      *

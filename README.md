@@ -30,6 +30,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [Deep Linking](#deep-linking)
         + [Native login](#native-login)
         + [Removal of Apps](#removal-of-apps)
+        + [Miscellaneous](#miscellaneous)
 
 ## Specifications
 **PACECloudSDK** currently supports Android 6.0 (API level 23) and above.
@@ -350,7 +351,7 @@ AppKit.isPoiInRange(poiId, result -> {
 ```
 
 ### AppActivity
-The *AppKit* contains a default `Activity` which can be used to display an app. To open an app in the `AppActivity` you have to call `AppKit.openAppActivity(...)`. The `AppActivity` will be closed when the user clicks the close button in the app.
+The *AppKit* contains a default `Activity` which can be used to display an app. To open an app in the `AppActivity` you have to call `AppKit.openAppActivity(...)`. The `AppActivity` will be closed when the user clicks the close button in the app. You may also use a `presetUrl` (see [Preset Urls](#preset-urls)).
 
 ### AppWebView
 Moreover the *AppKit* contains a default `AppWebView`. To display an app in this WebView you have to call `AppWebView.loadApp(parent: Fragment, url: String)`. The `AppWebView`s parent needs to be a fragment as that's the needed context for the integrated `Android Biometric API`.
@@ -537,3 +538,7 @@ AppKit.INSTANCE.openAppActivity(context, url, true, false, new AppCallbackImpl()
 In case you want to remove the [AppActivity](#appactivity), simply call `AppKit.closeAppActivity()`.
 
 If you want to remove all [AppDrawers](#appdrawer) *and* the [AppActivity](#appactivity) (only if it was started with `autoClose = true`), you can call the `AppKit.closeApps(buttonContainer: ConstraintLayout)` method and pass your `ConstraintLayout` where you've added the `AppDrawer`s to (see [AppDrawer](#appdrawer)).
+
+### Miscellaneous
+#### Preset Urls
+`PACECloudSDK` provides preset urls for the most common apps, such as `PACE ID`, `payment` and `transactions` based on the environment the sdk was initialized with. You may access these urls via the enum `Environment.kt`.
