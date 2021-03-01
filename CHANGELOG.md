@@ -10,7 +10,15 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Internal - Include, if needed -->
 
 
-5.2.0 Release notes (2021-03-11)
+6.0.0 Release notes (2021-03-15)
+=============================================================
+
+### Breaking changes
+
+* Implement end session request and add end session endpoint to `OIDConfiguration` to clear user session on logout
+
+
+5.2.0 Release notes (2021-03-12)
 =============================================================
 
 ### Enhancements
