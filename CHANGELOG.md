@@ -9,6 +9,15 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Breaking Changes - ONLY INCLUDE FOR NEW MAJOR version -->
 <!-- ### Internal - Include, if needed -->
 
+5.1.0 Release notes (2021-03-03)
+=============================================================
+
+### Enhancements
+
+* Add convenience method for most common URLs
+* Generate new GeoJSON service with new filter possibilities, e.g. onlinePaymentMethod
+* Checks for available apps in a given location is now done on device
+
 5.0.0 Release notes (2021-02-24)
 =============================================================
 
