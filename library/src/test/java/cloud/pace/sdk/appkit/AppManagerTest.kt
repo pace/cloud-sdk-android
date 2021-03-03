@@ -3,6 +3,7 @@ package cloud.pace.sdk.appkit
 import android.content.Context
 import android.location.Location
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.app.api.AppRepository
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
@@ -11,12 +12,10 @@ import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.utils.*
-import cloud.pace.sdk.utils.CloudSDKKoinComponent
-import cloud.pace.sdk.utils.Failure
-import cloud.pace.sdk.utils.KoinConfig
-import cloud.pace.sdk.utils.Success
+import cloud.pace.sdk.utils.*
 import org.junit.After
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,6 +23,7 @@ import org.koin.core.context.stopKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.mockito.Mock
+import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import java.util.concurrent.CompletableFuture
 
@@ -39,8 +39,39 @@ class AppManagerTest : CloudSDKKoinComponent {
     @Mock
     private lateinit var mockLocation: Location
 
+    @Before
+    fun init() {
+        `when`(mockLocation.latitude).then { 49.012722 }
+        `when`(mockLocation.longitude).then { 8.427326 }
+        `when`(mockLocation.speed).then { 3f }
+
+        PACECloudSDK.configuration = Configuration("", "", "", "", environment = Environment.DEVELOPMENT)
+    }
+
     @After
     fun onFinished() = stopKoin()
+
+    @Test
+    fun `no app due to invalid speed`() {
+        `when`(mockLocation.speed).then { 20f }
+
+        val testModule = module {
+            single<AppLocationManager> {
+                TestAppLocationManager(mockLocation)
+            }
+        }
+
+        setupKoinForTests(testModule)
+
+        val future = CompletableFuture<Throwable>()
+        AppManager().requestLocalApps {
+            if (it is Failure) {
+                future.complete(it.throwable)
+            }
+        }
+
+        assertEquals(InvalidSpeed, future.get())
+    }
 
     @Test
     fun `no app due to missing location permissions`() {

@@ -1,7 +1,6 @@
 package cloud.pace.sdk.appkit.app.api
 
 import android.net.Uri
-import cloud.pace.sdk.utils.isUrn
 import cloud.pace.sdk.utils.resourceUuid
 import java.util.regex.Pattern
 
@@ -28,14 +27,10 @@ class UriManagerImpl : UriManager {
         val parameters = url.queryParameterNames.filter { it.contains(PARAM_REFERENCES) }
 
         if (parameters.isNotEmpty()) {
-            val urls = references
-                ?.filter {
-                    it.isUrn()
-                }
-                ?.map {
-                    val builder = url.buildUpon().clearQuery().appendQueryParameter(PARAM_R, it)
-                    it.resourceUuid to builder.build().toString()
-                }
+            val urls = references?.map {
+                val builder = url.buildUpon().clearQuery().appendQueryParameter(PARAM_R, it)
+                it.resourceUuid to builder.build().toString()
+            }
 
             if (!urls.isNullOrEmpty()) {
                 return urls.toMap()

@@ -6,10 +6,13 @@ import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppWithRefs
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppsWithRefs
 import cloud.pace.sdk.appkit.app.api.AppRepositoryImpl
+import cloud.pace.sdk.appkit.geo.GeoAPIApp
+import cloud.pace.sdk.appkit.geo.GeoGasStation
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
-import cloud.pace.sdk.appkit.utils.TestAppCloudApi
+import cloud.pace.sdk.appkit.utils.TestAppAPI
 import cloud.pace.sdk.appkit.utils.TestCacheModel
+import cloud.pace.sdk.appkit.utils.TestGeoAPIManager
 import cloud.pace.sdk.appkit.utils.TestUriUtils
 import cloud.pace.sdk.utils.CompletableFutureCompat
 import cloud.pace.sdk.utils.Configuration
@@ -27,6 +30,7 @@ class AppRepositoryTest {
         it.latitude = 48.0
         it.longitude = 8.0
     }
+    private val id = "ed82a1d5-edd3-4bd7-9ad1-f1a501f23555"
     private val urlLocationBasedApp = "https://app.test"
     private val startUrl = "https://app.test.start"
     private val locationBasedApp = LocationBasedAppWithRefs().apply { pwaUrl = urlLocationBasedApp }
@@ -43,7 +47,7 @@ class AppRepositoryTest {
         textColor = ""
     )
 
-    private val appCloudApi = object : TestAppCloudApi() {
+    private val appApi = object : TestAppAPI() {
         override fun getLocationBasedApps(latitude: Double, longitude: Double, completion: (Result<LocationBasedAppsWithRefs>) -> Unit) {
             if (latitude == locationWithApp.latitude && longitude == locationWithApp.longitude) {
                 completion(Result.success(listOf(locationBasedApp)))
@@ -65,7 +69,17 @@ class AppRepositoryTest {
         }
     }
 
-    private val appRepository = AppRepositoryImpl(context, cache, appCloudApi, uriUtil)
+    private val geoApiManager = object : TestGeoAPIManager() {
+        override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {
+            if (latitude == locationWithApp.latitude && longitude == locationWithApp.longitude) {
+                completion(Result.success(listOf(GeoGasStation(id, listOf(GeoAPIApp("fueling", urlLocationBasedApp))))))
+            } else {
+                completion(Result.success(emptyList()))
+            }
+        }
+    }
+
+    private val appRepository = AppRepositoryImpl(context, cache, appApi, uriUtil, geoApiManager)
 
     @Before
     fun init() {
@@ -110,7 +124,7 @@ class AppRepositoryTest {
             }
         }
 
-        val appRepository = AppRepositoryImpl(context, cacheModel, appCloudApi, uriUtil)
+        val appRepository = AppRepositoryImpl(context, cacheModel, appApi, uriUtil, geoApiManager)
         val appsFuture = CompletableFutureCompat<List<App>>()
         appRepository.getLocationBasedApps(mock(Context::class.java), locationWithApp.latitude, locationWithApp.longitude) {
             it.onSuccess { appsFuture.complete(it) }
@@ -123,12 +137,18 @@ class AppRepositoryTest {
 
     @Test
     fun `pass error when something failed`() {
-        val appCloudApi = object : TestAppCloudApi() {
+        val geoApiManager = object : TestGeoAPIManager() {
+            override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {
+                completion(Result.failure(RuntimeException()))
+            }
+        }
+
+        val appApi = object : TestAppAPI() {
             override fun getLocationBasedApps(latitude: Double, longitude: Double, completion: (Result<LocationBasedAppsWithRefs>) -> Unit) {
                 completion(Result.failure(RuntimeException()))
             }
         }
-        val appRepository = AppRepositoryImpl(context, cache, appCloudApi, uriUtil)
+        val appRepository = AppRepositoryImpl(context, cache, appApi, uriUtil, geoApiManager)
         val exceptionFuture = CompletableFutureCompat<Throwable?>()
         appRepository.getLocationBasedApps(mock(Context::class.java), locationWithApp.latitude, locationWithApp.longitude) {
             it.onSuccess { exceptionFuture.complete(null) }
@@ -144,9 +164,9 @@ class AppRepositoryTest {
         val id2 = "2069125c-b65b-4514-81f9-3d09779b175f"
         val locationBasedApp = LocationBasedAppWithRefs().apply {
             pwaUrl = urlLocationBasedApp
-            references = listOf("prn:poi:gas-stations:$id1", "prn:poi:gas-stations:$id2")
+            references = listOf(id1, id2)
         }
-        val appCloudApi = object : TestAppCloudApi() {
+        val appApi = object : TestAppAPI() {
             override fun getLocationBasedApps(latitude: Double, longitude: Double, completion: (Result<LocationBasedAppsWithRefs>) -> Unit) {
                 if (latitude == locationWithApp.latitude && longitude == locationWithApp.longitude) {
                     completion(Result.success(listOf(locationBasedApp)))
@@ -158,12 +178,12 @@ class AppRepositoryTest {
         val uriUtil = object : TestUriUtils() {
             override fun getStartUrls(baseUrl: String, manifestUrl: String, sdkStartUrl: String?, references: List<String>?): Map<String?, String> {
                 return mapOf(
-                    id1 to "$startUrl/?references=prn%3Apoi%3Agas-stations%3A$id1",
-                    id2 to "$startUrl/?references=prn%3Apoi%3Agas-stations%3A$id2"
+                    id1 to "$startUrl/?references=$id1",
+                    id2 to "$startUrl/?references=$id2"
                 )
             }
         }
-        val appRepository = AppRepositoryImpl(context, cache, appCloudApi, uriUtil)
+        val appRepository = AppRepositoryImpl(context, cache, appApi, uriUtil, geoApiManager)
         val appsFuture = CompletableFutureCompat<List<App>>()
         appRepository.getLocationBasedApps(mock(Context::class.java), locationWithApp.latitude, locationWithApp.longitude) {
             it.onSuccess { appsFuture.complete(it) }
@@ -178,7 +198,7 @@ class AppRepositoryTest {
         assertEquals(manifest.description, app1.description)
         assertEquals(manifest.backgroundColor, app1.iconBackgroundColor)
         assertEquals(id1, app1.gasStationId)
-        assertEquals("$startUrl/?references=prn%3Apoi%3Agas-stations%3A$id1", app1.url)
+        assertEquals("$startUrl/?references=$id1", app1.url)
         assertNull(app1.logo)
 
         val app2 = apps.get(1)
@@ -186,7 +206,7 @@ class AppRepositoryTest {
         assertEquals(manifest.description, app2.description)
         assertEquals(manifest.backgroundColor, app2.iconBackgroundColor)
         assertEquals(id2, app2.gasStationId)
-        assertEquals("$startUrl/?references=prn%3Apoi%3Agas-stations%3A$id2", app2.url)
+        assertEquals("$startUrl/?references=$id2", app2.url)
         assertNull(app2.logo)
     }
 }

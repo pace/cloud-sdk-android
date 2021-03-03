@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import cloud.pace.sdk.R
+import cloud.pace.sdk.appkit.geo.GeoAPIManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.persistence.CacheModel
@@ -24,24 +25,42 @@ interface AppRepository {
 class AppRepositoryImpl(
     private val context: Context,
     private val cache: CacheModel,
-    private val appCloudApi: AppCloudApi,
-    private val uriUtil: UriManager
+    private val appApi: AppAPI,
+    private val uriUtil: UriManager,
+    private val geoApiManager: GeoAPIManager
 ) : AppRepository {
 
     override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {
-        appCloudApi.getLocationBasedApps(latitude, longitude) { response ->
-            response.onSuccess { apps ->
-                completion(Result.success(apps.mapNotNull { castLocationBasedApp(context, it.pwaUrl, it.references) }.flatten()))
+        // Try to load the apps from the cache
+        geoApiManager.apps(latitude, longitude) { response ->
+            response.onSuccess {
+                val apps = it
+                    .flatMap { geoGasStation ->
+                        geoGasStation.apps.mapNotNull { geoApp ->
+                            castLocationBasedApp(context, geoApp.url, listOf(geoGasStation.id))
+                        }
+                    }.flatten()
+
+                completion(Result.success(apps))
             }
 
-            response.onFailure { throwable ->
-                completion(Result.failure(throwable))
+            response.onFailure {
+                // Fetch the apps from the API
+                appApi.getLocationBasedApps(latitude, longitude) { response ->
+                    response.onSuccess { apps ->
+                        completion(Result.success(apps.mapNotNull { castLocationBasedApp(context, it.pwaUrl, it.references) }.flatten()))
+                    }
+
+                    response.onFailure { throwable ->
+                        completion(Result.failure(throwable))
+                    }
+                }
             }
         }
     }
 
     override fun getAllApps(context: Context, completion: (Result<List<App>>) -> Unit) {
-        appCloudApi.getAllApps { response ->
+        appApi.getAllApps { response ->
             response.onSuccess { apps ->
                 completion(Result.success(apps.mapNotNull { castLocationBasedApp(context, it.pwaUrl, null) }.flatten()))
             }
@@ -62,7 +81,7 @@ class AppRepositoryImpl(
     }
 
     override fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit) {
-        appCloudApi.getAppByAppId(appId) { response ->
+        appApi.getAppByAppId(appId) { response ->
             response.onSuccess { app ->
                 completion(Result.success(app.pwaUrl))
             }

@@ -69,7 +69,7 @@ object AppKit : CloudSDKKoinComponent {
     }
 
     /**
-     * Fetches the app with the given [url] and [references] (as PRNs/URNs).
+     * Fetches the app with the given [url] and [references] (e.g. referenced gas station UUIDs).
      *
      * @param completion Returns a list of [App]s on success or a [Throwable] on failure.
      */

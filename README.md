@@ -302,13 +302,11 @@ AppKit.INSTANCE.requestLocalApps(result -> {
 ```
 
 ### Fetch apps by URL
-You can also fetch apps by URL and references (e.g. gas station references).
-
-**_Note:_** The reference starts with a specific namespace identifier followed by the gas station ID in this case it has to conform the URN format.
+You can also fetch apps by URL and references (e.g. referenced gas station UUIDs).
 
 ##### Kotlin example
 ```kotlin
-AppKit.fetchAppsByUrl(url, "prn:poi:gas-stations:c977190d-049b-4023-bcbd-1dab88f02924", "prn:poi:gas-stations:f86a1818-353c-425f-a92b-705cc6ec5259") {
+AppKit.fetchAppsByUrl(url, "c977190d-049b-4023-bcbd-1dab88f02924", "f86a1818-353c-425f-a92b-705cc6ec5259") {
     when (it) {
         is Success -> // `it.result` contains the app objects
         is Failure -> // `it.throwable` contains the Throwable of the failed request
@@ -318,7 +316,7 @@ AppKit.fetchAppsByUrl(url, "prn:poi:gas-stations:c977190d-049b-4023-bcbd-1dab88f
 
 ##### Java example
 ```java
-AppKit.INSTANCE.fetchAppsByUrl(url, new String[]{"prn:poi:gas-stations:c977190d-049b-4023-bcbd-1dab88f02924", "prn:poi:gas-stations:f86a1818-353c-425f-a92b-705cc6ec5259"}, result -> {
+AppKit.INSTANCE.fetchAppsByUrl(url, new String[]{"c977190d-049b-4023-bcbd-1dab88f02924", "f86a1818-353c-425f-a92b-705cc6ec5259"}, result -> {
     if (result instanceof Success) {
         List<App> apps = ((Success<List<App>>) result).getResult();
         // `Apps` contains the app objects
