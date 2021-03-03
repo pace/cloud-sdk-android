@@ -41,6 +41,10 @@ object GetBetaGeojsonPoisAPI {
             @Query("fields[gasStation]") fieldsgasStation: String? = null,
             /** Only show POIs of the given type */
             @Query("filter[poiType]") filterpoiType: FilterpoiType? = null,
+            /** Filter results based on available online payment methods. Use a comma separated list to get stations for multiple payment method. */
+            @Query("filter[onlinePaymentMethod]") filteronlinePaymentMethod: String? = null,
+            /** Filter results based on merchant name. Value has to be the same as provided in the merchant field. */
+            @Query("filter[merchant]") filtermerchant: String? = null,
             /** Select a country to query. If this parameter is not provided data of all countries is returned. Country code in ISO 3166-1 alpha-2 format */
             @Query("filter[country]") filtercountry: String? = null,
             /** If set, the request will only return POIs which have PACE Connected Fueling activated.
@@ -92,6 +96,6 @@ object GetBetaGeojsonPoisAPI {
             .create(GetBetaGeojsonPoisService::class.java)
     }
 
-    fun GeoJSONAPI.GeoJSONAPI.getBetaGeojsonPois(fieldsgasStation: String? = null, filterpoiType: FilterpoiType? = null, filtercountry: String? = null, filterconnectedFueling: String? = null, filterdkvAppAndGo: String? = null) =
-        service.getBetaGeojsonPois(fieldsgasStation, filterpoiType, filtercountry, filterconnectedFueling, filterdkvAppAndGo)
+    fun GeoJSONAPI.GeoJSONAPI.getBetaGeojsonPois(fieldsgasStation: String? = null, filterpoiType: FilterpoiType? = null, filteronlinePaymentMethod: String? = null, filtermerchant: String? = null, filtercountry: String? = null, filterconnectedFueling: String? = null, filterdkvAppAndGo: String? = null) =
+        service.getBetaGeojsonPois(fieldsgasStation, filterpoiType, filteronlinePaymentMethod, filtermerchant, filtercountry, filterconnectedFueling, filterdkvAppAndGo)
 }
