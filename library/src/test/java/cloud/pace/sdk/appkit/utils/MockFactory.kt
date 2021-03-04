@@ -71,6 +71,7 @@ open class TestAppRepository : AppRepository {
     override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {}
     override fun getAllApps(context: Context, completion: (Result<List<App>>) -> Unit) {}
     override fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit) {}
+    override fun isPoiInRange(poiId: String, latitude: Double, longitude: Double, completion: (Boolean) -> Unit) {}
 }
 
 open class TestSharedPreferencesModel : SharedPreferencesModel {

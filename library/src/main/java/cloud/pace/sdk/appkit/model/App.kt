@@ -15,7 +15,7 @@ data class App(
     var textBackgroundColor: String? = null,
     var textColor: String? = null,
     var display: String? = null,
-    var gasStationId: String? = null
+    var poiId: String? = null
 ) : Parcelable {
 
     override fun equals(other: Any?): Boolean {

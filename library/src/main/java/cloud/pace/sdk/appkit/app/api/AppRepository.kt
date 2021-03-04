@@ -11,6 +11,7 @@ import cloud.pace.sdk.appkit.persistence.CacheModel
 import cloud.pace.sdk.utils.CompletableFutureCompat
 import cloud.pace.sdk.utils.IconUtils
 import cloud.pace.sdk.utils.dp
+import cloud.pace.sdk.utils.resourceUuid
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
@@ -20,6 +21,7 @@ interface AppRepository {
     fun getAllApps(context: Context, completion: (Result<List<App>>) -> Unit)
     fun getAppsByUrl(context: Context, url: String, references: List<String>, completion: (Result<List<App>>) -> Unit)
     fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit)
+    fun isPoiInRange(poiId: String, latitude: Double, longitude: Double, completion: (Boolean) -> Unit)
 }
 
 class AppRepositoryImpl(
@@ -92,6 +94,28 @@ class AppRepositoryImpl(
         }
     }
 
+    override fun isPoiInRange(poiId: String, latitude: Double, longitude: Double, completion: (Boolean) -> Unit) {
+        // Try to load the apps from the cache
+        geoApiManager.apps(latitude, longitude) { response ->
+            response.onSuccess { geoGasStations ->
+                completion(geoGasStations.any { it.id == poiId })
+            }
+
+            response.onFailure {
+                // Fetch the apps from the API
+                appApi.getLocationBasedApps(latitude, longitude) { response ->
+                    response.onSuccess { apps ->
+                        completion(apps.any { it.references?.any { reference -> reference.resourceUuid == poiId } ?: false })
+                    }
+
+                    response.onFailure {
+                        completion(false)
+                    }
+                }
+            }
+        }
+    }
+
     private fun castLocationBasedApp(context: Context, appUrl: String?, references: List<String>?): List<App>? {
         appUrl ?: return null
 
@@ -133,7 +157,7 @@ class AppRepositoryImpl(
                     textColor = manifest.textColor,
                     textBackgroundColor = manifest.themeColor,
                     display = manifest.display,
-                    gasStationId = it.key
+                    poiId = it.key
                 )
             }
     }

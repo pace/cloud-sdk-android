@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     private val defaultAppCallback = object : AppCallbackImpl() {
         override fun onOpen(app: App?) {
             appUrl = app?.url
-            Toast.makeText(this@MainActivity, "Gas station ID = ${app?.gasStationId}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@MainActivity, "POI ID = ${app?.poiId}", Toast.LENGTH_SHORT).show()
         }
 
         override fun onTokenInvalid(onResult: (String) -> Unit) {
