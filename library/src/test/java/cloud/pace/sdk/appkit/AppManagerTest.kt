@@ -4,12 +4,19 @@ import android.content.Context
 import android.location.Location
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import cloud.pace.sdk.PACECloudSDK
+import cloud.pace.sdk.appkit.app.api.AppAPI
 import cloud.pace.sdk.appkit.app.api.AppRepository
+import cloud.pace.sdk.appkit.app.api.AppRepositoryImpl
+import cloud.pace.sdk.appkit.app.api.UriManager
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.communication.AppModelImpl
+import cloud.pace.sdk.appkit.geo.GeoAPIApp
+import cloud.pace.sdk.appkit.geo.GeoAPIManager
+import cloud.pace.sdk.appkit.geo.GeoGasStation
 import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.model.App
+import cloud.pace.sdk.appkit.persistence.CacheModel
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.utils.*
 import cloud.pace.sdk.utils.*
@@ -263,40 +270,36 @@ class AppManagerTest : CloudSDKKoinComponent {
     @Test
     fun `poi id is in range`() {
         val id = "e3211b77-03f0-4d49-83aa-4adaa46d95ae"
-        val app = App(
-            url = "http://test1",
-            name = "App #1",
-            shortName = "Connected Fueling",
-            description = "Subtitle app #1",
-            logo = null,
-            gasStationId = id
-        )
 
-        val appRepository = object : TestAppRepository() {
-            override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {
-                completion(Result.success(listOf(app)))
+        val geoApiManager = object : TestGeoAPIManager() {
+            override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {
+                completion(Result.success(listOf(GeoGasStation(id, listOf(GeoAPIApp("fueling", "https://app.test"))))))
             }
         }
 
         val testModule = module {
+            single<CacheModel> {
+                TestCacheModel()
+            }
+
+            single<AppAPI> {
+                TestAppAPI()
+            }
+
+            single<UriManager> {
+                TestUriUtils()
+            }
+
             single<AppLocationManager> {
                 TestAppLocationManager(mockLocation)
             }
 
+            single<GeoAPIManager> {
+                geoApiManager
+            }
+
             single<AppRepository> {
-                appRepository
-            }
-
-            single<SharedPreferencesModel> {
-                TestSharedPreferencesModel()
-            }
-
-            single<AppEventManager> {
-                TestAppEventManager()
-            }
-
-            single<AppModel> {
-                AppModelImpl()
+                AppRepositoryImpl(mockContext, get(), get(), get(), get())
             }
         }
 
@@ -314,40 +317,36 @@ class AppManagerTest : CloudSDKKoinComponent {
     fun `poi id is not in range`() {
         val id1 = "e3211b77-03f0-4d49-83aa-4adaa46d95ae"
         val id2 = "992b77b6-5982-4848-88fe-ae2633308279"
-        val app = App(
-            url = "http://test1",
-            name = "App #1",
-            shortName = "Connected Fueling",
-            description = "Subtitle app #1",
-            logo = null,
-            gasStationId = id1
-        )
 
-        val appRepository = object : TestAppRepository() {
-            override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {
-                completion(Result.success(listOf(app)))
+        val geoApiManager = object : TestGeoAPIManager() {
+            override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {
+                completion(Result.success(listOf(GeoGasStation(id1, listOf(GeoAPIApp("fueling", "https://app.test"))))))
             }
         }
 
         val testModule = module {
+            single<CacheModel> {
+                TestCacheModel()
+            }
+
+            single<AppAPI> {
+                TestAppAPI()
+            }
+
+            single<UriManager> {
+                TestUriUtils()
+            }
+
             single<AppLocationManager> {
                 TestAppLocationManager(mockLocation)
             }
 
+            single<GeoAPIManager> {
+                geoApiManager
+            }
+
             single<AppRepository> {
-                appRepository
-            }
-
-            single<SharedPreferencesModel> {
-                TestSharedPreferencesModel()
-            }
-
-            single<AppEventManager> {
-                TestAppEventManager()
-            }
-
-            single<AppModel> {
-                AppModelImpl()
+                AppRepositoryImpl(mockContext, get(), get(), get(), get())
             }
         }
 

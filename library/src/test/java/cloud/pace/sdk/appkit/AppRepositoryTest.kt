@@ -197,7 +197,7 @@ class AppRepositoryTest {
         assertEquals(manifest.name, app1.name)
         assertEquals(manifest.description, app1.description)
         assertEquals(manifest.backgroundColor, app1.iconBackgroundColor)
-        assertEquals(id1, app1.gasStationId)
+        assertEquals(id1, app1.poiId)
         assertEquals("$startUrl/?references=$id1", app1.url)
         assertNull(app1.logo)
 
@@ -205,7 +205,7 @@ class AppRepositoryTest {
         assertEquals(manifest.name, app2.name)
         assertEquals(manifest.description, app2.description)
         assertEquals(manifest.backgroundColor, app2.iconBackgroundColor)
-        assertEquals(id2, app2.gasStationId)
+        assertEquals(id2, app2.poiId)
         assertEquals("$startUrl/?references=$id2", app2.url)
         assertNull(app2.logo)
     }

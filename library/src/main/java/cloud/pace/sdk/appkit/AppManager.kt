@@ -56,14 +56,7 @@ internal class AppManager : CloudSDKKoinComponent {
 
         appLocationManager.start { result ->
             result.onSuccess {
-                val metersPerSecond = PACECloudSDK.configuration.speedThresholdInKmPerHour / 3.6
-                var isSpeedValid = it.speed < metersPerSecond
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    isSpeedValid = isSpeedValid && it.speedAccuracyMetersPerSecond < SPEED_ACCURACY_THRESHOLD
-                }
-
-                if (isSpeedValid) {
+                if (isSpeedValid(it)) {
                     getAppsByLocation(it, completion)
                 } else {
                     completion(Failure(InvalidSpeed))
@@ -76,6 +69,17 @@ internal class AppManager : CloudSDKKoinComponent {
 
             checkRunning = false
         }
+    }
+
+    private fun isSpeedValid(location: Location): Boolean {
+        val metersPerSecond = PACECloudSDK.configuration.speedThresholdInKmPerHour / 3.6
+        var isSpeedValid = location.speed < metersPerSecond
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            isSpeedValid = isSpeedValid && location.speedAccuracyMetersPerSecond < SPEED_ACCURACY_THRESHOLD
+        }
+
+        return isSpeedValid
     }
 
     private fun getAppsByLocation(location: Location, completion: (Completion<List<App>>) -> Unit) {
@@ -156,10 +160,13 @@ internal class AppManager : CloudSDKKoinComponent {
     }
 
     internal fun isPoiInRange(poiId: String, completion: (Boolean) -> Unit) {
-        requestLocalApps {
-            when (it) {
-                is Success -> completion(it.result.any { app -> app.gasStationId == poiId })
-                is Failure -> completion(false)
+        appLocationManager.start { result ->
+            result.onSuccess {
+                appRepository.isPoiInRange(poiId, it.latitude, it.longitude, completion)
+            }
+
+            result.onFailure {
+                completion(false)
             }
         }
     }
