@@ -1,4 +1,4 @@
-package cloud.pace.sdk.idkit
+package cloud.pace.sdk.idkit.userinfo
 
 import cloud.pace.sdk.poikit.utils.ApiException
 import cloud.pace.sdk.utils.*

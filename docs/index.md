@@ -20,9 +20,13 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [Cached token](#cached-token)
         + [Check intent](#check-intent)
         + [End session](#end-session)
+        + [Biometry](#biometry)
+        + [PIN](#pin)
     * [AppKit](#appkit)
         + [Main Features](#main-features)
         + [Setup](#setup-2)
+            + [Permission](#permission)
+            + [Biometric authentication](#biometric-authentication)
         + [Request local apps](#request-local-apps)
         + [Fetch apps by URL](#fetch-apps-by-url)
         + [Is POI in range?](#is-poi-in-range)
@@ -100,7 +104,10 @@ apiKey: String
 authenticationMode: AuthenticationMode // Default: AuthenticationMode.WEB
 environment: Environment // Default: Environment.PRODUCTION
 extensions: List<String> // Default: emptyList()
+domainACL: List<String> // Default: emptyList()
 locationAccuracy: Int? // Default: null
+speedThresholdInKmPerHour: Int // Default: 50
+geoAppsScope: String // Default: "pace"
 ```
 
 PACE Cloud SDK uses [AppAuth for Android](https://github.com/openid/AppAuth-Android) for the native authentication in *IDKit*, which needs `appAuthRedirectScheme` manifest placeholder to be set. PACE Cloud SDK requires `pace_redirect_scheme` for [Deep Linking](#deep-linking) to be set. Both these manifest placeholder must be configured in your app's `build.gradle` file. In case you won't be using native login, you can set an empty string for `appAuthRedirectScheme`.
@@ -357,6 +364,24 @@ IDKit.handleEndSessionResponse(intent) {
 }
 ```
 
+#### Biometry
+The `PACECloudSDK` provides the following methods to enable and disable biometric authentication:
+* Check if biometric authentication has been enabled on the device: `IDKit.isBiometricAuthenticationEnabled()`
+* Enable biometric authentication with the user PIN: `IDKit.enableBiometricAuthenticationWithPIN(pin, completion)`
+* Enable biometric authentication with the user password: `IDKit.enableBiometricAuthenticationWithPassword(password, completion)`
+* Enable biometric authentication with an OTP previously sent by mail (see `sendMailOTP(completion)`): `IDKit.enableBiometricAuthenticationWithOTP(otp, completion)`
+* Disable biometric authentication on the device: `IDKit.disableBiometricAuthentication()`
+
+#### PIN
+The `PACECloudSDK` provides the following methods to check and set the PIN:
+* Check if the user PIN has been set: `IDKit.isPINSet(completion)`
+* Check if the user password has been set: `IDKit.isPasswordSet(completion)`
+* Check if the user PIN or password has been set: `IDKit.isPINOrPasswordSet(completion)`
+* Set the user PIN and authorize with biometry: `IDKit.setPINWithBiometry(...)`
+* Set the user PIN and authorize with the user password: `IDKit.setPINWithPassword(pin, password, completion)`
+* Set the user PIN and authorize with an OTP previously sent by mail (see `sendMailOTP(completion)`): `IDKit.setPINWithOTP(pin, otp, completion)`
+* Send the user an OTP via mail, which is used to enable biometric authentication or to set the user PIN: `sendMailOTP(completion)`
+
 ## AppKit
 ### Main features
 * Get apps at the current location or by URL
@@ -366,10 +391,15 @@ IDKit.handleEndSessionResponse(intent) {
 
 ### Setup
 
+#### Permission
 Please make sure that the user grants the following permission:
 * `Manifest.permission.ACCESS_FINE_LOCATION`
 
 **_Note:_** *AppKit* needs this permission to get the user location but it will not request the permission.
+
+#### Biometric authentication
+To be able to authorize payments with biometry, the `domainACL` must be set during the [setup](#setup) of the `PACECloudSDK`.
+The `domainACL` (domain access control list) is a list of domains which should be allowed to use biometric authentication.
 
 ### Request local apps
 Location based apps can be requested with the following function. The completion contains a list with the available apps as `App` objects or a `Throwable`, if an error occurs.

@@ -2,6 +2,7 @@ package cloud.pace.sdk.appkit.persistence
 
 import android.content.SharedPreferences
 import cloud.pace.sdk.appkit.model.Car
+import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.PAYMENT_AUTHORIZE
 
 interface SharedPreferencesModel {
 
@@ -15,6 +16,9 @@ interface SharedPreferencesModel {
     fun getLong(key: String, defValue: Long? = null): Long?
     fun setCar(car: Car)
     fun getCar(): Car
+    fun setTotpSecret(host: String? = null, key: String = PAYMENT_AUTHORIZE, totpSecret: TotpSecret)
+    fun getTotpSecret(host: String? = null, key: String = PAYMENT_AUTHORIZE): TotpSecret?
+    fun removeTotpSecret(host: String? = null, key: String = PAYMENT_AUTHORIZE)
     fun remove(key: String)
 }
 
@@ -71,6 +75,33 @@ class SharedPreferencesImpl(private val sharedPreferences: SharedPreferences) : 
         return Car(getString(VIN), getString(FUEL_TYPE), getInt(EXPECTED_AMOUNT), getInt(MILEAGE))
     }
 
+    override fun setTotpSecret(host: String?, key: String, totpSecret: TotpSecret) {
+        putString(getTotpSecretPreferenceKey(SECRET, host, key), totpSecret.encryptedSecret)
+        putInt(getTotpSecretPreferenceKey(DIGITS, host, key), totpSecret.digits)
+        putInt(getTotpSecretPreferenceKey(PERIOD, host, key), totpSecret.period)
+        putString(getTotpSecretPreferenceKey(ALGORITHM, host, key), totpSecret.algorithm)
+    }
+
+    override fun getTotpSecret(host: String?, key: String): TotpSecret? {
+        val encryptedSecret = getString(getTotpSecretPreferenceKey(SECRET, host, key))
+        val digits = getInt(getTotpSecretPreferenceKey(DIGITS, host, key))
+        val period = getInt(getTotpSecretPreferenceKey(PERIOD, host, key))
+        val algorithm = getString(getTotpSecretPreferenceKey(ALGORITHM, host, key))
+
+        return if (encryptedSecret != null && digits != null && period != null && algorithm != null) {
+            TotpSecret(encryptedSecret, digits, period, algorithm)
+        } else null
+    }
+
+    override fun removeTotpSecret(host: String?, key: String) {
+        sharedPreferences.edit()
+            .remove(getTotpSecretPreferenceKey(SECRET, host, key))
+            .remove(getTotpSecretPreferenceKey(DIGITS, host, key))
+            .remove(getTotpSecretPreferenceKey(PERIOD, host, key))
+            .remove(getTotpSecretPreferenceKey(ALGORITHM, host, key))
+            .apply()
+    }
+
     override fun remove(key: String) {
         sharedPreferences.edit().remove(key).apply()
     }
@@ -87,5 +118,14 @@ class SharedPreferencesImpl(private val sharedPreferences: SharedPreferences) : 
         const val ALGORITHM = "totp_secret_algorithm"
         const val SECURE_DATA = "secure_data"
         const val DISABLE_TIME = "disable_time"
+        const val PAYMENT_AUTHORIZE = "payment-authorize"
+
+        fun getTotpSecretPreferenceKey(which: String, host: String?, key: String) = which + (if (host != null) "_$host" else "") + "_$key"
+
+        fun getSecureDataPreferenceKey(host: String, key: String) = "${SECURE_DATA}_${host}_$key"
+
+        fun getDisableTimePreferenceKey(host: String) = "${DISABLE_TIME}_$host"
     }
 }
+
+data class TotpSecret(val encryptedSecret: String, val digits: Int, val period: Int, val algorithm: String)

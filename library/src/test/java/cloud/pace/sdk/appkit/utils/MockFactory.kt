@@ -23,6 +23,7 @@ import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.model.Car
 import cloud.pace.sdk.appkit.persistence.CacheModel
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
+import cloud.pace.sdk.appkit.persistence.TotpSecret
 import cloud.pace.sdk.utils.Event
 import cloud.pace.sdk.utils.LocationProvider
 import cloud.pace.sdk.utils.LocationState
@@ -76,10 +77,6 @@ open class TestAppRepository : AppRepository {
 
 open class TestSharedPreferencesModel : SharedPreferencesModel {
 
-    override fun getCar(): Car {
-        return Car("", "", 0, 0)
-    }
-
     override fun getInt(key: String, defValue: Int?): Int? {
         return null
     }
@@ -102,6 +99,17 @@ open class TestSharedPreferencesModel : SharedPreferencesModel {
     override fun putStringSet(key: String, values: HashSet<String>) {}
     override fun remove(key: String) {}
     override fun setCar(car: Car) {}
+    override fun getCar(): Car {
+        return Car("", "", 0, 0)
+    }
+
+    override fun setTotpSecret(host: String?, key: String, totpSecret: TotpSecret) {}
+
+    override fun getTotpSecret(host: String?, key: String): TotpSecret? {
+        return null
+    }
+
+    override fun removeTotpSecret(host: String?, key: String) {}
 }
 
 open class TestUriUtils(private val id: String? = null, private val startUrl: String = "") : UriManager {

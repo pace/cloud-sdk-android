@@ -7,6 +7,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.RadioButton
 import android.widget.Toast
@@ -18,9 +20,9 @@ import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.model.App
-import cloud.pace.sdk.idkit.FailedRetrievingSessionWhileAuthorizing
 import cloud.pace.sdk.idkit.IDKit
-import cloud.pace.sdk.idkit.OIDConfiguration
+import cloud.pace.sdk.idkit.model.FailedRetrievingSessionWhileAuthorizing
+import cloud.pace.sdk.idkit.model.OIDConfiguration
 import cloud.pace.sdk.poikit.POIKit
 import cloud.pace.sdk.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -70,11 +72,12 @@ class MainActivity : AppCompatActivity() {
 
         IDKit.setup(
             this, OIDConfiguration(
-                authorizationEndpoint = "YOUR_AUTHORIZATION_ENDPOINT",    // TODO: Replace with your authorization endpoint
-                endSessionEndpoint = "YOUR_END_SESSION_ENDPOINT",    // TODO: Replace with your end session endpoint
-                tokenEndpoint = "YOUR_TOKEN_ENDPOINT",    // TODO: Replace with your token endpoint
-                clientId = "YOUR_CLIENT_ID",    // TODO: Replace with your client ID
-                redirectUri = "YOUR_REDIRECT_URI",    // TODO: Replace with your redirect URI (URI scheme should match `appAuthRedirectScheme` in app's build.gradle file)
+                authorizationEndpoint = "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/auth",
+                endSessionEndpoint = "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/logout",
+                tokenEndpoint = "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/token",
+                userInfoEndpoint = "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/userinfo",
+                clientId = "cloud-sdk-example-app",
+                redirectUri = "pace://cloud-sdk-example"
             )
         )
 
@@ -85,9 +88,12 @@ class MainActivity : AppCompatActivity() {
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),
                 apiKey = "YOUR_API_KEY",
                 authenticationMode = AuthenticationMode.NATIVE,
-                environment = Environment.DEVELOPMENT
+                environment = Environment.DEVELOPMENT,
+                domainACL = listOf("pace.cloud")
             )
         )
+
+        IDKit.refreshToken()
 
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -149,8 +155,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         discover_configuration.setOnClickListener {
-            // TODO: Replace with your issuerUri
-            IDKit.discoverConfiguration("YOUR_ISSUER_URI") {
+            IDKit.discoverConfiguration("https://id.dev.pace.cloud/auth/realms/pace") {
                 when (it) {
                     is Success -> {
                         authorization_endpoint.text = "Authorization endpoint: ${it.result.authorizationEndpoint}"
@@ -293,6 +298,20 @@ class MainActivity : AppCompatActivity() {
 
                 this.lastLocation = it
             }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return if (item.itemId == R.id.credentials) {
+            startActivity(Intent(this, CredentialsActivity::class.java))
+            true
+        } else {
+            super.onOptionsItemSelected(item)
         }
     }
 
