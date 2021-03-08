@@ -9,6 +9,13 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Breaking Changes - ONLY INCLUDE FOR NEW MAJOR version -->
 <!-- ### Internal - Include, if needed -->
 
+5.1.1 Release notes (2021-03-08)
+=============================================================
+
+### Fixes
+
+* Return exception instead of last access token in `refreshToken` in case of error
+
 5.1.0 Release notes (2021-03-03)
 =============================================================
 
