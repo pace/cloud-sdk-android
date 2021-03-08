@@ -69,7 +69,11 @@ object IDKit : IDKitKoinComponent, LifecycleObserver {
     fun discoverConfiguration(issuerUri: String, completion: (Completion<ServiceConfiguration>) -> Unit) {
         AuthorizationServiceConfiguration.fetchFromIssuer(Uri.parse(issuerUri)) { configuration, exception ->
             when {
-                exception != null -> completion(Failure(exception))
+                exception != null -> completion(
+                    Failure(
+                        AuthorizationError(exception.type, exception.code, exception.error, exception.errorDescription, exception.errorUri, exception.message, exception.cause)
+                    )
+                )
                 configuration != null -> {
                     completion(Success(ServiceConfiguration(configuration.authorizationEndpoint, configuration.tokenEndpoint, configuration.registrationEndpoint)))
                     Log.i(TAG, "Discovery successful")
@@ -134,7 +138,11 @@ object IDKit : IDKitKoinComponent, LifecycleObserver {
         when {
             exception != null -> {
                 session.update(response, exception)
-                completion(Failure(exception))
+                completion(
+                    Failure(
+                        AuthorizationError(exception.type, exception.code, exception.error, exception.errorDescription, exception.errorUri, exception.message, exception.cause)
+                    )
+                )
             }
             response != null -> {
                 session.update(response, exception)
@@ -190,12 +198,16 @@ object IDKit : IDKitKoinComponent, LifecycleObserver {
         }
 
         when {
-            isAuthorizationValid() -> {
+            exception != null -> {
+                completion(
+                    Failure(
+                        AuthorizationError(exception.type, exception.code, exception.error, exception.errorDescription, exception.errorUri, exception.message, exception.cause)
+                    )
+                )
+            }
+            tokenResponse != null -> {
                 completion(Success(session.accessToken))
                 Log.i(TAG, "Token refresh successful")
-            }
-            exception != null -> {
-                completion(Failure(exception))
             }
             else -> {
                 completion(Failure(FailedRetrievingSessionWhileAuthorizing))
