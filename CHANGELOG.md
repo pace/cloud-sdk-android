@@ -9,12 +9,18 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Breaking Changes - ONLY INCLUDE FOR NEW MAJOR version -->
 <!-- ### Internal - Include, if needed -->
 
+
 5.1.1 Release notes (2021-03-08)
 =============================================================
+
+### Enhancements
+
+* Remove fetching of manifest and location speed check in `isPoiInRange`
 
 ### Fixes
 
 * Return exception instead of last access token in `refreshToken` in case of error
+
 
 5.1.0 Release notes (2021-03-03)
 =============================================================
@@ -24,6 +30,7 @@ x.y.z Release notes (yyyy-MM-dd)
 * Add convenience method for most common URLs
 * Generate new GeoJSON service with new filter possibilities, e.g. onlinePaymentMethod
 * Checks for available apps in a given location is now done on device
+
 
 5.0.0 Release notes (2021-02-24)
 =============================================================
@@ -89,6 +96,7 @@ x.y.z Release notes (yyyy-MM-dd)
 * Add possibility to attach additional query params to all requests
 * Extend documentation for custom drawer and add an example to the app
 
+
 3.0.0 Release notes (2021-01-15)
 =============================================================
 
@@ -107,6 +115,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Fix bug where location LiveData was emitted before location was updated
 
+
 2.0.5 Release notes (2020-12-18)
 =============================================================
 
@@ -115,6 +124,7 @@ x.y.z Release notes (yyyy-MM-dd)
 * Add user info endpoint
 * Add method to get cached access token
 * Add generated POI API models and requests
+
 
 2.0.4 Release notes (2020-12-10)
 =============================================================
@@ -140,6 +150,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Fix outdated location state LiveData values
 
+
 2.0.2 Release notes (2020-11-30)
 =============================================================
 
@@ -151,6 +162,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Set version and build number based on commit tag
 
+
 2.0.1 Release notes (2020-11-25)
 =============================================================
 
@@ -159,6 +171,7 @@ x.y.z Release notes (yyyy-MM-dd)
 * Remove device ID from request headers
 * Remove device ID and API key from user agent
 * Remove fetching apps by app ID
+
 
 2.0.0 Release notes (2020-11-17)
 =============================================================
