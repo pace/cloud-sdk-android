@@ -10,6 +10,15 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Internal - Include, if needed -->
 
 
+5.2.0 Release notes (2021-03-11)
+=============================================================
+
+### Enhancements
+
+* Remove Bintray integration because it will be discontinued
+* Add Maven Central and JitPack as alternative repositories (see the installation section in README)
+
+
 5.1.1 Release notes (2021-03-08)
 =============================================================
 

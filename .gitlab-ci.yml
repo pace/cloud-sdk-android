@@ -59,18 +59,27 @@ documentation:
     only:
         - tags
     artifacts:
-      paths:
-        - ./*.zip
-      name: "android-pace-cloud-sdk-$BUILD_VERSION_NAME.zip"
-      expire_in: 1 week
+        paths:
+            - ./*.zip
+        name: "android-pace-cloud-sdk-$BUILD_VERSION_NAME.zip"
+        expire_in: 1 week
 
-bintray_upload:
+maven_central_upload:
     extends: .android_version
     stage: build
     script:
-        - ./gradlew bintrayUpload -Puser=$BINTRAY_USER -Pkey=$BINTRAY_KEY -PbuildNumber=$BUILD_NUMBER -PversionName=$BUILD_VERSION_NAME
+        - bash -c "echo '$SIGNING_GPG_KEY_CONTENT' | base64 -d > '$SIGNING_SECRET_KEY_RING_FILE'"
+        - ./gradlew clean library:assembleRelease
+        - ./gradlew sourcesJar javadocJar
+        - ./gradlew publishReleasePublicationToMavenCentralRepository --max-workers 1 -PbuildNumber=$BUILD_NUMBER -PversionName=$BUILD_VERSION_NAME -PsigningKeyId=$SIGNING_KEY_ID -PsigningPassword=$SIGNING_PASSWORD -PsigningSecretKeyRingFile=$SIGNING_SECRET_KEY_RING_FILE -PossrhUsername=$OSSRH_USERNAME -PossrhPassword=$OSSRH_PASSWORD
     only:
         - tags
-    except:
-        variables:
-            - $CI_COMMIT_TAG !~ /^pacecloudsdk-/
+
+maven_central_close_and_release:
+    extends: .android_version
+    stage: publish
+    script:
+        - ./gradlew closeAndReleaseRepository -PossrhUsername=$OSSRH_USERNAME -PossrhPassword=$OSSRH_PASSWORD -PsonatypeStagingProfileId=$SONATYPE_STAGING_PROFILE_ID
+    when: manual
+    only:
+        - tags
