@@ -1,10 +1,16 @@
 # PACE Cloud SDK
 
+[![License](https://img.shields.io/github/license/pace/cloud-sdk-android)](https://github.com/pace/cloud-sdk-android/blob/master/LICENSE.md)
+[![Maven Central](https://img.shields.io/maven-central/v/cloud.pace/sdk)](https://search.maven.org/artifact/cloud.pace/sdk)
+[![JitPack](https://img.shields.io/jitpack/v/github/pace/cloud-sdk-android)](https://jitpack.io/#pace/cloud-sdk-android)
+
 This framework combines multipe functionalities provided by PACE i.e. authorizing via **PACE ID** or requesting and displaying **Apps**. These functionalities are separated and structured into different ***Kits*** by namespaces, i.e. [IDKit](#idkit), [AppKit](#appkit).
 
 - [PACE Cloud SDK](#pace-cloud-sdk)
     * [Specifications](#specifications)
     * [Installation](#installation)
+        + [Maven Central](#maven-central)
+        + [JitPack](#jitpack)
     * [Setup](#setup)
     * [Migration](#migration)
         + [2.x.x -> 3.x.x](#from-2xx-to-3xx)
@@ -33,24 +39,46 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [Miscellaneous](#miscellaneous)
 
 ## Specifications
-**PACECloudSDK** currently supports Android 6.0 (API level 23) and above.
+`PACECloudSDK` currently supports Android 6.0 (API level 23) and above.
 
 ## Installation
-Add JCenter to your top-level `build.gradle` (if not yet):
+You can get the `PACECloudSDK` from **one** of the following repositories.
+
+### Maven Central
+Add Maven Central to your top-level `build.gradle` (if not yet):
 ```groovy
 allprojects {
     repositories {
         ...
-        jcenter()
+        mavenCentral()
     }
 }
 ```
 
-Add the **PACE Cloud SDK** dependency to your module's `build.gradle`:
+Add the `PACECloudSDK` dependency to your module's `build.gradle`:
 ```groovy
 dependencies {
     ...
     implementation "cloud.pace:sdk:$pace_cloud_sdk_version"
+}
+```
+
+### JitPack
+Add JitPack to your top-level `build.gradle` (if not yet):
+```groovy
+allprojects {
+    repositories {
+        ...
+        maven { url "https://jitpack.io" }
+    }
+}
+```
+
+Add the `PACECloudSDK` dependency to your module's `build.gradle`:
+```groovy
+dependencies {
+    ...
+    implementation "com.github.pace:cloud-sdk-android:$pace_cloud_sdk_version"
 }
 ```
 
