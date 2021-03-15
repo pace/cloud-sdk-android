@@ -98,18 +98,20 @@ class AppWebViewModelTest {
     fun `has biometrics`() {
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
 
-        viewModel.handleGetBiometricStatus("")
+        viewModel.handleGetBiometricStatus(Gson().toJson(AppWebViewModel.MessageBundle<String>("id", "")))
 
-        assertEquals(true, viewModel.isBiometricAvailable.value?.getContentIfNotHandled())
+        assertEquals("id", viewModel.isBiometricAvailable.value?.peekContent()?.id)
+        assertEquals(true, viewModel.isBiometricAvailable.value?.getContentIfNotHandled()?.message)
     }
 
     @Test
     fun `does not have biometrics`() {
         `when`(payManager.isFingerprintAvailable()).thenReturn(false)
 
-        viewModel.handleGetBiometricStatus("")
+        viewModel.handleGetBiometricStatus(Gson().toJson(AppWebViewModel.MessageBundle<String>("id", "")))
 
-        assertEquals(false, viewModel.isBiometricAvailable.value?.getContentIfNotHandled())
+        assertEquals("id", viewModel.isBiometricAvailable.value?.peekContent()?.id)
+        assertEquals(false, viewModel.isBiometricAvailable.value?.getContentIfNotHandled()?.message)
     }
 
     @Test
@@ -120,14 +122,15 @@ class AppWebViewModelTest {
         val digits = 14
         val algorithm = "SHA1"
 
-        val totpRequest = Gson().toJson(AppWebViewModel.SetTOTPRequest(secret, period, digits, algorithm, key))
+        val totpRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.SetTOTPRequest(secret, period, digits, algorithm, key)))
         viewModel.handleSetTOTPSecret(totpRequest)
 
         verify(sharedPreferencesModel, times(1)).putString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, key), secret)
         verify(sharedPreferencesModel, times(1)).putInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, key), digits)
         verify(sharedPreferencesModel, times(1)).putInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, key), period)
         verify(sharedPreferencesModel, times(1)).putString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, key), algorithm)
-        assertEquals(AppWebViewModel.StatusCodeResponse.Success, viewModel.statusCode.value?.getContentIfNotHandled())
+        assertEquals("id", viewModel.statusCode.value?.peekContent()?.id)
+        assertEquals(AppWebViewModel.StatusCodeResponse.Success, viewModel.statusCode.value?.getContentIfNotHandled()?.message)
     }
 
     @Test
@@ -150,11 +153,11 @@ class AppWebViewModelTest {
         `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, key))).thenReturn(digits)
         `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, key))).thenReturn(period)
 
-        val totpRequest = Gson().toJson(AppWebViewModel.GetTOTPRequest(1611158191, key))
+        val totpRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.GetTOTPRequest(1611158191, key)))
         viewModel.handleGetTOTP(totpRequest)
 
-        assertEquals("00000865350714", viewModel.totpResponse.value?.peekContent()?.totp)
-        assertEquals(AppWebViewModel.BiometryMethod.OTHER.value, viewModel.totpResponse.value?.peekContent()?.biometryMethod)
+        assertEquals("00000865350714", viewModel.totpResponse.value?.peekContent()?.message?.totp)
+        assertEquals(AppWebViewModel.BiometryMethod.OTHER.value, viewModel.totpResponse.value?.peekContent()?.message?.biometryMethod)
 
         viewModel.biometricRequest.removeObserver(observer)
     }
@@ -181,14 +184,15 @@ class AppWebViewModelTest {
         `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, key))).thenReturn(digits)
         `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, key))).thenReturn(period)
 
-        val totpRequest = Gson().toJson(AppWebViewModel.GetTOTPRequest(1611158191, key))
+        val totpRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.GetTOTPRequest(1611158191, key)))
         viewModel.handleGetTOTP(totpRequest)
 
+        assertEquals("id", viewModel.statusCode.value?.peekContent()?.id)
         assertEquals(
             "Biometric authentication failed: errorCode was $errorCode, errString was $errString",
-            (viewModel.statusCode.value?.peekContent() as? AppWebViewModel.StatusCodeResponse.Failure)?.error
+            (viewModel.statusCode.value?.peekContent()?.message as? AppWebViewModel.StatusCodeResponse.Failure)?.error
         )
-        assertEquals(StatusCode.Unauthorized.code, viewModel.statusCode.value?.peekContent()?.statusCode)
+        assertEquals(StatusCode.Unauthorized.code, viewModel.statusCode.value?.peekContent()?.message?.statusCode)
 
         viewModel.biometricRequest.removeObserver(observer)
     }
@@ -203,11 +207,11 @@ class AppWebViewModelTest {
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(false)
 
-        val totpRequest = Gson().toJson(AppWebViewModel.GetTOTPRequest(1611158191, "fueling-app"))
+        val totpRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.GetTOTPRequest(1611158191, "fueling-app")))
         viewModel.handleGetTOTP(totpRequest)
 
-        assertEquals("No biometric authentication is available or none has been set.", (viewModel.statusCode.value?.peekContent() as? AppWebViewModel.StatusCodeResponse.Failure)?.error)
-        assertEquals(StatusCode.NotAllowed.code, viewModel.statusCode.value?.peekContent()?.statusCode)
+        assertEquals("No biometric authentication is available or none has been set.", (viewModel.statusCode.value?.peekContent()?.message as? AppWebViewModel.StatusCodeResponse.Failure)?.error)
+        assertEquals(StatusCode.NotAllowed.code, viewModel.statusCode.value?.peekContent()?.message?.statusCode)
 
         viewModel.biometricRequest.removeObserver(observer)
     }
@@ -231,14 +235,18 @@ class AppWebViewModelTest {
         `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, key))).thenReturn(digits)
         `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, key))).thenReturn(period)
 
-        val totpRequest = Gson().toJson(AppWebViewModel.GetTOTPRequest(1611158191, key))
+        val totpRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.GetTOTPRequest(1611158191, key)))
         viewModel.handleGetTOTP(totpRequest)
 
         assertEquals(
-            "No encrypted secret, digits, period or algorithm was found in the SharedPreferences.",
-            (viewModel.statusCode.value?.peekContent() as? AppWebViewModel.StatusCodeResponse.Failure)?.error
+            "id",
+            viewModel.statusCode.value?.peekContent()?.id
         )
-        assertEquals(StatusCode.NotFound.code, viewModel.statusCode.value?.peekContent()?.statusCode)
+        assertEquals(
+            "No encrypted secret, digits, period or algorithm was found in the SharedPreferences.",
+            (viewModel.statusCode.value?.peekContent()?.message as? AppWebViewModel.StatusCodeResponse.Failure)?.error
+        )
+        assertEquals(StatusCode.NotFound.code, viewModel.statusCode.value?.peekContent()?.message?.statusCode)
 
         viewModel.biometricRequest.removeObserver(observer)
     }
@@ -248,11 +256,11 @@ class AppWebViewModelTest {
         val key = "fueling-app"
         val value = "encryptedValue"
 
-        val secureDataRequest = Gson().toJson(AppWebViewModel.SetSecureDataRequest(key, value))
+        val secureDataRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.SetSecureDataRequest(key, value)))
         viewModel.handleSetSecureData(secureDataRequest)
 
         verify(sharedPreferencesModel, times(1)).putString(AppWebViewModelImpl.getSecureDataPreferenceKey(host, key), value)
-        assertEquals(AppWebViewModel.StatusCodeResponse.Success, viewModel.statusCode.value?.getContentIfNotHandled())
+        assertEquals(AppWebViewModel.StatusCodeResponse.Success, viewModel.statusCode.value?.getContentIfNotHandled()?.message)
     }
 
     @Test
@@ -269,9 +277,9 @@ class AppWebViewModelTest {
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
         `when`(sharedPreferencesModel.getString(AppWebViewModelImpl.getSecureDataPreferenceKey(host, key))).thenReturn(value)
 
-        viewModel.handleGetSecureData(Gson().toJson(mapOf("key" to key)))
+        viewModel.handleGetSecureData(Gson().toJson(AppWebViewModel.MessageBundle("id", mapOf("key" to key))))
 
-        assertEquals(mapOf("value" to value), viewModel.secureData.value?.getContentIfNotHandled())
+        assertEquals(mapOf("value" to value), viewModel.secureData.value?.getContentIfNotHandled()?.message)
 
         viewModel.biometricRequest.removeObserver(observer)
     }
@@ -280,11 +288,11 @@ class AppWebViewModelTest {
     fun `set disable timestamp`() {
         val until = 1597143588148L
 
-        viewModel.handleDisable(Gson().toJson(mapOf("until" to until)))
+        viewModel.handleDisable(Gson().toJson(AppWebViewModel.MessageBundle("id", mapOf("until" to until))))
 
         verify(sharedPreferencesModel, times(1)).putLong(getDisableTimePreferenceKey(host), until)
         assertEquals(host, disabled)
-        assertEquals(AppWebViewModel.StatusCodeResponse.Success, viewModel.statusCode.value?.getContentIfNotHandled())
+        assertEquals(AppWebViewModel.StatusCodeResponse.Success, viewModel.statusCode.value?.getContentIfNotHandled()?.message)
     }
 
     @Test
@@ -292,7 +300,7 @@ class AppWebViewModelTest {
         val redirectUri = "https://app.pay.redirect.net"
         val cancelUrl = "https://cancel.url.net"
 
-        val openURLInNewTabRequest = Gson().toJson(AppWebViewModel.OpenURLInNewTabRequest(redirectUri, cancelUrl))
+        val openURLInNewTabRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.OpenURLInNewTabRequest(redirectUri, cancelUrl)))
         viewModel.handleOpenURLInNewTab(openURLInNewTabRequest)
 
         assertEquals(cancelUrl, viewModel.url.value?.getContentIfNotHandled())
