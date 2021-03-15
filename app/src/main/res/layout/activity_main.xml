@@ -98,7 +98,7 @@
                 android:id="@+id/authorization_endpoint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
                 app:layout_constraintTop_toBottomOf="@id/discover_configuration"
@@ -108,29 +108,39 @@
                 android:id="@+id/token_endpoint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
                 app:layout_constraintTop_toBottomOf="@id/authorization_endpoint"
                 tools:text="Token endpoint: https://token.endpoint" />
 
             <TextView
-                android:id="@+id/registration_endpoint"
+                android:id="@+id/end_session_endpoint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
                 app:layout_constraintTop_toBottomOf="@id/token_endpoint"
+                tools:text="Registration endpoint: https://endsession.endpoint" />
+
+            <TextView
+                android:id="@+id/registration_endpoint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                app:layout_constraintTop_toBottomOf="@id/end_session_endpoint"
                 tools:text="Registration endpoint: https://registration.endpoint" />
 
             <Button
-                android:id="@+id/reset_session"
+                android:id="@+id/end_session"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="20dp"
                 android:background="@android:color/black"
-                android:text="Reset session"
+                android:text="End session"
                 android:textColor="@android:color/white"
                 app:layout_constraintTop_toBottomOf="@id/registration_endpoint" />
 
@@ -138,17 +148,17 @@
                 android:id="@+id/show_app_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="20dp"
                 android:background="@android:color/holo_red_light"
                 android:text="Show App list"
                 android:textColor="@android:color/white"
-                app:layout_constraintTop_toBottomOf="@id/reset_session" />
+                app:layout_constraintTop_toBottomOf="@id/end_session" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/app_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintTop_toBottomOf="@id/show_app_list"

@@ -71,6 +71,7 @@ class MainActivity : AppCompatActivity() {
         IDKit.setup(
             this, OIDConfiguration(
                 authorizationEndpoint = "YOUR_AUTHORIZATION_ENDPOINT",    // TODO: Replace with your authorization endpoint
+                endSessionEndpoint = "YOUR_END_SESSION_ENDPOINT",    // TODO: Replace with your end session endpoint
                 tokenEndpoint = "YOUR_TOKEN_ENDPOINT",    // TODO: Replace with your token endpoint
                 clientId = "YOUR_CLIENT_ID",    // TODO: Replace with your client ID
                 redirectUri = "YOUR_REDIRECT_URI",    // TODO: Replace with your redirect URI (URI scheme should match `appAuthRedirectScheme` in app's build.gradle file)
@@ -132,6 +133,7 @@ class MainActivity : AppCompatActivity() {
                     is Success -> {
                         authorization_endpoint.text = "Authorization endpoint: ${it.result.authorizationEndpoint}"
                         token_endpoint.text = "Token endpoint: ${it.result.tokenEndpoint}"
+                        end_session_endpoint.text = "End session endpoint: ${it.result.endSessionEndpoint}"
                         registration_endpoint.text = "Registration endpoint: ${it.result.registrationEndpoint}"
                     }
                     is Failure -> {
@@ -141,9 +143,23 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        reset_session.setOnClickListener {
-            IDKit.resetSession()
-            info_label.text = "Session reset successful"
+        end_session.setOnClickListener {
+            when (radioButtonId) {
+                R.id.radio_activity_result_api -> {
+                    val intent = IDKit.endSession()
+                    if (intent != null) {
+                        startForResult.launch(intent)
+                    } else {
+                        info_label.text = "Session could not be ended"
+                    }
+                }
+                R.id.radio_pending_intents -> {
+                    val success = IDKit.endSession(MainActivity::class.java, MainActivity::class.java)
+                    if (!success) {
+                        info_label.text = "Session could not be ended"
+                    }
+                }
+            }
         }
 
         val appListAdapter = AppListAdapter {
@@ -202,15 +218,24 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleIntent(intent: Intent?) {
         if (intent != null) {
-            IDKit.handleAuthorizationResponse(intent) {
-                when (it) {
-                    is Success -> openApp()
-                    is Failure -> {
-                        authorizationRequested = false
+            when {
+                IDKit.containsAuthorizationResponse(intent) -> {
+                    IDKit.handleAuthorizationResponse(intent) {
+                        when (it) {
+                            is Success -> openApp()
+                            is Failure -> {
+                                authorizationRequested = false
 
-                        if (it.throwable != FailedRetrievingSessionWhileAuthorizing) {
-                            info_label.text = "Unauthorized"
+                                if (it.throwable != FailedRetrievingSessionWhileAuthorizing) {
+                                    info_label.text = "Unauthorized"
+                                }
+                            }
                         }
+                    }
+                }
+                IDKit.containsEndSessionResponse(intent) -> {
+                    IDKit.handleEndSessionResponse(intent) {
+                        info_label.text = if ((it as? Success)?.result == Unit) "Unauthorized" else "Session could not be ended"
                     }
                 }
             }

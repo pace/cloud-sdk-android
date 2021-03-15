@@ -38,7 +38,7 @@ buildscript {
         gson_version = "2.8.6"
         rxjava_version = "3.0.6"
         rxandroid_version = "3.0.0"
-        appauth_version = "0.7.1"
+        appauth_version = "0.8.0"
         onetimepassword_version = "2.0.1"
         commons_codec_version = "1.12"
         test_arch_core_version = "2.1.0"

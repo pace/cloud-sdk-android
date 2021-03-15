@@ -21,7 +21,8 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [Access user information](#access-user-information)
         + [Token refresh](#token-refresh)
         + [Cached token](#cached-token)
-        + [Reset session](#reset-session)
+        + [Check intent](#check-intent)
+        + [End session](#end-session)
     * [AppKit](#appkit)
         + [Main Features](#main-features)
         + [Setup](#setup-2)
@@ -131,7 +132,8 @@ The universal `Configuration` almost has the same signature as the previous *App
 This code example shows how to setup *IDKit*. The parameter `additionalCaching` defines if *IDKit* persists the session additionally to the native WebView/Browser caching.
 ```kotlin
 val config = OIDConfiguration(
-    authorizationEndpoint, 
+    authorizationEndpoint,
+    endSessionEndpoint,
     tokenEndpoint,
     userInfoEndpoint, // optional
     clientSecret, // optional
@@ -280,12 +282,80 @@ You can get the cached (last refreshed) access token (nullable) as follows:
 IDKit.cachedToken()
 ```
 
-### Reset session
-Resetting the current session works as follows:
+### Check intent
+You can use the following functions to check if your intent contains an authorization response, end session response or an authorization/end session exception.
 ```kotlin
-IDKit.resetSession()
+fun containsAuthorizationResponse(intent: Intent)
+
+fun containsEndSessionResponse(intent: Intent)
+
+fun containsException(intent: Intent)
 ```
-A new authorization will be required afterwards.
+
+### End session
+The end session request works the same way as the authorization request. It can also be performed using **one** of the following two approaches (a new authorization will be required afterwards):
+
+#### 1. Getting result from an activity
+
+##### a. Using `Activity Result API` and a `StartActivityForResult` contract and handle the result in `ActivityResultCallback` inline:
+
+```kotlin
+val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    if (result.resultCode == Activity.RESULT_OK) {
+        val intent = result.data
+        if (intent != null) {
+            // Pass result to IDKit to reset the session
+            IDKit.handleEndSessionResponse(intent) {
+                when (it) {
+                    is Success -> // it.result contains Unit (success)
+                    is Failure -> // it.throwable contains error
+                }
+            }
+        }
+    }
+}
+
+logout_button.setOnClickListener {
+    startForResult.launch(IDKit.endSession())
+}
+```
+
+##### b. Using `Activity.startActivityForResult` and handle the response in `Activity.onActivityResult` callback:
+
+```kotlin
+logout_button.setOnClickListener {
+    startActivityForResult(IDKit.endSession(), REQUEST_CODE)
+}
+```
+Upon completion of this end session request, `onActivityResult` will be invoked with the end session result intent.
+
+Call the following function when an intent is passed to `onActivityResult` from [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs) to reset the session:
+```kotlin
+IDKit.handleEndSessionResponse(intent) {
+    when (it) {
+        is Success -> // it.result contains Unit (success)
+        is Failure -> // it.throwable contains error
+    }
+}
+```
+
+#### 2. Using `PendingIntent` and providing completion and cancellation handling activities:
+
+```kotlin
+IDKit.endSession(completedActivity, canceledActivity)
+```
+Upon completion of this end session request, a `PendingIntent` of the `completedActivity` will be invoked.
+If the user cancels the end session request, a `PendingIntent` of the `canceledActivity` will be invoked.
+
+Call the following function when an `intent` is passed to the `completedActivity` or `canceledActivity` from [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs) to reset the session:
+```kotlin
+IDKit.handleEndSessionResponse(intent) {
+    when (it) {
+        is Success -> // it.result contains Unit (success)
+        is Failure -> // it.throwable contains error
+    }
+}
+```
 
 ## AppKit
 ### Main features
