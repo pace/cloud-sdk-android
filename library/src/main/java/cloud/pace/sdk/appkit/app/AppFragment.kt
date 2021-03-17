@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
 import cloud.pace.sdk.R
+import cloud.pace.sdk.appkit.app.AppFragmentViewModelImpl.Companion.CHROME_PACKAGE_NAME
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import kotlinx.android.synthetic.main.fragment_app.*
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -43,6 +44,11 @@ class AppFragment : Fragment(), CloudSDKKoinComponent {
             it.getContentIfNotHandled()?.let { url ->
                 context?.let { context ->
                     val customTabsIntent = CustomTabsIntent.Builder().build()
+
+                    if (viewModel.isChromeCustomTabsSupported(context)) {
+                        customTabsIntent.intent.setPackage(CHROME_PACKAGE_NAME)
+                    }
+
                     customTabsIntent.launchUrl(context, Uri.parse(url))
                 }
             }

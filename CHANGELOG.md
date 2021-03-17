@@ -2,7 +2,7 @@ x.y.z Release notes (yyyy-MM-dd)
 =============================================================
 ### Enhancements
 
-* None.
+* Implement check for chrome installation and always use it if installed and not deactivated
 
 ### Fixes
 
