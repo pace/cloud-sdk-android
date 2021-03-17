@@ -3,8 +3,11 @@
 This framework combines multipe functionalities provided by PACE i.e. authorizing via **PACE ID** or requesting and displaying **Apps**. These functionalities are separated and structured into different ***Kits*** by namespaces, i.e. [IDKit](#idkit), [AppKit](#appkit).
 
 - [PACE Cloud SDK](#pace-cloud-sdk)
+    * [Source code](#source-code)
     * [Specifications](#specifications)
     * [Installation](#installation)
+        + [Maven Central](#maven-central)
+        + [JitPack](#jitpack)
     * [Setup](#setup)
     * [Migration](#migration)
         + [2.x.x -> 3.x.x](#from-2xx-to-3xx)
@@ -15,7 +18,8 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [Access user information](#access-user-information)
         + [Token refresh](#token-refresh)
         + [Cached token](#cached-token)
-        + [Reset session](#reset-session)
+        + [Check intent](#check-intent)
+        + [End session](#end-session)
     * [AppKit](#appkit)
         + [Main Features](#main-features)
         + [Setup](#setup-2)
@@ -30,22 +34,29 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [Deep Linking](#deep-linking)
         + [Native login](#native-login)
         + [Removal of Apps](#removal-of-apps)
+        + [Miscellaneous](#miscellaneous)
+
+## Source code
+The complete source code of the SDK can be found on [GitHub](https://github.com/pace/cloud-sdk-android).
 
 ## Specifications
-**PACECloudSDK** currently supports Android 6.0 (API level 23) and above.
+`PACECloudSDK` currently supports Android 6.0 (API level 23) and above.
 
 ## Installation
-Add JCenter to your top-level `build.gradle` (if not yet):
+You can get the `PACECloudSDK` from **one** of the following repositories.
+
+### Maven Central
+Add Maven Central to your top-level `build.gradle` (if not yet):
 ```groovy
 allprojects {
     repositories {
         ...
-        jcenter()
+        mavenCentral()
     }
 }
 ```
 
-Add the **PACE Cloud SDK** dependency to your module's `build.gradle`:
+Add the `PACECloudSDK` dependency to your module's `build.gradle`:
 ```groovy
 dependencies {
     ...
@@ -53,15 +64,22 @@ dependencies {
 }
 ```
 
-Because the PACE Cloud SDK uses [AppAuth for Android](https://github.com/openid/AppAuth-Android) for the *IDKit*, the AppAuth redirect scheme must be registered in your app's `build.gradle` file:
+### JitPack
+Add JitPack to your top-level `build.gradle` (if not yet):
 ```groovy
-android {
-    ...
-    defaultConfig {
+allprojects {
+    repositories {
         ...
-        manifestPlaceholders = ['appAuthRedirectScheme': 'YOUR_REDIRECT_URI_SCHEME_OR_EMPTY']
+        maven { url "https://jitpack.io" }
     }
+}
+```
+
+Add the `PACECloudSDK` dependency to your module's `build.gradle`:
+```groovy
+dependencies {
     ...
+    implementation "com.github.pace:cloud-sdk-android:$pace_cloud_sdk_version"
 }
 ```
 
@@ -79,12 +97,26 @@ clientAppName: String
 clientAppVersion: String
 clientAppBuild: String
 apiKey: String
-clientId: String? // Default: null
-accessToken: String? // Default: null
 authenticationMode: AuthenticationMode // Default: AuthenticationMode.WEB
 environment: Environment // Default: Environment.PRODUCTION
 extensions: List<String> // Default: emptyList()
 locationAccuracy: Int? // Default: null
+```
+
+PACE Cloud SDK uses [AppAuth for Android](https://github.com/openid/AppAuth-Android) for the native authentication in *IDKit*, which needs `appAuthRedirectScheme` manifest placeholder to be set. PACE Cloud SDK requires `pace_redirect_scheme` for [Deep Linking](#deep-linking) to be set. Both these manifest placeholder must be configured in your app's `build.gradle` file. In case you won't be using native login, you can set an empty string for `appAuthRedirectScheme`.
+
+For the `pace_redirect_scheme` we recommend to use the following pattern to prevent collisions with other apps that might be using PACE Cloud SDK: `pace.$UUID`, where `$UUID` can be any UUID of your choice:
+```groovy
+android {
+    ...
+    defaultConfig {
+        ...
+        manifestPlaceholders = [
+            'appAuthRedirectScheme': 'YOUR_REDIRECT_URI_SCHEME_OR_EMPTY', // e.g. reverse domain name notation: cloud.pace.app
+            'pace_redirect_scheme': 'YOUR_REDIRECT_SCHEME_OR_EMPTY'] // e.g. pace.ad50262a-9c88-4a5f-bc55-00dc31b81e5a
+    }
+    ...
+}
 ```
 
 ## Migration
@@ -100,10 +132,10 @@ The universal `Configuration` almost has the same signature as the previous *App
 This code example shows how to setup *IDKit*. The parameter `additionalCaching` defines if *IDKit* persists the session additionally to the native WebView/Browser caching.
 ```kotlin
 val config = OIDConfiguration(
-    authorizationEndpoint, 
+    authorizationEndpoint,
+    endSessionEndpoint,
     tokenEndpoint,
     userInfoEndpoint, // optional
-    clientId, 
     clientSecret, // optional
     scopes, // optional
     redirectUri,
@@ -222,7 +254,7 @@ IDKit.handleAuthorizationResponse(intent) {
 ```
 
 ### Access user information
-In case you want to fetch the current access token's user info, you need to make sure to set the `userInfoEndpoint` during the [setup](#setup), and then you can call: 
+In case you want to fetch the current access token's user info, you need to make sure to set the `userInfoEndpoint` during the [setup](#setup), and then you can call:
 ```kotlin
 IDKit.userInfo(accessToken = it) {
     when (it) {
@@ -250,12 +282,80 @@ You can get the cached (last refreshed) access token (nullable) as follows:
 IDKit.cachedToken()
 ```
 
-### Reset session
-Resetting the current session works as follows:
+### Check intent
+You can use the following functions to check if your intent contains an authorization response, end session response or an authorization/end session exception.
 ```kotlin
-IDKit.resetSession()
+fun containsAuthorizationResponse(intent: Intent)
+
+fun containsEndSessionResponse(intent: Intent)
+
+fun containsException(intent: Intent)
 ```
-A new authorization will be required afterwards.
+
+### End session
+The end session request works the same way as the authorization request. It can also be performed using **one** of the following two approaches (a new authorization will be required afterwards):
+
+#### 1. Getting result from an activity
+
+##### a. Using `Activity Result API` and a `StartActivityForResult` contract and handle the result in `ActivityResultCallback` inline:
+
+```kotlin
+val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+    if (result.resultCode == Activity.RESULT_OK) {
+        val intent = result.data
+        if (intent != null) {
+            // Pass result to IDKit to reset the session
+            IDKit.handleEndSessionResponse(intent) {
+                when (it) {
+                    is Success -> // it.result contains Unit (success)
+                    is Failure -> // it.throwable contains error
+                }
+            }
+        }
+    }
+}
+
+logout_button.setOnClickListener {
+    startForResult.launch(IDKit.endSession())
+}
+```
+
+##### b. Using `Activity.startActivityForResult` and handle the response in `Activity.onActivityResult` callback:
+
+```kotlin
+logout_button.setOnClickListener {
+    startActivityForResult(IDKit.endSession(), REQUEST_CODE)
+}
+```
+Upon completion of this end session request, `onActivityResult` will be invoked with the end session result intent.
+
+Call the following function when an intent is passed to `onActivityResult` from [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs) to reset the session:
+```kotlin
+IDKit.handleEndSessionResponse(intent) {
+    when (it) {
+        is Success -> // it.result contains Unit (success)
+        is Failure -> // it.throwable contains error
+    }
+}
+```
+
+#### 2. Using `PendingIntent` and providing completion and cancellation handling activities:
+
+```kotlin
+IDKit.endSession(completedActivity, canceledActivity)
+```
+Upon completion of this end session request, a `PendingIntent` of the `completedActivity` will be invoked.
+If the user cancels the end session request, a `PendingIntent` of the `canceledActivity` will be invoked.
+
+Call the following function when an `intent` is passed to the `completedActivity` or `canceledActivity` from [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs) to reset the session:
+```kotlin
+IDKit.handleEndSessionResponse(intent) {
+    when (it) {
+        is Success -> // it.result contains Unit (success)
+        is Failure -> // it.throwable contains error
+    }
+}
+```
 
 ## AppKit
 ### Main features
@@ -294,19 +394,17 @@ AppKit.INSTANCE.requestLocalApps(result -> {
         Throwable throwable = ((Failure<List<App>>) result).getThrowable();
         // `throwable` contains the Throwable of the failed request
     }
-    
+
     return null;
 });
 ```
 
 ### Fetch apps by URL
-You can also fetch apps by URL and references (e.g. gas station references).
-
-**_Note:_** The reference starts with a specific namespace identifier followed by the gas station ID in this case it has to conform the URN format.
+You can also fetch apps by URL and references (e.g. referenced gas station UUIDs).
 
 ##### Kotlin example
 ```kotlin
-AppKit.fetchAppsByUrl(url, "prn:poi:gas-stations:c977190d-049b-4023-bcbd-1dab88f02924", "prn:poi:gas-stations:f86a1818-353c-425f-a92b-705cc6ec5259") {
+AppKit.fetchAppsByUrl(url, "c977190d-049b-4023-bcbd-1dab88f02924", "f86a1818-353c-425f-a92b-705cc6ec5259") {
     when (it) {
         is Success -> // `it.result` contains the app objects
         is Failure -> // `it.throwable` contains the Throwable of the failed request
@@ -316,7 +414,7 @@ AppKit.fetchAppsByUrl(url, "prn:poi:gas-stations:c977190d-049b-4023-bcbd-1dab88f
 
 ##### Java example
 ```java
-AppKit.INSTANCE.fetchAppsByUrl(url, new String[]{"prn:poi:gas-stations:c977190d-049b-4023-bcbd-1dab88f02924", "prn:poi:gas-stations:f86a1818-353c-425f-a92b-705cc6ec5259"}, result -> {
+AppKit.INSTANCE.fetchAppsByUrl(url, new String[]{"c977190d-049b-4023-bcbd-1dab88f02924", "f86a1818-353c-425f-a92b-705cc6ec5259"}, result -> {
     if (result instanceof Success) {
         List<App> apps = ((Success<List<App>>) result).getResult();
         // `Apps` contains the app objects
@@ -324,7 +422,7 @@ AppKit.INSTANCE.fetchAppsByUrl(url, new String[]{"prn:poi:gas-stations:c977190d-
         Throwable throwable = ((Failure<List<App>>) result).getThrowable();
         // `throwable` contains the Throwable of the failed request
     }
-    
+
     return null;
 });
 ```
@@ -343,13 +441,13 @@ AppKit.isPoiInRange(poiId) {
 ```java
 AppKit.isPoiInRange(poiId, result -> {
     // True or false
-    
+
     return null;
 });
 ```
 
 ### AppActivity
-The *AppKit* contains a default `Activity` which can be used to display an app. To open an app in the `AppActivity` you have to call `AppKit.openAppActivity(...)`. The `AppActivity` will be closed when the user clicks the close button in the app.
+The *AppKit* contains a default `Activity` which can be used to display an app. To open an app in the `AppActivity` you have to call `AppKit.openAppActivity(...)`. The `AppActivity` will be closed when the user clicks the close button in the app. You may also use a `presetUrl` (see [Preset Urls](#preset-urls)).
 
 ### AppWebView
 Moreover the *AppKit* contains a default `AppWebView`. To display an app in this WebView you have to call `AppWebView.loadApp(parent: Fragment, url: String)`. The `AppWebView`s parent needs to be a fragment as that's the needed context for the integrated `Android Biometric API`.
@@ -490,37 +588,17 @@ AppKit.requestLocalApps { app ->
 }
 ```
 **Note**: For a more detailed example, where the apps are displayed in a `RecyclerView`, see the `PACECloudSDK` example app.
-  
+
 ### Deep Linking
 Some of our services (e.g. `PayPal`) do not open the URL in the WebView, but in a Chrome Custom Tab within the app, due to security reasons. After completion of the process the user is redirected back to the WebView via deep linking. In order to set the redirect URL correctly and to ensure that the client app intercepts the deep link, the following requirements must be met:
 
-* Set `clientId` in *PACECloudSDK's* configuration during the [setup](#setup), because it is needed for the redirect URL
-* Specify the [AppActivity](#appactivity) as deep link intent filter in your app manifest. **`pace.${clientId}` (same `clientId` as passed in the configuration) must be passed to `android:scheme`:**
-* If the scheme is not set, the *AppKit* calls the `onCustomSchemeError(context: Context?, scheme: String)` callback
-
-```xml
-<activity
-    android:name="cloud.pace.sdk.appkit.app.AppActivity"
-    android:launchMode="singleTop"
-    android:screenOrientation="portrait"
-    android:theme="@style/AppKitTheme">
-    <intent-filter>
-        <action android:name="android.intent.action.VIEW" />
-
-        <category android:name="android.intent.category.DEFAULT" />
-        <category android:name="android.intent.category.BROWSABLE" />
-
-        <data
-            android:host="redirect"
-            android:scheme="pace.$clientId" />
-    </intent-filter>
-</activity>
-```
+* Specify the `pace_redirect_scheme` as manifest placeholder in your app's `build.gradle` file (see [setup](#setup))
+* If the scheme is empty, the *AppKit* calls the `onCustomSchemeError(context: Context?, scheme: String)` callback
 
 ### Native login
 If the client app uses its own login and wants to pass an access token to the apps, follow these steps:
 
-1. Initialize the `PACECloudSDK` with `authenticationMode = AuthenticationMode.NATIVE` and an optional start `accessToken = "Your access token"`.
+1. Initialize the `PACECloudSDK` with `authenticationMode = AuthenticationMode.NATIVE`
 2. Pass an `AppCallbackImpl` instance to `AppKit.openApps(...)` or `AppKit.openAppActivity(...)` and override the required callbacks (`onTokenInvalid(onResult: (String) -> Unit) {}` in this case)
 3. If the access token is invalid, the *AppKit* calls the `onTokenInvalid` function. The client app needs to call the `onResult` function to set a new access token. In case that you can't retrieve a new valid token, don't call `onResult`, otherwise you will most likely end up
 in an endless loop. Make sure to clean up all the app related views as well (see [Removal of Apps](#removal-of-apps)).
@@ -533,7 +611,7 @@ AppKit.openAppActivity(context, url, object : AppCallbackImpl() {
         // and pass the new token to onResult
         getTokenAsnyc { token ->
             onResult(token)
-        }      
+        }
     }
 }
 ```
@@ -557,5 +635,13 @@ In case you want to remove the [AppActivity](#appactivity), simply call `AppKit.
 
 If you want to remove all [AppDrawers](#appdrawer) *and* the [AppActivity](#appactivity) (only if it was started with `autoClose = true`), you can call the `AppKit.closeApps(buttonContainer: ConstraintLayout)` method and pass your `ConstraintLayout` where you've added the `AppDrawer`s to (see [AppDrawer](#appdrawer)).
 
-## SDK API Documentation
-The latest API (`3.0.1`) can be found [here](3.0.1/-p-a-c-e-cloud-s-d-k/index.html).
+### Miscellaneous
+#### Preset Urls
+`PACECloudSDK` provides preset urls for the most common apps, such as `PACE ID`, `payment` and `transactions` based on the environment the sdk was initialized with. You may access these urls via the enum `Environment.kt`.
+
+## SDK API Docs
+
+Here is a complete list of all our SDK API documentations:
+
+- [latest](/latest/-p-a-c-e-cloud-s-d-k/index.html) – the current `master`
+- [3.0.1](/3.0.1/-p-a-c-e-cloud-s-d-k/index.html)

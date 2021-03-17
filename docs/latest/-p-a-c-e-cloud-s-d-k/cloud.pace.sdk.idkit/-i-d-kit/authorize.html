@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>authorize</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+    <link href="../../../styles/style.css" rel="Stylesheet">
+    <link href="../../../styles/logo-styles.css" rel="Stylesheet">
+    <link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+    <link href="../../../styles/main.css" rel="Stylesheet">
+    <script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+    <script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+    <script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+    <script type="text/javascript" src="../../../scripts/main.js" async="async"></script>
+  </head>
+  <body>
+    <div id="container">
+      <div id="leftColumn">
+        <div id="logo"></div>
+        <div id="paneSearch"></div>
+        <div id="sideMenu"></div>
+      </div>
+      <div id="main">
+        <div id="leftToggler"><span class="icon-toggler"></span></div>
+        <script type="text/javascript" src="../../../scripts/pages.js"></script>
+        <script type="text/javascript" src="../../../scripts/main.js"></script>
+        <div class="main-content" id="content" pageIds="cloud.pace.sdk.idkit/IDKit/authorize/#java.lang.Class[*]#java.lang.Class[*]/PointingToDeclaration//1421936391">
+          <div class="navigation-wrapper" id="navigation-wrapper">
+            <div class="breadcrumbs"><a href="../../index.html">PACECloudSDK</a>/<a href="../index.html">cloud.pace.sdk.idkit</a>/<a href="index.html">IDKit</a>/<a href="authorize.html">authorize</a></div>
+            <div class="pull-right d-flex">
+              <div id="searchBar"></div>
+            </div>
+          </div>
+          <div class="cover ">
+            <h1 class="cover"><span>authorize</span></h1>
+          </div>
+<div class="divergent-group" data-filterable-current=":library:dokkaHtml/release" data-filterable-set=":library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":library:dokkaHtml/release"><div class="symbol monospace">fun <a href="authorize.html">authorize</a>(completedActivity: <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html">Class</a>&lt;*&gt;, canceledActivity: <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html">Class</a>&lt;*&gt;)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<p class="paragraph">Sends an authorization request to the authorization service, using a <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>. Upon completion of this authorization request, a <a href="https://developer.android.com/reference/kotlin/android/app/PendingIntent.html">PendingIntent</a> of the <span data-unresolved-link="cloud.pace.sdk.idkit/IDKit/completedActivity/#/PointingToCallableParameters(-1)/">completedActivity</span> will be invoked. If the user cancels the authorization request, a <a href="https://developer.android.com/reference/kotlin/android/app/PendingIntent.html">PendingIntent</a> of the <span data-unresolved-link="cloud.pace.sdk.idkit/IDKit/canceledActivity/#/PointingToCallableParameters(-1)/">canceledActivity</span> will be invoked.</p><p class="paragraph">Note: Call <a href="handle-authorization-response.html">handleAuthorizationResponse</a> in <span data-unresolved-link="cloud.pace.sdk.idkit/IDKit/completedActivity/#/PointingToCallableParameters(-1)/">completedActivity</span> or <span data-unresolved-link="cloud.pace.sdk.idkit/IDKit/canceledActivity/#/PointingToCallableParameters(-1)/">canceledActivity</span> when the intent is returned from Chrome Custom Tab.</p></div>
+<div class="divergent-group" data-filterable-current=":library:dokkaHtml/release" data-filterable-set=":library:dokkaHtml/release"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":library:dokkaHtml/release"><div class="symbol monospace">fun <a href="authorize.html">authorize</a>(): <a href="https://developer.android.com/reference/kotlin/android/content/Intent.html">Intent</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<p class="paragraph">Creates an authorization request <a href="https://developer.android.com/reference/kotlin/android/content/Intent.html">Intent</a> that can be launched using the Activity Result API and a StartActivityForResult contract or with <a href="https://developer.android.com/reference/kotlin/android/app/Activity.html#startactivityforresult">android.app.Activity.startActivityForResult</a> to open a <a href="https://developer.chrome.com/multidevice/android/customtabs">Chrome Custom Tab</a>.</p><p class="paragraph">Note: Call <a href="handle-authorization-response.html">handleAuthorizationResponse</a> in ActivityResultCallback if Activity Result API was used or in <a href="https://developer.android.com/reference/kotlin/android/app/Activity.html#onactivityresult">android.app.Activity.onActivityResult</a> if <a href="https://developer.android.com/reference/kotlin/android/app/Activity.html#startactivityforresult">android.app.Activity.startActivityForResult</a> was used when the authorization result is returned from Chrome Custom Tab.</p></div>
+        </div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#content"></a></span><span>© 2020 Copyright</span><span class="pull-right"><span>Sponsored and developed by dokka</span><a href="https://github.com/Kotlin/dokka"><span class="padded-icon"></span></a></span></div>
+      </div>
+    </div>
+  </body>
+</html>
+
