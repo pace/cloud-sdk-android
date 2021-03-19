@@ -1,22 +1,22 @@
 x.y.z Release notes (yyyy-MM-dd)
 =============================================================
-### Enhancements
-* None.
-
-### Fixes
-* None.
-
-<!-- ### Breaking Changes - ONLY INCLUDE FOR NEW MAJOR version -->
-<!-- ### Internal - Include, if needed -->
-
-
-6.0.0 Release notes (2021-03-15)
-=============================================================
-
 ### Breaking changes
 
 * Implement end session request and add end session endpoint to `OIDConfiguration` to clear user session on logout
 
+### Enhancements
+
+* None.
+
+### Fixes
+
+* None.
+
+### Internal
+
+* Improve communication with PWA
+<!-- ### Breaking Changes - ONLY INCLUDE FOR NEW MAJOR version -->
+<!-- ### Internal - Include, if needed -->
 
 5.2.0 Release notes (2021-03-12)
 =============================================================

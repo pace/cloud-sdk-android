@@ -58,6 +58,7 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
 
     @TargetApi(Build.VERSION_CODES.N)
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+        injectFeatureFlags(view)
         val newUrl = request?.url ?: return false
         this.url = newUrl.toString()
         return super.shouldOverrideUrlLoading(view, request)
@@ -65,13 +66,19 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
 
     @Suppress("DEPRECATION")
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+        injectFeatureFlags(view)
         val newUrl = url?.let { Uri.parse(it) } ?: return false
         this.url = newUrl.toString()
         return super.shouldOverrideUrlLoading(view, url)
     }
 
+    private fun injectFeatureFlags(view: WebView?) {
+        view?.evaluateJavascript("window.features = { messageIds: true }") {}
+    }
+
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
+        injectFeatureFlags(view)
         isInErrorState = false
         callback.onLoadingChanged(true)
     }

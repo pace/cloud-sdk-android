@@ -73,47 +73,47 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         }
     }
 
-    private val newTokenObserver = Observer<Event<String>> {
-        it.getContentIfNotHandled()?.let { newToken ->
+    private val newTokenObserver = Observer<AppWebViewModel.ResponseEvent<String>> {
+        it.getContentIfNotHandled()?.let { event ->
             if (PACECloudSDK.configuration.authenticationMode == AuthenticationMode.NATIVE) {
-                sendMessageCallback(newToken)
+                sendMessageCallback(event)
             }
         }
     }
 
-    private val verifyLocationResponseObserver = Observer<Event<AppWebViewModel.VerifyLocationResponse>> {
+    private val verifyLocationResponseObserver = Observer<AppWebViewModel.ResponseEvent<String>> {
         it.getContentIfNotHandled()?.let { response ->
-            sendMessageCallback(response.value)
+            sendMessageCallback(response)
         }
     }
 
-    private val isBiometricAvailableObserver = Observer<Event<Boolean>> {
-        it.getContentIfNotHandled()?.let { isBiometricAvailable ->
-            sendMessageCallback(isBiometricAvailable.toString())
+    private val isBiometricAvailableObserver = Observer<AppWebViewModel.ResponseEvent<Boolean>> {
+        it.getContentIfNotHandled()?.let { event ->
+            sendMessageCallback(AppWebViewModel.MessageBundle(event.id, event.message))
         }
     }
 
-    private val statusCodeObserver = Observer<Event<AppWebViewModel.StatusCodeResponse>> {
-        it.getContentIfNotHandled()?.let { statusCodeResponse ->
-            sendMessageCallback(gson.toJson(statusCodeResponse))
+    private val statusCodeObserver = Observer<AppWebViewModel.ResponseEvent<AppWebViewModel.StatusCodeResponse>> {
+        it.getContentIfNotHandled()?.let { event ->
+            sendMessageCallback(event)
         }
     }
 
-    private val totpResponseObserver = Observer<Event<AppWebViewModel.TOTPResponse>> {
+    private val totpResponseObserver = Observer<AppWebViewModel.ResponseEvent<AppWebViewModel.TOTPResponse>> {
         it.getContentIfNotHandled()?.let { totpResponse ->
-            sendMessageCallback(gson.toJson(totpResponse))
+            sendMessageCallback(totpResponse)
         }
     }
 
-    private val secureDataObserver = Observer<Event<Map<String, String>>> {
+    private val secureDataObserver = Observer<AppWebViewModel.ResponseEvent<Map<String, String>>> {
         it.getContentIfNotHandled()?.let { secureDataResponse ->
-            sendMessageCallback(gson.toJson(secureDataResponse))
+            sendMessageCallback(secureDataResponse)
         }
     }
 
-    private val appInterceptableLinkObserver = Observer<Event<AppWebViewModel.AppInterceptableLinkResponse>> {
+    private val appInterceptableLinkObserver = Observer<AppWebViewModel.ResponseEvent<AppWebViewModel.AppInterceptableLinkResponse>> {
         it.getContentIfNotHandled()?.let { appInterceptableLinkResponse ->
-            sendMessageCallback(gson.toJson(appInterceptableLinkResponse))
+            sendMessageCallback(appInterceptableLinkResponse)
         }
     }
 
@@ -197,8 +197,8 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         }
     }
 
-    private fun sendMessageCallback(message: String) {
-        webView.evaluateJavascript("window.messageCallback('$message')") {}
+    private fun <T> sendMessageCallback(bundle: AppWebViewModel.MessageBundle<T>) {
+        webView.evaluateJavascript("window.postMessage('${gson.toJson(bundle)}')") {}
     }
 
     inner class InvalidTokenInterface {

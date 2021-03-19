@@ -23,6 +23,7 @@ import cloud.pace.sdk.utils.Event
 import cloud.pace.sdk.utils.Log
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
+import com.google.gson.reflect.TypeToken
 import dev.turingcomplete.kotlinonetimepassword.HmacAlgorithm
 import dev.turingcomplete.kotlinonetimepassword.TimeBasedOneTimePasswordConfig
 import dev.turingcomplete.kotlinonetimepassword.TimeBasedOneTimePasswordGenerator
@@ -32,17 +33,20 @@ import java.util.concurrent.TimeUnit
 
 abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback {
 
+    class MessageBundle<T>(val id: String, val message: T)
+    class ResponseEvent<T>(id: String, content: T) : Event<MessageBundle<T>>(MessageBundle(id, content))
+
     abstract val url: LiveData<Event<String>>
     abstract val isInErrorState: LiveData<Event<Boolean>>
     abstract val showLoadingIndicator: LiveData<Event<Boolean>>
     abstract val biometricRequest: LiveData<Event<BiometricRequest>>
-    abstract val newToken: LiveData<Event<String>>
-    abstract val verifyLocationResponse: LiveData<Event<VerifyLocationResponse>>
-    abstract val isBiometricAvailable: LiveData<Event<Boolean>>
-    abstract val statusCode: LiveData<Event<StatusCodeResponse>>
-    abstract val totpResponse: LiveData<Event<TOTPResponse>>
-    abstract val secureData: LiveData<Event<Map<String, String>>>
-    abstract val appInterceptableLink: LiveData<Event<AppInterceptableLinkResponse>>
+    abstract val newToken: LiveData<ResponseEvent<String>>
+    abstract val verifyLocationResponse: LiveData<ResponseEvent<String>>
+    abstract val isBiometricAvailable: LiveData<ResponseEvent<Boolean>>
+    abstract val statusCode: LiveData<ResponseEvent<StatusCodeResponse>>
+    abstract val totpResponse: LiveData<ResponseEvent<TOTPResponse>>
+    abstract val secureData: LiveData<ResponseEvent<Map<String, String>>>
+    abstract val appInterceptableLink: LiveData<ResponseEvent<AppInterceptableLinkResponse>>
 
     abstract fun init(url: String)
     abstract fun handleInvalidToken(message: String)
@@ -100,13 +104,13 @@ class AppWebViewModelImpl(
     override val isInErrorState = MutableLiveData<Event<Boolean>>()
     override val showLoadingIndicator = MutableLiveData<Event<Boolean>>()
     override val biometricRequest = MutableLiveData<Event<BiometricRequest>>()
-    override val newToken = MutableLiveData<Event<String>>()
-    override val verifyLocationResponse = MutableLiveData<Event<VerifyLocationResponse>>()
-    override val isBiometricAvailable = MutableLiveData<Event<Boolean>>()
-    override val statusCode = MutableLiveData<Event<StatusCodeResponse>>()
-    override val totpResponse = MutableLiveData<Event<TOTPResponse>>()
-    override val secureData = MutableLiveData<Event<Map<String, String>>>()
-    override val appInterceptableLink = MutableLiveData<Event<AppInterceptableLinkResponse>>()
+    override val newToken = MutableLiveData<ResponseEvent<String>>()
+    override val verifyLocationResponse = MutableLiveData<ResponseEvent<String>>()
+    override val isBiometricAvailable = MutableLiveData<ResponseEvent<Boolean>>()
+    override val statusCode = MutableLiveData<ResponseEvent<StatusCodeResponse>>()
+    override val totpResponse = MutableLiveData<ResponseEvent<TOTPResponse>>()
+    override val secureData = MutableLiveData<ResponseEvent<Map<String, String>>>()
+    override val appInterceptableLink = MutableLiveData<ResponseEvent<AppInterceptableLinkResponse>>()
 
     private val gson = Gson()
 
@@ -122,10 +126,13 @@ class AppWebViewModelImpl(
         showLoadingIndicator.value = Event(isLoading)
     }
 
+    private inline fun <reified T> Gson.fromJson(json: String) = fromJson<T>(json, object : TypeToken<T>() {}.type)
+
     override fun handleInvalidToken(message: String) {
+        val requestBundle = gson.fromJson<MessageBundle<Any>>(message)
         appModel.onTokenInvalid { token ->
             if (TokenValidator.isTokenValid(token)) {
-                newToken.value = Event(token)
+                newToken.value = ResponseEvent(requestBundle.id, token)
             } else {
                 handleInvalidToken(message)
             }
@@ -133,8 +140,9 @@ class AppWebViewModelImpl(
     }
 
     override fun handleImageData(message: String) {
+        val messageBundle = gson.fromJson<MessageBundle<String>>(message)
         try {
-            val decodedString = Base64.decode(message, Base64.DEFAULT)
+            val decodedString = Base64.decode(messageBundle.message, Base64.DEFAULT)
             val bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
             appModel.onImageDataReceived(bitmap)
         } catch (e: IllegalArgumentException) {
@@ -143,24 +151,25 @@ class AppWebViewModelImpl(
     }
 
     override fun handleVerifyLocation(message: String) {
+        val messageBundle = gson.fromJson<MessageBundle<Any>>(message)
         try {
-            val verifyLocationRequest = gson.fromJson(message, VerifyLocationRequest::class.java)
+            val verifyLocationRequest = gson.fromJson<MessageBundle<VerifyLocationRequest>>(message)
 
             appLocationManager.start { result ->
                 val targetLocation = Location("").apply {
-                    latitude = verifyLocationRequest.lat
-                    longitude = verifyLocationRequest.lon
+                    latitude = verifyLocationRequest.message.lat
+                    longitude = verifyLocationRequest.message.lon
                 }
-                val value = when (result.getOrNull()?.distanceTo(targetLocation)?.let { it <= verifyLocationRequest.threshold }) {
-                    true -> Event(VerifyLocationResponse.TRUE)
-                    false -> Event(VerifyLocationResponse.FALSE)
-                    else -> Event(VerifyLocationResponse.UNKNOWN)
+                val value = when (result.getOrNull()?.distanceTo(targetLocation)?.let { it <= verifyLocationRequest.message.threshold }) {
+                    true -> VerifyLocationResponse.TRUE
+                    false -> VerifyLocationResponse.FALSE
+                    else -> VerifyLocationResponse.UNKNOWN
                 }
-                verifyLocationResponse.value = value
+                verifyLocationResponse.value = ResponseEvent(verifyLocationRequest.id, value.value)
             }
         } catch (e: JsonSyntaxException) {
             Log.e(e, "The verifyLocation JSON $message could not be deserialized.")
-            verifyLocationResponse.value = Event(VerifyLocationResponse.UNKNOWN)
+            verifyLocationResponse.value = ResponseEvent(messageBundle.id, VerifyLocationResponse.UNKNOWN.value)
         }
     }
 
@@ -169,165 +178,184 @@ class AppWebViewModelImpl(
     }
 
     override fun handleGetBiometricStatus(message: String) {
-        isBiometricAvailable.value = Event(payAuthenticationManager.isFingerprintAvailable())
+        val messageBundle = gson.fromJson<MessageBundle<String>>(message)
+        isBiometricAvailable.value = ResponseEvent(messageBundle.id, payAuthenticationManager.isFingerprintAvailable())
     }
 
     override fun handleSetTOTPSecret(message: String) {
+        val messageBundle = gson.fromJson<MessageBundle<Any>>(message)
         try {
-            val totpRequest = gson.fromJson(message, SetTOTPRequest::class.java)
-            val hmacAlgorithm = stringToAlgorithm(totpRequest.algorithm)
+            val totpRequest = gson.fromJson<MessageBundle<SetTOTPRequest>>(message)
+            val hmacAlgorithm = stringToAlgorithm(totpRequest.message.algorithm)
 
             if (hmacAlgorithm == null) {
-                statusCode.value = Event(StatusCodeResponse.Failure("Invalid HMAC algorithm: ${totpRequest.algorithm}", StatusCode.InternalError.code))
+                statusCode.value = ResponseEvent(totpRequest.id, StatusCodeResponse.Failure("Invalid HMAC algorithm: ${totpRequest.message.algorithm}", StatusCode.InternalError.code))
                 return
             }
 
             val host = getHost()
             if (host != null) {
-                sharedPreferencesModel.putInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, totpRequest.key), totpRequest.digits)
-                sharedPreferencesModel.putInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, totpRequest.key), totpRequest.period)
-                sharedPreferencesModel.putString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, totpRequest.key), totpRequest.algorithm)
+                sharedPreferencesModel.putInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, totpRequest.message.key), totpRequest.message.digits)
+                sharedPreferencesModel.putInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, totpRequest.message.key), totpRequest.message.period)
+                sharedPreferencesModel.putString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, totpRequest.message.key), totpRequest.message.algorithm)
 
                 try {
-                    val encryptedSecret = EncryptionUtils.encrypt(totpRequest.secret)
-                    sharedPreferencesModel.putString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, totpRequest.key), encryptedSecret)
-                    statusCode.value = Event(StatusCodeResponse.Success)
+                    val encryptedSecret = EncryptionUtils.encrypt(totpRequest.message.secret)
+                    sharedPreferencesModel.putString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, totpRequest.message.key), encryptedSecret)
+                    statusCode.value = ResponseEvent(totpRequest.id, StatusCodeResponse.Success)
                 } catch (e: Exception) {
-                    statusCode.value = Event(StatusCodeResponse.Failure("Could not encrypt the TOTP secret.", StatusCode.InternalError.code))
+                    statusCode.value = ResponseEvent(totpRequest.id, StatusCodeResponse.Failure("Could not encrypt the TOTP secret.", StatusCode.InternalError.code))
                 }
             } else {
-                statusCode.value = Event(StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
+                statusCode.value = ResponseEvent(totpRequest.id, StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
             }
         } catch (e: JsonSyntaxException) {
-            statusCode.value = Event(StatusCodeResponse.Failure("The setTOTPSecret JSON $message could not be deserialized.", StatusCode.InternalError.code))
+            statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The setTOTPSecret JSON $message could not be deserialized.", StatusCode.InternalError.code))
         }
     }
 
     override fun handleGetTOTP(message: String) {
+        val messageBundle = gson.fromJson<MessageBundle<Any>>(message)
         if (!payAuthenticationManager.isFingerprintAvailable()) {
-            statusCode.value = Event(StatusCodeResponse.Failure("No biometric authentication is available or none has been set.", StatusCode.NotAllowed.code))
+            statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("No biometric authentication is available or none has been set.", StatusCode.NotAllowed.code))
             return
         }
 
         try {
-            val getTOTPRequest = gson.fromJson(message, GetTOTPRequest::class.java)
+            val getTOTPRequest = gson.fromJson<MessageBundle<GetTOTPRequest>>(message)
             val host = getHost()
 
             if (host != null) {
-                val encryptedSecret = sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, getTOTPRequest.key))
-                val digits = sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, getTOTPRequest.key))
-                val period = sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, getTOTPRequest.key))
-                val algorithm = sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, getTOTPRequest.key))
+                val encryptedSecret = sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, getTOTPRequest.message.key))
+                val digits = sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, getTOTPRequest.message.key))
+                val period = sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, getTOTPRequest.message.key))
+                val algorithm = sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, getTOTPRequest.message.key))
 
                 if (encryptedSecret == null || digits == null || period == null || algorithm == null || stringToAlgorithm(algorithm) == null) {
-                    statusCode.value = Event(StatusCodeResponse.Failure("No encrypted secret, digits, period or algorithm was found in the SharedPreferences.", StatusCode.NotFound.code))
+                    statusCode.value =
+                        ResponseEvent(getTOTPRequest.id, StatusCodeResponse.Failure("No encrypted secret, digits, period or algorithm was found in the SharedPreferences.", StatusCode.NotFound.code))
                     return
                 }
 
-                biometricRequest.value = Event(BiometricRequest(
-                    R.string.biometric_totp_title,
-                    onSuccess = {
-                        try {
-                            val secret = EncryptionUtils.decrypt(encryptedSecret)
-                            val config = TimeBasedOneTimePasswordConfig(
-                                codeDigits = digits,
-                                hmacAlgorithm = stringToAlgorithm(algorithm) ?: HmacAlgorithm.SHA1,
-                                timeStep = period.toLong(),
-                                timeStepUnit = TimeUnit.SECONDS
+                biometricRequest.value = Event(
+                    BiometricRequest(
+                        R.string.biometric_totp_title,
+                        onSuccess = {
+                            try {
+                                val secret = EncryptionUtils.decrypt(encryptedSecret)
+                                val config = TimeBasedOneTimePasswordConfig(
+                                    codeDigits = digits,
+                                    hmacAlgorithm = stringToAlgorithm(algorithm) ?: HmacAlgorithm.SHA1,
+                                    timeStep = period.toLong(),
+                                    timeStepUnit = TimeUnit.SECONDS
+                                )
+                                val otp = TimeBasedOneTimePasswordGenerator(Base32().decode(secret), config).generate(Date(getTOTPRequest.message.serverTime * 1000L))
+
+                                // the biometric lib currently doesn't tell which method was used; set "other" for consistency
+                                totpResponse.value = ResponseEvent(getTOTPRequest.id, TOTPResponse(otp, BiometryMethod.OTHER.value))
+                            } catch (e: Exception) {
+                                statusCode.value = ResponseEvent(getTOTPRequest.id, StatusCodeResponse.Failure("Could not decrypt the encrypted TOTP secret.", StatusCode.InternalError.code))
+                            }
+                        },
+                        onFailure = { errorCode, errString ->
+                            statusCode.value = ResponseEvent(
+                                getTOTPRequest.id,
+                                StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", StatusCode.Unauthorized.code)
                             )
-                            val otp = TimeBasedOneTimePasswordGenerator(Base32().decode(secret), config).generate(Date(getTOTPRequest.serverTime * 1000L))
 
-                            // the biometric lib currently doesn't tell which method was used; set "other" for consistency
-                            totpResponse.value = Event(TOTPResponse(otp, BiometryMethod.OTHER.value))
-                        } catch (e: Exception) {
-                            statusCode.value = Event(StatusCodeResponse.Failure("Could not decrypt the encrypted TOTP secret.", StatusCode.InternalError.code))
                         }
-                    },
-                    onFailure = { errorCode, errString ->
-                        statusCode.value = Event(StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", StatusCode.Unauthorized.code))
-
-                    }
-                ))
+                    ))
             } else {
-                statusCode.value = Event(StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
+                statusCode.value = ResponseEvent(getTOTPRequest.id, StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
             }
         } catch (e: JsonSyntaxException) {
-            statusCode.value = Event(StatusCodeResponse.Failure("The getTOTP JSON $message could not be deserialized.", StatusCode.InternalError.code))
+            statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The getTOTP JSON $message could not be deserialized.", StatusCode.InternalError.code))
         }
     }
 
     override fun handleSetSecureData(message: String) {
+        val messageBundle = gson.fromJson<MessageBundle<Any>>(message)
         try {
             val host = getHost()
             if (host != null) {
-                val setSecureDataRequest = gson.fromJson(message, SetSecureDataRequest::class.java)
-                val preferenceKey = getSecureDataPreferenceKey(host, setSecureDataRequest.key)
-                val encryptedValue = EncryptionUtils.encrypt(setSecureDataRequest.value)
+                val setSecureDataRequest = gson.fromJson<MessageBundle<SetSecureDataRequest>>(message)
+                val preferenceKey = getSecureDataPreferenceKey(host, setSecureDataRequest.message.key)
+                val encryptedValue = EncryptionUtils.encrypt(setSecureDataRequest.message.value)
                 sharedPreferencesModel.putString(preferenceKey, encryptedValue)
-                statusCode.value = Event(StatusCodeResponse.Success)
+                statusCode.value = ResponseEvent(setSecureDataRequest.id, StatusCodeResponse.Success)
             } else {
-                statusCode.value = Event(StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
+                statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
             }
         } catch (e: JsonSyntaxException) {
-            statusCode.value = Event(StatusCodeResponse.Failure("The setSecureData JSON $message could not be deserialized.", StatusCode.InternalError.code))
+            statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The setSecureData JSON $message could not be deserialized.", StatusCode.InternalError.code))
         } catch (e: Exception) {
-            statusCode.value = Event(StatusCodeResponse.Failure("Could not encrypt the secure data value.", StatusCode.InternalError.code))
+            statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("Could not encrypt the secure data value.", StatusCode.InternalError.code))
         }
     }
 
     override fun handleGetSecureData(message: String) {
+        val messageBundle = gson.fromJson<MessageBundle<Any>>(message)
         if (!payAuthenticationManager.isFingerprintAvailable()) {
-            statusCode.value = Event(StatusCodeResponse.Failure("No biometric authentication is available or none has been set.", StatusCode.NotAllowed.code))
+            statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("No biometric authentication is available or none has been set.", StatusCode.NotAllowed.code))
             return
         }
 
         try {
             val host = getHost()
             if (host != null) {
-                val getSecureDataRequest = gson.fromJson(message, GetSecureDataRequest::class.java)
-                val preferenceKey = getSecureDataPreferenceKey(host, getSecureDataRequest.key)
+                val getSecureDataRequest = gson.fromJson<MessageBundle<GetSecureDataRequest>>(message)
+                val preferenceKey = getSecureDataPreferenceKey(host, getSecureDataRequest.message.key)
                 val encryptedValue = sharedPreferencesModel.getString(preferenceKey)
                 if (encryptedValue == null) {
-                    statusCode.value = Event(StatusCodeResponse.Failure("No encrypted value with the key $preferenceKey was found in the SharedPreferences.", StatusCode.NotFound.code))
+                    statusCode.value = ResponseEvent(
+                        getSecureDataRequest.id,
+                        StatusCodeResponse.Failure("No encrypted value with the key $preferenceKey was found in the SharedPreferences.", StatusCode.NotFound.code)
+                    )
                     return
                 }
 
-                biometricRequest.value = Event(BiometricRequest(
-                    R.string.biometric_secure_data_title,
-                    onSuccess = {
-                        try {
-                            val value = EncryptionUtils.decrypt(encryptedValue)
-                            secureData.value = Event(mapOf("value" to value))
-                        } catch (e: Exception) {
-                            statusCode.value = Event(StatusCodeResponse.Failure("Could not decrypt the encrypted secure data value.", StatusCode.InternalError.code))
+                biometricRequest.value = Event(
+                    BiometricRequest(
+                        R.string.biometric_secure_data_title,
+                        onSuccess = {
+                            try {
+                                val value = EncryptionUtils.decrypt(encryptedValue)
+                                secureData.value = ResponseEvent(getSecureDataRequest.id, mapOf("value" to value))
+                            } catch (e: Exception) {
+                                statusCode.value =
+                                    ResponseEvent(getSecureDataRequest.id, StatusCodeResponse.Failure("Could not decrypt the encrypted secure data value.", StatusCode.InternalError.code))
+                            }
+                        },
+                        onFailure = { errorCode, errString ->
+                            statusCode.value = ResponseEvent(
+                                getSecureDataRequest.id,
+                                StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", StatusCode.Unauthorized.code)
+                            )
                         }
-                    },
-                    onFailure = { errorCode, errString ->
-                        statusCode.value = Event(StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", StatusCode.Unauthorized.code))
-                    }
-                ))
+                    ))
             } else {
-                statusCode.value = Event(StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
+                statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
             }
         } catch (e: JsonSyntaxException) {
-            statusCode.value = Event(StatusCodeResponse.Failure("The getSecureData JSON $message could not be deserialized.", StatusCode.InternalError.code))
+            statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The getSecureData JSON $message could not be deserialized.", StatusCode.InternalError.code))
         }
     }
 
     override fun handleDisable(message: String) {
+        val messageBundle = gson.fromJson<MessageBundle<Any>>(message)
         try {
-            val disableRequest = gson.fromJson(message, DisableRequest::class.java)
+            val disableRequest = gson.fromJson<MessageBundle<DisableRequest>>(message)
             val host = getHost()
             if (host != null) {
-                sharedPreferencesModel.putLong(getDisableTimePreferenceKey(host), disableRequest.until)
+                sharedPreferencesModel.putLong(getDisableTimePreferenceKey(host), disableRequest.message.until)
                 eventManager.setDisabledHost(host)
                 appModel.disable(host)
-                statusCode.value = Event(StatusCodeResponse.Success)
+                statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Success)
             } else {
-                statusCode.value = Event(StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
+                statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
             }
         } catch (e: JsonSyntaxException) {
-            statusCode.value = Event(StatusCodeResponse.Failure("The disable JSON $message could not be deserialized.", StatusCode.InternalError.code))
+            statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The disable JSON $message could not be deserialized.", StatusCode.InternalError.code))
         } finally {
             handleClose()
         }
@@ -336,11 +364,11 @@ class AppWebViewModelImpl(
     override fun handleOpenURLInNewTab(message: String) {
         try {
             val redirectScheme = getRedirectScheme()
-            val openURLInNewTabRequest = gson.fromJson(message, OpenURLInNewTabRequest::class.java)
-            url.value = Event(openURLInNewTabRequest.cancelUrl)
+            val openURLInNewTabRequest = gson.fromJson<MessageBundle<OpenURLInNewTabRequest>>(message)
+            url.value = Event(openURLInNewTabRequest.message.cancelUrl)
 
             if (!redirectScheme.isNullOrEmpty()) {
-                appModel.openUrlInNewTab(openURLInNewTabRequest.url)
+                appModel.openUrlInNewTab(openURLInNewTabRequest.message.url)
             } else {
                 appModel.onCustomSchemeError(context, "${redirectScheme}://redirect")
             }
@@ -350,15 +378,16 @@ class AppWebViewModelImpl(
     }
 
     override fun handleGetAppInterceptableLink(message: String) {
+        val messageBundle = gson.fromJson<MessageBundle<Any>>(message)
         try {
             val redirectScheme = getRedirectScheme()
             if (!redirectScheme.isNullOrEmpty()) {
-                appInterceptableLink.value = Event(AppInterceptableLinkResponse(redirectScheme))
+                appInterceptableLink.value = ResponseEvent(messageBundle.id, AppInterceptableLinkResponse(redirectScheme))
             } else {
-                statusCode.value = Event(StatusCodeResponse.Failure("Could not retrieve redirect scheme", StatusCode.NotFound.code))
+                statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("Could not retrieve redirect scheme", StatusCode.NotFound.code))
             }
         } catch (e: Exception) {
-            statusCode.value = Event(StatusCodeResponse.Failure("Could not retrieve redirect scheme", StatusCode.NotFound.code))
+            statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("Could not retrieve redirect scheme", StatusCode.NotFound.code))
         }
     }
 
