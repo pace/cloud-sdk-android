@@ -15,6 +15,7 @@ import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.location.AppLocationManager
+import cloud.pace.sdk.appkit.model.InvalidTokenReason
 import cloud.pace.sdk.appkit.pay.PayAuthenticationManager
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getDisableTimePreferenceKey
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getSecureDataPreferenceKey
@@ -60,6 +61,7 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     class MessageBundle<T>(val id: String, val message: T)
     class ResponseEvent<T>(id: String, content: T) : Event<MessageBundle<T>>(MessageBundle(id, content))
 
+    class InvalidTokenRequest(val reason: String, val oldToken: String?)
     class VerifyLocationRequest(val lat: Double, val lon: Double, val threshold: Double)
     class BiometricRequest(@StringRes val title: Int, val onSuccess: () -> Unit, val onFailure: (errorCode: Int, errString: CharSequence) -> Unit)
     class SetTOTPRequest(val secret: String, val period: Int, val digits: Int, val algorithm: String, val key: String)
@@ -127,10 +129,12 @@ class AppWebViewModelImpl(
     }
 
     override fun handleInvalidToken(message: String) {
-        val requestBundle = gson.fromJson<MessageBundle<Any>>(message)
-        appModel.onTokenInvalid { token ->
+        val messageBundle = gson.fromJson<MessageBundle<InvalidTokenRequest>>(message)
+        val reason = messageBundle.message.reason
+        val invalidTokenReason = InvalidTokenReason.values().associateBy(InvalidTokenReason::value)[reason] ?: InvalidTokenReason.OTHER
+        appModel.onTokenInvalid(invalidTokenReason, messageBundle.message.oldToken) { token ->
             if (TokenValidator.isTokenValid(token)) {
-                newToken.value = ResponseEvent(requestBundle.id, token)
+                newToken.value = ResponseEvent(messageBundle.id, token)
             } else {
                 handleInvalidToken(message)
             }

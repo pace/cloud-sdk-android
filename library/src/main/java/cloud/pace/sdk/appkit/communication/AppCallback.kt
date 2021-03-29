@@ -3,6 +3,7 @@ package cloud.pace.sdk.appkit.communication
 import android.content.Context
 import android.graphics.Bitmap
 import cloud.pace.sdk.appkit.model.App
+import cloud.pace.sdk.appkit.model.InvalidTokenReason
 
 /**
  * Public callback functions to subscribe to app events.
@@ -36,8 +37,11 @@ interface AppCallback {
     /**
      * Is called when the app sends the access token is invalid action.
      * The client app needs to call the [onResult] function to set a new access token.
+     *
+     * @param reason Specifies the reason why the token is invalid. `UNAUTHORIZED` means that the session was invalidated and `OTHER` if the token expired and should be renewed via [onResult].
+     * @param oldToken The last access token.
      */
-    fun onTokenInvalid(onResult: (String) -> Unit)
+    fun onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit)
 
     /**
      * Is called when the client app hasn't set up deep linking via a custom scheme,
@@ -61,7 +65,7 @@ abstract class AppCallbackImpl : AppCallback {
     override fun onClose() {}
     override fun onOpenInNewTab(url: String) {}
     override fun onDisable(host: String) {}
-    override fun onTokenInvalid(onResult: (String) -> Unit) {}
+    override fun onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit) {}
     override fun onCustomSchemeError(context: Context?, scheme: String) {}
     override fun onImageDataReceived(bitmap: Bitmap) {}
 }

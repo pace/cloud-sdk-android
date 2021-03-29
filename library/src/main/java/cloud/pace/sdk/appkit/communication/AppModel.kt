@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import cloud.pace.sdk.appkit.model.InvalidTokenReason
 
 interface AppModel {
 
@@ -16,7 +17,7 @@ interface AppModel {
     fun close(force: Boolean = false, urls: List<String>? = null)
     fun openUrlInNewTab(url: String)
     fun disable(host: String)
-    fun onTokenInvalid(onResult: (String) -> Unit)
+    fun onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit)
     fun onCustomSchemeError(context: Context?, scheme: String)
     fun onImageDataReceived(bitmap: Bitmap)
 }
@@ -49,8 +50,8 @@ class AppModelImpl : AppModel {
         callback?.onDisable(host)
     }
 
-    override fun onTokenInvalid(onResult: (String) -> Unit) {
-        callback?.onTokenInvalid(onResult)
+    override fun onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit) {
+        callback?.onTokenInvalid(reason, oldToken, onResult)
     }
 
     override fun onCustomSchemeError(context: Context?, scheme: String) {
