@@ -637,7 +637,7 @@ If you want to remove all [AppDrawers](#appdrawer) *and* the [AppActivity](#appa
 
 ### Miscellaneous
 #### Preset Urls
-`PACECloudSDK` provides preset urls for the most common apps, such as `PACE ID`, `payment` and `transactions` based on the environment the sdk was initialized with. You may access these urls via the enum `Environment.kt`.
+`PACECloudSDK` provides preset urls for the most common apps, such as `PACE ID`, `payment`, `fueling`  and `transactions` based on the environment the sdk was initialized with. You may access these urls via the enum `Environment.kt`.
 
 ## SDK API Docs
 

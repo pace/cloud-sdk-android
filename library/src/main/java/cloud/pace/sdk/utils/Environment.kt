@@ -6,7 +6,8 @@ enum class Environment(
     val searchBaseUrl: String,
     val routingBaseUrl: String,
     val payUrl: String,
-    val transactionUrl: String
+    val transactionUrl: String,
+    val fuelingUrl: String
 ) {
 
     DEVELOPMENT(
@@ -15,7 +16,8 @@ enum class Environment(
         "https://api.pace.cloud/photon/",
         "https://maps.pacelink.net/osrm5/route/v1/",
         "https://pay.dev.pace.cloud",
-        "https://pay.dev.pace.cloud/transactions"
+        "https://pay.dev.pace.cloud/transactions",
+        "https://fueling.dev.pace.cloud"
     ),
     STAGING(
         "https://id.stage.pace.cloud",
@@ -23,7 +25,8 @@ enum class Environment(
         "https://api.pace.cloud/photon/",
         "https://maps.pacelink.net/osrm5/route/v1/",
         "https://pay.stage.pace.cloud",
-        "https://pay.stage.pace.cloud/transactions"
+        "https://pay.stage.pace.cloud/transactions",
+        "https://fueling.stage.pace.cloud"
     ),
     PRODUCTION(
         "https://id.pace.cloud",
@@ -31,7 +34,8 @@ enum class Environment(
         "https://api.pace.cloud/photon/",
         "https://maps.pacelink.net/osrm5/route/v1/",
         "https://pay.pace.cloud",
-        "https://pay.pace.cloud/transactions"
+        "https://pay.pace.cloud/transactions",
+        "https://fuel.site"
     ),
     SANDBOX(
         "https://id.sandbox.pace.cloud",
@@ -39,6 +43,7 @@ enum class Environment(
         "https://api.pace.cloud/photon/",
         "https://maps.pacelink.net/osrm5/route/v1/",
         "https://pay.sandbox.pace.cloud",
-        "https://pay.sandbox.pace.cloud/transactions"
+        "https://pay.sandbox.pace.cloud/transactions",
+        "https://fueling.sandbox.pace.cloud"
     )
 }
