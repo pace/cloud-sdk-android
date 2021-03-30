@@ -100,11 +100,33 @@ class MainActivity : AppCompatActivity() {
         }
 
         payment_app.setOnClickListener {
-            authorize(PAYMENT_APP_URL)
+            if (!authorizationRequested) {
+                authorizationRequested = true
+                if (IDKit.isAuthorizationValid()) {
+                    AppKit.openPaymentApp(this, autoClose = false, callback = defaultAppCallback)
+                    authorizationRequested = false
+                } else {
+                    when (radioButtonId) {
+                        R.id.radio_activity_result_api -> startForResult.launch(IDKit.authorize())
+                        R.id.radio_pending_intents -> IDKit.authorize(MainActivity::class.java, MainActivity::class.java)
+                    }
+                }
+            }
         }
 
         fueling_app.setOnClickListener {
-            authorize(FUELING_APP_URL)
+            if (!authorizationRequested) {
+                authorizationRequested = true
+                if (IDKit.isAuthorizationValid()) {
+                    AppKit.openFuelingApp(this, autoClose = false, callback = defaultAppCallback)
+                    authorizationRequested = false
+                } else {
+                    when (radioButtonId) {
+                        R.id.radio_activity_result_api -> startForResult.launch(IDKit.authorize())
+                        R.id.radio_pending_intents -> IDKit.authorize(MainActivity::class.java, MainActivity::class.java)
+                    }
+                }
+            }
         }
 
         user_info.setOnClickListener {
@@ -275,8 +297,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val PAYMENT_APP_URL = "YOUR_PAYMENT_APP_URL"    // TODO: Replace with your payment app URL
-        private const val FUELING_APP_URL = "YOUR_FUELING_APP_URL"    // TODO: Replace with your fueling app URL
         private const val APP_DISTANCE_THRESHOLD = 15
     }
 }

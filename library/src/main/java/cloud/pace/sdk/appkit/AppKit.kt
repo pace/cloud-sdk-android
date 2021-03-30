@@ -9,10 +9,7 @@ import cloud.pace.sdk.appkit.app.drawer.AppDrawer
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.Car
-import cloud.pace.sdk.utils.CloudSDKKoinComponent
-import cloud.pace.sdk.utils.Completion
-import cloud.pace.sdk.utils.DeviceUtils
-import cloud.pace.sdk.utils.Theme
+import cloud.pace.sdk.utils.*
 import org.koin.core.inject
 
 object AppKit : CloudSDKKoinComponent {
@@ -155,6 +152,26 @@ object AppKit : CloudSDKKoinComponent {
      */
     fun openTransactions(context: Context, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl? = null) {
         appManager.openAppActivity(context, PACECloudSDK.configuration.environment.transactionUrl, enableBackToFinish, autoClose, callback)
+    }
+
+    /**
+     * Starts an [AppActivity] and loads Fueling App in the [cloud.pace.sdk.appkit.app.webview.AppWebView].
+     *
+     * @param context Context which should be used to start the [AppActivity].
+     * @param id Needed to get Fueling App Url for specific gas station
+     * @param enableBackToFinish True if the [AppActivity] should be finished or false if the [cloud.pace.sdk.appkit.app.webview.AppWebView] should navigate back on back press.
+     * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
+     * @param callback Via this callback the client app can subscribe to certain app events.
+     */
+    fun openFuelingApp(context: Context, id: String? = null, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl? = null) {
+        if (id == null) {
+            appManager.openAppActivity(context, PACECloudSDK.configuration.environment.fuelingUrl, enableBackToFinish, autoClose, callback)
+            return
+        }
+
+        fetchAppsByUrl(PACECloudSDK.configuration.environment.fuelingUrl, id) {
+            (it as? Success)?.result?.firstOrNull()?.url?.let { url -> appManager.openAppActivity(context, url, enableBackToFinish, autoClose, callback) }
+        }
     }
 
     /**

@@ -3,6 +3,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Enhancements
 
 * Implement check for chrome installation and always use it if installed and not deactivated
+* Add convenience method for fueling app
 
 ### Fixes
 
