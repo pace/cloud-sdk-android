@@ -12,7 +12,6 @@ import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.app.AppActivity
 import cloud.pace.sdk.appkit.app.api.AppRepository
 import cloud.pace.sdk.appkit.app.drawer.AppDrawer
-import cloud.pace.sdk.appkit.app.webview.AppWebViewModelImpl.Companion.getDisableTimePreferenceKey
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
@@ -20,6 +19,7 @@ import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.Car
 import cloud.pace.sdk.appkit.network.NetworkChangeListener
+import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getDisableTimePreferenceKey
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.utils.InvalidSpeed
 import cloud.pace.sdk.appkit.utils.NetworkError

@@ -1,4 +1,4 @@
-package cloud.pace.sdk.idkit
+package cloud.pace.sdk.idkit.model
 
 import android.net.Uri
 

@@ -1,19 +1,20 @@
 x.y.z Release notes (yyyy-MM-dd)
 =============================================================
+
 ### Enhancements
 
 * Implement check for chrome installation and always use it if installed and not deactivated
 * Add convenience method for fueling app
-
-### Fixes
-
-* None.
+* Add methods to handle PIN and biometry actions
 
 <!-- ### Breaking Changes - ONLY INCLUDE FOR NEW MAJOR version -->
+<!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
+
 
 6.0.0 Release notes (2021-03-19)
 =============================================================
+
 ### Breaking changes
 
 * Implement end session request and add end session endpoint to `OIDConfiguration` to clear user session on logout
@@ -21,6 +22,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Internal
 
 * Improve communication with PWA
+
 
 5.2.0 Release notes (2021-03-12)
 =============================================================

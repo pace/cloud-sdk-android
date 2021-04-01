@@ -6,15 +6,15 @@ import androidx.lifecycle.Observer
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModel
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModelImpl
-import cloud.pace.sdk.appkit.app.webview.AppWebViewModelImpl.Companion.getDisableTimePreferenceKey
-import cloud.pace.sdk.appkit.app.webview.AppWebViewModelImpl.Companion.getTotpSecretPreferenceKey
 import cloud.pace.sdk.appkit.app.webview.StatusCode
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.communication.AppModelImpl
 import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.pay.PayAuthenticationManager
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
+import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getTotpSecretPreferenceKey
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
+import cloud.pace.sdk.appkit.persistence.TotpSecret
 import cloud.pace.sdk.appkit.utils.EncryptionUtils
 import cloud.pace.sdk.appkit.utils.TestAppEventManager
 import cloud.pace.sdk.utils.Configuration
@@ -40,11 +40,11 @@ class AppWebViewModelTest {
     private val sharedPreferencesModel = mock(SharedPreferencesModel::class.java)
     private val payManager = mock(PayAuthenticationManager::class.java)
     private var disabled = ""
-    private val host = "app.test.net"
+    private val host = "pace.cloud"
     private val url = "https://$host"
     private val eventManager = object : TestAppEventManager() {
         override fun setDisabledHost(host: String) {
-            disabled = "app.test.net"
+            disabled = host
         }
     }
     private val appCallback = mock(AppCallbackImpl::class.java)
@@ -53,7 +53,7 @@ class AppWebViewModelTest {
 
     @Before
     fun init() {
-        PACECloudSDK.configuration = Configuration("", "", "", "", environment = Environment.DEVELOPMENT)
+        PACECloudSDK.configuration = Configuration("", "", "", "", environment = Environment.DEVELOPMENT, domainACL = listOf(host))
 
         appModel.callback = appCallback
         disabled = ""
@@ -125,10 +125,7 @@ class AppWebViewModelTest {
         val totpRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.SetTOTPRequest(secret, period, digits, algorithm, key)))
         viewModel.handleSetTOTPSecret(totpRequest)
 
-        verify(sharedPreferencesModel, times(1)).putString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, key), secret)
-        verify(sharedPreferencesModel, times(1)).putInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, key), digits)
-        verify(sharedPreferencesModel, times(1)).putInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, key), period)
-        verify(sharedPreferencesModel, times(1)).putString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, key), algorithm)
+        verify(sharedPreferencesModel, times(1)).setTotpSecret(host, key, TotpSecret(secret, digits, period, algorithm))
         assertEquals("id", viewModel.statusCode.value?.peekContent()?.id)
         assertEquals(AppWebViewModel.StatusCodeResponse.Success, viewModel.statusCode.value?.getContentIfNotHandled()?.message)
     }
@@ -152,6 +149,7 @@ class AppWebViewModelTest {
         `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, key))).thenReturn(algorithm)
         `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, key))).thenReturn(digits)
         `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, key))).thenReturn(period)
+        `when`(sharedPreferencesModel.getTotpSecret(host, key)).thenReturn(TotpSecret(secret, digits, period, algorithm))
 
         val totpRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.GetTOTPRequest(1611158191, key)))
         viewModel.handleGetTOTP(totpRequest)
@@ -183,6 +181,7 @@ class AppWebViewModelTest {
         `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, key))).thenReturn(algorithm)
         `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, key))).thenReturn(digits)
         `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, key))).thenReturn(period)
+        `when`(sharedPreferencesModel.getTotpSecret(host, key)).thenReturn(TotpSecret(secret, period, digits, algorithm))
 
         val totpRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.GetTOTPRequest(1611158191, key)))
         viewModel.handleGetTOTP(totpRequest)
@@ -234,18 +233,13 @@ class AppWebViewModelTest {
         `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, key))).thenReturn(algorithm)
         `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, key))).thenReturn(digits)
         `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, key))).thenReturn(period)
+        `when`(sharedPreferencesModel.getTotpSecret(host, key)).thenReturn(null)
 
         val totpRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.GetTOTPRequest(1611158191, key)))
         viewModel.handleGetTOTP(totpRequest)
 
-        assertEquals(
-            "id",
-            viewModel.statusCode.value?.peekContent()?.id
-        )
-        assertEquals(
-            "No encrypted secret, digits, period or algorithm was found in the SharedPreferences.",
-            (viewModel.statusCode.value?.peekContent()?.message as? AppWebViewModel.StatusCodeResponse.Failure)?.error
-        )
+        assertEquals("id", viewModel.statusCode.value?.peekContent()?.id)
+        assertEquals("No biometric data found in the SharedPreferences.", (viewModel.statusCode.value?.peekContent()?.message as? AppWebViewModel.StatusCodeResponse.Failure)?.error)
         assertEquals(StatusCode.NotFound.code, viewModel.statusCode.value?.peekContent()?.message?.statusCode)
 
         viewModel.biometricRequest.removeObserver(observer)
@@ -259,7 +253,7 @@ class AppWebViewModelTest {
         val secureDataRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.SetSecureDataRequest(key, value)))
         viewModel.handleSetSecureData(secureDataRequest)
 
-        verify(sharedPreferencesModel, times(1)).putString(AppWebViewModelImpl.getSecureDataPreferenceKey(host, key), value)
+        verify(sharedPreferencesModel, times(1)).putString(SharedPreferencesImpl.getSecureDataPreferenceKey(host, key), value)
         assertEquals(AppWebViewModel.StatusCodeResponse.Success, viewModel.statusCode.value?.getContentIfNotHandled()?.message)
     }
 
@@ -275,7 +269,7 @@ class AppWebViewModelTest {
         viewModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
-        `when`(sharedPreferencesModel.getString(AppWebViewModelImpl.getSecureDataPreferenceKey(host, key))).thenReturn(value)
+        `when`(sharedPreferencesModel.getString(SharedPreferencesImpl.getSecureDataPreferenceKey(host, key))).thenReturn(value)
 
         viewModel.handleGetSecureData(Gson().toJson(AppWebViewModel.MessageBundle("id", mapOf("key" to key))))
 
@@ -290,7 +284,7 @@ class AppWebViewModelTest {
 
         viewModel.handleDisable(Gson().toJson(AppWebViewModel.MessageBundle("id", mapOf("until" to until))))
 
-        verify(sharedPreferencesModel, times(1)).putLong(getDisableTimePreferenceKey(host), until)
+        verify(sharedPreferencesModel, times(1)).putLong(SharedPreferencesImpl.getDisableTimePreferenceKey(host), until)
         assertEquals(host, disabled)
         assertEquals(AppWebViewModel.StatusCodeResponse.Success, viewModel.statusCode.value?.getContentIfNotHandled()?.message)
     }

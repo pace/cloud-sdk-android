@@ -3,7 +3,13 @@ package cloud.pace.sdk.appkit.utils
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties.*
 import android.util.Base64
+import dev.turingcomplete.kotlinonetimepassword.HmacAlgorithm
+import dev.turingcomplete.kotlinonetimepassword.TimeBasedOneTimePasswordConfig
+import dev.turingcomplete.kotlinonetimepassword.TimeBasedOneTimePasswordGenerator
+import org.apache.commons.codec.binary.Base32
 import java.security.KeyStore
+import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.spec.GCMParameterSpec
@@ -59,5 +65,24 @@ object EncryptionUtils {
         val decoded = cipher.doFinal(Base64.decode(data, Base64.DEFAULT))
 
         return String(decoded)
+    }
+
+    fun stringToAlgorithm(algorithm: String): HmacAlgorithm? {
+        return when (algorithm) {
+            "SHA1" -> HmacAlgorithm.SHA1
+            "SHA256" -> HmacAlgorithm.SHA256
+            "SHA512" -> HmacAlgorithm.SHA512
+            else -> null
+        }
+    }
+
+    fun generateOTP(decryptedSecret: String, digits: Int, period: Int, algorithm: String, date: Date = Date()): String {
+        val config = TimeBasedOneTimePasswordConfig(
+            codeDigits = digits,
+            hmacAlgorithm = stringToAlgorithm(algorithm) ?: HmacAlgorithm.SHA1,
+            timeStep = period.toLong(),
+            timeStepUnit = TimeUnit.SECONDS
+        )
+        return TimeBasedOneTimePasswordGenerator(Base32().decode(decryptedSecret), config).generate(date)
     }
 }

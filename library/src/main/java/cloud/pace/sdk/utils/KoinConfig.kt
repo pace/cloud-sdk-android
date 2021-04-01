@@ -29,6 +29,8 @@ import cloud.pace.sdk.appkit.persistence.CacheModel
 import cloud.pace.sdk.appkit.persistence.CacheModelImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
+import cloud.pace.sdk.idkit.authorization.AuthorizationManager
+import cloud.pace.sdk.idkit.credentials.CredentialsManager
 import cloud.pace.sdk.poikit.database.POIKitDatabase
 import cloud.pace.sdk.poikit.poi.download.TileDownloader
 import cloud.pace.sdk.poikit.routing.NavigationApiClient
@@ -53,6 +55,10 @@ object KoinConfig {
             androidContext(context)
             modules(module {
                 single { AuthorizationService(get()) }
+                single<SharedPreferencesModel> { SharedPreferencesImpl(PreferenceManager.getDefaultSharedPreferences(get())) }
+                single<PayAuthenticationManager> { PayAuthenticationManagerImpl(get()) }
+                single { AuthorizationManager(get(), get()) }
+                single { CredentialsManager(get(), get(), get()) }
             })
         }
     }

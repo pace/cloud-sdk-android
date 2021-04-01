@@ -10,13 +10,16 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.pay.PayAuthenticationManager
-import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
+import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getDisableTimePreferenceKey
+import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getSecureDataPreferenceKey
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
+import cloud.pace.sdk.appkit.persistence.TotpSecret
 import cloud.pace.sdk.appkit.utils.EncryptionUtils
 import cloud.pace.sdk.appkit.utils.TokenValidator
 import cloud.pace.sdk.utils.Event
@@ -24,17 +27,9 @@ import cloud.pace.sdk.utils.Log
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
-import dev.turingcomplete.kotlinonetimepassword.HmacAlgorithm
-import dev.turingcomplete.kotlinonetimepassword.TimeBasedOneTimePasswordConfig
-import dev.turingcomplete.kotlinonetimepassword.TimeBasedOneTimePasswordGenerator
-import org.apache.commons.codec.binary.Base32
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback {
-
-    class MessageBundle<T>(val id: String, val message: T)
-    class ResponseEvent<T>(id: String, content: T) : Event<MessageBundle<T>>(MessageBundle(id, content))
 
     abstract val url: LiveData<Event<String>>
     abstract val isInErrorState: LiveData<Event<Boolean>>
@@ -61,6 +56,9 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     abstract fun handleDisable(message: String)
     abstract fun handleOpenURLInNewTab(message: String)
     abstract fun handleGetAppInterceptableLink(message: String)
+
+    class MessageBundle<T>(val id: String, val message: T)
+    class ResponseEvent<T>(id: String, content: T) : Event<MessageBundle<T>>(MessageBundle(id, content))
 
     class VerifyLocationRequest(val lat: Double, val lon: Double, val threshold: Double)
     class BiometricRequest(@StringRes val title: Int, val onSuccess: () -> Unit, val onFailure: (errorCode: Int, errString: CharSequence) -> Unit)
@@ -114,6 +112,8 @@ class AppWebViewModelImpl(
 
     private val gson = Gson()
 
+    private inline fun <reified T> Gson.fromJson(json: String) = fromJson<T>(json, object : TypeToken<T>() {}.type)
+
     override fun init(url: String) {
         this.url.value = Event(url)
     }
@@ -125,8 +125,6 @@ class AppWebViewModelImpl(
     override fun onLoadingChanged(isLoading: Boolean) {
         showLoadingIndicator.value = Event(isLoading)
     }
-
-    private inline fun <reified T> Gson.fromJson(json: String) = fromJson<T>(json, object : TypeToken<T>() {}.type)
 
     override fun handleInvalidToken(message: String) {
         val requestBundle = gson.fromJson<MessageBundle<Any>>(message)
@@ -186,28 +184,23 @@ class AppWebViewModelImpl(
         val messageBundle = gson.fromJson<MessageBundle<Any>>(message)
         try {
             val totpRequest = gson.fromJson<MessageBundle<SetTOTPRequest>>(message)
-            val hmacAlgorithm = stringToAlgorithm(totpRequest.message.algorithm)
 
-            if (hmacAlgorithm == null) {
+            EncryptionUtils.stringToAlgorithm(totpRequest.message.algorithm) ?: run {
                 statusCode.value = ResponseEvent(totpRequest.id, StatusCodeResponse.Failure("Invalid HMAC algorithm: ${totpRequest.message.algorithm}", StatusCode.InternalError.code))
                 return
             }
 
-            val host = getHost()
-            if (host != null) {
-                sharedPreferencesModel.putInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, totpRequest.message.key), totpRequest.message.digits)
-                sharedPreferencesModel.putInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, totpRequest.message.key), totpRequest.message.period)
-                sharedPreferencesModel.putString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, totpRequest.message.key), totpRequest.message.algorithm)
-
-                try {
-                    val encryptedSecret = EncryptionUtils.encrypt(totpRequest.message.secret)
-                    sharedPreferencesModel.putString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, totpRequest.message.key), encryptedSecret)
-                    statusCode.value = ResponseEvent(totpRequest.id, StatusCodeResponse.Success)
-                } catch (e: Exception) {
-                    statusCode.value = ResponseEvent(totpRequest.id, StatusCodeResponse.Failure("Could not encrypt the TOTP secret.", StatusCode.InternalError.code))
-                }
-            } else {
+            val host = getHost() ?: run {
                 statusCode.value = ResponseEvent(totpRequest.id, StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
+                return
+            }
+
+            try {
+                val encryptedSecret = EncryptionUtils.encrypt(totpRequest.message.secret)
+                sharedPreferencesModel.setTotpSecret(host, totpRequest.message.key, TotpSecret(encryptedSecret, totpRequest.message.digits, totpRequest.message.period, totpRequest.message.algorithm))
+                statusCode.value = ResponseEvent(totpRequest.id, StatusCodeResponse.Success)
+            } catch (e: Exception) {
+                statusCode.value = ResponseEvent(totpRequest.id, StatusCodeResponse.Failure("Could not encrypt the TOTP secret.", StatusCode.InternalError.code))
             }
         } catch (e: JsonSyntaxException) {
             statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The setTOTPSecret JSON $message could not be deserialized.", StatusCode.InternalError.code))
@@ -223,51 +216,43 @@ class AppWebViewModelImpl(
 
         try {
             val getTOTPRequest = gson.fromJson<MessageBundle<GetTOTPRequest>>(message)
-            val host = getHost()
+            val host = getHost() ?: run {
+                statusCode.value = ResponseEvent(getTOTPRequest.id, StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
+                return
+            }
 
-            if (host != null) {
-                val encryptedSecret = sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, getTOTPRequest.message.key))
-                val digits = sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, getTOTPRequest.message.key))
-                val period = sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, getTOTPRequest.message.key))
-                val algorithm = sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, getTOTPRequest.message.key))
-
-                if (encryptedSecret == null || digits == null || period == null || algorithm == null || stringToAlgorithm(algorithm) == null) {
-                    statusCode.value =
-                        ResponseEvent(getTOTPRequest.id, StatusCodeResponse.Failure("No encrypted secret, digits, period or algorithm was found in the SharedPreferences.", StatusCode.NotFound.code))
+            val totpSecret = sharedPreferencesModel.getTotpSecret(host, getTOTPRequest.message.key) ?: run {
+                if (isDomainInACL(host)) {
+                    // Get master TOTP secret data
+                    sharedPreferencesModel.getTotpSecret() ?: run {
+                        statusCode.value = ResponseEvent(getTOTPRequest.id, StatusCodeResponse.Failure("No biometric data found in the SharedPreferences.", StatusCode.NotFound.code))
+                        return
+                    }
+                } else {
+                    statusCode.value = ResponseEvent(getTOTPRequest.id, StatusCodeResponse.Failure("The host $host is not in the access control list.", StatusCode.InternalError.code))
                     return
                 }
-
-                biometricRequest.value = Event(
-                    BiometricRequest(
-                        R.string.biometric_totp_title,
-                        onSuccess = {
-                            try {
-                                val secret = EncryptionUtils.decrypt(encryptedSecret)
-                                val config = TimeBasedOneTimePasswordConfig(
-                                    codeDigits = digits,
-                                    hmacAlgorithm = stringToAlgorithm(algorithm) ?: HmacAlgorithm.SHA1,
-                                    timeStep = period.toLong(),
-                                    timeStepUnit = TimeUnit.SECONDS
-                                )
-                                val otp = TimeBasedOneTimePasswordGenerator(Base32().decode(secret), config).generate(Date(getTOTPRequest.message.serverTime * 1000L))
-
-                                // the biometric lib currently doesn't tell which method was used; set "other" for consistency
-                                totpResponse.value = ResponseEvent(getTOTPRequest.id, TOTPResponse(otp, BiometryMethod.OTHER.value))
-                            } catch (e: Exception) {
-                                statusCode.value = ResponseEvent(getTOTPRequest.id, StatusCodeResponse.Failure("Could not decrypt the encrypted TOTP secret.", StatusCode.InternalError.code))
-                            }
-                        },
-                        onFailure = { errorCode, errString ->
-                            statusCode.value = ResponseEvent(
-                                getTOTPRequest.id,
-                                StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", StatusCode.Unauthorized.code)
-                            )
-
-                        }
-                    ))
-            } else {
-                statusCode.value = ResponseEvent(getTOTPRequest.id, StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
             }
+
+            biometricRequest.value = Event(BiometricRequest(
+                R.string.biometric_totp_title,
+                onSuccess = {
+                    try {
+                        val decryptedSecret = EncryptionUtils.decrypt(totpSecret.encryptedSecret)
+                        val otp = EncryptionUtils.generateOTP(decryptedSecret, totpSecret.digits, totpSecret.period, totpSecret.algorithm, Date(getTOTPRequest.message.serverTime * 1000L))
+                        // the biometric lib currently doesn't tell which method was used; set "other" for consistency
+                        totpResponse.value = ResponseEvent(getTOTPRequest.id, TOTPResponse(otp, BiometryMethod.OTHER.value))
+                    } catch (e: Exception) {
+                        statusCode.value = ResponseEvent(getTOTPRequest.id, StatusCodeResponse.Failure("Could not decrypt the encrypted TOTP secret.", StatusCode.InternalError.code))
+                    }
+                },
+                onFailure = { errorCode, errString ->
+                    statusCode.value = ResponseEvent(
+                        getTOTPRequest.id,
+                        StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", StatusCode.Unauthorized.code)
+                    )
+                }
+            ))
         } catch (e: JsonSyntaxException) {
             statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The getTOTP JSON $message could not be deserialized.", StatusCode.InternalError.code))
         }
@@ -276,16 +261,16 @@ class AppWebViewModelImpl(
     override fun handleSetSecureData(message: String) {
         val messageBundle = gson.fromJson<MessageBundle<Any>>(message)
         try {
-            val host = getHost()
-            if (host != null) {
-                val setSecureDataRequest = gson.fromJson<MessageBundle<SetSecureDataRequest>>(message)
-                val preferenceKey = getSecureDataPreferenceKey(host, setSecureDataRequest.message.key)
-                val encryptedValue = EncryptionUtils.encrypt(setSecureDataRequest.message.value)
-                sharedPreferencesModel.putString(preferenceKey, encryptedValue)
-                statusCode.value = ResponseEvent(setSecureDataRequest.id, StatusCodeResponse.Success)
-            } else {
+            val host = getHost() ?: run {
                 statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
+                return
             }
+            val setSecureDataRequest = gson.fromJson<MessageBundle<SetSecureDataRequest>>(message)
+            val preferenceKey = getSecureDataPreferenceKey(host, setSecureDataRequest.message.key)
+            val encryptedValue = EncryptionUtils.encrypt(setSecureDataRequest.message.value)
+
+            sharedPreferencesModel.putString(preferenceKey, encryptedValue)
+            statusCode.value = ResponseEvent(setSecureDataRequest.id, StatusCodeResponse.Success)
         } catch (e: JsonSyntaxException) {
             statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The setSecureData JSON $message could not be deserialized.", StatusCode.InternalError.code))
         } catch (e: Exception) {
@@ -301,41 +286,41 @@ class AppWebViewModelImpl(
         }
 
         try {
-            val host = getHost()
-            if (host != null) {
-                val getSecureDataRequest = gson.fromJson<MessageBundle<GetSecureDataRequest>>(message)
-                val preferenceKey = getSecureDataPreferenceKey(host, getSecureDataRequest.message.key)
-                val encryptedValue = sharedPreferencesModel.getString(preferenceKey)
-                if (encryptedValue == null) {
-                    statusCode.value = ResponseEvent(
-                        getSecureDataRequest.id,
-                        StatusCodeResponse.Failure("No encrypted value with the key $preferenceKey was found in the SharedPreferences.", StatusCode.NotFound.code)
-                    )
-                    return
-                }
+            val host = getHost() ?: run {
+                statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
+                return
+            }
+            val getSecureDataRequest = gson.fromJson<MessageBundle<GetSecureDataRequest>>(message)
+            val preferenceKey = getSecureDataPreferenceKey(host, getSecureDataRequest.message.key)
+            val encryptedValue = sharedPreferencesModel.getString(preferenceKey) ?: run {
+                statusCode.value = ResponseEvent(
+                    getSecureDataRequest.id,
+                    StatusCodeResponse.Failure("No encrypted value with the key $preferenceKey was found in the SharedPreferences.", StatusCode.NotFound.code)
+                )
+                return
+            }
 
-                biometricRequest.value = Event(
-                    BiometricRequest(
-                        R.string.biometric_secure_data_title,
-                        onSuccess = {
-                            try {
-                                val value = EncryptionUtils.decrypt(encryptedValue)
-                                secureData.value = ResponseEvent(getSecureDataRequest.id, mapOf("value" to value))
-                            } catch (e: Exception) {
-                                statusCode.value =
-                                    ResponseEvent(getSecureDataRequest.id, StatusCodeResponse.Failure("Could not decrypt the encrypted secure data value.", StatusCode.InternalError.code))
-                            }
-                        },
-                        onFailure = { errorCode, errString ->
+            biometricRequest.value = Event(
+                BiometricRequest(
+                    R.string.biometric_secure_data_title,
+                    onSuccess = {
+                        try {
+                            val value = EncryptionUtils.decrypt(encryptedValue)
+                            secureData.value = ResponseEvent(getSecureDataRequest.id, mapOf("value" to value))
+                        } catch (e: Exception) {
                             statusCode.value = ResponseEvent(
                                 getSecureDataRequest.id,
-                                StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", StatusCode.Unauthorized.code)
+                                StatusCodeResponse.Failure("Could not decrypt the encrypted secure data value.", StatusCode.InternalError.code)
                             )
                         }
-                    ))
-            } else {
-                statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The host is null.", StatusCode.InternalError.code))
-            }
+                    },
+                    onFailure = { errorCode, errString ->
+                        statusCode.value = ResponseEvent(
+                            getSecureDataRequest.id,
+                            StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", StatusCode.Unauthorized.code)
+                        )
+                    }
+                ))
         } catch (e: JsonSyntaxException) {
             statusCode.value = ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The getSecureData JSON $message could not be deserialized.", StatusCode.InternalError.code))
         }
@@ -396,23 +381,12 @@ class AppWebViewModelImpl(
         return applicationInfo?.metaData?.get("pace_redirect_scheme")?.toString()
     }
 
-    private fun stringToAlgorithm(algorithm: String): HmacAlgorithm? {
-        return when (algorithm) {
-            "SHA1" -> HmacAlgorithm.SHA1
-            "SHA256" -> HmacAlgorithm.SHA256
-            "SHA512" -> HmacAlgorithm.SHA512
-            else -> null
-        }
-    }
-
     private fun getHost() = url.value?.peekContent()?.let { Uri.parse(it).host }
 
-    companion object {
-
-        fun getTotpSecretPreferenceKey(which: String, host: String, key: String) = "${which}_${host}_$key"
-
-        fun getSecureDataPreferenceKey(host: String, key: String) = "${SharedPreferencesImpl.SECURE_DATA}_${host}_$key"
-
-        fun getDisableTimePreferenceKey(host: String) = "${SharedPreferencesImpl.DISABLE_TIME}_$host"
+    private fun isDomainInACL(domain: String): Boolean {
+        return PACECloudSDK.configuration.domainACL.any {
+            val aclHost = Uri.parse(it).host ?: it
+            domain.endsWith(aclHost)
+        }
     }
 }
