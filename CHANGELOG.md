@@ -7,6 +7,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Enhancements
 
 * Intercept PWA logs and pass all logs to client
+* Add handlers to set user properties, log analytic events and get configurations
 
 ### Internal
 

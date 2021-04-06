@@ -131,7 +131,8 @@ class AppRepositoryImpl(
 
         val manifest = manifestFuture.get() ?: return null
 
-        val iconUrl = if (manifest.icons.isNullOrEmpty()) null else getIconPath(appUrl, manifest.icons)
+        val icons = manifest.icons
+        val iconUrl = if (icons.isNullOrEmpty()) null else getIconPath(appUrl, icons)
 
         val logo: Bitmap? = if (iconUrl == null) {
             null
@@ -155,8 +156,8 @@ class AppRepositoryImpl(
             .getStartUrls(appUrl, appUrl, manifest.sdkStartUrl, references)
             .map {
                 App(
-                    name = manifest.name,
-                    shortName = manifest.shortName,
+                    name = manifest.name ?: "",
+                    shortName = manifest.shortName ?: "",
                     description = manifest.description,
                     url = it.value,
                     logo = logo,

@@ -117,6 +117,12 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         }
     }
 
+    private val configResponseObserver = Observer<AppWebViewModel.ResponseEvent<AppWebViewModel.ValueResponse>> {
+        it.getContentIfNotHandled()?.let { configResponse ->
+            sendMessageCallback(configResponse)
+        }
+    }
+
     init {
         addView(View.inflate(context, R.layout.app_web_view, null))
 
@@ -144,6 +150,9 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         webView.addJavascriptInterface(DisableInterface(), "pace_disable")
         webView.addJavascriptInterface(OpenURLInNewTabInterface(), "pace_openURLInNewTab")
         webView.addJavascriptInterface(GetAppInterceptableLinkInterface(), "pace_getAppInterceptableLink")
+        webView.addJavascriptInterface(SetUserProperty(), "pace_setUserProperty")
+        webView.addJavascriptInterface(LogEvent(), "pace_logEvent")
+        webView.addJavascriptInterface(GetConfig(), "pace_getConfig")
 
         failureView.setButtonClickListener {
             webView.reload()
@@ -187,6 +196,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         webViewModel.totpResponse.observe(lifecycleOwner, totpResponseObserver)
         webViewModel.secureData.observe(lifecycleOwner, secureDataObserver)
         webViewModel.appInterceptableLink.observe(lifecycleOwner, appInterceptableLinkObserver)
+        webViewModel.configResponse.observe(lifecycleOwner, configResponseObserver)
     }
 
     private fun handleBack() {
@@ -289,6 +299,27 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         @JavascriptInterface
         fun postMessage(message: String) {
             onMainThread { webViewModel.handleGetAppInterceptableLink(message) }
+        }
+    }
+
+    inner class SetUserProperty {
+        @JavascriptInterface
+        fun postMessage(message: String) {
+            onMainThread { webViewModel.handleSetUserProperty(message) }
+        }
+    }
+
+    inner class LogEvent {
+        @JavascriptInterface
+        fun postMessage(message: String) {
+            onMainThread { webViewModel.handleLogEvent(message) }
+        }
+    }
+
+    inner class GetConfig {
+        @JavascriptInterface
+        fun postMessage(message: String) {
+            onMainThread { webViewModel.handleGetConfig(message) }
         }
     }
 }
