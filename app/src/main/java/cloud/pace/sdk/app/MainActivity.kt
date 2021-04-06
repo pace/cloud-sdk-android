@@ -20,6 +20,8 @@ import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.model.App
+import cloud.pace.sdk.appkit.model.InvalidTokenReason
+import cloud.pace.sdk.appkit.utils.TokenValidator
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.FailedRetrievingSessionWhileAuthorizing
 import cloud.pace.sdk.idkit.model.OIDConfiguration
@@ -44,11 +46,16 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this@MainActivity, "POI ID = ${app?.poiId}", Toast.LENGTH_SHORT).show()
         }
 
-        override fun onTokenInvalid(onResult: (String) -> Unit) {
-            IDKit.refreshToken { response ->
-                (response as? Success)?.result?.let { token -> onResult(token) } ?: run {
-                    radioButtonId = R.id.radio_pending_intents
-                    authorize(appUrl)
+        override fun onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit) {
+            if (reason == InvalidTokenReason.UNAUTHORIZED && oldToken != null && TokenValidator.isTokenValid(oldToken)) {
+                AppKit.closeAppActivity()
+                Toast.makeText(this@MainActivity, "An error occurred. Please try again later.", Toast.LENGTH_LONG).show()
+            } else {
+                IDKit.refreshToken { response ->
+                    (response as? Success)?.result?.let { token -> onResult(token) } ?: run {
+                        radioButtonId = R.id.radio_pending_intents
+                        authorize(appUrl)
+                    }
                 }
             }
         }
@@ -275,11 +282,16 @@ class MainActivity : AppCompatActivity() {
 
         info_label.text = "Open app"
         AppKit.openAppActivity(context = this, url = url, autoClose = false, callback = object : AppCallbackImpl() {
-            override fun onTokenInvalid(onResult: (String) -> Unit) {
-                IDKit.refreshToken { completion ->
-                    when (completion) {
-                        is Success -> completion.result?.let { onResult(it) }
-                        is Failure -> info_label.text = "Refresh error: ${completion.throwable.message}"
+            override fun onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit) {
+                if (reason == InvalidTokenReason.UNAUTHORIZED && oldToken != null && TokenValidator.isTokenValid(oldToken)) {
+                    AppKit.closeAppActivity()
+                    Toast.makeText(this@MainActivity, "An error occurred. Please try again later.", Toast.LENGTH_LONG).show()
+                } else {
+                    IDKit.refreshToken { completion ->
+                        when (completion) {
+                            is Success -> completion.result?.let { onResult(it) }
+                            is Failure -> info_label.text = "Refresh error: ${completion.throwable.message}"
+                        }
                     }
                 }
             }

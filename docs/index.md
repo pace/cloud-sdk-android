@@ -629,16 +629,16 @@ Some of our services (e.g. `PayPal`) do not open the URL in the WebView, but in 
 If the client app uses its own login and wants to pass an access token to the apps, follow these steps:
 
 1. Initialize the `PACECloudSDK` with `authenticationMode = AuthenticationMode.NATIVE`
-2. Pass an `AppCallbackImpl` instance to `AppKit.openApps(...)` or `AppKit.openAppActivity(...)` and override the required callbacks (`onTokenInvalid(onResult: (String) -> Unit) {}` in this case)
+2. Pass an `AppCallbackImpl` instance to `AppKit.openApps(...)` or `AppKit.openAppActivity(...)` and override the required callbacks (`onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit)` in this case)
 3. If the access token is invalid, the *AppKit* calls the `onTokenInvalid` function. The client app needs to call the `onResult` function to set a new access token. In case that you can't retrieve a new valid token, don't call `onResult`, otherwise you will most likely end up
 in an endless loop. Make sure to clean up all the app related views as well (see [Removal of Apps](#removal-of-apps)).
 
 ##### Kotlin example
 ```kotlin
 AppKit.openAppActivity(context, url, object : AppCallbackImpl() {
-    override fun onTokenInvalid(onResult: (String) -> Unit) {
-        // Token is invalid, call your function to request a new one (async or not)
-        // and pass the new token to onResult
+    override fun onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit) {
+        // Token is invalid, check reason and oldToken parameters
+        // Call your function to request a new one (async or not) and pass the new token to onResult
         getTokenAsnyc { token ->
             onResult(token)
         }
@@ -650,9 +650,9 @@ AppKit.openAppActivity(context, url, object : AppCallbackImpl() {
 ```java
 AppKit.INSTANCE.openAppActivity(context, url, true, false, new AppCallbackImpl() {
     @Override
-    public void onTokenInvalid(@NotNull Function1<? super String, Unit> onResult) {
-        // Token is invalid, call your function to request a new one (async or not)
-        // and pass the new token to onResult
+    public void onTokenInvalid(@NotNull InvalidTokenReason reason, @Nullable String oldToken, @NotNull Function1<? super String, Unit> onResult) {
+        // Token is invalid, check reason and oldToken parameters
+        // Call your function to request a new one (async or not) and pass the new token to onResult
         getTokenAsnyc( token -> {
             onResult.invoke(token);
         });

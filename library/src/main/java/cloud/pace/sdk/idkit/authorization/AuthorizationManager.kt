@@ -161,6 +161,7 @@ internal class AuthorizationManager(
         session = AuthState(serviceConfiguration)
 
         return AuthorizationRequest.Builder(serviceConfiguration, configuration.clientId, configuration.responseType, Uri.parse(configuration.redirectUri))
+            .setPrompt("login") // Disable SSO --> Always show login screen
             .setScopes(configuration.scopes?.plus("openid") ?: listOf("openid")) // Make sure that 'openid' is passed as scope so that the idToken for the end session request is returned
             .setAdditionalParameters(configuration.additionalParameters)
             .build()
