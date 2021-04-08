@@ -29,6 +29,7 @@ import cloud.pace.sdk.idkit.model.*
 import cloud.pace.sdk.poikit.utils.ApiException
 import cloud.pace.sdk.utils.*
 import retrofit2.Call
+import timber.log.Timber
 import java.net.HttpURLConnection
 
 internal class CredentialsManager(
@@ -162,6 +163,7 @@ internal class CredentialsManager(
             val generatedOtp = generateOTP(decryptedSecret, totpSecret.digits, totpSecret.period, totpSecret.algorithm)
             API.credentials.updateUserPIN(UpdateUserPINAPI.Body().apply { data = getUserPINBody(pin, generatedOtp) }).makeBooleanRequest(completion)
         } catch (e: Exception) {
+            Timber.e(e, "Could not decrypt the secret while updating the user PIN")
             completion(Failure(e))
         }
     }

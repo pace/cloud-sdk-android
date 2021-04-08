@@ -12,6 +12,7 @@ import cloud.pace.sdk.utils.CompletableFutureCompat
 import cloud.pace.sdk.utils.IconUtils
 import cloud.pace.sdk.utils.dp
 import cloud.pace.sdk.utils.resourceUuid
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
@@ -122,7 +123,10 @@ class AppRepositoryImpl(
         val manifestFuture = CompletableFutureCompat<AppManifest?>()
         cache.getManifest(context, appUrl) { result ->
             result.onSuccess { manifestFuture.complete(it) }
-            result.onFailure { manifestFuture.complete(null) }
+            result.onFailure {
+                Timber.e(it, "Failed to download the manifest")
+                manifestFuture.complete(null)
+            }
         }
 
         val manifest = manifestFuture.get() ?: return null
@@ -135,7 +139,10 @@ class AppRepositoryImpl(
             val iconFuture = CompletableFutureCompat<Bitmap?>()
             cache.getUri(context, iconUrl) { result ->
                 result.onSuccess { iconFuture.complete(BitmapFactory.decodeByteArray(it, 0, it.size)) }
-                result.onFailure { iconFuture.complete(null) }
+                result.onFailure {
+                    Timber.e(it, "Failed to download the icon")
+                    iconFuture.complete(null)
+                }
             }
             try {
                 iconFuture.get(2, TimeUnit.SECONDS)

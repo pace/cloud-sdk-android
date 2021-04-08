@@ -26,6 +26,7 @@ import cloud.pace.sdk.appkit.utils.NetworkError
 import cloud.pace.sdk.appkit.utils.RunningCheck
 import cloud.pace.sdk.utils.*
 import org.koin.core.inject
+import timber.log.Timber
 import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URL
@@ -45,10 +46,10 @@ internal class AppManager : CloudSDKKoinComponent {
     private var lastApps = emptyList<String>()
 
     internal fun requestLocalApps(completion: (Completion<List<App>>) -> Unit) {
-        Log.d("Check local available Apps")
+        Timber.i("Check local available Apps")
 
         if (checkRunning) {
-            Log.w("App check already running")
+            Timber.w("App check already running")
             completion(Failure(RunningCheck))
             return
         }
@@ -85,7 +86,7 @@ internal class AppManager : CloudSDKKoinComponent {
     private fun getAppsByLocation(location: Location, completion: (Completion<List<App>>) -> Unit) {
         appRepository.getLocationBasedApps(context, location.latitude, location.longitude) { result ->
             result.onSuccess { apps ->
-                Log.d("Received ${apps.size} Apps: ${apps.map { it.url }}")
+                Timber.d("Received ${apps.size} Apps: ${apps.map { it.url }}")
 
                 val notDisabled = apps
                     .filter {
@@ -95,11 +96,11 @@ internal class AppManager : CloudSDKKoinComponent {
                             when {
                                 timestamp == null -> true
                                 Date(timestamp).after(Date()) -> {
-                                    Log.d("Don't show app $host, because disable timer has not been reached (timestamp = $timestamp)")
+                                    Timber.d("Don't show app $host, because disable timer has not been reached (timestamp = $timestamp)")
                                     false
                                 }
                                 else -> {
-                                    Log.d("Disable timer for app $host has been reached")
+                                    Timber.d("Disable timer for app $host has been reached")
                                     sharedPreferencesModel.remove(getDisableTimePreferenceKey(host))
                                     true
                                 }
@@ -120,10 +121,10 @@ internal class AppManager : CloudSDKKoinComponent {
             }
 
             result.onFailure { error ->
-                Log.e(error, "Could not receive Apps: ${error.message}")
+                Timber.e(error, "Could not receive Apps")
 
                 if (error is IOException) {
-                    Log.d("No network - listen to network changes")
+                    Timber.w("No network - listen to network changes")
                     networkChangeListener.getNetworkChanges { networkChanged ->
                         if (networkChanged) {
                             requestLocalApps(completion)
@@ -227,11 +228,11 @@ internal class AppManager : CloudSDKKoinComponent {
     }
 
     internal fun closeApps(buttonContainer: ConstraintLayout) {
-        Log.d("Close all AppDrawers")
+        Timber.i("Close all AppDrawers")
         // asReversed(), to make sure that all AppDrawers will be removed, because iterating and removing is done simultaneously
         buttonContainer.children.toList().asReversed().forEach {
             if (it is AppDrawer) {
-                Log.d("Child is AppDrawer --> Remove view with ID ${it.id}")
+                Timber.d("Child is AppDrawer --> Remove view with ID ${it.id}")
                 buttonContainer.removeView(it)
             }
         }

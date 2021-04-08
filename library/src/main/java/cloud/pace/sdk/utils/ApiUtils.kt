@@ -2,7 +2,6 @@ package cloud.pace.sdk.utils
 
 import android.os.Build
 import cloud.pace.sdk.BuildConfig
-import cloud.pace.sdk.utils.Constants.TAG
 
 object ApiUtils {
 
@@ -13,6 +12,6 @@ object ApiUtils {
     const val AUTHORIZATION_HEADER = "Authorization"
 
     fun getUserAgent(versionName: String = BuildConfig.VERSION_NAME, versionCode: Int = BuildConfig.VERSION_CODE): String {
-        return "$TAG/$versionName.$versionCode (${DeviceUtils.getDeviceName()}; Android/${Build.VERSION.RELEASE})"
+        return "PACECloudSDK/$versionName.$versionCode (${DeviceUtils.getDeviceName()}; Android/${Build.VERSION.RELEASE})"
     }
 }

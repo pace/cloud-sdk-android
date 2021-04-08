@@ -7,6 +7,7 @@ import dev.turingcomplete.kotlinonetimepassword.HmacAlgorithm
 import dev.turingcomplete.kotlinonetimepassword.TimeBasedOneTimePasswordConfig
 import dev.turingcomplete.kotlinonetimepassword.TimeBasedOneTimePasswordGenerator
 import org.apache.commons.codec.binary.Base32
+import timber.log.Timber
 import java.security.KeyStore
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -72,7 +73,10 @@ object EncryptionUtils {
             "SHA1" -> HmacAlgorithm.SHA1
             "SHA256" -> HmacAlgorithm.SHA256
             "SHA512" -> HmacAlgorithm.SHA512
-            else -> null
+            else -> {
+                Timber.w("Unknown algorithm: $algorithm")
+                null
+            }
         }
     }
 

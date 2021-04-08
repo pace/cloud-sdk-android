@@ -9,12 +9,12 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.utils.NotificationUtils
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
-import cloud.pace.sdk.utils.Log
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingEvent
 import com.google.android.gms.location.GeofencingRequest
 import org.koin.core.inject
+import timber.log.Timber
 import java.util.*
 
 abstract class GeofenceManager : CloudSDKKoinComponent {
@@ -77,11 +77,11 @@ class GeofenceManagerImpl : GeofenceManager() {
         try {
             geofencingClient.addGeofences(request, pendingIntent)?.run {
                 addOnSuccessListener {
-                    Log.d("Added ${locations.size} geofences: ${locations.joinToString { it.id }}")
+                    Timber.d("Added ${locations.size} geofences: ${locations.joinToString { it.id }}")
                     setupCallback(Result.success(it))
                 }
                 addOnFailureListener {
-                    Log.e(it, "Failed adding geofences: ${it.message}")
+                    Timber.e(it, "Failed adding geofences")
                     setupCallback(Result.failure(it))
                 }
             }
@@ -94,13 +94,13 @@ class GeofenceManagerImpl : GeofenceManager() {
             locations,
             callback = { event ->
                 val triggeringGeofenceIDs = event.triggeringGeofences.joinToString { it.requestId }
-                Log.d("Triggering geofences = $triggeringGeofenceIDs")
-                Log.d("Geofence location: lat = ${event.triggeringLocation.latitude} lon = ${event.triggeringLocation.longitude}")
+                Timber.d("Triggering geofences = $triggeringGeofenceIDs")
+                Timber.d("Geofence location: lat = ${event.triggeringLocation.latitude} lon = ${event.triggeringLocation.longitude}")
                 if (event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL &&
                     // only send notification if in background
                     ProcessLifecycleOwner.get().lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED).not()
                 ) {
-                    Log.d("Geofence DWELL")
+                    Timber.i("Geofence DWELL")
                     lastNotification?.let {
                         NotificationUtils.removeNotification(context, it)
                         lastNotification = null
@@ -119,15 +119,15 @@ class GeofenceManagerImpl : GeofenceManager() {
                     )
 
                     notificationCallback(triggeringGeofenceIDs.take(100))
-                    Log.d("Geofence notification sent")
+                    Timber.i("Geofence notification sent")
                 } else if (event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
-                    Log.d("Geofence ENTER")
+                    Timber.i("Geofence ENTER")
                 } else if (event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
-                    Log.d("Geofence EXIT")
+                    Timber.i("Geofence EXIT")
                     lastNotification?.let {
                         NotificationUtils.removeNotification(context, it)
                         lastNotification = null
-                        Log.d("Geofence notification removed")
+                        Timber.i("Geofence notification removed")
                     }
                 }
             },

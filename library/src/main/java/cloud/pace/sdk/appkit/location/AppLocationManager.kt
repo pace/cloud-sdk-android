@@ -7,7 +7,11 @@ import androidx.lifecycle.switchMap
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.utils.NoLocationFound
 import cloud.pace.sdk.appkit.utils.PermissionDenied
-import cloud.pace.sdk.utils.*
+import cloud.pace.sdk.utils.Event
+import cloud.pace.sdk.utils.LocationProvider
+import cloud.pace.sdk.utils.LocationState
+import cloud.pace.sdk.utils.SystemManager
+import timber.log.Timber
 
 interface AppLocationManager {
 
@@ -24,7 +28,7 @@ class AppLocationManagerImpl(
     private var startTime = 0L
     private val handler = systemManager.getHandler()
     private val locationTimeoutRunnable = Runnable {
-        Log.w("AppLocationManager timeout after $LOCATION_TIMEOUT ms")
+        Timber.w("Timeout after $LOCATION_TIMEOUT ms")
         callback?.invoke(Result.failure(NoLocationFound))
     }
     private val locationEvent = locationProvider.location.switchMap {
@@ -62,24 +66,24 @@ class AppLocationManagerImpl(
 
     private fun isLocationValid(location: Location?, startTime: Long): Boolean {
         if (location == null) {
-            Log.w("Discard null location")
+            Timber.w("Discard null location")
             return false
         }
 
         // Discard inaccurate locations
         val minAccuracy = getNeededAccuracy(startTime)
         if (location.accuracy > minAccuracy) {
-            Log.w("Discard inaccurate location: location.accuracy (${location.accuracy} m) > minAccuracy ($minAccuracy m)")
+            Timber.w("Discard inaccurate location: location.accuracy (${location.accuracy} m) > minAccuracy ($minAccuracy m)")
             return false
         }
 
         // Discard old locations
         if (systemManager.getCurrentTimeMillis() - location.time >= MAX_LOCATION_AGE) {
-            Log.w("Discard old location: location.time (${location.time} ms) >= MAX_LOCATION_AGE ($MAX_LOCATION_AGE ms)")
+            Timber.w("Discard old location: location.time (${location.time} ms) >= MAX_LOCATION_AGE ($MAX_LOCATION_AGE ms)")
             return false
         }
 
-        Log.d("App location found: lat = ${location.latitude} lon = ${location.longitude}")
+        Timber.d("App location found: lat = ${location.latitude} lon = ${location.longitude}")
         return true
     }
 
