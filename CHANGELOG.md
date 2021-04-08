@@ -1,6 +1,15 @@
 x.y.z Release notes (yyyy-MM-dd)
 =============================================================
 
+<!-- ### Breaking changes - Include, if needed -->
+<!-- ### Enhancements - Include, if needed -->
+<!-- ### Fixes - Include, if needed -->
+<!-- ### Internal - Include, if needed -->
+
+
+7.0.0 Release notes (2021-04-08)
+=============================================================
+
 ### Breaking changes
 
 * Pass `reason` and `oldToken` in the `onTokenInvalid` callback
@@ -10,9 +19,6 @@ x.y.z Release notes (yyyy-MM-dd)
 * Implement check for chrome installation and always use it if installed and not deactivated
 * Add convenience method for fueling app
 * Add methods to handle PIN and biometry actions
-
-<!-- ### Fixes - Include, if needed -->
-<!-- ### Internal - Include, if needed -->
 
 
 6.0.0 Release notes (2021-03-19)
