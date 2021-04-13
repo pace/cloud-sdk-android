@@ -3,7 +3,7 @@ package cloud.pace.sdk.appkit.communication
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cloud.pace.sdk.utils.Event
-import cloud.pace.sdk.utils.Log
+import timber.log.Timber
 
 interface AppEventManager {
 
@@ -23,12 +23,12 @@ class AppEventManagerImpl : AppEventManager {
     override val redirectUrl = MutableLiveData<Event<String>>()
 
     override fun setInvalidApps(list: List<String>) {
-        Log.d("Remove outdated AppDrawers: $list")
+        Timber.d("Remove outdated AppDrawers: $list")
         invalidApps.value = list
     }
 
     override fun setDisabledHost(host: String) {
-        Log.d("Remove disabled AppDrawer: $host")
+        Timber.d("Remove disabled AppDrawer: $host")
         disabledHost.value = host
     }
 

@@ -8,7 +8,9 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Message
+import android.util.Log
 import android.webkit.*
+import timber.log.Timber
 
 class AppWebViewClient(var url: String, val callback: WebClientCallback, val context: Context? = null) : WebViewClient() {
 
@@ -53,6 +55,20 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
 
         override fun onGeolocationPermissionsShowPrompt(origin: String?, callback: GeolocationPermissions.Callback?) {
             callback?.invoke(origin, true, false) ?: super.onGeolocationPermissionsShowPrompt(origin, callback)
+        }
+
+        override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
+            consoleMessage ?: return super.onConsoleMessage(consoleMessage)
+
+            val logLevel = when (consoleMessage.messageLevel()) {
+                ConsoleMessage.MessageLevel.LOG -> Log.INFO
+                ConsoleMessage.MessageLevel.WARNING -> Log.WARN
+                ConsoleMessage.MessageLevel.ERROR -> Log.ERROR
+                ConsoleMessage.MessageLevel.DEBUG -> Log.DEBUG
+                else -> Log.VERBOSE
+            }
+            Timber.log(logLevel, consoleMessage.message())
+            return true
         }
     }
 

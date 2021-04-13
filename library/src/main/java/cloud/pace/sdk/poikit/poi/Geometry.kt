@@ -1,13 +1,10 @@
 package cloud.pace.sdk.poikit.poi
 
-import android.util.Log
 import cloud.pace.sdk.poikit.poi.download.VectorTile
 
 class Geometry {
 
     companion object {
-
-        private val TAG = "Geometry"
 
         private fun getParamCount(ct: CommandType?): Int {
             return 2 // Both for MOVETO AND LINETO
@@ -45,8 +42,6 @@ class Geometry {
                 }
                 if (parameters.size == cac.count && cac.commandType != null) { // Only parse valid commands understood by app
                     commands.addAll(convertToCommands(cac.commandType, parameters))
-                } else {
-                    Log.d(TAG, "malformed command in geometry") // This should not happen in unit test!
                 }
             }
             return convertPoints(commands)

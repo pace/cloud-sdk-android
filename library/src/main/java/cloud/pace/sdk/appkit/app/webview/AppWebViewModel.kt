@@ -24,10 +24,10 @@ import cloud.pace.sdk.appkit.persistence.TotpSecret
 import cloud.pace.sdk.appkit.utils.EncryptionUtils
 import cloud.pace.sdk.appkit.utils.TokenValidator
 import cloud.pace.sdk.utils.Event
-import cloud.pace.sdk.utils.Log
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
+import timber.log.Timber
 import java.util.*
 
 abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback {
@@ -148,7 +148,7 @@ class AppWebViewModelImpl(
             val bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
             appModel.onImageDataReceived(bitmap)
         } catch (e: IllegalArgumentException) {
-            Log.e(e, "Could not decode the following Base64 image string: $message")
+            Timber.e(e, "Could not decode the following Base64 image string: $message")
         }
     }
 
@@ -170,7 +170,7 @@ class AppWebViewModelImpl(
                 verifyLocationResponse.value = ResponseEvent(verifyLocationRequest.id, value.value)
             }
         } catch (e: JsonSyntaxException) {
-            Log.e(e, "The verifyLocation JSON $message could not be deserialized.")
+            Timber.e(e, "The verifyLocation JSON $message could not be deserialized.")
             verifyLocationResponse.value = ResponseEvent(messageBundle.id, VerifyLocationResponse.UNKNOWN.value)
         }
     }
@@ -362,7 +362,7 @@ class AppWebViewModelImpl(
                 appModel.onCustomSchemeError(context, "${redirectScheme}://redirect")
             }
         } catch (e: JsonSyntaxException) {
-            Log.e(e, "The openURLInNewTab JSON $message could not be deserialized.")
+            Timber.e(e, "The openURLInNewTab JSON $message could not be deserialized.")
         }
     }
 

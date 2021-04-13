@@ -4,7 +4,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -14,6 +13,7 @@ import cloud.pace.sdk.idkit.userinfo.UserInfoApiClient
 import cloud.pace.sdk.idkit.userinfo.UserInfoResponse
 import cloud.pace.sdk.utils.*
 import net.openid.appauth.*
+import timber.log.Timber
 
 internal class AuthorizationManager(
     private val context: Context,
@@ -43,16 +43,20 @@ internal class AuthorizationManager(
     internal fun discoverConfiguration(issuerUri: String, completion: (Completion<ServiceConfiguration>) -> Unit) {
         AuthorizationServiceConfiguration.fetchFromIssuer(Uri.parse(issuerUri)) { configuration, exception ->
             when {
-                exception != null -> completion(
-                    Failure(
-                        AuthorizationError(exception.type, exception.code, exception.error, exception.errorDescription, exception.errorUri, exception.message, exception.cause)
-                    )
-                )
-                configuration != null -> {
-                    completion(Success(ServiceConfiguration(configuration.authorizationEndpoint, configuration.tokenEndpoint, configuration.endSessionEndpoint, configuration.registrationEndpoint)))
-                    Log.i(Constants.TAG, "Discovery successful")
+                exception != null -> {
+                    val throwable = AuthorizationError(exception.type, exception.code, exception.error, exception.errorDescription, exception.errorUri, exception.message, exception.cause)
+                    Timber.e(throwable, "Failed to discover configuration")
+                    completion(Failure(throwable))
                 }
-                else -> completion(Failure(FailedRetrievingConfigurationWhileDiscovering))
+                configuration != null -> {
+                    Timber.i("Configuration discovery successful")
+                    completion(Success(ServiceConfiguration(configuration.authorizationEndpoint, configuration.tokenEndpoint, configuration.endSessionEndpoint, configuration.registrationEndpoint)))
+                }
+                else -> {
+                    val throwable = FailedRetrievingConfigurationWhileDiscovering
+                    Timber.e(throwable, "Failed to discover configuration")
+                    completion(Failure(throwable))
+                }
             }
         }
     }
@@ -74,17 +78,19 @@ internal class AuthorizationManager(
         when {
             exception != null -> {
                 session.update(response, exception)
-                completion(
-                    Failure(
-                        AuthorizationError(exception.type, exception.code, exception.error, exception.errorDescription, exception.errorUri, exception.message, exception.cause)
-                    )
-                )
+                val throwable = AuthorizationError(exception.type, exception.code, exception.error, exception.errorDescription, exception.errorUri, exception.message, exception.cause)
+                Timber.e(throwable, "Failed to handle authorization response")
+                completion(Failure(throwable))
             }
             response != null -> {
                 session.update(response, exception)
                 performTokenRequest(response.createTokenExchangeRequest(), completion)
             }
-            else -> completion(Failure(FailedRetrievingSessionWhileAuthorizing))
+            else -> {
+                val throwable = FailedRetrievingSessionWhileAuthorizing
+                Timber.e(throwable, "Failed to handle authorization response")
+                completion(Failure(throwable))
+            }
         }
     }
 
@@ -93,7 +99,11 @@ internal class AuthorizationManager(
         val exception = AuthorizationException.fromIntent(intent)
 
         when {
-            exception != null -> completion(Failure(exception))
+            exception != null -> {
+                val throwable = AuthorizationError(exception.type, exception.code, exception.error, exception.errorDescription, exception.errorUri, exception.message, exception.cause)
+                Timber.e(throwable, "Failed to handle end session response")
+                completion(Failure(throwable))
+            }
             response != null -> {
                 val serviceConfiguration = session.authorizationServiceConfiguration
                 if (serviceConfiguration != null) {
@@ -108,7 +118,11 @@ internal class AuthorizationManager(
 
                 completion(Success(Unit))
             }
-            else -> completion(Failure(FailedRetrievingSessionWhileEnding))
+            else -> {
+                val throwable = FailedRetrievingSessionWhileEnding
+                Timber.e(throwable, "Failed to handle end session response")
+                completion(Failure(throwable))
+            }
         }
     }
 
@@ -151,7 +165,9 @@ internal class AuthorizationManager(
             if (it != null) {
                 UserInfoApiClient(it, accessToken).getUserInfo(completion)
             } else {
-                completion(Failure(UserEndpointNotDefined))
+                val throwable = UserEndpointNotDefined
+                Timber.e(throwable)
+                completion(Failure(throwable))
             }
         }
     }
@@ -187,7 +203,7 @@ internal class AuthorizationManager(
     }
 
     private fun performTokenRequest(request: TokenRequest, completion: (Completion<String?>) -> Unit) {
-        Log.i(Constants.TAG, "Trying to refresh token...")
+        Timber.i("Trying to refresh token...")
 
         val clientSecret = configuration.clientSecret
         val clientAuthentication: ClientAuthentication = if (clientSecret != null) {
@@ -196,7 +212,7 @@ internal class AuthorizationManager(
             try {
                 session.clientAuthentication
             } catch (e: ClientAuthentication.UnsupportedAuthenticationMethod) {
-                Log.e(Constants.TAG, "Token request cannot be made, client authentication for the token endpoint could not be constructed", e)
+                Timber.e(e, "Token request cannot be made, client authentication for the token endpoint could not be constructed")
                 completion(Failure(e))
                 return
             }
@@ -215,18 +231,18 @@ internal class AuthorizationManager(
 
         when {
             exception != null -> {
-                completion(
-                    Failure(
-                        AuthorizationError(exception.type, exception.code, exception.error, exception.errorDescription, exception.errorUri, exception.message, exception.cause)
-                    )
-                )
+                val throwable = AuthorizationError(exception.type, exception.code, exception.error, exception.errorDescription, exception.errorUri, exception.message, exception.cause)
+                Timber.e(throwable, "Failed to handle token response")
+                completion(Failure(throwable))
             }
             tokenResponse != null -> {
                 completion(Success(session.accessToken))
-                Log.i(Constants.TAG, "Token refresh successful")
+                Timber.i("Token refresh successful")
             }
             else -> {
-                completion(Failure(FailedRetrievingSessionWhileAuthorizing))
+                val throwable = FailedRetrievingSessionWhileAuthorizing
+                Timber.e(throwable, "Failed to handle token response")
+                completion(Failure(throwable))
             }
         }
     }

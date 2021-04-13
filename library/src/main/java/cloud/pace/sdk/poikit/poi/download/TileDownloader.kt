@@ -1,6 +1,5 @@
 package cloud.pace.sdk.poikit.poi.download
 
-import android.util.Log
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.Geometry
 import cloud.pace.sdk.poikit.poi.LocationPoint
@@ -14,6 +13,7 @@ import cloud.pace.sdk.utils.ApiUtils
 import cloud.pace.sdk.utils.Environment
 import com.google.protobuf.InvalidProtocolBufferException
 import okhttp3.*
+import timber.log.Timber
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.math.atan
@@ -73,7 +73,7 @@ internal class TileDownloader(environment: Environment) {
 
                     handler(Result.success(pois))
                 } catch (e: InvalidProtocolBufferException) {
-                    Log.w("PoiKit", "Failed to parse protobuffer reponse: " + e.message)
+                    Timber.e(e, "Failed to parse protobuffer response")
                     handler(Result.failure(e))
                 }
             }

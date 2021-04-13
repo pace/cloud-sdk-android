@@ -41,6 +41,8 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [Native login](#native-login)
         + [Removal of Apps](#removal-of-apps)
         + [Miscellaneous](#miscellaneous)
+            + [Preset Urls](#preset-urls)
+            + [Logging](#logging)
 
 ## Source code
 The complete source code of the SDK can be found on [GitHub](https://github.com/pace/cloud-sdk-android).
@@ -736,6 +738,15 @@ If you want to remove all [AppDrawers](#appdrawer) *and* the [AppActivity](#appa
 ### Miscellaneous
 #### Preset Urls
 `PACECloudSDK` provides preset urls for the most common apps, such as `PACE ID`, `payment`, `fueling`  and `transactions` based on the environment the sdk was initialized with. You may access these urls via the enum `Environment.kt`.
+
+### Logging 
+Besides the own logs of the SDK's kits, the `AppWebView` also intercepts the logs of their loaded apps. You may retrieve all of the mentioned logs as shown in the following code example:
+```kotlin
+PACECloudSDK.isLoggingEnabled = true // Defaults to `false`
+PACECloudSDK.setLoggingListener {
+    // it = log message
+}
+```
 
 ## SDK API Docs
 

@@ -114,6 +114,7 @@ dependencies {
     implementation "net.openid:appauth:$appauth_version"
     implementation "dev.turingcomplete:kotlin-onetimepassword:$onetimepassword_version"
     implementation "commons-codec:commons-codec:$commons_codec_version"
+    implementation "com.jakewharton.timber:timber:$timber_version"
 
     // Testing
     testImplementation "androidx.arch.core:core-testing:$test_arch_core_version"

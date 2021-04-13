@@ -2,10 +2,14 @@ x.y.z Release notes (yyyy-MM-dd)
 =============================================================
 
 <!-- ### Breaking changes - Include, if needed -->
-<!-- ### Enhancements - Include, if needed -->
 <!-- ### Fixes - Include, if needed -->
 
+### Enhancements
+
+* Intercept PWA logs and pass all logs to client
+
 ### Internal
+
 * Add missing parameter to JS communication
 
 
@@ -15,6 +19,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Breaking changes
 
 * Pass `reason` and `oldToken` in the `onTokenInvalid` callback
+> **_NOTE:_** Remember to adjust the implementation of your `tokenInvalid` function.
 
 ### Enhancements
 

@@ -1,7 +1,7 @@
 package cloud.pace.sdk.appkit.utils
 
-import cloud.pace.sdk.utils.Log
 import org.json.JSONObject
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 object TokenValidator {
@@ -15,7 +15,7 @@ object TokenValidator {
             decodedJwtPayload = JWTUtils.decodeJwtPayload(token)
             expirationTime = decodedJwtPayload.getLong("exp")
         } catch (e: Exception) {
-            Log.e("TokenValidator: Failed to decode token $token or its expiration date - Error: ${e.message}")
+            Timber.e(e, "Failed to decode token $token or its expiration date")
             return false
         }
 
