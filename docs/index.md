@@ -20,8 +20,10 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [Cached token](#cached-token)
         + [Check intent](#check-intent)
         + [End session](#end-session)
-        + [Biometry](#biometry)
-        + [PIN](#pin)
+        + [2FA setup](#2fa-setup)
+            * [Mail-OTP](#mail-otp)
+            * [Biometry](#biometry)
+            * [PIN](#pin)
     * [AppKit](#appkit)
         + [Main Features](#main-features)
         + [Setup](#setup-2)
@@ -364,23 +366,89 @@ IDKit.handleEndSessionResponse(intent) {
 }
 ```
 
+### 2FA setup
+In numerous cases are second factor is required when using Connected Fueling, e.g. when authorizing a payment. Following are methods that can be used to setup biometric authentication on the user's device or setup an account PIN.
+
+In order to prevent websites from accessing your TOTP secrets (used when biometric authentication is used), a domain access control list has to bepassed to the `domainACL` property of the `Configuration` object in the [setup phase](#setup). If you're not using a custom PWA, then setting the `domainACL` to `"pace.cloud"` is enough.
+
+#### Mail-OTP
+For some of the below mentioned methods an OTP is needed, which can be requested to be sent to the user's email via
+
+```kotlin
+IDKit.sendMailOTP(completion)
+```
+
 #### Biometry
 The `PACECloudSDK` provides the following methods to enable and disable biometric authentication:
-* Check if biometric authentication has been enabled on the device: `IDKit.isBiometricAuthenticationEnabled()`
-* Enable biometric authentication with the user PIN: `IDKit.enableBiometricAuthenticationWithPIN(pin, completion)`
-* Enable biometric authentication with the user password: `IDKit.enableBiometricAuthenticationWithPassword(password, completion)`
-* Enable biometric authentication with an OTP previously sent by mail (see `sendMailOTP(completion)`): `IDKit.enableBiometricAuthenticationWithOTP(otp, completion)`
-* Disable biometric authentication on the device: `IDKit.disableBiometricAuthentication()`
+
+* Check if biometric authentication has been enabled on the device:
+
+	```kotlin
+	IDKit.isBiometricAuthenticationEnabled()
+	```
+
+* Enable biometric authentication with the user PIN
+
+	```kotlin
+	IDKit.enableBiometricAuthenticationWithPIN(pin, completion)
+	```
+
+* Enable biometric authentication with the user password:
+
+	```kotlin
+	IDKit.enableBiometricAuthenticationWithPassword(password, completion)
+	```
+
+* Enable biometric authentication with an OTP previously sent by mail (see [OTP](#mail-otp))
+
+	```kotlin
+	IDKit.enableBiometricAuthenticationWithOTP(otp, completion)
+	```
+
+* Disable biometric authentication on the device
+
+	```kotlin
+	IDKit.disableBiometricAuthentication()
+	```
 
 #### PIN
 The `PACECloudSDK` provides the following methods to check and set the PIN:
-* Check if the user PIN has been set: `IDKit.isPINSet(completion)`
-* Check if the user password has been set: `IDKit.isPasswordSet(completion)`
-* Check if the user PIN or password has been set: `IDKit.isPINOrPasswordSet(completion)`
-* Set the user PIN and authorize with biometry: `IDKit.setPINWithBiometry(...)`
-* Set the user PIN and authorize with the user password: `IDKit.setPINWithPassword(pin, password, completion)`
-* Set the user PIN and authorize with an OTP previously sent by mail (see `sendMailOTP(completion)`): `IDKit.setPINWithOTP(pin, otp, completion)`
-* Send the user an OTP via mail, which is used to enable biometric authentication or to set the user PIN: `sendMailOTP(completion)`
+
+* Check if the user PIN has been set
+
+	```kotlin
+	IDKit.isPINSet(completion)
+	```
+
+* Check if the user password has been set
+
+	```kotlin
+	IDKit.isPasswordSet(completion)
+	```
+
+* Check if the user PIN or password has been set
+
+	```kotlin
+	IDKit.isPINOrPasswordSet(completion)
+	```
+
+* Set the user PIN and authorize with biometry
+
+	```kotlin
+	IDKit.setPINWithBiometry(...)
+	```
+
+* Set the user PIN and authorize with the user password
+
+	```kotlin
+	IDKit.setPINWithPassword(pin, password, completion)
+	```
+
+* Set the user PIN and authorize with an OTP previously sent by mail (see [OTP](#mail-otp))
+
+	```kotlin
+	IDKit.setPINWithOTP(pin, otp, completion)
+	```
 
 ## AppKit
 ### Main features
