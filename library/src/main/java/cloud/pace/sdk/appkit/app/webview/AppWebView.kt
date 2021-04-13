@@ -198,7 +198,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
     }
 
     private fun <T> sendMessageCallback(bundle: AppWebViewModel.MessageBundle<T>) {
-        webView.evaluateJavascript("window.postMessage('${gson.toJson(bundle)}')") {}
+        webView.evaluateJavascript("window.postMessage('${gson.toJson(bundle)}', window.origin)") {}
     }
 
     inner class InvalidTokenInterface {

@@ -4,7 +4,9 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Breaking changes - Include, if needed -->
 <!-- ### Enhancements - Include, if needed -->
 <!-- ### Fixes - Include, if needed -->
-<!-- ### Internal - Include, if needed -->
+
+### Internal
+* Add missing parameter to JS communication
 
 
 7.0.0 Release notes (2021-04-08)
