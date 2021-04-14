@@ -1,4 +1,4 @@
-# PACE Cloud SDK
+# PACE Cloud SDK – Android
 
 This framework combines multipe functionalities provided by PACE i.e. authorizing via **PACE ID** or requesting and displaying **Apps**. These functionalities are separated and structured into different ***Kits*** by namespaces, i.e. [IDKit](#idkit), [AppKit](#appkit).
 
@@ -369,9 +369,9 @@ IDKit.handleEndSessionResponse(intent) {
 ```
 
 ### 2FA setup
-In numerous cases are second factor is required when using Connected Fueling, e.g. when authorizing a payment. Following are methods that can be used to setup biometric authentication on the user's device or setup an account PIN.
+In numerous cases a second authentication factor is required when using Connected Fueling, e.g. when authorizing a payment. Following are methods that can be used to setup biometric authentication on the user's device or setup an account PIN.
 
-In order to prevent websites from accessing your TOTP secrets (used when biometric authentication is used), a domain access control list has to bepassed to the `domainACL` property of the `Configuration` object in the [setup phase](#setup). If you're not using a custom PWA, then setting the `domainACL` to `"pace.cloud"` is enough.
+In order to prevent websites from accessing your TOTP secrets (used when biometric authentication is used), a domain access control list has to be passed to the `domainACL` property of the `Configuration` object in the [setup phase](#setup). If you're not using a custom PWA, then setting the `domainACL` to `"pace.cloud"` is enough.
 
 #### Mail-OTP
 For some of the below mentioned methods an OTP is needed, which can be requested to be sent to the user's email via
