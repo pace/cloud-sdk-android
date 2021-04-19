@@ -20,6 +20,9 @@ interface AppModel {
     fun onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit)
     fun onCustomSchemeError(context: Context?, scheme: String)
     fun onImageDataReceived(bitmap: Bitmap)
+    fun setUserProperty(key: String, value: String, update: Boolean)
+    fun logEvent(key: String, parameters: Map<String, Any>)
+    fun getConfig(key: String, config: (String?) -> Unit)
 }
 
 class AppModelImpl : AppModel {
@@ -60,5 +63,17 @@ class AppModelImpl : AppModel {
 
     override fun onImageDataReceived(bitmap: Bitmap) {
         callback?.onImageDataReceived(bitmap)
+    }
+
+    override fun setUserProperty(key: String, value: String, update: Boolean) {
+        callback?.setUserProperty(key, value, update)
+    }
+
+    override fun logEvent(key: String, parameters: Map<String, Any>) {
+        callback?.logEvent(key, parameters)
+    }
+
+    override fun getConfig(key: String, config: (String?) -> Unit) {
+        callback?.getConfig(key, config)
     }
 }

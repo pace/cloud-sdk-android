@@ -6,7 +6,6 @@ import androidx.lifecycle.Observer
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModel
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModelImpl
-import cloud.pace.sdk.appkit.app.webview.StatusCode
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.communication.AppModelImpl
 import cloud.pace.sdk.appkit.location.AppLocationManager
@@ -31,6 +30,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito.*
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import java.net.HttpURLConnection
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [Build.VERSION_CODES.O_MR1])
@@ -127,7 +127,7 @@ class AppWebViewModelTest {
 
         verify(sharedPreferencesModel, times(1)).setTotpSecret(host, key, TotpSecret(secret, digits, period, algorithm))
         assertEquals("id", viewModel.statusCode.value?.peekContent()?.id)
-        assertEquals(AppWebViewModel.StatusCodeResponse.Success, viewModel.statusCode.value?.getContentIfNotHandled()?.message)
+        assertEquals(AppWebViewModel.StatusCodeResponse.Success().statusCode, viewModel.statusCode.value?.getContentIfNotHandled()?.message?.statusCode)
     }
 
     @Test
@@ -191,7 +191,7 @@ class AppWebViewModelTest {
             "Biometric authentication failed: errorCode was $errorCode, errString was $errString",
             (viewModel.statusCode.value?.peekContent()?.message as? AppWebViewModel.StatusCodeResponse.Failure)?.error
         )
-        assertEquals(StatusCode.Unauthorized.code, viewModel.statusCode.value?.peekContent()?.message?.statusCode)
+        assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, viewModel.statusCode.value?.peekContent()?.message?.statusCode)
 
         viewModel.biometricRequest.removeObserver(observer)
     }
@@ -210,7 +210,7 @@ class AppWebViewModelTest {
         viewModel.handleGetTOTP(totpRequest)
 
         assertEquals("No biometric authentication is available or none has been set.", (viewModel.statusCode.value?.peekContent()?.message as? AppWebViewModel.StatusCodeResponse.Failure)?.error)
-        assertEquals(StatusCode.NotAllowed.code, viewModel.statusCode.value?.peekContent()?.message?.statusCode)
+        assertEquals(HttpURLConnection.HTTP_BAD_METHOD, viewModel.statusCode.value?.peekContent()?.message?.statusCode)
 
         viewModel.biometricRequest.removeObserver(observer)
     }
@@ -240,7 +240,7 @@ class AppWebViewModelTest {
 
         assertEquals("id", viewModel.statusCode.value?.peekContent()?.id)
         assertEquals("No biometric data found in the SharedPreferences.", (viewModel.statusCode.value?.peekContent()?.message as? AppWebViewModel.StatusCodeResponse.Failure)?.error)
-        assertEquals(StatusCode.NotFound.code, viewModel.statusCode.value?.peekContent()?.message?.statusCode)
+        assertEquals(HttpURLConnection.HTTP_NOT_FOUND, viewModel.statusCode.value?.peekContent()?.message?.statusCode)
 
         viewModel.biometricRequest.removeObserver(observer)
     }
@@ -254,7 +254,7 @@ class AppWebViewModelTest {
         viewModel.handleSetSecureData(secureDataRequest)
 
         verify(sharedPreferencesModel, times(1)).putString(SharedPreferencesImpl.getSecureDataPreferenceKey(host, key), value)
-        assertEquals(AppWebViewModel.StatusCodeResponse.Success, viewModel.statusCode.value?.getContentIfNotHandled()?.message)
+        assertEquals(AppWebViewModel.StatusCodeResponse.Success().statusCode, viewModel.statusCode.value?.getContentIfNotHandled()?.message?.statusCode)
     }
 
     @Test
@@ -286,7 +286,7 @@ class AppWebViewModelTest {
 
         verify(sharedPreferencesModel, times(1)).putLong(SharedPreferencesImpl.getDisableTimePreferenceKey(host), until)
         assertEquals(host, disabled)
-        assertEquals(AppWebViewModel.StatusCodeResponse.Success, viewModel.statusCode.value?.getContentIfNotHandled()?.message)
+        assertEquals(AppWebViewModel.StatusCodeResponse.Success().statusCode, viewModel.statusCode.value?.getContentIfNotHandled()?.message?.statusCode)
     }
 
     @Test
@@ -298,5 +298,33 @@ class AppWebViewModelTest {
         viewModel.handleOpenURLInNewTab(openURLInNewTabRequest)
 
         assertEquals(cancelUrl, viewModel.url.value?.getContentIfNotHandled())
+    }
+
+    @Test
+    fun `set user property`() {
+        val id = "id"
+        val key = "foo"
+        val value = "bar"
+
+        val setUserPropertyRequest = Gson().toJson(AppWebViewModel.MessageBundle(id, AppWebViewModel.SetUserPropertyRequest(key, value)))
+        viewModel.handleSetUserProperty(setUserPropertyRequest)
+
+        verify(appCallback, times(1)).setUserProperty(key, value, false)
+        assertEquals(id, viewModel.statusCode.value?.peekContent()?.id)
+        assertEquals(HttpURLConnection.HTTP_NO_CONTENT, viewModel.statusCode.value?.peekContent()?.message?.statusCode)
+    }
+
+    @Test
+    fun `log event`() {
+        val id = "id"
+        val key = "foo"
+        val parameters = mapOf("string" to "value", "number" to 1.0, "boolean" to true, "list" to listOf("element1", 3.0, false))
+
+        val logEventRequest = Gson().toJson(AppWebViewModel.MessageBundle(id, AppWebViewModel.LogEventRequest(key, parameters)))
+        viewModel.handleLogEvent(logEventRequest)
+
+        verify(appCallback, times(1)).logEvent(key, parameters)
+        assertEquals(id, viewModel.statusCode.value?.peekContent()?.id)
+        assertEquals(HttpURLConnection.HTTP_NO_CONTENT, viewModel.statusCode.value?.peekContent()?.message?.statusCode)
     }
 }

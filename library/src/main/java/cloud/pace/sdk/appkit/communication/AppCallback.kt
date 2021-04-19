@@ -57,6 +57,31 @@ interface AppCallback {
      * @param bitmap The image as bitmap.
      */
     fun onImageDataReceived(bitmap: Bitmap)
+
+    /**
+     * Is called when the app sends a user property.
+     *
+     * @param key The key of the user property
+     * @param value The value of the user property
+     * @param update Whether the user property should be updated or not
+     */
+    fun setUserProperty(key: String, value: String, update: Boolean)
+
+    /**
+     * Is called when the app sends an event to be logged.
+     *
+     * @param key The event key
+     * @param parameters Optional parameters to be logged
+     */
+    fun logEvent(key: String, parameters: Map<String, Any>)
+
+    /**
+     * Is called when the app requests a configuration.
+     *
+     * @param key The configuration key
+     * @param config Call this function to pass the configuration or `null` if none is available
+     */
+    fun getConfig(key: String, config: (String?) -> Unit)
 }
 
 abstract class AppCallbackImpl : AppCallback {
@@ -68,4 +93,7 @@ abstract class AppCallbackImpl : AppCallback {
     override fun onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit) {}
     override fun onCustomSchemeError(context: Context?, scheme: String) {}
     override fun onImageDataReceived(bitmap: Bitmap) {}
+    override fun setUserProperty(key: String, value: String, update: Boolean) {}
+    override fun logEvent(key: String, parameters: Map<String, Any>) {}
+    override fun getConfig(key: String, config: (String?) -> Unit) {}
 }
