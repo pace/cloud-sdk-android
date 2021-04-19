@@ -6,6 +6,11 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Enhancements
+
+* Add payment method vendor request
+* Add cofuPaymentMethods field to GasStation entity
+
 
 7.1.0 Release notes (2021-04-20)
 =============================================================
