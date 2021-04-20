@@ -2,7 +2,13 @@ x.y.z Release notes (yyyy-MM-dd)
 =============================================================
 
 <!-- ### Breaking changes - Include, if needed -->
+<!-- ### Enhancements - Include, if needed -->
 <!-- ### Fixes - Include, if needed -->
+<!-- ### Internal - Include, if needed -->
+
+
+7.1.0 Release notes (2021-04-20)
+=============================================================
 
 ### Enhancements
 

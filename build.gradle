@@ -7,7 +7,7 @@ buildscript {
         min_sdk_version = 23
         target_sdk_version = 30
         build_number = properties.getOrDefault("buildNumber", 1) as Integer
-        version_name = properties.getOrDefault("versionName", "7.0.0")
+        version_name = properties.getOrDefault("versionName", "7.1.0")
 
         group_id = "cloud.pace"
         artifact_id = "sdk"
