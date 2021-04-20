@@ -12,6 +12,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Internal
 
 * Add missing parameter to JS communication
+* Remove token validity check and send the received token to the PWA right away to prevent a possible `onTokenInvalid` loop
 
 
 7.0.0 Release notes (2021-04-08)

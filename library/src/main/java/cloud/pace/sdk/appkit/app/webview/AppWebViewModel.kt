@@ -22,7 +22,6 @@ import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getSecu
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.persistence.TotpSecret
 import cloud.pace.sdk.appkit.utils.EncryptionUtils
-import cloud.pace.sdk.appkit.utils.TokenValidator
 import cloud.pace.sdk.utils.Event
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -142,11 +141,7 @@ class AppWebViewModelImpl(
             val reason = messageBundle.message.reason
             val invalidTokenReason = InvalidTokenReason.values().associateBy(InvalidTokenReason::value)[reason] ?: InvalidTokenReason.OTHER
             appModel.onTokenInvalid(invalidTokenReason, messageBundle.message.oldToken) { token ->
-                if (TokenValidator.isTokenValid(token)) {
-                    newToken.value = ResponseEvent(messageBundle.id, token)
-                } else {
-                    handleInvalidToken(message)
-                }
+                newToken.value = ResponseEvent(messageBundle.id, token)
             }
         } catch (e: Exception) {
             Timber.e(e, "The invalidToken JSON $message could not be deserialized.")
