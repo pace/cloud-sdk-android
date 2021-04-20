@@ -64,7 +64,7 @@ object IDKit : IDKitKoinComponent {
      * Sends a request to the authorization service to exchange a code granted as part of an authorization request for a token.
      *
      * @param intent Represents the [Intent] from the [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs).
-     * @param completion The block to be called when the request is complete including either a valid `accessToken` or [Throwable].
+     * @param completion The block to be called when the request is completed including either a valid `accessToken` or [Throwable].
      */
     fun handleAuthorizationResponse(intent: Intent, completion: (Completion<String?>) -> Unit) = authorizationManager.handleAuthorizationResponse(intent, completion)
 
@@ -80,7 +80,7 @@ object IDKit : IDKitKoinComponent {
      * Refreshes the current access token if needed.
      *
      * @param force Forces a refresh even if the current `accessToken` is still valid. Defaults to `false`.
-     * @param completion The block to be called when the request is complete including either a new valid `accessToken` or a [Throwable].
+     * @param completion The block to be called when the request is completed including either a new valid `accessToken` or a [Throwable].
      */
     @JvmOverloads
     fun refreshToken(force: Boolean = false, completion: (Completion<String?>) -> Unit = {}) = authorizationManager.refreshToken(force, completion)
@@ -144,7 +144,7 @@ object IDKit : IDKitKoinComponent {
      * Retrieves the currently authorized user's information.
      *
      * @param accessToken The user's access token for which to retrieve the user info.
-     * @param completion The block to be called when the request is complete including either a valid `userInfo` or a [Throwable].
+     * @param completion The block to be called when the request is completed including either a valid `userInfo` or a [Throwable].
      */
     fun userInfo(accessToken: String, completion: (Completion<UserInfoResponse>) -> Unit) = authorizationManager.userInfo(accessToken, completion)
 
@@ -159,7 +159,7 @@ object IDKit : IDKitKoinComponent {
      * Enables biometric authentication for the current user using the PIN.
      *
      * @param pin The PIN of the current user.
-     * @param completion The block to be called when the request is complete including either the information if biometric authentication has been enabled `successfully` or a [Throwable].
+     * @param completion The block to be called when the request is completed including either the information if biometric authentication has been enabled `successfully` or a [Throwable].
      */
     fun enableBiometricAuthenticationWithPIN(pin: String, completion: (Completion<Boolean>) -> Unit) = credentialsManager.enableBiometricAuthentication(pin = pin, completion = completion)
 
@@ -167,7 +167,7 @@ object IDKit : IDKitKoinComponent {
      * Enables biometric authentication for the current user using the account password.
      *
      * @param password The password of the current user.
-     * @param completion The block to be called when the request is complete including either the information if biometric authentication has been enabled `successfully` or a [Throwable].
+     * @param completion The block to be called when the request is completed including either the information if biometric authentication has been enabled `successfully` or a [Throwable].
      */
     fun enableBiometricAuthenticationWithPassword(password: String, completion: (Completion<Boolean>) -> Unit) =
         credentialsManager.enableBiometricAuthentication(password = password, completion = completion)
@@ -178,9 +178,18 @@ object IDKit : IDKitKoinComponent {
      * @see sendMailOTP
      *
      * @param otp The OTP for the user.
-     * @param completion The block to be called when the request is complete including either the information if biometric authentication has been enabled `successfully` or a [Throwable].
+     * @param completion The block to be called when the request is completed including either the information if biometric authentication has been enabled `successfully` or a [Throwable].
      */
     fun enableBiometricAuthenticationWithOTP(otp: String, completion: (Completion<Boolean>) -> Unit) = credentialsManager.enableBiometricAuthentication(otp = otp, completion = completion)
+
+    /**
+     * Enables biometric authentication without passing credentials for the current user.
+     *
+     * This request will only succeed if called within 5 minutes after a successful authorization.
+     *
+     * @param completion The block to be called when the request is completed including either the information if biometric authentication has been enabled `successfully` or a [Throwable].
+     */
+    fun enableBiometricAuthentication(completion: (Completion<Boolean>) -> Unit) = credentialsManager.enableBiometricAuthentication(completion = completion)
 
     /**
      * Disables biometric authentication for the current user.
@@ -190,21 +199,21 @@ object IDKit : IDKitKoinComponent {
     /**
      * Checks if there is an active PIN set for the currently authenticated user.
      *
-     * @param completion The block to be called when the request is complete including either the `pinStatus` or a [Throwable].
+     * @param completion The block to be called when the request is completed including either the `pinStatus` or a [Throwable].
      */
     fun isPINSet(completion: (Completion<Boolean>) -> Unit) = credentialsManager.isPINSet(completion)
 
     /**
      * Checks if there is an active password set for the currently authenticated user.
      *
-     * @param completion The block to be called when the request is complete including either the `passwordStatus` or a [Throwable].
+     * @param completion The block to be called when the request is completed including either the `passwordStatus` or a [Throwable].
      */
     fun isPasswordSet(completion: (Completion<Boolean>) -> Unit) = credentialsManager.isPasswordSet(completion)
 
     /**
      * Checks if there is an active PIN or password set and verified for the currently authenticated user.
      *
-     * @param completion The block to be called when the request is complete including either the [PinOrPassword] status or a [Throwable].
+     * @param completion The block to be called when the request is completed including either the [PinOrPassword] status or a [Throwable].
      */
     fun isPINOrPasswordSet(completion: (Completion<PinOrPassword>) -> Unit) = credentialsManager.isPINOrPasswordSet(completion)
 
@@ -216,7 +225,7 @@ object IDKit : IDKitKoinComponent {
      * @param subtitle The subtitle of the [androidx.biometric.BiometricPrompt].
      * @param cancelText The negative button text of the [androidx.biometric.BiometricPrompt].
      * @param pin The PIN to be set.
-     * @param completion The block to be called when the request is complete including either the information if the PIN has been set / updated `successfully` or a [Throwable].
+     * @param completion The block to be called when the request is completed including either the information if the PIN has been set / updated `successfully` or a [Throwable].
      */
     @JvmOverloads
     fun setPINWithBiometry(fragment: Fragment, title: String, subtitle: String? = null, cancelText: String? = null, pin: String, completion: (Completion<Boolean>) -> Unit) =
@@ -230,7 +239,7 @@ object IDKit : IDKitKoinComponent {
      * @param subtitle The subtitle of the [androidx.biometric.BiometricPrompt].
      * @param cancelText The negative button text of the [androidx.biometric.BiometricPrompt].
      * @param pin The PIN to be set.
-     * @param completion The block to be called when the request is complete including either the information if the PIN has been set / updated `successfully` or a [Throwable].
+     * @param completion The block to be called when the request is completed including either the information if the PIN has been set / updated `successfully` or a [Throwable].
      */
     @JvmOverloads
     fun setPINWithBiometry(activity: FragmentActivity, title: String, subtitle: String? = null, cancelText: String? = null, pin: String, completion: (Completion<Boolean>) -> Unit) =
@@ -241,7 +250,7 @@ object IDKit : IDKitKoinComponent {
      *
      * @param pin The PIN to be set.
      * @param password The account password that additionally needs to be provided to successfully set or update the PIN.
-     * @param completion The block to be called when the request is complete including either the information if the PIN has been set / updated `successfully` or a [Throwable].
+     * @param completion The block to be called when the request is completed including either the information if the PIN has been set / updated `successfully` or a [Throwable].
      */
     fun setPINWithPassword(pin: String, password: String, completion: (Completion<Boolean>) -> Unit) = credentialsManager.setPINWithPassword(pin, password, completion)
 
@@ -252,14 +261,14 @@ object IDKit : IDKitKoinComponent {
      *
      * @param pin The PIN to be set.
      * @param otp The OTP that additionally needs to be provided to successfully set or update the PIN.
-     * @param completion The block to be called when the request is complete including either the information if the PIN has been set / updated `successfully` or a [Throwable].
+     * @param completion The block to be called when the request is completed including either the information if the PIN has been set / updated `successfully` or a [Throwable].
      */
     fun setPINWithOTP(pin: String, otp: String, completion: (Completion<Boolean>) -> Unit) = credentialsManager.setPINWithOTP(pin, otp, completion)
 
     /**
      * Sends a mail to the user that provides an OTP.
      *
-     * @param completion The block to be called when the request is complete including either the information if the mail has been sent `successfully` or a [Throwable].
+     * @param completion The block to be called when the request is completed including either the information if the mail has been sent `successfully` or a [Throwable].
      */
     fun sendMailOTP(completion: (Completion<Boolean>) -> Unit) = credentialsManager.sendMailOTP(completion)
 }
