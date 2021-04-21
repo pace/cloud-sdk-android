@@ -14,6 +14,7 @@ import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getTotpSecretPreferenceKey
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.persistence.TotpSecret
+import cloud.pace.sdk.appkit.utils.CoroutineTestRule
 import cloud.pace.sdk.appkit.utils.EncryptionUtils
 import cloud.pace.sdk.appkit.utils.TestAppEventManager
 import cloud.pace.sdk.utils.Configuration
@@ -25,6 +26,7 @@ import io.mockk.mockkObject
 import io.mockk.slot
 import junit.framework.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.*
@@ -36,6 +38,8 @@ import java.net.HttpURLConnection
 @Config(sdk = [Build.VERSION_CODES.O_MR1])
 class AppWebViewModelTest {
 
+    @get:Rule
+    var coroutineTestRule = CoroutineTestRule()
     private val context = mock(Context::class.java)
     private val sharedPreferencesModel = mock(SharedPreferencesModel::class.java)
     private val payManager = mock(PayAuthenticationManager::class.java)
@@ -49,7 +53,7 @@ class AppWebViewModelTest {
     }
     private val appCallback = mock(AppCallbackImpl::class.java)
     private val appModel = AppModelImpl()
-    private val viewModel = AppWebViewModelImpl(context, sharedPreferencesModel, eventManager, payManager, appModel, mock(AppLocationManager::class.java))
+    private val viewModel = AppWebViewModelImpl(context, coroutineTestRule.testDispatcherProvider, sharedPreferencesModel, eventManager, payManager, appModel, mock(AppLocationManager::class.java))
 
     @Before
     fun init() {
@@ -75,7 +79,7 @@ class AppWebViewModelTest {
 
     @Test
     fun `close app`() {
-        viewModel.handleClose()
+        viewModel.handleClose(Gson().toJson(AppWebViewModel.MessageBundle("id", "")))
 
         verify(appCallback, times(1)).onClose()
     }
@@ -98,7 +102,7 @@ class AppWebViewModelTest {
     fun `has biometrics`() {
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
 
-        viewModel.handleGetBiometricStatus(Gson().toJson(AppWebViewModel.MessageBundle<String>("id", "")))
+        viewModel.handleGetBiometricStatus(Gson().toJson(AppWebViewModel.MessageBundle("id", "")))
 
         assertEquals("id", viewModel.isBiometricAvailable.value?.peekContent()?.id)
         assertEquals(true, viewModel.isBiometricAvailable.value?.getContentIfNotHandled()?.message)
@@ -108,7 +112,7 @@ class AppWebViewModelTest {
     fun `does not have biometrics`() {
         `when`(payManager.isFingerprintAvailable()).thenReturn(false)
 
-        viewModel.handleGetBiometricStatus(Gson().toJson(AppWebViewModel.MessageBundle<String>("id", "")))
+        viewModel.handleGetBiometricStatus(Gson().toJson(AppWebViewModel.MessageBundle("id", "")))
 
         assertEquals("id", viewModel.isBiometricAvailable.value?.peekContent()?.id)
         assertEquals(false, viewModel.isBiometricAvailable.value?.getContentIfNotHandled()?.message)
