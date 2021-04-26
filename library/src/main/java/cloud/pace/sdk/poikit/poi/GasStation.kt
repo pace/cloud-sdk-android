@@ -116,6 +116,11 @@ open class GasStation(id: String, geometry: ArrayList<Geometry.CommandGeo>) :
      */
     var priceComparisonOptOut: Boolean? = false
 
+    /**
+     * List of CofuPaymentMethods Strings
+     */
+    var cofuPaymentMethods: MutableList<String> = mutableListOf()
+
     /*protected constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readArrayList(Geometry.CommandGeo::class.java.classLoader) as ArrayList<Geometry.CommandGeo>,
@@ -157,10 +162,13 @@ open class GasStation(id: String, geometry: ArrayList<Geometry.CommandGeo>) :
         }
 
         values[OSM_PAYMENT_METHODS]?.let { value ->
+            val splittedResponse = value.split(",")
             val methods: MutableList<PaymentMethod> = mutableListOf()
-            value.split(",").forEach { paymentMethod ->
+            splittedResponse.forEach { paymentMethod ->
                 PaymentMethod.fromString(paymentMethod)?.let { methods.add(it) }
             }
+
+            cofuPaymentMethods = splittedResponse.filter { it.startsWith("cofu:") }.toMutableList()
             paymentMethods = methods
         }
 

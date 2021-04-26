@@ -182,4 +182,19 @@ class Converters {
     fun toFood(json: String): MutableList<Food> {
         return gson.fromJson(json, typeFood)
     }
+
+    /**
+     * CofuPaymentMethods
+     */
+    private val typeCofuPaymentMethods = object : TypeToken<MutableList<String>>() {}.type
+
+    @TypeConverter
+    fun fromCofuPaymentMethods(list: MutableList<String>): String {
+        return gson.toJson(list, typeCofuPaymentMethods)
+    }
+
+    @TypeConverter
+    fun toCofuPaymentMethods(json: String): MutableList<String> {
+        return gson.fromJson(json, typeCofuPaymentMethods)
+    }
 }

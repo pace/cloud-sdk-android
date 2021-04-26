@@ -47,7 +47,8 @@ class MigrationTest {
             POIKitDatabase.migration1to2,
             POIKitDatabase.migration2to3,
             POIKitDatabase.migration3to4,
-            POIKitDatabase.migration4to5
+            POIKitDatabase.migration4to5,
+            POIKitDatabase.migration5to6
             // Add all migrations here
         ).build()
     }
@@ -154,5 +155,28 @@ class MigrationTest {
 
         assertEquals(true, cursor.moveToFirst())
         assertEquals(null, cursor.getString(cursor.getColumnIndex("priceComparisonOptOut")))
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun migrate5to6() {
+        helper.createDatabase(TEST_DB, 5).apply {
+            execSQL(
+                "INSERT INTO \"GasStation\" VALUES ('Shell','[{\"days\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"],\"hours\":[{\"from\":\"0\",\"to\":\"0\"}],\"rule\":\"OPEN\"}]','[{\"name\":\"Diesel FuelSave\",\"price\":1.249,\"type\":\"DIESEL\"},{\"name\":\"V-Power Diesel\",\"price\":1.439,\"type\":\"DIESEL_PREMIUM\"},{\"name\":\"V-Power Racing\",\"price\":1.609,\"type\":\"RON100\"},{\"name\":\"Super FuelSave E10\",\"price\":1.399,\"type\":\"E10_RON98\"},{\"name\":\"Super FuelSave 95\",\"price\":1.419,\"type\":\"E5\"}]','EUR', 'd.dd', 1573545854000,'[\"MASTER_CARD\",\"VISA\",\"CASH\",\"AMERICAN_EXPRESS\",\"DINERS_CLUB\",\"EUROSHELL\",\"PAYPAL\"]',0,'[\"TOILET\",\"SHOP\",\"ATM\"]','[\"BAKERY\",\"CAFE\"]','[\"SHELL_CLUBSMART\"]','[]','[\"CAR_WASH\",\"TYRE_AIR\",\"VACUUM\",\"SCREEN_WASH_WATER\"]','[\"AD_BLUE\"]', 0,'[\"cofu:creditcard\"]',0,1573547242518, 48.935194152219424, 8.42889279127121, '496a4123-4acc-4f03-9488-bc85a76c41aa','[{\"commandType\":\"MOVETO\",\"locationPoint\":{\"lat\":48.935194152219424,\"lon\":8.42889279127121}}]','DE','Ettlingen','76275',NULL,NULL,'Pforzheimer Str.','110-116','c=DE;l=Ettlingen;pc=76275;s=Pforzheimer Str.;hn=110-116');"
+            )
+            execSQL(
+                "INSERT INTO \"GasStation\" VALUES ('Shell','[{\"days\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"],\"hours\":[{\"from\":\"0\",\"to\":\"0\"}],\"rule\":\"OPEN\"}]','[{\"name\":\"Diesel FuelSave\",\"price\":1.239,\"type\":\"DIESEL\"},{\"name\":\"V-Power Diesel\",\"price\":1.429,\"type\":\"DIESEL_PREMIUM\"},{\"name\":\"V-Power Racing\",\"price\":1.599,\"type\":\"RON100\"},{\"name\":\"Super FuelSave E10\",\"price\":1.389,\"type\":\"E10_RON98\"},{\"name\":\"Super FuelSave 95\",\"price\":1.409,\"type\":\"E5\"}]','EUR', 'd.dds', 1573545852000,'[\"MASTER_CARD\",\"VISA\",\"CASH\",\"AMERICAN_EXPRESS\",\"DINERS_CLUB\",\"EUROSHELL\",\"PAYPAL\"]',0,'[\"TOILET\",\"SHOP\"]','[]','[\"SHELL_CLUBSMART\"]','[]','[\"CAR_WASH\",\"TYRE_AIR\",\"VACUUM\",\"SCREEN_WASH_WATER\"]','[\"AD_BLUE\"]', 0,'[\"cofu:creditcard\"]',0,1573547242518, 48.935219700863996, 8.376566916704178,'dab084a3-2012-427e-aff7-85c245cd0f1b','[{\"commandType\":\"MOVETO\",\"locationPoint\":{\"lat\":48.935219700863996,\"lon\":8.376566916704178}}]','DE','Ettlingen','76275',NULL,NULL,'Nobelstr.','24','c=DE;l=Ettlingen;pc=76275;s=Nobelstr.;hn=24');\n"
+            )
+        }
+
+        val db = helper.runMigrationsAndValidate(TEST_DB, 6, true, POIKitDatabase.migration5to6)
+
+        val cursor = db.query("SELECT * FROM GasStation")
+        assertEquals(2, cursor.count)
+        assertEquals(31, cursor.columnCount)
+
+        assertEquals(true, cursor.moveToFirst())
+        assertEquals("", cursor.getString(cursor.getColumnIndex("cofuPaymentMethods")))
+
     }
 }
