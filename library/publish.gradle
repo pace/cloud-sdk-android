@@ -43,7 +43,9 @@ publishing {
             artifactId rootProject.ext.artifact_id
             version rootProject.ext.version_name
 
-            artifact("$buildDir/outputs/aar/${project.getName()}-debug.aar")
+            artifact("$buildDir/outputs/aar/${project.getName()}-debug.aar") {
+                builtBy assemble
+            }
             artifact sourcesJar
             artifact javadocJar
 
@@ -89,7 +91,9 @@ publishing {
             artifactId rootProject.ext.artifact_id
             version rootProject.ext.version_name
 
-            artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+            artifact("$buildDir/outputs/aar/${project.getName()}-release.aar") {
+                builtBy assemble
+            }
             artifact sourcesJar
             artifact javadocJar
 
