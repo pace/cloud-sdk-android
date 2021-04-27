@@ -19,6 +19,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Intercept PWA logs and pass all logs to client
 * Add handlers to set user properties, log analytic events and get configurations
+* Add function to enable biometry within 5 minutes after authorization
 
 ### Internal
 

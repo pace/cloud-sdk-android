@@ -386,6 +386,13 @@ The `PACECloudSDK` provides the following methods to enable and disable biometri
 	```kotlin
 	IDKit.enableBiometricAuthenticationWithOTP(otp, completion)
 	```
+ 
+* Enable biometric authentication without passing credentials within 5 minutes after a successful authorization:
+
+	```kotlin
+    // After a successful authorization
+	IDKit.enableBiometricAuthentication(completion)
+	```
 
 * Disable biometric authentication on the device
 

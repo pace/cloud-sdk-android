@@ -101,6 +101,7 @@ class CredentialsActivity : AppCompatActivity() {
                         }
                     }
                 }
+                R.id.radio_biometry_after_login -> IDKit.enableBiometricAuthentication(completion)
             }
         }
 
