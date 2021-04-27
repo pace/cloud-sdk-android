@@ -2,7 +2,6 @@
 
 [![License](https://img.shields.io/github/license/pace/cloud-sdk-android)](https://github.com/pace/cloud-sdk-android/blob/master/LICENSE.md)
 [![Maven Central](https://img.shields.io/maven-central/v/cloud.pace/sdk)](https://search.maven.org/artifact/cloud.pace/sdk)
-[![JitPack](https://img.shields.io/jitpack/v/github/pace/cloud-sdk-android)](https://jitpack.io/#pace/cloud-sdk-android)
 
 This framework combines multipe functionalities provided by `PACE` i.e. authorizing via **PACE ID** or requesting and displaying **Apps** for fueling and payment. These functionalities are separated and structured into different ***Kits*** by namespaces, e.g. `IDKit`, `AppKit` or `POIKit`.
 
