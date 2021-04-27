@@ -7,7 +7,6 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
     * [Specifications](#specifications)
     * [Installation](#installation)
         + [Maven Central](#maven-central)
-        + [JitPack](#jitpack)
     * [Setup](#setup)
     * [Migration](#migration)
         + [2.x.x -> 3.x.x](#from-2xx-to-3xx)
@@ -69,25 +68,6 @@ Add the `PACECloudSDK` dependency to your module's `build.gradle`:
 dependencies {
     ...
     implementation "cloud.pace:sdk:$pace_cloud_sdk_version"
-}
-```
-
-### JitPack
-Add JitPack to your top-level `build.gradle` (if not yet):
-```groovy
-allprojects {
-    repositories {
-        ...
-        maven { url "https://jitpack.io" }
-    }
-}
-```
-
-Add the `PACECloudSDK` dependency to your module's `build.gradle`:
-```groovy
-dependencies {
-    ...
-    implementation "com.github.pace:cloud-sdk-android:$pace_cloud_sdk_version"
 }
 ```
 
