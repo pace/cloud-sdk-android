@@ -118,7 +118,7 @@ dependencies {
 
     // Testing
     testImplementation "androidx.arch.core:core-testing:$test_arch_core_version"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$test_coroutines_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     testImplementation "org.koin:koin-test:$koin_version"
     testImplementation "org.mockito:mockito-core:$mockito_version"
     testImplementation "org.mockito:mockito-inline:$mockito_version"

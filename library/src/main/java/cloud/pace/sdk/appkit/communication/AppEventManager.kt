@@ -3,6 +3,7 @@ package cloud.pace.sdk.appkit.communication
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cloud.pace.sdk.utils.Event
+import cloud.pace.sdk.utils.onMainThread
 import timber.log.Timber
 
 interface AppEventManager {
@@ -24,15 +25,21 @@ class AppEventManagerImpl : AppEventManager {
 
     override fun setInvalidApps(list: List<String>) {
         Timber.d("Remove outdated AppDrawers: $list")
-        invalidApps.value = list
+        onMainThread {
+            invalidApps.value = list
+        }
     }
 
     override fun setDisabledHost(host: String) {
         Timber.d("Remove disabled AppDrawer: $host")
-        disabledHost.value = host
+        onMainThread {
+            disabledHost.value = host
+        }
     }
 
     override fun onReceivedRedirect(url: String) {
-        redirectUrl.value = Event(url)
+        onMainThread {
+            redirectUrl.value = Event(url)
+        }
     }
 }

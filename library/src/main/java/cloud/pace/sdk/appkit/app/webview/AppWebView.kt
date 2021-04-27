@@ -13,11 +13,11 @@ import androidx.lifecycle.Observer
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.AppKit
+import cloud.pace.sdk.appkit.communication.MessageHandler
 import cloud.pace.sdk.appkit.utils.BiometricUtils
 import cloud.pace.sdk.utils.AuthenticationMode
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Event
-import cloud.pace.sdk.utils.onMainThread
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.app_web_view.view.*
 import org.koin.core.inject
@@ -87,6 +87,16 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         }
     }
 
+    private val goBackObserver = Observer<Event<Unit>> {
+        it.getContentIfNotHandled()?.let {
+            if (webView.canGoBack()) {
+                webView.goBack()
+            } else {
+                webViewModel.close()
+            }
+        }
+    }
+
     private val isBiometricAvailableObserver = Observer<AppWebViewModel.ResponseEvent<Boolean>> {
         it.getContentIfNotHandled()?.let { event ->
             sendMessageCallback(AppWebViewModel.MessageBundle(event.id, event.message))
@@ -137,22 +147,22 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
             userAgentString = AppKit.userAgent
         }
 
-        webView.addJavascriptInterface(InvalidTokenInterface(), "pace_invalidToken")
-        webView.addJavascriptInterface(ImageDataInterface(), "pace_imageData")
-        webView.addJavascriptInterface(VerifyLocationInterface(), "pace_verifyLocation")
-        webView.addJavascriptInterface(BackInterface(), "pace_back")
-        webView.addJavascriptInterface(CloseInterface(), "pace_close")
-        webView.addJavascriptInterface(GetBiometricStatusInterface(), "pace_getBiometricStatus")
-        webView.addJavascriptInterface(SetTOTPSecretInterface(), "pace_setTOTPSecret")
-        webView.addJavascriptInterface(GetTOTPInterface(), "pace_getTOTP")
-        webView.addJavascriptInterface(SetSecureDataInterface(), "pace_setSecureData")
-        webView.addJavascriptInterface(GetSecureDataInterface(), "pace_getSecureData")
-        webView.addJavascriptInterface(DisableInterface(), "pace_disable")
-        webView.addJavascriptInterface(OpenURLInNewTabInterface(), "pace_openURLInNewTab")
-        webView.addJavascriptInterface(GetAppInterceptableLinkInterface(), "pace_getAppInterceptableLink")
-        webView.addJavascriptInterface(SetUserProperty(), "pace_setUserProperty")
-        webView.addJavascriptInterface(LogEvent(), "pace_logEvent")
-        webView.addJavascriptInterface(GetConfig(), "pace_getConfig")
+        webView.addJavascriptInterface(InvalidTokenInterface(), MessageHandler.INVALID_TOKEN.id)
+        webView.addJavascriptInterface(ImageDataInterface(), MessageHandler.IMAGE_DATA.id)
+        webView.addJavascriptInterface(VerifyLocationInterface(), MessageHandler.VERIFY_LOCATION.id)
+        webView.addJavascriptInterface(BackInterface(), MessageHandler.BACK.id)
+        webView.addJavascriptInterface(CloseInterface(), MessageHandler.CLOSE.id)
+        webView.addJavascriptInterface(GetBiometricStatusInterface(), MessageHandler.GET_BIOMETRIC_STATUS.id)
+        webView.addJavascriptInterface(SetTOTPSecretInterface(), MessageHandler.SET_TOTP_SECRET.id)
+        webView.addJavascriptInterface(GetTOTPInterface(), MessageHandler.GET_TOTP.id)
+        webView.addJavascriptInterface(SetSecureDataInterface(), MessageHandler.SET_SECURE_DATA.id)
+        webView.addJavascriptInterface(GetSecureDataInterface(), MessageHandler.GET_SECURE_DATA.id)
+        webView.addJavascriptInterface(DisableInterface(), MessageHandler.DISABLE.id)
+        webView.addJavascriptInterface(OpenURLInNewTabInterface(), MessageHandler.OPEN_URL_IN_NEW_TAB.id)
+        webView.addJavascriptInterface(GetAppInterceptableLinkInterface(), MessageHandler.GET_APP_INTERCEPTABLE_LINK.id)
+        webView.addJavascriptInterface(SetUserProperty(), MessageHandler.SET_USER_PROPERTY.id)
+        webView.addJavascriptInterface(LogEvent(), MessageHandler.LOG_EVENT.id)
+        webView.addJavascriptInterface(GetConfig(), MessageHandler.GET_CONFIG.id)
 
         failureView.setButtonClickListener {
             webView.reload()
@@ -191,20 +201,13 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         webViewModel.biometricRequest.observe(lifecycleOwner, biometricRequestObserver)
         webViewModel.newToken.observe(lifecycleOwner, newTokenObserver)
         webViewModel.verifyLocationResponse.observe(lifecycleOwner, verifyLocationResponseObserver)
+        webViewModel.goBack.observe(lifecycleOwner, goBackObserver)
         webViewModel.isBiometricAvailable.observe(lifecycleOwner, isBiometricAvailableObserver)
         webViewModel.statusCode.observe(lifecycleOwner, statusCodeObserver)
         webViewModel.totpResponse.observe(lifecycleOwner, totpResponseObserver)
         webViewModel.secureData.observe(lifecycleOwner, secureDataObserver)
         webViewModel.appInterceptableLink.observe(lifecycleOwner, appInterceptableLinkObserver)
         webViewModel.configResponse.observe(lifecycleOwner, configResponseObserver)
-    }
-
-    private fun handleBack() {
-        if (webView.canGoBack()) {
-            webView.goBack()
-        } else {
-            webViewModel.handleClose()
-        }
     }
 
     private fun <T> sendMessageCallback(bundle: AppWebViewModel.MessageBundle<T>) {
@@ -214,112 +217,112 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
     inner class InvalidTokenInterface {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { webViewModel.handleInvalidToken(message) }
+            webViewModel.handleInvalidToken(message)
         }
     }
 
     inner class ImageDataInterface {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { webViewModel.handleImageData(message) }
+            webViewModel.handleImageData(message)
         }
     }
 
     inner class VerifyLocationInterface {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { webViewModel.handleVerifyLocation(message) }
+            webViewModel.handleVerifyLocation(message)
         }
     }
 
     inner class BackInterface {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { handleBack() }
+            webViewModel.handleBack(message)
         }
     }
 
     inner class CloseInterface {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { webViewModel.handleClose() }
+            webViewModel.handleClose(message)
         }
     }
 
     inner class GetBiometricStatusInterface {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { webViewModel.handleGetBiometricStatus(message) }
+            webViewModel.handleGetBiometricStatus(message)
         }
     }
 
     inner class SetTOTPSecretInterface {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { webViewModel.handleSetTOTPSecret(message) }
+            webViewModel.handleSetTOTPSecret(message)
         }
     }
 
     inner class GetTOTPInterface {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { webViewModel.handleGetTOTP(message) }
+            webViewModel.handleGetTOTP(message)
         }
     }
 
     inner class SetSecureDataInterface {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { webViewModel.handleSetSecureData(message) }
+            webViewModel.handleSetSecureData(message)
         }
     }
 
     inner class GetSecureDataInterface {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { webViewModel.handleGetSecureData(message) }
+            webViewModel.handleGetSecureData(message)
         }
     }
 
     inner class DisableInterface {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { webViewModel.handleDisable(message) }
+            webViewModel.handleDisable(message)
         }
     }
 
     inner class OpenURLInNewTabInterface {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { webViewModel.handleOpenURLInNewTab(message) }
+            webViewModel.handleOpenURLInNewTab(message)
         }
     }
 
     inner class GetAppInterceptableLinkInterface {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { webViewModel.handleGetAppInterceptableLink(message) }
+            webViewModel.handleGetAppInterceptableLink(message)
         }
     }
 
     inner class SetUserProperty {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { webViewModel.handleSetUserProperty(message) }
+            webViewModel.handleSetUserProperty(message)
         }
     }
 
     inner class LogEvent {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { webViewModel.handleLogEvent(message) }
+            webViewModel.handleLogEvent(message)
         }
     }
 
     inner class GetConfig {
         @JavascriptInterface
         fun postMessage(message: String) {
-            onMainThread { webViewModel.handleGetConfig(message) }
+            webViewModel.handleGetConfig(message)
         }
     }
 }

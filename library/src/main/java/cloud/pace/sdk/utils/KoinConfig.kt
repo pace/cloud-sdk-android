@@ -94,7 +94,7 @@ object KoinConfig {
                 single { AppManager() }
                 single<GeoAPIManager> { GeoAPIManagerImpl(get(), get()) }
                 viewModel<AppFragmentViewModel> { AppFragmentViewModelImpl(get(), get()) }
-                viewModel<AppWebViewModel> { (context: Context) -> AppWebViewModelImpl(context, get(), get(), get(), get(), get()) }
+                viewModel<AppWebViewModel> { (context: Context) -> AppWebViewModelImpl(context, DefaultDispatcherProvider(), get(), get(), get(), get(), get()) }
                 viewModel<AppDrawerViewModel> { AppDrawerViewModelImpl(get()) }
             })
         }

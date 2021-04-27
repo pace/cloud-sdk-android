@@ -7,6 +7,7 @@ import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppEventManagerImpl
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.communication.AppModelImpl
+import cloud.pace.sdk.appkit.utils.CoroutineTestRule
 import junit.framework.Assert.assertEquals
 import org.junit.After
 import org.junit.Before
@@ -23,6 +24,9 @@ import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
 class AppFragmentViewModelTest : KoinTest {
+
+    @get:Rule
+    var coroutineTestRule = CoroutineTestRule()
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
