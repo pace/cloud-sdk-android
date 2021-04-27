@@ -9,12 +9,14 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import cloud.pace.sdk.PACECloudSDK
+import cloud.pace.sdk.api.geo.ConnectedFuelingStatus
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.idkit.IDKit
@@ -65,7 +67,8 @@ class MainActivity : AppCompatActivity() {
                 apiKey = "YOUR_API_KEY",
                 authenticationMode = AuthenticationMode.NATIVE,
                 environment = Environment.DEVELOPMENT,
-                domainACL = listOf("pace.cloud")
+                domainACL = listOf("pace.cloud"),
+                geoAppsScope = "pace-drive-android"
             )
         )
 
@@ -154,6 +157,12 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 button.isEnabled = true
+            }
+        }
+
+        AppKit.requestCofuGasStations { completion ->
+            (completion as? Success)?.result?.count { it.connectedFuelingStatus == ConnectedFuelingStatus.ONLINE }?.let {
+                Toast.makeText(this, "$it CoFu gas stations online", Toast.LENGTH_LONG).show()
             }
         }
     }

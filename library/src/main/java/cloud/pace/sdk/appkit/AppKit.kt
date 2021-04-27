@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.constraintlayout.widget.ConstraintLayout
 import cloud.pace.sdk.BuildConfig
 import cloud.pace.sdk.PACECloudSDK
+import cloud.pace.sdk.api.geo.CofuGasStation
 import cloud.pace.sdk.appkit.app.AppActivity
 import cloud.pace.sdk.appkit.app.drawer.AppDrawer
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
@@ -82,6 +83,15 @@ object AppKit : CloudSDKKoinComponent {
      */
     fun fetchUrlByAppId(appId: String, completion: (Completion<String?>) -> Unit) {
         appManager.fetchUrlByAppId(appId, completion)
+    }
+
+    /**
+     * Returns a list of all Connected Fueling gas stations.
+     *
+     * @param completion Returns a list of [CofuGasStation]s on success or a [Throwable] on failure.
+     */
+    fun requestCofuGasStations(completion: (Completion<List<CofuGasStation>>) -> Unit) {
+        appManager.requestCofuGasStations(completion)
     }
 
     /**

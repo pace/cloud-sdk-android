@@ -1,6 +1,10 @@
 package cloud.pace.sdk.appkit
 
-import cloud.pace.sdk.appkit.geo.*
+import cloud.pace.sdk.api.geo.GeoAPIFeature
+import cloud.pace.sdk.api.geo.GeoAPIResponse
+import cloud.pace.sdk.api.geo.GeoGasStation
+import cloud.pace.sdk.api.geo.Polygon
+import cloud.pace.sdk.appkit.geo.GeoAPIManagerImpl
 import cloud.pace.sdk.appkit.utils.TestAppAPI
 import cloud.pace.sdk.utils.CompletableFutureCompat
 import cloud.pace.sdk.utils.SystemManager
@@ -206,16 +210,11 @@ class GeoAPIManagerTest {
                 GeoAPIFeature(
                     id ?: UUID.randomUUID().toString(),
                     "Feature",
-                    GeoAPIGeometry(
-                        "Polygon",
-                        listOf(it)
-                    ),
-                    GeoAPIProperties(
-                        listOf(
-                            GeoAPIApp(
-                                "fueling",
-                                "https://fueling.app.test"
-                            )
+                    Polygon(listOf(it)),
+                    mapOf(
+                        "apps" to listOf(
+                            "type" to "fueling",
+                            "url" to "https://fueling.app.test"
                         )
                     )
                 )

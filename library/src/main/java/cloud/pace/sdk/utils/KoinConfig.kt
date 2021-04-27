@@ -3,6 +3,7 @@ package cloud.pace.sdk.utils
 import android.content.Context
 import androidx.preference.PreferenceManager
 import androidx.room.Room
+import cloud.pace.sdk.api.geo.GeoAPIClient
 import cloud.pace.sdk.appkit.AppManager
 import cloud.pace.sdk.appkit.app.AppFragmentViewModel
 import cloud.pace.sdk.appkit.app.AppFragmentViewModelImpl
@@ -15,7 +16,6 @@ import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppEventManagerImpl
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.communication.AppModelImpl
-import cloud.pace.sdk.appkit.geo.GeoAPIClient
 import cloud.pace.sdk.appkit.geo.GeoAPIManager
 import cloud.pace.sdk.appkit.geo.GeoAPIManagerImpl
 import cloud.pace.sdk.appkit.geofences.GeofenceCallback

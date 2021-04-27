@@ -6,6 +6,12 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Enhancements
+
+* Adjust Geo API to new version `2021-1`
+* Add function to `AppKit` to request Connected Fueling gas stations
+
+
 7.5.2 Release notes (2021-06-08)
 =============================================================
 
