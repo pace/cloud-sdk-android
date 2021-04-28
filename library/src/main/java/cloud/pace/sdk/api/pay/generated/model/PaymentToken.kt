@@ -20,7 +20,8 @@ class PaymentToken : Resource() {
 
     /* The amount that this token represents. */
     var amount: Double? = null
-    var currency: Currency? = null
+    /* Currency as specified in ISO-4217. */
+    var currency: String? = null
     /* PACE resource name(s) of one or multiple resources, for which the payment was authorized. */
     var purposePRNs: List<String>? = null
     /* The datetime (iso8601) after which the token is no longer valid. May not be provided. */

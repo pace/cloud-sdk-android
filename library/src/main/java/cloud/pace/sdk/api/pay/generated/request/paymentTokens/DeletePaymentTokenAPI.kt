@@ -34,7 +34,7 @@ object DeletePaymentTokenAPI {
         /* Delete the paymentToken record. */
         @DELETE("payment-tokens/{paymentTokenId}")
         fun deletePaymentToken(
-            /** paymentToken ID. */
+            /* paymentToken ID. */
             @Path("paymentTokenId") paymentTokenId: String
         ): Call<Void>
     }

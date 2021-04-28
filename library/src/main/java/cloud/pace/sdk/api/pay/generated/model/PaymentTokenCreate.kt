@@ -18,7 +18,8 @@ import java.util.*
 @JsonApi(type = "paymentTokenCreate")
 class PaymentTokenCreate : Resource() {
 
-    lateinit var currency: Currency
+    /* Currency as specified in ISO-4217. */
+    lateinit var currency: String
     var amount: Double? = null
     /* PACE resource name(s) of one or multiple resources, for which the payment should be authorized. */
     lateinit var purposePRNs: List<String>
@@ -29,34 +30,9 @@ class PaymentTokenCreate : Resource() {
     class TwoFactor {
 
         /* A single name for the 2fa e.g. `face-id`, `fingerprint`, `biometry`, `password`, `pin` */
-        var method: Method? = null
+        var method: String? = null
         /* OTP (One time password) for the authorization. */
         var otp: String? = null
-
-        /* A single name for the 2fa e.g. `face-id`, `fingerprint`, `biometry`, `password`, `pin` */
-        enum class Method(val value: String) {
-            @SerializedName("face-id")
-            @Json(name = "face-id")
-            FACEID("face-id"),
-            @SerializedName("fingerprint")
-            @Json(name = "fingerprint")
-            FINGERPRINT("fingerprint"),
-            @SerializedName("biometry")
-            @Json(name = "biometry")
-            BIOMETRY("biometry"),
-            @SerializedName("password")
-            @Json(name = "password")
-            PASSWORD("password"),
-            @SerializedName("pin")
-            @Json(name = "pin")
-            PIN("pin"),
-            @SerializedName("qr")
-            @Json(name = "qr")
-            QR("qr"),
-            @SerializedName("u2f")
-            @Json(name = "u2f")
-            U2F("u2f")
-        }
     }
 
 }

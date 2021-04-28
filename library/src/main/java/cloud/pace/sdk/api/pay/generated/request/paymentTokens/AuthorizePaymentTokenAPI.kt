@@ -35,8 +35,8 @@ object AuthorizePaymentTokenAPI {
         /* When successful, returns a paymentToken value. */
         @POST("payment-methods/{paymentMethodId}/authorize")
         fun authorizePaymentToken(
-            /** ID of the paymentMethod */
-            @Path("paymentMethodId") paymentMethodId: String,
+            /* ID of the paymentMethod */
+            @Path("paymentMethodId") paymentMethodId: String, 
             @retrofit2.http.Body body: Body
         ): Call<PaymentToken>
     }

@@ -20,6 +20,8 @@ class PaymentMethodKind : Resource() {
 
     /* data privacy information */
     var dataPrivacy: DataPrivacy? = null
+    /* Indicates whether the payment method is a fuel card. Fuelcard `no` means no. */
+    var fuelcard: Boolean? = null
     /* Indicates whether the payment method can be onboarded/modified. Implict `true` means no. Otherwise yes.
 Most payment method kinds are no implicit, i.e., `implicit=false`.
 This field is optional and if not present should be assumed to indicate `implicit=false`.
@@ -53,30 +55,6 @@ This field is optional and if not present should be assumed to indicate `implici
             /* Terms formatted as markdown. Does not contain external resources like images. */
             var markdown: String? = null
         }
-    }
-
-    enum class Id(val value: String) {
-        @SerializedName("sepa")
-        @Json(name = "sepa")
-        SEPA("sepa"),
-        @SerializedName("creditcard")
-        @Json(name = "creditcard")
-        CREDITCARD("creditcard"),
-        @SerializedName("paypal")
-        @Json(name = "paypal")
-        PAYPAL("paypal"),
-        @SerializedName("paydirekt")
-        @Json(name = "paydirekt")
-        PAYDIREKT("paydirekt"),
-        @SerializedName("dkv")
-        @Json(name = "dkv")
-        DKV("dkv"),
-        @SerializedName("hoyer")
-        @Json(name = "hoyer")
-        HOYER("hoyer"),
-        @SerializedName("applepay")
-        @Json(name = "applepay")
-        APPLEPAY("applepay")
     }
 
 }

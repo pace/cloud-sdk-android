@@ -34,7 +34,7 @@ object DeletePaymentMethodAPI {
         /* Delete a payment method */
         @DELETE("payment-methods/{paymentMethodId}")
         fun deletePaymentMethod(
-            /** ID of the paymentMethod */
+            /* ID of the paymentMethod */
             @Path("paymentMethodId") paymentMethodId: String
         ): Call<Void>
     }

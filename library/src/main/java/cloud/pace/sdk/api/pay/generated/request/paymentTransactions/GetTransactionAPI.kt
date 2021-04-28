@@ -36,7 +36,7 @@ object GetTransactionAPI {
  */
         @GET("transactions/{transactionId}")
         fun getTransaction(
-            /** transaction ID. */
+            /* transaction ID. */
             @Path("transactionId") transactionId: String
         ): Call<Transaction>
     }

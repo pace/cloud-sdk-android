@@ -34,22 +34,9 @@ object NotificationForPaymentMethodAPI {
         /* Notify about payment method data */
         @POST("payment-methods/{paymentMethodId}/notification")
         fun notificationForPaymentMethod(
-            /** Type of the notification */
-            @Query("type") type: Type? = null
+            /* Type of the notification */
+            @Query("type") type: String? = null
         ): Call<Void>
-    }
-
-    /* Type of the notification */
-    enum class Type(val value: String) {
-        @SerializedName("concardis")
-        @Json(name = "concardis")
-        CONCARDIS("concardis"),
-        @SerializedName("paypal")
-        @Json(name = "paypal")
-        PAYPAL("paypal"),
-        @SerializedName("paydirekt")
-        @Json(name = "paydirekt")
-        PAYDIREKT("paydirekt")
     }
 
     private val service: NotificationForPaymentMethodService by lazy {
@@ -72,6 +59,6 @@ object NotificationForPaymentMethodAPI {
             .create(NotificationForPaymentMethodService::class.java)
     }
 
-    fun PayAPI.PaymentMethodsAPI.notificationForPaymentMethod(type: Type? = null) =
+    fun PayAPI.PaymentMethodsAPI.notificationForPaymentMethod(type: String? = null) =
         service.notificationForPaymentMethod(type)
 }
