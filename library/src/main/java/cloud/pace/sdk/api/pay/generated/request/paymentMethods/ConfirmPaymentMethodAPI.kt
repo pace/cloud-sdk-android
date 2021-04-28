@@ -35,7 +35,7 @@ object ConfirmPaymentMethodAPI {
         /* Redirect endpoint to confirm a payment method. External services redirect the user here and in turn this endpoint redirects the user to the frontend. */
         @GET("payment-methods/confirm/{token}")
         fun confirmPaymentMethod(
-            /** single use token */
+            /* single use token */
             @Path("token") token: String
         ): Call<Void>
     }

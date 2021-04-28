@@ -36,7 +36,7 @@ object GetReceiptAPI {
  */
         @GET("receipts/{transactionID}")
         fun getReceipt(
-            /** ID of the payment transaction */
+            /* ID of the payment transaction */
             @Path("transactionID") transactionID: String
         ): Call<Void>
     }

@@ -39,8 +39,8 @@ Only use after approaching (fueling api), otherwise returns `403 Forbidden`.
  */
         @POST("transactions")
         fun processPayment(
-            /** Announcing the transaction without actually capturing the payment. An announced transaction can later be processed only if providing the same `paymentToken`, `purposePRN`, and `providerPRN`. By announcing the transaction the token is locked to be used only with this transaction. The `priceIncludingVAT` and `currency` will be taken from the token, and upon capturing the transaction, must be equal or lower than what was announced. */
-            @Query("announce") announce: Boolean? = null,
+            /* Announcing the transaction without actually capturing the payment. An announced transaction can later be processed only if providing the same `paymentToken`, `purposePRN`, and `providerPRN`. By announcing the transaction the token is locked to be used only with this transaction. The `priceIncludingVAT` and `currency` will be taken from the token, and upon capturing the transaction, must be equal or lower than what was announced. */
+            @Query("announce") announce: Boolean? = null, 
             @retrofit2.http.Body body: Body
         ): Call<Transaction>
     }

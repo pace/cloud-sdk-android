@@ -36,29 +36,29 @@ object ListTransactionsAPI {
  */
         @GET("transactions")
         fun listTransactions(
-            /** Number of the page that should be returned (sometimes referred to as "offset"). Page `0` is the first page. */
+            /* Number of the page that should be returned (sometimes referred to as "offset"). Page `0` is the first page. */
             @Query("page[number]") pagenumber: Int? = null,
-            /** Page size of the currently returned page (sometimes referred to as "limit"). */
+            /* Page size of the currently returned page (sometimes referred to as "limit"). */
             @Query("page[size]") pagesize: Int? = null,
-            /** Sort by given attribute, plus and minus are used to indicate ascending and descending order. */
+            /* Sort by given attribute, plus and minus are used to indicate ascending and descending order. */
             @Query("sort") sort: Sort? = null,
-            /** ID of the payment transaction */
+            /* ID of the payment transaction */
             @Query("filter[id]") filterid: String? = null,
-            /** Time the transaction was created. */
+            /* Time the transaction was created. */
             @Query("filter[createdAt]") filtercreatedAt: String? = null,
-            /** Time the transaction was last updated. */
+            /* Time the transaction was last updated. */
             @Query("filter[updatedAt]") filterupdatedAt: String? = null,
-            /** Payment method ID of the transaction. */
+            /* Payment method ID of the transaction. */
             @Query("filter[paymentMethodId]") filterpaymentMethodId: String? = null,
-            /** Payment method kind of the transaction. */
+            /* Payment method kind of the transaction. */
             @Query("filter[paymentMethodKind]") filterpaymentMethodKind: String? = null,
-            /** PACE resource name of the resource, for which the payment was authorized. */
+            /* PACE resource name of the resource, for which the payment was authorized. */
             @Query("filter[purposePRN]") filterpurposePRN: String? = null,
-            /** PACE resource name - referring to the transaction purpose with provider details. */
+            /* PACE resource name - referring to the transaction purpose with provider details. */
             @Query("filter[providerPRN]") filterproviderPRN: String? = null,
-            /** Product name of the fuel that was used in the transaction. */
+            /* Product name of the fuel that was used in the transaction. */
             @Query("filter[fuel.productName]") filterfuelProductName: String? = null,
-            /** Fuel type which was used in the transaction. */
+            /* Fuel type which was used in the transaction. */
             @Query("filter[fuel.type]") filterfuelType: String? = null
         ): Call<Transactions>
     }

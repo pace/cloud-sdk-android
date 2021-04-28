@@ -36,8 +36,8 @@ object PatchPaymentMethodAPI {
  */
         @PATCH("payment-methods/{paymentMethodId}")
         fun patchPaymentMethod(
-            /** ID of the paymentMethod */
-            @Path("paymentMethodId") paymentMethodId: String,
+            /* ID of the paymentMethod */
+            @Path("paymentMethodId") paymentMethodId: String, 
             @retrofit2.http.Body body: Body
         ): Call<PaymentMethod>
     }

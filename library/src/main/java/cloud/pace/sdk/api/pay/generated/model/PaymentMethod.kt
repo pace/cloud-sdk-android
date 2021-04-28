@@ -28,35 +28,12 @@ class PaymentMethod : Resource() {
     var identificationString: String? = null
     /* Implicit (`true`) payment methods are read-only and cannot be deleted, e.g., ApplePay */
     var implicit: Boolean? = null
-    var kind: Kind? = null
+    /* one of sepa, creditcard, paypal, paydirekt, dkv, applepay, ... */
+    var kind: String? = null
     /* indicates if the payment method kind requires two factors later on */
     var twoFactor: Boolean? = null
     /* PACE resource name(s) to payment method vendor */
     var vendorPRN: String? = null
-
-    enum class Kind(val value: String) {
-        @SerializedName("sepa")
-        @Json(name = "sepa")
-        SEPA("sepa"),
-        @SerializedName("creditcard")
-        @Json(name = "creditcard")
-        CREDITCARD("creditcard"),
-        @SerializedName("paypal")
-        @Json(name = "paypal")
-        PAYPAL("paypal"),
-        @SerializedName("paydirekt")
-        @Json(name = "paydirekt")
-        PAYDIREKT("paydirekt"),
-        @SerializedName("dkv")
-        @Json(name = "dkv")
-        DKV("dkv"),
-        @SerializedName("hoyer")
-        @Json(name = "hoyer")
-        HOYER("hoyer"),
-        @SerializedName("applepay")
-        @Json(name = "applepay")
-        APPLEPAY("applepay")
-    }
 
     private var paymentTokens: HasMany<PaymentTokensRelationship> = HasMany()
     fun getPaymentTokens() = paymentTokens.get(document)

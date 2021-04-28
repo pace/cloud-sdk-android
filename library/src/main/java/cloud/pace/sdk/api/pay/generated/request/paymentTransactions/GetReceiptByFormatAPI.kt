@@ -36,9 +36,9 @@ object GetReceiptByFormatAPI {
  */
         @GET("receipts/{transactionID}.{fileFormat}")
         fun getReceiptByFormat(
-            /** ID of the payment transaction */
+            /* ID of the payment transaction */
             @Path("transactionID") transactionID: String,
-            /** Format of the expected file */
+            /* Format of the expected file */
             @Path("fileFormat") fileFormat: FileFormat? = null
         ): Call<Void>
     }

@@ -35,7 +35,7 @@ object GetPaymentMethodKindsAPI {
         /* Returns all payment method kinds that are supported by this service. Use the Accept-Language header for localization. */
         @GET("payment-method-kinds")
         fun getPaymentMethodKinds(
-            /** Language preference of localized response properties. The full standard of RFC 7231 (https://tools.ietf.org/html/rfc7231#section-5.3.5) is supported. */
+            /* Language preference of localized response properties. The full standard of RFC 7231 (https://tools.ietf.org/html/rfc7231#section-5.3.5) is supported. */
             @Query("Accept-Language") acceptLanguage: String? = null
         ): Call<PaymentMethodKinds>
     }

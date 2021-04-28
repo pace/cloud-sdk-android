@@ -34,7 +34,7 @@ object GetPaymentTokenAPI {
         /* Get a payment token */
         @GET("payment-tokens/{paymentTokenId}")
         fun getPaymentToken(
-            /** paymentToken ID. */
+            /* paymentToken ID. */
             @Path("paymentTokenId") paymentTokenId: String
         ): Call<PaymentToken>
     }

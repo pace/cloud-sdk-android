@@ -34,7 +34,7 @@ object GetPaymentMethodAPI {
         /* Get a payment method */
         @GET("payment-methods/{paymentMethodId}")
         fun getPaymentMethod(
-            /** ID of the paymentMethod */
+            /* ID of the paymentMethod */
             @Path("paymentMethodId") paymentMethodId: String
         ): Call<PaymentMethod>
     }

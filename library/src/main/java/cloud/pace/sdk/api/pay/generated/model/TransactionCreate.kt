@@ -25,7 +25,8 @@ class TransactionCreate : Resource() {
     /* PACE resource name - referring to the transaction purpose with provider details */
     lateinit var providerPRN: String
     var vat: VAT? = null
-    var currency: Currency? = null
+    /* Currency as specified in ISO-4217. */
+    var currency: String? = null
     var fuel: Fuel? = null
     /* Fuel amount */
     var fuelAmount: Double? = null

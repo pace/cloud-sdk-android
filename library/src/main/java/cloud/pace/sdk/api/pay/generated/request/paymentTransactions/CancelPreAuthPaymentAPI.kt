@@ -39,7 +39,7 @@ object CancelPreAuthPaymentAPI {
  */
         @POST("transactions/{transactionId}/cancel")
         fun cancelPreAuthPayment(
-            /** transaction ID. */
+            /* transaction ID. */
             @Path("transactionId") transactionId: String
         ): Call<Void>
     }

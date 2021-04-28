@@ -24,7 +24,8 @@ class Transaction : Resource() {
     /* Initial creation date of the transaction (https://tools.ietf.org/html/rfc3339#section-5.6).
  */
     var createdAt: Date? = null
-    var currency: Currency? = null
+    /* Currency as specified in ISO-4217. */
+    var currency: String? = null
     var fuel: Fuel? = null
     /* PACE resource name */
     var issuerPRN: String? = null
