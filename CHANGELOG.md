@@ -1,10 +1,16 @@
 x.y.z Release notes (yyyy-MM-dd)
 =============================================================
 
+<!-- ### Breaking changes - Include, if needed -->
+<!-- ### Enhancements - Include, if needed -->
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
-        
-### Breaking changes
+
+
+7.2.0 Release notes (2021-04-28)
+=============================================================
+
+### Fixes
 
 * Generate Pay API `2020-4`, which includes removal of enums to prevent the clients from crashing when new values are added
 
