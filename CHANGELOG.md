@@ -7,6 +7,14 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Internal - Include, if needed -->
 
 
+7.2.1 Release notes (2021-04-29)
+=============================================================
+
+### Fixes
+
+* Fix crash in POIKit database converter
+
+
 7.2.0 Release notes (2021-04-28)
 =============================================================
 

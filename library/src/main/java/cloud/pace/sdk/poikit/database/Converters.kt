@@ -21,7 +21,7 @@ class Converters {
 
     @TypeConverter
     fun toPaymentMethods(json: String): MutableList<PaymentMethod> {
-        return gson.fromJson(json, typePaymentMethods)
+        return gson.fromJson(json, typePaymentMethods) ?: mutableListOf()
     }
 
     /**
@@ -36,7 +36,7 @@ class Converters {
 
     @TypeConverter
     fun toOpeningHours(json: String): List<OpeningHours> {
-        return gson.fromJson(json, typeOpeningHours)
+        return gson.fromJson(json, typeOpeningHours) ?: mutableListOf()
     }
 
     /**
@@ -51,22 +51,8 @@ class Converters {
 
     @TypeConverter
     fun toPriceList(priceString: String): List<Price> {
-        return gson.fromJson(priceString, typePriceList)
+        return gson.fromJson(priceString, typePriceList) ?: mutableListOf()
     }
-
-    // TODO: check if needed
-    /**
-     * PoiType
-     */
-    /*@TypeConverter
-    fun fromPoiType(poiType: PoiType): String {
-        return poiType.toString()
-    }
-
-    @TypeConverter
-    fun toPoiType(poiTypeString: String): PoiType {
-        return PoiType.valueOf(poiTypeString)
-    }*/
 
     /**
      * Geometry
@@ -80,7 +66,7 @@ class Converters {
 
     @TypeConverter
     fun toGeometry(geometryString: String): ArrayList<Geometry.CommandGeo> {
-        return gson.fromJson(geometryString, typeGeometry)
+        return gson.fromJson(geometryString, typeGeometry) ?: arrayListOf()
     }
 
     @TypeConverter
@@ -105,7 +91,7 @@ class Converters {
 
     @TypeConverter
     fun toAmenity(json: String): MutableList<Amenity> {
-        return gson.fromJson(json, typeAmenity)
+        return gson.fromJson(json, typeAmenity) ?: mutableListOf()
     }
 
     /**
@@ -120,7 +106,7 @@ class Converters {
 
     @TypeConverter
     fun toLoyaltyProgram(json: String): MutableList<LoyaltyProgram> {
-        return gson.fromJson(json, typeLoyaltyProgram)
+        return gson.fromJson(json, typeLoyaltyProgram) ?: mutableListOf()
     }
 
     /**
@@ -135,7 +121,7 @@ class Converters {
 
     @TypeConverter
     fun toPostalService(json: String): MutableList<PostalService> {
-        return gson.fromJson(json, typePostalService)
+        return gson.fromJson(json, typePostalService) ?: mutableListOf()
     }
 
     /**
@@ -150,7 +136,7 @@ class Converters {
 
     @TypeConverter
     fun toService(json: String): MutableList<Service> {
-        return gson.fromJson(json, typeService)
+        return gson.fromJson(json, typeService) ?: mutableListOf()
     }
 
     /**
@@ -165,7 +151,7 @@ class Converters {
 
     @TypeConverter
     fun toShopGood(json: String): MutableList<ShopGood> {
-        return gson.fromJson(json, typeShopGood)
+        return gson.fromJson(json, typeShopGood) ?: mutableListOf()
     }
 
     /**
@@ -180,21 +166,21 @@ class Converters {
 
     @TypeConverter
     fun toFood(json: String): MutableList<Food> {
-        return gson.fromJson(json, typeFood)
+        return gson.fromJson(json, typeFood) ?: mutableListOf()
     }
 
     /**
-     * CofuPaymentMethods
+     * List<String>
      */
-    private val typeCofuPaymentMethods = object : TypeToken<MutableList<String>>() {}.type
+    private val strings = object : TypeToken<MutableList<String>>() {}.type
 
     @TypeConverter
-    fun fromCofuPaymentMethods(list: MutableList<String>): String {
-        return gson.toJson(list, typeCofuPaymentMethods)
+    fun fromStringList(list: MutableList<String>): String {
+        return gson.toJson(list, strings)
     }
 
     @TypeConverter
-    fun toCofuPaymentMethods(json: String): MutableList<String> {
-        return gson.fromJson(json, typeCofuPaymentMethods)
+    fun toStringList(json: String): MutableList<String> {
+        return gson.fromJson(json, strings) ?: mutableListOf()
     }
 }
