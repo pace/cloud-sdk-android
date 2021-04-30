@@ -17,5 +17,6 @@ enum class MessageHandler(val id: String, val timeoutMillis: Long) {
     GET_APP_INTERCEPTABLE_LINK("pace_getAppInterceptableLink", 5_000),
     SET_USER_PROPERTY("pace_setUserProperty", 5_000),
     LOG_EVENT("pace_logEvent", 5_000),
-    GET_CONFIG("pace_getConfig", 60_000)
+    GET_CONFIG("pace_getConfig", 60_000),
+    GET_TRACE_ID("pace_getTraceId", 5_000)
 }

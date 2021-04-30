@@ -127,9 +127,9 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         }
     }
 
-    private val configResponseObserver = Observer<AppWebViewModel.ResponseEvent<AppWebViewModel.ValueResponse>> {
-        it.getContentIfNotHandled()?.let { configResponse ->
-            sendMessageCallback(configResponse)
+    private val valueResponseObserver = Observer<AppWebViewModel.ResponseEvent<AppWebViewModel.ValueResponse>> {
+        it.getContentIfNotHandled()?.let { valueResponse ->
+            sendMessageCallback(valueResponse)
         }
     }
 
@@ -163,6 +163,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         webView.addJavascriptInterface(SetUserProperty(), MessageHandler.SET_USER_PROPERTY.id)
         webView.addJavascriptInterface(LogEvent(), MessageHandler.LOG_EVENT.id)
         webView.addJavascriptInterface(GetConfig(), MessageHandler.GET_CONFIG.id)
+        webView.addJavascriptInterface(GetTraceId(), MessageHandler.GET_TRACE_ID.id)
 
         failureView.setButtonClickListener {
             webView.reload()
@@ -207,7 +208,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         webViewModel.totpResponse.observe(lifecycleOwner, totpResponseObserver)
         webViewModel.secureData.observe(lifecycleOwner, secureDataObserver)
         webViewModel.appInterceptableLink.observe(lifecycleOwner, appInterceptableLinkObserver)
-        webViewModel.configResponse.observe(lifecycleOwner, configResponseObserver)
+        webViewModel.valueResponse.observe(lifecycleOwner, valueResponseObserver)
     }
 
     private fun <T> sendMessageCallback(bundle: AppWebViewModel.MessageBundle<T>) {
@@ -323,6 +324,13 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         @JavascriptInterface
         fun postMessage(message: String) {
             webViewModel.handleGetConfig(message)
+        }
+    }
+
+    inner class GetTraceId {
+        @JavascriptInterface
+        fun postMessage(message: String) {
+            webViewModel.handleGetTraceId(message)
         }
     }
 }

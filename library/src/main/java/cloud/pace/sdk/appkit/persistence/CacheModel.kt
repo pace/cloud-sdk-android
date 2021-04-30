@@ -2,6 +2,8 @@ package cloud.pace.sdk.appkit.persistence
 
 import android.content.Context
 import android.net.Uri
+import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.api.utils.InterceptorUtils.UBER_TRACE_ID_HEADER
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.model.AppManifest
 import com.google.gson.Gson
@@ -34,6 +36,7 @@ class CacheModelImpl : CacheModel {
     private fun fetch(context: Context, url: URL, userAgent: String?, completion: (Result<ByteArray>) -> Unit) {
         val headers = mutableMapOf<String, String>()
         headers[ACCEPT_LANGUAGE_KEY] = Locale.getDefault().language
+        headers[UBER_TRACE_ID_HEADER] = InterceptorUtils.getUberTraceId()
         if (userAgent != null) {
             headers[USER_AGENT_KEY] = userAgent
         }

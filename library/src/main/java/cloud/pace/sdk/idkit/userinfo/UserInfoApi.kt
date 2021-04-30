@@ -1,7 +1,11 @@
 package cloud.pace.sdk.idkit.userinfo
 
+import cloud.pace.sdk.api.utils.InterceptorUtils
 import cloud.pace.sdk.poikit.utils.ApiException
-import cloud.pace.sdk.utils.*
+import cloud.pace.sdk.utils.Completion
+import cloud.pace.sdk.utils.Failure
+import cloud.pace.sdk.utils.Success
+import cloud.pace.sdk.utils.enqueue
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
@@ -45,9 +49,10 @@ class UserInfoApiClient(userInfoEndpoint: String, accessToken: String) {
                             it.proceed(
                                 it.request()
                                     .newBuilder()
-                                    .header(ApiUtils.ACCEPT_HEADER, "application/json")
-                                    .header(ApiUtils.CONTENT_TYPE_HEADER, "application/json")
-                                    .header(ApiUtils.AUTHORIZATION_HEADER, "Bearer $accessToken")
+                                    .header(InterceptorUtils.ACCEPT_HEADER, "application/json")
+                                    .header(InterceptorUtils.CONTENT_TYPE_HEADER, "application/json")
+                                    .header(InterceptorUtils.AUTHORIZATION_HEADER, "Bearer $accessToken")
+                                    .header(InterceptorUtils.UBER_TRACE_ID_HEADER, InterceptorUtils.getUberTraceId())
                                     .build()
                             )
                         }

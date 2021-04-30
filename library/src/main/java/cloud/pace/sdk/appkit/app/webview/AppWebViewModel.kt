@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.R
+import cloud.pace.sdk.api.utils.InterceptorUtils
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.communication.MessageHandler
@@ -50,7 +51,7 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     abstract val totpResponse: LiveData<ResponseEvent<TOTPResponse>>
     abstract val secureData: LiveData<ResponseEvent<Map<String, String>>>
     abstract val appInterceptableLink: LiveData<ResponseEvent<AppInterceptableLinkResponse>>
-    abstract val configResponse: LiveData<ResponseEvent<ValueResponse>>
+    abstract val valueResponse: LiveData<ResponseEvent<ValueResponse>>
 
     abstract fun init(url: String)
     abstract fun close()
@@ -70,6 +71,7 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     abstract fun handleSetUserProperty(message: String)
     abstract fun handleLogEvent(message: String)
     abstract fun handleGetConfig(message: String)
+    abstract fun handleGetTraceId(message: String)
 
     class MessageBundle<T>(val id: String, val message: T)
     class ResponseEvent<T>(id: String, content: T) : Event<MessageBundle<T>>(MessageBundle(id, content))
@@ -129,7 +131,7 @@ class AppWebViewModelImpl(
     override val totpResponse = MutableLiveData<ResponseEvent<TOTPResponse>>()
     override val secureData = MutableLiveData<ResponseEvent<Map<String, String>>>()
     override val appInterceptableLink = MutableLiveData<ResponseEvent<AppInterceptableLinkResponse>>()
-    override val configResponse = MutableLiveData<ResponseEvent<ValueResponse>>()
+    override val valueResponse = MutableLiveData<ResponseEvent<ValueResponse>>()
 
     private val gson = Gson()
 
@@ -470,9 +472,18 @@ class AppWebViewModelImpl(
             }
 
             if (config != null) {
-                configResponse.postValue(ResponseEvent(messageBundle.id, ValueResponse(config)))
+                valueResponse.postValue(ResponseEvent(messageBundle.id, ValueResponse(config)))
             } else {
                 statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("No config value found.", HttpURLConnection.HTTP_NOT_FOUND)))
+            }
+        }
+    }
+
+    override fun handleGetTraceId(message: String) {
+        val messageBundle = getMessageBundle<MessageBundle<String>>(message) ?: return
+        launch {
+            timeout(message, MessageHandler.GET_TRACE_ID.timeoutMillis) {
+                valueResponse.postValue(ResponseEvent(messageBundle.id, ValueResponse(InterceptorUtils.getTraceId())))
             }
         }
     }

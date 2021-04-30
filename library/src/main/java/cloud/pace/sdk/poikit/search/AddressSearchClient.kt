@@ -1,6 +1,6 @@
 package cloud.pace.sdk.poikit.search
 
-import cloud.pace.sdk.utils.ApiUtils
+import cloud.pace.sdk.api.utils.InterceptorUtils
 import cloud.pace.sdk.utils.Environment
 import io.reactivex.rxjava3.core.Observable
 import okhttp3.OkHttpClient
@@ -58,8 +58,9 @@ interface AddressSearchApi {
                             it.proceed(
                                 it.request()
                                     .newBuilder()
-                                    .header(ApiUtils.USER_AGENT_HEADER, ApiUtils.getUserAgent())
-                                    .header(ApiUtils.API_KEY_HEADER, apiKey)
+                                    .header(InterceptorUtils.USER_AGENT_HEADER, InterceptorUtils.getUserAgent())
+                                    .header(InterceptorUtils.API_KEY_HEADER, apiKey)
+                                    .header(InterceptorUtils.UBER_TRACE_ID_HEADER, InterceptorUtils.getUberTraceId())
                                     .build()
                             )
                         }
