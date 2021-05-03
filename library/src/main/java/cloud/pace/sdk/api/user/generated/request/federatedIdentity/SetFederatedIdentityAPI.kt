@@ -5,7 +5,7 @@
  * https://github.com/pace/SwagGen
  */
 
-package cloud.pace.sdk.api.user.generated.request.totp
+package cloud.pace.sdk.api.user.generated.request.federatedIdentity
 
 import cloud.pace.sdk.api.user.UserAPI
 import cloud.pace.sdk.api.user.generated.model.*
@@ -29,19 +29,19 @@ import retrofit2.http.*
 import java.io.File
 import java.util.*
 
-object CreateOTPAPI {
+object SetFederatedIdentityAPI {
 
-    interface CreateOTPService {
-        /* Create OTP */
-        /* Verifies that the passed PIN or password is valid for the user account and generates a one time password (OTP). One of the provided values need to be valid. First check is on the password, 2nd on the PIN.
+    interface SetFederatedIdentityService {
+        /* Define federated identity */
+        /* Set a federated identity for the user with the given identity provider
  */
-        @POST("user/otp")
-        fun createOTP(
-            @retrofit2.http.Body body: CreateOTP
-        ): Call<CreateOTP>
+        @PUT("federated-identities/{identityProvider}")
+        fun setFederatedIdentity(
+            @Path("identityProvider") identityProvider: String? = null
+        ): Call<Void>
     }
 
-    private val service: CreateOTPService by lazy {
+    private val service: SetFederatedIdentityService by lazy {
         Retrofit.Builder()
             .client(OkHttpClient.Builder().addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
             .baseUrl(UserAPI.baseUrl)
@@ -66,9 +66,9 @@ object CreateOTPAPI {
                 )
             )
             .build()
-            .create(CreateOTPService::class.java)
+            .create(SetFederatedIdentityService::class.java)
     }
 
-    fun UserAPI.TOTPAPI.createOTP(body: CreateOTP) =
-        service.createOTP(body)
+    fun UserAPI.FederatedIdentityAPI.setFederatedIdentity(identityProvider: String? = null) =
+        service.setFederatedIdentity(identityProvider)
 }

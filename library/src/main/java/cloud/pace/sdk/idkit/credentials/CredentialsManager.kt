@@ -31,6 +31,7 @@ import cloud.pace.sdk.utils.*
 import retrofit2.Call
 import timber.log.Timber
 import java.net.HttpURLConnection
+import java.util.*
 
 internal class CredentialsManager(
     private val sharedPreferencesModel: SharedPreferencesModel,
@@ -252,6 +253,8 @@ internal class CredentialsManager(
 
     private fun getUserPINBody(pin: String, otp: String) =
         UserPINBody().apply {
+            id = UUID.randomUUID().toString()
+            type = UserPINBody.Type.PIN
             attributes = UserPINBody.Attributes().apply {
                 this.pin = pin
                 this.otp = otp
@@ -260,6 +263,8 @@ internal class CredentialsManager(
 
     private fun getDeviceTOTPBody(pin: String? = null, password: String? = null, otp: String? = null) =
         DeviceTOTPBody().apply {
+            id = UUID.randomUUID().toString()
+            type = DeviceTOTPBody.Type.DEVICETOTP
             attributes = DeviceTOTPBody.Attributes().apply {
                 this.pin = pin
                 this.password = password

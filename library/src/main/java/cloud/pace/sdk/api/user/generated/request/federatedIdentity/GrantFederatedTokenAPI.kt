@@ -5,7 +5,7 @@
  * https://github.com/pace/SwagGen
  */
 
-package cloud.pace.sdk.api.user.generated.request.totp
+package cloud.pace.sdk.api.user.generated.request.federatedIdentity
 
 import cloud.pace.sdk.api.user.UserAPI
 import cloud.pace.sdk.api.user.generated.model.*
@@ -29,19 +29,19 @@ import retrofit2.http.*
 import java.io.File
 import java.util.*
 
-object CreateOTPAPI {
+object GrantFederatedTokenAPI {
 
-    interface CreateOTPService {
-        /* Create OTP */
-        /* Verifies that the passed PIN or password is valid for the user account and generates a one time password (OTP). One of the provided values need to be valid. First check is on the password, 2nd on the PIN.
+    interface GrantFederatedTokenService {
+        /* Provide a token for a federated identity provider */
+        /* Provides a token for the given identity provider, if the user has a valid one. Token grant is a request as per OAuth2 specification
  */
-        @POST("user/otp")
-        fun createOTP(
-            @retrofit2.http.Body body: CreateOTP
-        ): Call<CreateOTP>
+        @POST("federated-identities/{identityProvider}/token")
+        fun grantFederatedToken(
+            @Path("identityProvider") identityProvider: String? = null
+        ): Call<AccessToken>
     }
 
-    private val service: CreateOTPService by lazy {
+    private val service: GrantFederatedTokenService by lazy {
         Retrofit.Builder()
             .client(OkHttpClient.Builder().addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
             .baseUrl(UserAPI.baseUrl)
@@ -66,9 +66,9 @@ object CreateOTPAPI {
                 )
             )
             .build()
-            .create(CreateOTPService::class.java)
+            .create(GrantFederatedTokenService::class.java)
     }
 
-    fun UserAPI.TOTPAPI.createOTP(body: CreateOTP) =
-        service.createOTP(body)
+    fun UserAPI.FederatedIdentityAPI.grantFederatedToken(identityProvider: String? = null) =
+        service.grantFederatedToken(identityProvider)
 }
