@@ -1,5 +1,6 @@
 package cloud.pace.sdk.poikit.poi.download
 
+import cloud.pace.sdk.api.utils.InterceptorUtils
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.Geometry
 import cloud.pace.sdk.poikit.poi.LocationPoint
@@ -9,7 +10,6 @@ import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_GAS_STATION
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_ID
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_TYPE
 import cloud.pace.sdk.poikit.utils.POIKitConfig
-import cloud.pace.sdk.utils.ApiUtils
 import cloud.pace.sdk.utils.Environment
 import com.google.protobuf.InvalidProtocolBufferException
 import okhttp3.*
@@ -26,7 +26,8 @@ internal class TileDownloader(environment: Environment) {
                 it.proceed(
                     it.request()
                         .newBuilder()
-                        .header(ApiUtils.USER_AGENT_HEADER, ApiUtils.getUserAgent())
+                        .header(InterceptorUtils.USER_AGENT_HEADER, InterceptorUtils.getUserAgent())
+                        .header(InterceptorUtils.UBER_TRACE_ID_HEADER, InterceptorUtils.getUberTraceId())
                         .build()
                 )
             }

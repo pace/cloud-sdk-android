@@ -2,6 +2,7 @@ package cloud.pace.sdk.poikit.routing
 
 import android.os.Parcelable
 import android.text.TextUtils
+import cloud.pace.sdk.api.utils.InterceptorUtils
 import cloud.pace.sdk.poikit.poi.LocationPoint
 import cloud.pace.sdk.poikit.utils.ApiException
 import cloud.pace.sdk.utils.*
@@ -100,8 +101,9 @@ interface NavigationApi {
                             it.proceed(
                                 it.request()
                                     .newBuilder()
-                                    .header(ApiUtils.USER_AGENT_HEADER, ApiUtils.getUserAgent())
-                                    .header(ApiUtils.API_KEY_HEADER, apiKey)
+                                    .header(InterceptorUtils.USER_AGENT_HEADER, InterceptorUtils.getUserAgent())
+                                    .header(InterceptorUtils.API_KEY_HEADER, apiKey)
+                                    .header(InterceptorUtils.UBER_TRACE_ID_HEADER, InterceptorUtils.getUberTraceId())
                                     .build()
                             )
                         }

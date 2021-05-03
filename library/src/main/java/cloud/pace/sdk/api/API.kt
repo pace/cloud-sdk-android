@@ -1,6 +1,6 @@
 package cloud.pace.sdk.api
 
-import cloud.pace.sdk.utils.ApiUtils.AUTHORIZATION_HEADER
+import cloud.pace.sdk.api.utils.InterceptorUtils.AUTHORIZATION_HEADER
 import cloud.pace.sdk.utils.Environment
 
 object API {

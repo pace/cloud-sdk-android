@@ -2,6 +2,7 @@ package cloud.pace.sdk.utils
 
 import android.content.res.Resources
 import android.util.TypedValue
+import java.security.SecureRandom
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -45,4 +46,13 @@ fun Date.toRfc3339Short(): String {
         timeZone = TimeZone.getTimeZone("UTC")
         format(this@toRfc3339Short)
     }
+}
+
+fun String.Companion.randomHexString(length: Int): String {
+    val secureRandom = SecureRandom()
+    val stringBuilder = StringBuffer()
+    repeat(length) {
+        stringBuilder.append(Integer.toHexString(secureRandom.nextInt()))
+    }
+    return stringBuilder.toString().substring(0, length)
 }

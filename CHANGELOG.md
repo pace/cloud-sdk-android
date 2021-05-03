@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Internal
+
+* Introduce tracing identifier for all API requests and communication with PWA
+
 
 7.2.1 Release notes (2021-04-29)
 =============================================================
@@ -26,6 +30,9 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Add payment method vendor request
 * Add cofuPaymentMethods field to GasStation entity
+
+### Internal
+
 * Introduce timeouts for PWA communication
 
 
