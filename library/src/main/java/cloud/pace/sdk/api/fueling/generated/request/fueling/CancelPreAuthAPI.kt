@@ -24,6 +24,7 @@ import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.File
 import java.util.*
@@ -36,16 +37,16 @@ object CancelPreAuthAPI {
  */
         @DELETE("gas-stations/{gasStationId}/transactions/{transactionId}")
         fun cancelPreAuth(
-            /** Gas station ID */
+            /* Gas station ID */
             @Path("gasStationId") gasStationId: String,
-            /** Transaction ID (for pre auth transactions). */
+            /* Transaction ID (for pre auth transactions). */
             @Path("transactionId") transactionId: String
         ): Call<Void>
     }
 
     private val service: CancelPreAuthService by lazy {
         Retrofit.Builder()
-            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .client(OkHttpClient.Builder().addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
             .baseUrl(FuelingAPI.baseUrl)
             .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
@@ -54,6 +55,14 @@ object CancelPreAuthAPI {
                         .add(ResourceAdapterFactory.builder()
                             .build()
                         )
+                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
+                        .build()
+                )
+            )
+            .addConverterFactory(
+                MoshiConverterFactory.create(
+                    Moshi.Builder()
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
                         .add(KotlinJsonAdapterFactory())
                         .build()
