@@ -17,11 +17,13 @@ import java.util.*
 
 /* Error objects provide additional information about problems encountered while performing an operation.
 Errors also contain codes besides title and message which can be used for checks even if the detailed messages might change.
-    * code `1000`:  generic error
-    * code `1001`:  payment processing temporarily unavailable
-    * code `1002`:  requested amount exceeds the authorized amount of the provided token
-    * code `1003`:  implicit payment methods cannot be modified
-    * code `1004`:  payment method rejected by provider
+    * `1000`:  generic error
+    * `1001`:  payment processing temporarily unavailable
+    * `1002`:  requested amount exceeds the authorized amount of the provided token
+    * `1003`:  implicit payment methods cannot be modified
+    * `1004`:  payment method rejected by provider
+    * `provider:payment-method-rejected`:  payment method rejected by provider (identical to `1004`)
+    * `rule:product-denied`: Product restrictions forbid transaction, e.g., forbidden fuel type - token authorized only for Diesel but attempted to fuel Super.
  */
 class Error {
 
@@ -29,11 +31,13 @@ class Error {
 
     /* Error objects provide additional information about problems encountered while performing an operation.
     Errors also contain codes besides title and message which can be used for checks even if the detailed messages might change.
-        * code `1000`:  generic error
-        * code `1001`:  payment processing temporarily unavailable
-        * code `1002`:  requested amount exceeds the authorized amount of the provided token
-        * code `1003`:  implicit payment methods cannot be modified
-        * code `1004`:  payment method rejected by provider
+        * `1000`:  generic error
+        * `1001`:  payment processing temporarily unavailable
+        * `1002`:  requested amount exceeds the authorized amount of the provided token
+        * `1003`:  implicit payment methods cannot be modified
+        * `1004`:  payment method rejected by provider
+        * `provider:payment-method-rejected`:  payment method rejected by provider (identical to `1004`)
+        * `rule:product-denied`: Product restrictions forbid transaction, e.g., forbidden fuel type - token authorized only for Diesel but attempted to fuel Super.
      */
     class Errors {
 
@@ -59,11 +63,13 @@ class Error {
 
         /* Error objects provide additional information about problems encountered while performing an operation.
         Errors also contain codes besides title and message which can be used for checks even if the detailed messages might change.
-            * code `1000`:  generic error
-            * code `1001`:  payment processing temporarily unavailable
-            * code `1002`:  requested amount exceeds the authorized amount of the provided token
-            * code `1003`:  implicit payment methods cannot be modified
-            * code `1004`:  payment method rejected by provider
+            * `1000`:  generic error
+            * `1001`:  payment processing temporarily unavailable
+            * `1002`:  requested amount exceeds the authorized amount of the provided token
+            * `1003`:  implicit payment methods cannot be modified
+            * `1004`:  payment method rejected by provider
+            * `provider:payment-method-rejected`:  payment method rejected by provider (identical to `1004`)
+            * `rule:product-denied`: Product restrictions forbid transaction, e.g., forbidden fuel type - token authorized only for Diesel but attempted to fuel Super.
          */
         class Links {
 

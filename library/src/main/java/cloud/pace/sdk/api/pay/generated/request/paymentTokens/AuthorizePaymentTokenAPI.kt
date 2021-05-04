@@ -24,6 +24,7 @@ import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.File
 import java.util.*
@@ -44,12 +45,12 @@ object AuthorizePaymentTokenAPI {
     /* When successful, returns a paymentToken value. */
     class Body {
 
-        var data: PaymentTokenCreate? = null
+        var data: PaymentTokenCreateBody? = null
     }
 
     private val service: AuthorizePaymentTokenService by lazy {
         Retrofit.Builder()
-            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .client(OkHttpClient.Builder().addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
             .baseUrl(PayAPI.baseUrl)
             .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
@@ -58,6 +59,14 @@ object AuthorizePaymentTokenAPI {
                         .add(ResourceAdapterFactory.builder()
                             .build()
                         )
+                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
+                        .build()
+                )
+            )
+            .addConverterFactory(
+                MoshiConverterFactory.create(
+                    Moshi.Builder()
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
                         .add(KotlinJsonAdapterFactory())
                         .build()

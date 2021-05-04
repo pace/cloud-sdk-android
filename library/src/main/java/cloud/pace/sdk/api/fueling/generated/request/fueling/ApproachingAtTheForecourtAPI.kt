@@ -24,6 +24,7 @@ import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.File
 import java.util.*
@@ -48,16 +49,16 @@ The approaching is a necessary first api call for connected fueling. Without a v
  */
         @POST("gas-stations/{gasStationId}/approaching")
         fun approachingAtTheForecourt(
-            /** Gas station ID */
+            /* Gas station ID */
             @Path("gasStationId") gasStationId: String,
-            /** Reduces the opening hours rules. After compilation, only rules with the action open will remain in the response. */
+            /* Reduces the opening hours rules. After compilation, only rules with the action open will remain in the response. */
             @Query("compile[openingHours]") compileopeningHours: Boolean? = null
         ): Call<ApproachingResponse>
     }
 
     private val service: ApproachingAtTheForecourtService by lazy {
         Retrofit.Builder()
-            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .client(OkHttpClient.Builder().addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
             .baseUrl(FuelingAPI.baseUrl)
             .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
@@ -66,6 +67,14 @@ The approaching is a necessary first api call for connected fueling. Without a v
                         .add(ResourceAdapterFactory.builder()
                             .build()
                         )
+                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
+                        .build()
+                )
+            )
+            .addConverterFactory(
+                MoshiConverterFactory.create(
+                    Moshi.Builder()
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
                         .add(KotlinJsonAdapterFactory())
                         .build()

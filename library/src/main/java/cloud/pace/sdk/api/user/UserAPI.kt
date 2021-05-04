@@ -20,6 +20,8 @@ object UserAPI {
     internal val baseUrl = "${API.baseUrl}/user/$VERSION/"
 
     class CredentialsAPI
+    class FederatedIdentityAPI
+    class OAuth2API
     class PhoneAPI
     class PreferencesAPI
     class SessionsAPI
@@ -28,6 +30,8 @@ object UserAPI {
     class UserAPI
 
     val API.credentials: CredentialsAPI by lazy { CredentialsAPI() }
+    val API.federatedIdentity: FederatedIdentityAPI by lazy { FederatedIdentityAPI() }
+    val API.oAuth2: OAuth2API by lazy { OAuth2API() }
     val API.phone: PhoneAPI by lazy { PhoneAPI() }
     val API.preferences: PreferencesAPI by lazy { PreferencesAPI() }
     val API.sessions: SessionsAPI by lazy { SessionsAPI() }

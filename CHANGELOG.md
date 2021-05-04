@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Fixes
+
+* Fix body models in generated API requests
+
 ### Internal
 
 * Introduce tracing identifier for all API requests and communication with PWA

@@ -24,6 +24,7 @@ import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.File
 import java.util.*
@@ -48,12 +49,12 @@ If the process is not completed within 24h the process is canceled.
      */
     class Body {
 
-        var data: UpdateUserPhone? = null
+        var data: UpdateUserPhoneBody? = null
     }
 
     private val service: UpdateUserPhoneService by lazy {
         Retrofit.Builder()
-            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .client(OkHttpClient.Builder().addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
             .baseUrl(UserAPI.baseUrl)
             .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
@@ -62,6 +63,14 @@ If the process is not completed within 24h the process is canceled.
                         .add(ResourceAdapterFactory.builder()
                             .build()
                         )
+                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
+                        .build()
+                )
+            )
+            .addConverterFactory(
+                MoshiConverterFactory.create(
+                    Moshi.Builder()
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
                         .add(KotlinJsonAdapterFactory())
                         .build()

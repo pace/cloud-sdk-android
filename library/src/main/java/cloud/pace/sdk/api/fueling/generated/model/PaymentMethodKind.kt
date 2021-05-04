@@ -20,6 +20,8 @@ class PaymentMethodKind : Resource() {
 
     /* data privacy information */
     var dataPrivacy: DataPrivacy? = null
+    /* Indicates whether the payment method is a fuel card. Fuelcard `no` means no. */
+    var fuelcard: Boolean? = null
     /* Indicates whether the payment method can be onboarded/modified. Implict `true` means no. Otherwise yes.
 Most payment method kinds are no implicit, i.e., `implicit=false`.
 This field is optional and if not present should be assumed to indicate `implicit=false`.

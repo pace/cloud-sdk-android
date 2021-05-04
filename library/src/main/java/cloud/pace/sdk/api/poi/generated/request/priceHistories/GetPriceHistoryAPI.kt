@@ -24,6 +24,7 @@ import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.File
 import java.util.*
@@ -36,22 +37,22 @@ object GetPriceHistoryAPI {
  */
         @GET("gas-stations/{id}/fuel-price-histories/{fuel_type}")
         fun getPriceHistory(
-            /** Gas station ID */
+            /* Gas station ID */
             @Path("id") id: String,
-            /** Filter after a specific fuel type */
+            /* Filter after a specific fuel type */
             @Path("fuel_type") fuelType: Fuel? = null,
-            /** Filters data from the given point in time */
+            /* Filters data from the given point in time */
             @Query("filter[from]") filterfrom: String? = null,
-            /** Filters data to the given point in time */
+            /* Filters data to the given point in time */
             @Query("filter[to]") filterto: String? = null,
-            /** Base time interval between price changes */
+            /* Base time interval between price changes */
             @Query("filter[granularity]") filtergranularity: String? = null
         ): Call<PriceHistory>
     }
 
     private val service: GetPriceHistoryService by lazy {
         Retrofit.Builder()
-            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .client(OkHttpClient.Builder().addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
             .baseUrl(POIAPI.baseUrl)
             .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
@@ -60,6 +61,14 @@ object GetPriceHistoryAPI {
                         .add(ResourceAdapterFactory.builder()
                             .build()
                         )
+                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
+                        .build()
+                )
+            )
+            .addConverterFactory(
+                MoshiConverterFactory.create(
+                    Moshi.Builder()
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
                         .add(KotlinJsonAdapterFactory())
                         .build()

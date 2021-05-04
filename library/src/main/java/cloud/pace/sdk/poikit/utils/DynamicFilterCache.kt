@@ -1,4 +1,4 @@
-package cloud.pace.sdk.api.poi
+package cloud.pace.sdk.poikit.utils
 
 import android.location.Location
 import cloud.pace.sdk.api.poi.generated.model.Categories
