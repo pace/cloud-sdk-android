@@ -1,4 +1,4 @@
-package cloud.pace.sdk.api.poi
+package cloud.pace.sdk.poikit.utils
 
 class GasStationCodes {
     companion object {

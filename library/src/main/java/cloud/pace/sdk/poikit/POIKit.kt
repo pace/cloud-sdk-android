@@ -5,8 +5,8 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import cloud.pace.sdk.api.API
-import cloud.pace.sdk.api.poi.GasStationCodes
-import cloud.pace.sdk.api.poi.GasStationMovedResponse
+import cloud.pace.sdk.poikit.utils.GasStationCodes
+import cloud.pace.sdk.poikit.utils.GasStationMovedResponse
 import cloud.pace.sdk.api.poi.POIAPI.gasStations
 import cloud.pace.sdk.api.poi.POIAPI.metadataFilters
 import cloud.pace.sdk.api.poi.POIAPI.priceHistories

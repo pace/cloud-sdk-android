@@ -24,6 +24,7 @@ import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.File
 import java.util.*
@@ -36,16 +37,16 @@ object GetGasStationAPI {
  */
         @GET("gas-stations/{id}")
         fun getGasStation(
-            /** Gas station ID */
+            /* Gas station ID */
             @Path("id") id: String,
-            /** Reduces the opening hours rules. After compilation, only rules with the action open will remain in the response. */
+            /* Reduces the opening hours rules. After compilation, only rules with the action open will remain in the response. */
             @Query("compile[openingHours]") compileopeningHours: Boolean? = null
         ): Call<GasStation>
     }
 
     private val service: GetGasStationService by lazy {
         Retrofit.Builder()
-            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .client(OkHttpClient.Builder().addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
             .baseUrl(POIAPI.baseUrl)
             .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
@@ -57,6 +58,14 @@ object GetGasStationAPI {
                             .add(ReferenceStatus::class.java)
                             .build()
                         )
+                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
+                        .build()
+                )
+            )
+            .addConverterFactory(
+                MoshiConverterFactory.create(
+                    Moshi.Builder()
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
                         .add(KotlinJsonAdapterFactory())
                         .build()

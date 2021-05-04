@@ -24,6 +24,7 @@ import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.File
 import java.util.*
@@ -42,27 +43,27 @@ To search inside a bounding box provide the following query parameter:
  */
         @GET("gas-stations")
         fun getGasStations(
-            /** page number */
+            /* page number */
             @Query("page[number]") pagenumber: Int? = null,
-            /** items per page */
+            /* items per page */
             @Query("page[size]") pagesize: Int? = null,
-            /** POI type you are searching for (in this case gas stations) */
+            /* POI type you are searching for (in this case gas stations) */
             @Query("filter[poiType]") filterpoiType: FilterpoiType? = null,
-            /** Search only gas stations with fueling app available */
+            /* Search only gas stations with fueling app available */
             @Query("filter[appType]") filterappType: List<FilterappType>? = null,
-            /** Latitude in degrees */
+            /* Latitude in degrees */
             @Query("filter[latitude]") filterlatitude: Float? = null,
-            /** Longitude in degrees */
+            /* Longitude in degrees */
             @Query("filter[longitude]") filterlongitude: Float? = null,
-            /** Radius in meters */
+            /* Radius in meters */
             @Query("filter[radius]") filterradius: Float? = null,
-            /** Bounding box representing left, bottom, right, top in degrees. The query parameters need to be passed 4 times in exactly the order left, bottom, right, top.
+            /* Bounding box representing left, bottom, right, top in degrees. The query parameters need to be passed 4 times in exactly the order left, bottom, right, top.
 <table> <tr><th>#</th><th>Value</th><th>Lat/Long</th><th>Range</th></tr> <tr><td>0</td><td>left</td><td>Lat</td><td>[-180..180]</td></tr> <tr><td>1</td><td>bottom</td><td>Long</td><td>[-90..90]</td></tr> <tr><td>2</td><td>right</td><td>Lat</td><td>[-180..180]</td></tr> <tr><td>3</td><td>top</td><td>Long</td><td>[-90..90]</td></tr> </table>
  */
             @Query("filter[boundingBox]") filterboundingBox: List<Float>? = null,
-            /** Reduces the opening hours rules. After compilation only rules with the action open will remain in the response. */
+            /* Reduces the opening hours rules. After compilation only rules with the action open will remain in the response. */
             @Query("compile[openingHours]") compileopeningHours: Boolean? = null,
-            /** Filter by source ID */
+            /* Filter by source ID */
             @Query("filter[source]") filtersource: String? = null
         ): Call<GasStations>
     }
@@ -83,7 +84,7 @@ To search inside a bounding box provide the following query parameter:
 
     private val service: GetGasStationsService by lazy {
         Retrofit.Builder()
-            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .client(OkHttpClient.Builder().addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
             .baseUrl(POIAPI.baseUrl)
             .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
@@ -95,6 +96,14 @@ To search inside a bounding box provide the following query parameter:
                             .add(ReferenceStatus::class.java)
                             .build()
                         )
+                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                        .add(KotlinJsonAdapterFactory())
+                        .build()
+                )
+            )
+            .addConverterFactory(
+                MoshiConverterFactory.create(
+                    Moshi.Builder()
                         .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
                         .add(KotlinJsonAdapterFactory())
                         .build()
