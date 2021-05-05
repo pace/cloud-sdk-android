@@ -1,6 +1,7 @@
 package cloud.pace.sdk.appkit.persistence
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import cloud.pace.sdk.appkit.model.Car
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.PAYMENT_AUTHORIZE
 
@@ -25,7 +26,7 @@ interface SharedPreferencesModel {
 class SharedPreferencesImpl(private val sharedPreferences: SharedPreferences) : SharedPreferencesModel {
 
     override fun putString(key: String, value: String) {
-        sharedPreferences.edit().putString(key, value).apply()
+        sharedPreferences.edit { putString(key, value) }
     }
 
     override fun getString(key: String, defValue: String?): String? {
@@ -33,7 +34,7 @@ class SharedPreferencesImpl(private val sharedPreferences: SharedPreferences) : 
     }
 
     override fun putStringSet(key: String, values: HashSet<String>) {
-        sharedPreferences.edit().putStringSet(key, values).apply()
+        sharedPreferences.edit { putStringSet(key, values) }
     }
 
     override fun getStringSet(key: String, defValues: HashSet<String>?): HashSet<String>? {
@@ -41,7 +42,7 @@ class SharedPreferencesImpl(private val sharedPreferences: SharedPreferences) : 
     }
 
     override fun putInt(key: String, value: Int) {
-        sharedPreferences.edit().putInt(key, value).apply()
+        sharedPreferences.edit { putInt(key, value) }
     }
 
     override fun getInt(key: String, defValue: Int?): Int? {
@@ -53,7 +54,7 @@ class SharedPreferencesImpl(private val sharedPreferences: SharedPreferences) : 
     }
 
     override fun putLong(key: String, value: Long) {
-        sharedPreferences.edit().putLong(key, value).apply()
+        sharedPreferences.edit { putLong(key, value) }
     }
 
     override fun getLong(key: String, defValue: Long?): Long? {
@@ -94,16 +95,16 @@ class SharedPreferencesImpl(private val sharedPreferences: SharedPreferences) : 
     }
 
     override fun removeTotpSecret(host: String?, key: String) {
-        sharedPreferences.edit()
-            .remove(getTotpSecretPreferenceKey(SECRET, host, key))
-            .remove(getTotpSecretPreferenceKey(DIGITS, host, key))
-            .remove(getTotpSecretPreferenceKey(PERIOD, host, key))
-            .remove(getTotpSecretPreferenceKey(ALGORITHM, host, key))
-            .apply()
+        sharedPreferences.edit {
+            remove(getTotpSecretPreferenceKey(SECRET, host, key))
+            remove(getTotpSecretPreferenceKey(DIGITS, host, key))
+            remove(getTotpSecretPreferenceKey(PERIOD, host, key))
+            remove(getTotpSecretPreferenceKey(ALGORITHM, host, key))
+        }
     }
 
     override fun remove(key: String) {
-        sharedPreferences.edit().remove(key).apply()
+        sharedPreferences.edit { remove(key) }
     }
 
     companion object {
@@ -119,6 +120,7 @@ class SharedPreferencesImpl(private val sharedPreferences: SharedPreferences) : 
         const val SECURE_DATA = "secure_data"
         const val DISABLE_TIME = "disable_time"
         const val PAYMENT_AUTHORIZE = "payment-authorize"
+        const val SESSION_CACHE = "sessionCache"
 
         fun getTotpSecretPreferenceKey(which: String, host: String?, key: String) = which + (if (host != null) "_$host" else "") + "_$key"
 

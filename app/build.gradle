@@ -46,5 +46,5 @@ dependencies {
     implementation "androidx.core:core-ktx:$core_ktx_version"
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
-    implementation "androidx.preference:preference:$preference_version"
+    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
 }

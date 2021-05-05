@@ -8,16 +8,23 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
+import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.SESSION_CACHE
+import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.idkit.model.*
 import cloud.pace.sdk.idkit.userinfo.UserInfoApiClient
 import cloud.pace.sdk.idkit.userinfo.UserInfoResponse
-import cloud.pace.sdk.utils.*
+import cloud.pace.sdk.utils.CloudSDKKoinComponent
+import cloud.pace.sdk.utils.Completion
+import cloud.pace.sdk.utils.Failure
+import cloud.pace.sdk.utils.Success
 import net.openid.appauth.*
+import org.json.JSONException
 import timber.log.Timber
 
 internal class AuthorizationManager(
     private val context: Context,
-    private val authorizationService: AuthorizationService
+    private val authorizationService: AuthorizationService,
+    private val sharedPreferencesModel: SharedPreferencesModel
 ) : CloudSDKKoinComponent, LifecycleObserver {
 
     private lateinit var configuration: OIDConfiguration
@@ -34,7 +41,7 @@ internal class AuthorizationManager(
         authorizationRequest = createAuthorizationRequest()
 
         if (additionalCaching) {
-            SharedPreferenceUtils.loadSession(context)?.let {
+            loadSession()?.let {
                 session = it
             }
         }
@@ -114,7 +121,7 @@ internal class AuthorizationManager(
                     }
                     session = clearedState
                 }
-                SharedPreferenceUtils.persistSession(context, session)
+                persistSession(session)
 
                 completion(Success(Unit))
             }
@@ -226,7 +233,7 @@ internal class AuthorizationManager(
     private fun handleTokenResponse(tokenResponse: TokenResponse?, exception: AuthorizationException?, completion: (Completion<String?>) -> Unit) {
         session.update(tokenResponse, exception)
         if (additionalCaching) {
-            SharedPreferenceUtils.persistSession(context, session)
+            persistSession(session)
         }
 
         when {
@@ -244,6 +251,26 @@ internal class AuthorizationManager(
                 Timber.e(throwable, "Failed to handle token response")
                 completion(Failure(throwable))
             }
+        }
+    }
+
+    private fun persistSession(authState: AuthState) {
+        Timber.i("Persisting session to SharedPreferences")
+        sharedPreferencesModel.putString(SESSION_CACHE, authState.jsonSerializeString())
+    }
+
+    private fun loadSession(): AuthState? {
+        Timber.i("Loading session from SharedPreferences")
+        val jsonString = sharedPreferencesModel.getString(SESSION_CACHE)
+        return if (!jsonString.isNullOrEmpty()) {
+            try {
+                AuthState.jsonDeserialize(jsonString)
+            } catch (jsonException: JSONException) {
+                Timber.e(jsonException, "Failed retrieving session from SharedPreferences")
+                null
+            }
+        } else {
+            null
         }
     }
 

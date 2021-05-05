@@ -57,7 +57,7 @@ object KoinConfig {
                 single { AuthorizationService(get()) }
                 single<SharedPreferencesModel> { SharedPreferencesImpl(PreferenceManager.getDefaultSharedPreferences(get())) }
                 single<PayAuthenticationManager> { PayAuthenticationManagerImpl(get()) }
-                single { AuthorizationManager(get(), get()) }
+                single { AuthorizationManager(get(), get(), get()) }
                 single { CredentialsManager(get(), get(), get()) }
             })
         }

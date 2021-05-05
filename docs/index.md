@@ -49,6 +49,40 @@ The complete source code of the SDK can be found on [GitHub](https://github.com/
 ## Specifications
 `PACECloudSDK` currently supports Android 6.0 (API level 23) and above.
 
+It uses the following dependencies:
+
+- [Kotlin Standard Library](https://kotlinlang.org/api/latest/jvm/stdlib/): The Kotlin Standard Library provides living essentials for everyday work with Kotlin.
+- [Kotlinx Coroutines Android](https://github.com/Kotlin/kotlinx.coroutines#android): Provides Dispatchers.Main context for Android applications.
+- [Android Core KTX](https://developer.android.com/kotlin/ktx#core): The Core KTX module provides extensions for common libraries that are part of the Android framework.
+- [Android Appcompat](https://developer.android.com/jetpack/androidx/releases/appcompat): Allows access to new Android APIs on older Android devices.
+- [Android Constraintlayout](https://developer.android.com/jetpack/androidx/releases/constraintlayout): Position and size widgets in a flexible way with relative positioning.
+- [Android Preference KTX](https://developer.android.com/jetpack/androidx/releases/preference): Build interactive settings screens without needing to interact with device storage or manage the UI.
+- [Android Fragment KTX](https://developer.android.com/kotlin/ktx#fragment): The Fragment KTX module provides a number of extensions to simplify the fragment API.
+- [Android LiveData KTX](https://developer.android.com/kotlin/ktx#livedata): Kotlin extension functions for Android LiveData.
+- [Android Biometric](https://developer.android.com/jetpack/androidx/releases/biometric): Authenticate with biometrics or device credentials, and perform cryptographic operations.
+- [Android Browser](https://developer.android.com/jetpack/androidx/releases/browser): This artifact is used for the Chrome Custom Tabs.
+- [Android Room](https://developer.android.com/jetpack/androidx/releases/room): The Room persistence library provides an abstraction layer over SQLite to allow for more robust database access while harnessing the full power of SQLite.
+- [Google Play Services Location](https://developers.google.com/android/reference/com/google/android/gms/location/package-summary): The location APIs available in Google Play services facilitate adding location awareness with automated location tracking, geofencing, and activity recognition.
+- [Google Play Services Maps](https://developers.google.com/android/reference/com/google/android/gms/maps/package-summary): Contains the Google Maps SDK for Android.
+- [Maps SDK for Android Utility Library](https://github.com/googlemaps/android-maps-utils): This open-source library contains utilities for Google Maps Android API.
+- [Protocol Buffers](https://github.com/protocolbuffers/protobuf/tree/master/java): Protocol Buffers (a.k.a., protobuf) are Google's language-neutral, platform-neutral, extensible mechanism for serializing structured data.
+- [Koin for Android](https://insert-koin.io/): A pragmatic lightweight dependency injection framework for Kotlin developers.
+- [Retrofit](https://square.github.io/retrofit/): A type-safe HTTP client for Android and Java.
+- [Retrofit Moshi Converter](https://github.com/square/retrofit/tree/master/retrofit-converters/moshi): A Converter which uses Moshi for serialization to and from JSON.
+- [Retrofit Gson Converter](https://github.com/square/retrofit/tree/master/retrofit-converters/gson): A Converter which uses Gson for serialization to and from JSON.
+- [Retrofit RxJava3 Adapter](https://github.com/square/retrofit/tree/master/retrofit-adapters/rxjava3): An Retrofit call adapter for adapting RxJava 3.x types.
+- [OkHttp logging interceptor](https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor): An OkHttp interceptor which logs HTTP request and response data.
+- [OkHttp logging interceptor](https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor): An OkHttp interceptor which logs HTTP request and response data.
+- [Moshi](https://github.com/square/moshi): Moshi is a modern JSON library for Android and Java.
+- [Moshi adapters](https://github.com/square/moshi/tree/master/adapters): Prebuilt Moshi JsonAdapters for various things, such as Rfc3339DateJsonAdapter for parsing java.util.Date objects.
+- [moshi-jsonapi](https://github.com/kamikat/moshi-jsonapi): Java implementation of JSON:API specification v1.0 for Moshi.
+- [Gson](https://github.com/google/gson): A Java serialization/deserialization library to convert Java Objects into JSON and back.
+- [RxJava](https://github.com/ReactiveX/RxJava): RxJava is a Java VM implementation of Reactive Extensions: a library for composing asynchronous and event-based programs by using observable sequences.
+- [RxAndroid](https://github.com/ReactiveX/RxAndroid): Android specific bindings for RxJava.
+- [AppAuth](https://github.com/openid/AppAuth-Android): AppAuth for Android is a client SDK for communicating with OAuth 2.0 and OpenID Connect providers.
+- [Kotlin One-Time Password](https://github.com/marcelkliemannel/kotlin-onetimepassword): A Kotlin one-time password library to generate "Google Authenticator", "Time-based One-time Password" (TOTP) and "HMAC-based One-time Password" (HOTP) codes based on RFC 4226 and 6238.
+- [Timber](https://github.com/JakeWharton/timber): A logger with a small, extensible API which provides utility on top of Android's normal Log class.
+
 ## Installation
 You can get the `PACECloudSDK` from **one** of the following repositories.
 
