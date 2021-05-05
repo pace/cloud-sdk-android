@@ -13,6 +13,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Internal
 
 * Introduce tracing identifier for all API requests and communication with PWA
+* Refactor `SharedPreferences` handling in `AuthorizationManager`
 
 
 7.2.1 Release notes (2021-04-29)
