@@ -172,17 +172,17 @@ internal class AppManager : CloudSDKKoinComponent {
         }
     }
 
-    internal fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, autoClose: Boolean, callback: AppCallbackImpl? = null) {
-        callback?.onOpen(null)
+    internal fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, autoClose: Boolean, callback: AppCallbackImpl) {
+        callback.onOpen(null)
         startAppActivity(context, url, enableBackToFinish, autoClose, callback)
     }
 
-    internal fun openAppActivity(context: Context, app: App, enableBackToFinish: Boolean = false, autoClose: Boolean, callback: AppCallbackImpl? = null) {
-        callback?.onOpen(app)
+    internal fun openAppActivity(context: Context, app: App, enableBackToFinish: Boolean = false, autoClose: Boolean, callback: AppCallbackImpl) {
+        callback.onOpen(app)
         startAppActivity(context, app.url, enableBackToFinish, autoClose, callback)
     }
 
-    private fun startAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, autoClose: Boolean, callback: AppCallbackImpl? = null) {
+    private fun startAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, autoClose: Boolean, callback: AppCallbackImpl) {
         appModel.callback = callback
 
         val intent = Intent(context, AppActivity::class.java)
@@ -192,7 +192,7 @@ internal class AppManager : CloudSDKKoinComponent {
         context.startActivity(intent)
     }
 
-    internal fun openApps(context: Context, apps: List<App>, buttonContainer: ConstraintLayout, theme: Theme, bottomMargin: Float, autoClose: Boolean, callback: AppCallbackImpl?) {
+    internal fun openApps(context: Context, apps: List<App>, buttonContainer: ConstraintLayout, theme: Theme, bottomMargin: Float, autoClose: Boolean, callback: AppCallbackImpl) {
         closeApps(buttonContainer)
 
         var topAppDrawerId: Int? = null
