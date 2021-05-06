@@ -9,6 +9,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Fixes
 
 * Fix body models in generated API requests
+* Download correct icon for App Drawers
 
 ### Internal
 
