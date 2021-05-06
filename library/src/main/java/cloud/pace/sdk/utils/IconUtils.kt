@@ -6,9 +6,7 @@ object IconUtils {
 
     fun getBestMatchingIcon(buttonWidth: Double, icons: Array<AppManifest.AppIcons>): AppManifest.AppIcons? {
         val sizeDiffs = mutableListOf<Pair<AppManifest.AppIcons, Double>>()
-        for (icon in icons) {
-            if (!icon.src.contains("notification_logo")) continue
-
+        icons.forEach { icon ->
             try {
                 val iconSizes = icon.sizes.split("\\s+".toRegex())
                 iconSizes.forEach {
