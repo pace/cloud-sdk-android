@@ -6,6 +6,9 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+7.3.0 Release notes (2021-05-06)
+=============================================================
+
 ### Fixes
 
 * Fix body models in generated API requests
