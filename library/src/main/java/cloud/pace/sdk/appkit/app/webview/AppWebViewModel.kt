@@ -305,6 +305,7 @@ class AppWebViewModelImpl(
                             continuation.resume(otp)
                         } catch (e: Exception) {
                             statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("Could not decrypt the encrypted TOTP secret.", HttpURLConnection.HTTP_INTERNAL_ERROR)))
+                            continuation.resume(null)
                         }
                     },
                     onFailure = { errorCode, errString ->
@@ -313,6 +314,7 @@ class AppWebViewModelImpl(
                                 id, StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", HttpURLConnection.HTTP_UNAUTHORIZED)
                             )
                         )
+                        continuation.resume(null)
                     }
                 )))
             }?.let {
@@ -373,15 +375,16 @@ class AppWebViewModelImpl(
                             continuation.resume(value)
                         } catch (e: Exception) {
                             statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("Could not decrypt the encrypted secure data value.", HttpURLConnection.HTTP_INTERNAL_ERROR)))
+                            continuation.resume(null)
                         }
                     },
                     onFailure = { errorCode, errString ->
                         statusCode.postValue(
                             ResponseEvent(
-                                id,
-                                StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", HttpURLConnection.HTTP_UNAUTHORIZED)
+                                id, StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", HttpURLConnection.HTTP_UNAUTHORIZED)
                             )
                         )
+                        continuation.resume(null)
                     }
                 )))
             }?.let {

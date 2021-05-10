@@ -4,6 +4,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.InvalidTokenReason
+import cloud.pace.sdk.appkit.utils.TokenValidator
+import cloud.pace.sdk.idkit.IDKit
+import cloud.pace.sdk.utils.CloudSDKKoinComponent
+import cloud.pace.sdk.utils.Success
+import org.koin.core.inject
 
 /**
  * Public callback functions to subscribe to app events.
@@ -84,13 +89,30 @@ interface AppCallback {
     fun getConfig(key: String, config: (String?) -> Unit)
 }
 
-abstract class AppCallbackImpl : AppCallback {
+abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
+
+    private val appModel: AppModel by inject()
 
     override fun onOpen(app: App?) {}
     override fun onClose() {}
     override fun onOpenInNewTab(url: String) {}
     override fun onDisable(host: String) {}
-    override fun onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit) {}
+    override fun onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit) {
+        if (!IDKit.isInitialized) return
+
+        if (IDKit.isAuthorizationValid()) {
+            if (reason == InvalidTokenReason.UNAUTHORIZED && oldToken != null && TokenValidator.isTokenValid(oldToken)) {
+                appModel.close(true)
+            } else {
+                IDKit.refreshToken {
+                    (it as? Success)?.result?.let(onResult) ?: appModel.authorize(onResult)
+                }
+            }
+        } else {
+            appModel.authorize(onResult)
+        }
+    }
+
     override fun onCustomSchemeError(context: Context?, scheme: String) {}
     override fun onImageDataReceived(bitmap: Bitmap) {}
     override fun setUserProperty(key: String, value: String, update: Boolean) {}
