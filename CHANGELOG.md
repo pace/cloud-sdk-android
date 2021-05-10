@@ -3,11 +3,16 @@ x.y.z Release notes (yyyy-MM-dd)
 
 <!-- ### Breaking changes - Include, if needed -->
 <!-- ### Enhancements - Include, if needed -->
+<!-- ### Fixed - Include, if needed -->
+<!-- ### Internal - Include, if needed -->
+
+7.3.1 Release notes (2021-05-10)
+=============================================================
+
 ### Fixes
 
 * Ensure that `additionalQueryParams` is added to all PWA URLs
 
-<!-- ### Internal - Include, if needed -->
 
 7.3.0 Release notes (2021-05-06)
 =============================================================
