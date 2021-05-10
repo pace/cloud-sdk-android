@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
 import cloud.pace.sdk.R
+import cloud.pace.sdk.api.utils.InterceptorUtils
 import cloud.pace.sdk.appkit.app.AppFragmentViewModelImpl.Companion.CHROME_PACKAGE_NAME
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import kotlinx.android.synthetic.main.fragment_app.*
@@ -30,7 +31,7 @@ class AppFragment : Fragment(), CloudSDKKoinComponent {
 
         val autoClose = activity?.intent?.extras?.getBoolean(AppActivity.AUTO_CLOSE) ?: true
 
-        appWebView.loadApp(this, url)
+        appWebView.loadApp(this, InterceptorUtils.getUrlWithQueryParams(url))
 
         viewModel.closeEvent.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { (force, urls) ->
