@@ -24,9 +24,8 @@ class CredentialsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_credentials)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        IDKit.refreshToken()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         is_biometry_enabled.setOnClickListener {
             Toast.makeText(this, if (IDKit.isBiometricAuthenticationEnabled()) "Biometric authentication is enabled" else "Biometric authentication is not enabled", Toast.LENGTH_SHORT).show()

@@ -11,7 +11,6 @@ object InternalError : Exception("An internal error occured.")
 object BiometricAuthenticationNotSupported : Exception("The device doesn't have biometric authentication.")
 object BiometricAuthenticationNotSet : Exception("Biometric authentication is not set.")
 object PINNotSecure : Exception("PIN not secure.")
-object OperationCanceled : Exception("Operation was canceled by the user.")
 data class AuthorizationError(
     val type: Int,
     val code: Int,

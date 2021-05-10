@@ -3,7 +3,6 @@ package cloud.pace.sdk.idkit
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import cloud.pace.sdk.api.user.generated.model.PinOrPassword
@@ -19,7 +18,6 @@ import org.koin.core.inject
 
 object IDKit : IDKitKoinComponent {
 
-    internal var isInitialized = false
     private val authorizationManager: AuthorizationManager by inject()
     private val credentialsManager: CredentialsManager by inject()
 
@@ -33,8 +31,7 @@ object IDKit : IDKitKoinComponent {
     @JvmOverloads
     fun setup(context: Context, configuration: OIDConfiguration, additionalCaching: Boolean = true) {
         KoinConfig.setupIDKit(context)
-        authorizationManager.setup(configuration, additionalCaching)
-        isInitialized = true
+        authorizationManager.setup(context, configuration, additionalCaching)
     }
 
     /**
@@ -44,24 +41,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the discovery is complete either including the [ServiceConfiguration] or a [Throwable].
      */
     fun discoverConfiguration(issuerUri: String, completion: (Completion<ServiceConfiguration>) -> Unit) = authorizationManager.discoverConfiguration(issuerUri, completion)
-
-    /**
-     * Sends an authorization request to the authorization service, using a [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs)
-     * and handles the authorization response automatically.
-     *
-     * @param activity The Activity to launch the authorization request [Intent].
-     * @param completion The block to be called when the request is completed including either a valid `accessToken` or [Throwable].
-     */
-    suspend fun authorize(activity: AppCompatActivity, completion: (Completion<String?>) -> Unit = {}) = authorizationManager.authorize(activity, completion)
-
-    /**
-     * Sends an authorization request to the authorization service, using a [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs)
-     * and handles the authorization response automatically.
-     *
-     * @param fragment The Fragment to launch the authorization request [Intent].
-     * @param completion The block to be called when the request is completed including either a valid `accessToken` or [Throwable].
-     */
-    suspend fun authorize(fragment: Fragment, completion: (Completion<String?>) -> Unit = {}) = authorizationManager.authorize(fragment, completion)
 
     /**
      * Sends an authorization request to the authorization service, using a [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs).
@@ -90,6 +69,14 @@ object IDKit : IDKitKoinComponent {
     fun handleAuthorizationResponse(intent: Intent, completion: (Completion<String?>) -> Unit) = authorizationManager.handleAuthorizationResponse(intent, completion)
 
     /**
+     * Resets the local session object.
+     *
+     * @param intent Represents the [Intent] from the [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs).
+     * @param completion The block to be called when the session was reset or a [Throwable] when an exception occurred.
+     */
+    fun handleEndSessionResponse(intent: Intent, completion: (Completion<Unit>) -> Unit) = authorizationManager.handleEndSessionResponse(intent, completion)
+
+    /**
      * Refreshes the current access token if needed.
      *
      * @param force Forces a refresh even if the current `accessToken` is still valid. Defaults to `false`.
@@ -97,24 +84,6 @@ object IDKit : IDKitKoinComponent {
      */
     @JvmOverloads
     fun refreshToken(force: Boolean = false, completion: (Completion<String?>) -> Unit = {}) = authorizationManager.refreshToken(force, completion)
-
-    /**
-     * Sends an end session request to the authorization service, using a [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs)
-     * and handles the end session response automatically.
-     *
-     * @param activity The Activity to launch the end session request [Intent].
-     * @param completion The block to be called when the session has been reset or a [Throwable] when an exception occurred.
-     */
-    suspend fun endSession(activity: AppCompatActivity, completion: (Completion<Unit>) -> Unit = {}) = authorizationManager.endSession(activity, completion)
-
-    /**
-     * Sends an end session request to the authorization service, using a [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs)
-     * and handles the end session response automatically.
-     *
-     * @param fragment The Fragment to launch the end session request [Intent].
-     * @param completion The block to be called when the session has been reset or a [Throwable] when an exception occurred.
-     */
-    suspend fun endSession(fragment: Fragment, completion: (Completion<Unit>) -> Unit = {}) = authorizationManager.endSession(fragment, completion)
 
     /**
      * Sends an end session request to the authorization service, using a [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs).
@@ -137,14 +106,6 @@ object IDKit : IDKitKoinComponent {
      * @return The end session request [Intent] or null, if none could be created due to an invalid session.
      */
     fun endSession() = authorizationManager.endSession()
-
-    /**
-     * Resets the local session object.
-     *
-     * @param intent Represents the [Intent] from the [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs).
-     * @param completion The block to be called when the session has been reset or a [Throwable] when an exception occurred.
-     */
-    fun handleEndSessionResponse(intent: Intent, completion: (Completion<Unit>) -> Unit) = authorizationManager.handleEndSessionResponse(intent, completion)
 
     /**
      * Checks the current authorization state. Returning `true` does not mean that the access is fresh - just that it was valid the last time it was used.

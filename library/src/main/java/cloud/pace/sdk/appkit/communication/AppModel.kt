@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cloud.pace.sdk.appkit.model.InvalidTokenReason
-import cloud.pace.sdk.utils.Event
 import cloud.pace.sdk.utils.onMainThread
 
 interface AppModel {
@@ -13,10 +12,8 @@ interface AppModel {
     var callback: AppCallbackImpl?
     val close: LiveData<Pair<Boolean, List<String>?>>
     val openUrlInNewTab: LiveData<String>
-    val authorize: LiveData<Event<AuthorizationResult>>
 
     fun reset()
-    fun authorize(onResult: (String) -> Unit)
     fun close(force: Boolean = false, urls: List<String>? = null)
     fun openUrlInNewTab(url: String)
     fun disable(host: String)
@@ -26,8 +23,6 @@ interface AppModel {
     fun setUserProperty(key: String, value: String, update: Boolean)
     fun logEvent(key: String, parameters: Map<String, Any>)
     fun getConfig(key: String, config: (String?) -> Unit)
-
-    class AuthorizationResult(val onResult: (String) -> Unit)
 }
 
 class AppModelImpl : AppModel {
@@ -35,17 +30,10 @@ class AppModelImpl : AppModel {
     override var callback: AppCallbackImpl? = null
     override var close = MutableLiveData<Pair<Boolean, List<String>?>>()
     override var openUrlInNewTab = MutableLiveData<String>()
-    override val authorize = MutableLiveData<Event<AppModel.AuthorizationResult>>()
 
     override fun reset() {
         close = MutableLiveData()
         openUrlInNewTab = MutableLiveData()
-    }
-
-    override fun authorize(onResult: (String) -> Unit) {
-        onMainThread {
-            authorize.value = Event(AppModel.AuthorizationResult(onResult))
-        }
     }
 
     override fun close(force: Boolean, urls: List<String>?) {

@@ -47,5 +47,4 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$appcompat_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
 }

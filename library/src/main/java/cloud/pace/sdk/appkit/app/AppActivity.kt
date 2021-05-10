@@ -3,15 +3,11 @@ package cloud.pace.sdk.appkit.app
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
-import cloud.pace.sdk.idkit.IDKit
-import cloud.pace.sdk.utils.*
+import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import kotlinx.android.synthetic.main.fragment_app.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
@@ -37,16 +33,6 @@ class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
         }
 
         backToFinish = intent.extras?.getBoolean(BACK_TO_FINISH, true) ?: true
-
-        appModel.authorize.observe(this) { event ->
-            event.getContentIfNotHandled()?.let { authorizationResult ->
-                lifecycleScope.launch(Dispatchers.Main) {
-                    IDKit.authorize(this@AppActivity) { completion ->
-                        (completion as? Success)?.result?.let { authorizationResult.onResult(it) } ?: finish()
-                    }
-                }
-            }
-        }
 
         handleIntent(intent)
     }

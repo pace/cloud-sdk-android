@@ -16,7 +16,6 @@ object AppKit : CloudSDKKoinComponent {
 
     private val appManager: AppManager by inject()
     internal lateinit var userAgent: String
-    private val defaultAppCallback = object : AppCallbackImpl() {}
 
     /**
      * Specifies whether the light or dark theme should be used for the apps.
@@ -102,7 +101,7 @@ object AppKit : CloudSDKKoinComponent {
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
     @JvmOverloads
-    fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
+    fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl? = null) {
         appManager.openAppActivity(context, url, enableBackToFinish, autoClose, callback)
     }
 
@@ -115,7 +114,7 @@ object AppKit : CloudSDKKoinComponent {
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
     @JvmOverloads
-    fun openAppActivity(context: Context, app: App, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
+    fun openAppActivity(context: Context, app: App, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl? = null) {
         appManager.openAppActivity(context, app, enableBackToFinish, autoClose, callback)
     }
 
@@ -127,7 +126,7 @@ object AppKit : CloudSDKKoinComponent {
      * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
-    fun openPaceID(context: Context, enableBackToFinish: Boolean = true, autoClose: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
+    fun openPaceID(context: Context, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl? = null) {
         appManager.openAppActivity(context, PACECloudSDK.configuration.environment.idUrl, enableBackToFinish, autoClose, callback)
     }
 
@@ -139,7 +138,7 @@ object AppKit : CloudSDKKoinComponent {
      * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
-    fun openPaymentApp(context: Context, enableBackToFinish: Boolean = true, autoClose: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
+    fun openPaymentApp(context: Context, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl? = null) {
         appManager.openAppActivity(context, PACECloudSDK.configuration.environment.payUrl, enableBackToFinish, autoClose, callback)
     }
 
@@ -151,7 +150,7 @@ object AppKit : CloudSDKKoinComponent {
      * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
-    fun openTransactions(context: Context, enableBackToFinish: Boolean = true, autoClose: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
+    fun openTransactions(context: Context, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl? = null) {
         appManager.openAppActivity(context, PACECloudSDK.configuration.environment.transactionUrl, enableBackToFinish, autoClose, callback)
     }
 
@@ -164,7 +163,7 @@ object AppKit : CloudSDKKoinComponent {
      * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
-    fun openFuelingApp(context: Context, id: String? = null, enableBackToFinish: Boolean = true, autoClose: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
+    fun openFuelingApp(context: Context, id: String? = null, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl? = null) {
         if (id == null) {
             appManager.openAppActivity(context, PACECloudSDK.configuration.environment.fuelingUrl, enableBackToFinish, autoClose, callback)
             return
@@ -193,7 +192,7 @@ object AppKit : CloudSDKKoinComponent {
         theme: Theme = Theme.LIGHT,
         bottomMargin: Float = 16f,
         autoClose: Boolean = true,
-        callback: AppCallbackImpl = defaultAppCallback
+        callback: AppCallbackImpl? = null
     ) {
         appManager.openApps(context, apps, buttonContainer, theme, bottomMargin, autoClose, callback)
     }

@@ -4,19 +4,19 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.SESSION_CACHE
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
-import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.*
 import cloud.pace.sdk.idkit.userinfo.UserInfoApiClient
 import cloud.pace.sdk.idkit.userinfo.UserInfoResponse
-import cloud.pace.sdk.utils.*
+import cloud.pace.sdk.utils.CloudSDKKoinComponent
+import cloud.pace.sdk.utils.Completion
+import cloud.pace.sdk.utils.Failure
+import cloud.pace.sdk.utils.Success
 import net.openid.appauth.*
 import org.json.JSONException
 import timber.log.Timber
@@ -33,7 +33,7 @@ internal class AuthorizationManager(
 
     private var additionalCaching = true
 
-    internal fun setup(configuration: OIDConfiguration, additionalCaching: Boolean = true) {
+    internal fun setup(context: Context, configuration: OIDConfiguration, additionalCaching: Boolean = true) {
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 
         this.configuration = configuration
@@ -65,20 +65,6 @@ internal class AuthorizationManager(
                     completion(Failure(throwable))
                 }
             }
-        }
-    }
-
-    internal suspend fun authorize(activity: AppCompatActivity, completion: (Completion<String?>) -> Unit) {
-        when (val result = activity.getResultFor(authorize())) {
-            is Ok -> result.data?.let { handleAuthorizationResponse(it, completion) } ?: completion(Failure(InternalError))
-            is Canceled -> completion(Failure(OperationCanceled))
-        }
-    }
-
-    internal suspend fun authorize(fragment: Fragment, completion: (Completion<String?>) -> Unit) {
-        when (val result = fragment.getResultFor(authorize())) {
-            is Ok -> result.data?.let { handleAuthorizationResponse(it, completion) } ?: completion(Failure(InternalError))
-            is Canceled -> completion(Failure(OperationCanceled))
         }
     }
 
@@ -115,48 +101,6 @@ internal class AuthorizationManager(
         }
     }
 
-    internal fun refreshToken(force: Boolean = false, completion: (Completion<String?>) -> Unit) {
-        if (isAuthorizationValid()) {
-            if (force) {
-                session.needsTokenRefresh = true
-            }
-            performTokenRequest(session.createTokenRefreshRequest(), completion)
-        } else {
-            completion(Failure(InvalidSession))
-        }
-    }
-
-    internal suspend fun endSession(activity: AppCompatActivity, completion: (Completion<Unit>) -> Unit) {
-        endSession()?.let { intent ->
-            when (val result = activity.getResultFor(intent)) {
-                is Ok -> result.data?.let { IDKit.handleEndSessionResponse(it, completion) } ?: completion(Failure(InternalError))
-                is Canceled -> completion(Failure(OperationCanceled))
-            }
-        } ?: completion(Failure(FailedRetrievingSessionWhileEnding))
-    }
-
-    internal suspend fun endSession(fragment: Fragment, completion: (Completion<Unit>) -> Unit) {
-        endSession()?.let { intent ->
-            when (val result = fragment.getResultFor(intent)) {
-                is Ok -> result.data?.let { IDKit.handleEndSessionResponse(it, completion) } ?: completion(Failure(InternalError))
-                is Canceled -> completion(Failure(OperationCanceled))
-            }
-        } ?: completion(Failure(FailedRetrievingSessionWhileEnding))
-    }
-
-    internal fun endSession(completedActivity: Class<*>, canceledActivity: Class<*>): Boolean {
-        return createEndSessionRequest()?.let {
-            authorizationService.performEndSessionRequest(
-                it,
-                PendingIntent.getActivity(context, 0, Intent(context, completedActivity), 0),
-                PendingIntent.getActivity(context, 0, Intent(context, canceledActivity), 0)
-            )
-            true
-        } ?: false
-    }
-
-    internal fun endSession() = createEndSessionRequest()?.let { authorizationService.getEndSessionRequestIntent(it) }
-
     internal fun handleEndSessionResponse(intent: Intent, completion: (Completion<Unit>) -> Unit) {
         val response = EndSessionResponse.fromIntent(intent)
         val exception = AuthorizationException.fromIntent(intent)
@@ -188,6 +132,30 @@ internal class AuthorizationManager(
             }
         }
     }
+
+    internal fun refreshToken(force: Boolean = false, completion: (Completion<String?>) -> Unit) {
+        if (isAuthorizationValid()) {
+            if (force) {
+                session.needsTokenRefresh = true
+            }
+            performTokenRequest(session.createTokenRefreshRequest(), completion)
+        } else {
+            completion(Failure(InvalidSession))
+        }
+    }
+
+    internal fun endSession(completedActivity: Class<*>, canceledActivity: Class<*>): Boolean {
+        return createEndSessionRequest()?.let {
+            authorizationService.performEndSessionRequest(
+                it,
+                PendingIntent.getActivity(context, 0, Intent(context, completedActivity), 0),
+                PendingIntent.getActivity(context, 0, Intent(context, canceledActivity), 0)
+            )
+            true
+        } ?: false
+    }
+
+    internal fun endSession() = createEndSessionRequest()?.let { authorizationService.getEndSessionRequestIntent(it) }
 
     internal fun isAuthorizationValid() = session.isAuthorized
 
