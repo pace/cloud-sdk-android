@@ -2,6 +2,7 @@ package cloud.pace.sdk.api.utils
 
 import android.os.Build
 import cloud.pace.sdk.BuildConfig
+import android.net.Uri
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.utils.DeviceUtils
@@ -47,6 +48,15 @@ object InterceptorUtils {
 
             it.proceed(builder.build())
         }
+    }
+
+    fun getUrlWithQueryParams(url: String): String {
+        val newUrl = Uri.parse(url).buildUpon()
+        PACECloudSDK.additionalQueryParams.forEach {
+            newUrl.appendQueryParameter(it.key, it.value)
+        }
+
+        return newUrl.build().toString()
     }
 
     fun getUserAgent(versionName: String = BuildConfig.VERSION_NAME, versionCode: Int = BuildConfig.VERSION_CODE): String {

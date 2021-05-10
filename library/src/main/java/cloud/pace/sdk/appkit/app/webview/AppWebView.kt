@@ -12,6 +12,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.R
+import cloud.pace.sdk.api.utils.InterceptorUtils
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.MessageHandler
 import cloud.pace.sdk.appkit.utils.BiometricUtils

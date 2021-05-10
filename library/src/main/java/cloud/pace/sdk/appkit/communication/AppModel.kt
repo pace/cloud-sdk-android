@@ -71,7 +71,9 @@ class AppModelImpl : AppModel {
     }
 
     override fun onCustomSchemeError(context: Context?, scheme: String) {
-        callback?.onCustomSchemeError(context, scheme)
+        onMainThread {
+            callback?.onCustomSchemeError(context, scheme)
+        }
     }
 
     override fun onImageDataReceived(bitmap: Bitmap) {
