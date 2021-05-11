@@ -3,8 +3,17 @@ x.y.z Release notes (yyyy-MM-dd)
 
 <!-- ### Breaking changes - Include, if needed -->
 <!-- ### Enhancements - Include, if needed -->
-<!-- ### Fixed - Include, if needed -->
+<!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
+
+### Enhancements
+
+* Add functions to launch the authorization and end session request as well as the handling of the response inline
+
+### Internal
+
+* Add default implementation of `onTokenInvalid` callback which automatically tries to refresh the token and shows the login form in case of error
+
 
 7.3.1 Release notes (2021-05-10)
 =============================================================

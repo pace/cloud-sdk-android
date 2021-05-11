@@ -26,43 +26,15 @@
                 android:textSize="20sp"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <RadioGroup
-                android:id="@+id/radio_group"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:checkedButton="@id/radio_activity_result_api"
-                android:orientation="vertical"
-                app:layout_constraintTop_toBottomOf="@id/info_label">
-
-                <RadioButton
-                    android:id="@+id/radio_activity_result_api"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="onRadioButtonClicked"
-                    android:text="Use Activity Result API"
-                    android:textSize="18sp" />
-
-                <RadioButton
-                    android:id="@+id/radio_pending_intents"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:onClick="onRadioButtonClicked"
-                    android:text="Use PendingIntents"
-                    android:textSize="18sp" />
-
-            </RadioGroup>
-
             <Button
                 android:id="@+id/payment_app"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:background="@android:color/holo_orange_dark"
+                android:layout_marginTop="30dp"
+                android:background="@android:color/holo_blue_light"
                 android:text="Start payment app"
                 android:textColor="@android:color/white"
-                app:layout_constraintTop_toBottomOf="@id/radio_group" />
+                app:layout_constraintTop_toBottomOf="@id/info_label" />
 
             <Button
                 android:id="@+id/fueling_app"
@@ -75,6 +47,26 @@
                 app:layout_constraintTop_toBottomOf="@id/payment_app" />
 
             <Button
+                android:id="@+id/transactions_app"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@android:color/holo_blue_light"
+                android:text="Start transactions app"
+                android:textColor="@android:color/white"
+                app:layout_constraintTop_toBottomOf="@id/fueling_app" />
+
+            <Button
+                android:id="@+id/pace_id_app"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@android:color/holo_blue_light"
+                android:text="Start PACE ID app"
+                android:textColor="@android:color/white"
+                app:layout_constraintTop_toBottomOf="@id/transactions_app" />
+
+            <Button
                 android:id="@+id/user_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -82,7 +74,7 @@
                 android:background="@android:color/holo_purple"
                 android:text="Get user info"
                 android:textColor="@android:color/white"
-                app:layout_constraintTop_toBottomOf="@+id/fueling_app" />
+                app:layout_constraintTop_toBottomOf="@+id/pace_id_app" />
 
             <Button
                 android:id="@+id/discover_configuration"
