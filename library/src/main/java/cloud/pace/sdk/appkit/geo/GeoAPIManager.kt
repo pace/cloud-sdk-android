@@ -9,6 +9,7 @@ import com.google.maps.android.PolyUtil
 interface GeoAPIManager {
 
     fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit)
+    fun features(poiId: String, latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit)
 }
 
 class GeoAPIManagerImpl(
@@ -19,9 +20,24 @@ class GeoAPIManagerImpl(
     private var cache: GeoAPICache? = null
 
     override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {
-        val cache = cache
-        if (cache != null && isInRadius(latitude, longitude, cache.center) && systemManager.getCurrentTimeMillis() - cache.time <= CACHE_MAX_AGE) {
+        if (isCacheValid(latitude, longitude)) {
             completion(Result.success(loadApps(latitude, longitude)))
+        } else {
+            buildCache(latitude, longitude) {
+                it.onSuccess {
+                    completion(Result.success(loadApps(latitude, longitude)))
+                }
+
+                it.onFailure { throwable ->
+                    completion(Result.failure(throwable))
+                }
+            }
+        }
+    }
+
+    override fun features(poiId: String, latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {
+        if (isCacheValid(latitude, longitude)) {
+            completion(Result.success(cache?.features ?: emptyList()))
         } else {
             buildCache(latitude, longitude, completion)
         }
@@ -57,7 +73,7 @@ class GeoAPIManagerImpl(
             } ?: emptyList()
     }
 
-    private fun buildCache(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {
+    private fun buildCache(latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {
         appAPI.getGeoApiApps { result ->
             result.onSuccess { response ->
                 val center = LatLng(latitude, longitude)
@@ -76,10 +92,15 @@ class GeoAPIManagerImpl(
 
                 cache = GeoAPICache(features, time, center)
 
-                completion(Result.success(loadApps(latitude, longitude)))
+                completion(Result.success(features))
             }
             result.onFailure { completion(Result.failure(it)) }
         }
+    }
+
+    private fun isCacheValid(latitude: Double, longitude: Double): Boolean {
+        val cache = cache
+        return cache != null && isInRadius(latitude, longitude, cache.center) && systemManager.getCurrentTimeMillis() - cache.time <= CACHE_MAX_AGE
     }
 
     private fun isInRadius(latitude: Double?, longitude: Double?, center: LatLng): Boolean {

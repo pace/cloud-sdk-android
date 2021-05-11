@@ -13,6 +13,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Internal
 
 * Add default implementation of `onTokenInvalid` callback which automatically tries to refresh the token and shows the login form in case of error
+* Refactor `isPoiInRange` check so that it no longer checks if the position is within the POI's polygon, but if beeline to the POI is within 500m
 
 
 7.3.1 Release notes (2021-05-10)

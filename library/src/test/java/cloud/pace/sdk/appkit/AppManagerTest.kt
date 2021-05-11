@@ -11,9 +11,7 @@ import cloud.pace.sdk.appkit.app.api.UriManager
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.communication.AppModelImpl
-import cloud.pace.sdk.appkit.geo.GeoAPIApp
-import cloud.pace.sdk.appkit.geo.GeoAPIManager
-import cloud.pace.sdk.appkit.geo.GeoGasStation
+import cloud.pace.sdk.appkit.geo.*
 import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.persistence.CacheModel
@@ -45,6 +43,26 @@ class AppManagerTest : CloudSDKKoinComponent {
 
     @Mock
     private lateinit var mockLocation: Location
+
+    private val polygon = listOf(
+        listOf(8.427429, 49.01304015764206),
+        listOf(8.427166935031618, 49.013005967255644),
+        listOf(8.426944768026093, 49.012908601401435),
+        listOf(8.426796322288334, 49.01276288345869),
+        listOf(8.426744196943954, 49.01259099797384),
+        listOf(8.426796326657078, 49.01241911308242),
+        listOf(8.42694477420443, 49.0122733965724),
+        listOf(8.427166939400362, 49.0121760321509),
+        listOf(8.427429, 49.012141842357934),
+        listOf(8.427691060599638, 49.0121760321509),
+        listOf(8.42791322579557, 49.0122733965724),
+        listOf(8.42806167334292, 49.01241911308242),
+        listOf(8.428113803056045, 49.01259099797384),
+        listOf(8.428061677711664, 49.01276288345869),
+        listOf(8.427913231973907, 49.012908601401435),
+        listOf(8.427691064968382, 49.013005967255644),
+        listOf(8.427429, 49.01304015764206)
+    )
 
     @Before
     fun init() {
@@ -272,8 +290,8 @@ class AppManagerTest : CloudSDKKoinComponent {
         val id = "e3211b77-03f0-4d49-83aa-4adaa46d95ae"
 
         val geoApiManager = object : TestGeoAPIManager() {
-            override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {
-                completion(Result.success(listOf(GeoGasStation(id, listOf(GeoAPIApp("fueling", "https://app.test"))))))
+            override fun features(poiId: String, latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {
+                completion(Result.success(listOf(getGeoAPIFeature(id))))
             }
         }
 
@@ -319,8 +337,8 @@ class AppManagerTest : CloudSDKKoinComponent {
         val id2 = "992b77b6-5982-4848-88fe-ae2633308279"
 
         val geoApiManager = object : TestGeoAPIManager() {
-            override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {
-                completion(Result.success(listOf(GeoGasStation(id1, listOf(GeoAPIApp("fueling", "https://app.test"))))))
+            override fun features(poiId: String, latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {
+                completion(Result.success(listOf(getGeoAPIFeature(id2))))
             }
         }
 
@@ -353,11 +371,30 @@ class AppManagerTest : CloudSDKKoinComponent {
         setupKoinForTests(testModule)
 
         val future = CompletableFuture<Boolean>()
-        AppManager().isPoiInRange(id2) {
+        AppManager().isPoiInRange(id1) {
             future.complete(it)
         }
 
         assertFalse(future.get())
+    }
+
+    private fun getGeoAPIFeature(id: String): GeoAPIFeature {
+        return GeoAPIFeature(
+            id,
+            "Feature",
+            GeoAPIGeometry(
+                "Polygon",
+                listOf(polygon)
+            ),
+            GeoAPIProperties(
+                listOf(
+                    GeoAPIApp(
+                        "fueling",
+                        "https://fueling.app.test"
+                    )
+                )
+            )
+        )
     }
 
     private fun setupKoinForTests(module: Module) {

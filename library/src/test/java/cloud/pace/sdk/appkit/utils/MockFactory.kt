@@ -14,6 +14,7 @@ import cloud.pace.sdk.appkit.app.api.AppRepository
 import cloud.pace.sdk.appkit.app.api.UriManager
 import cloud.pace.sdk.appkit.app.webview.AppWebViewClient
 import cloud.pace.sdk.appkit.communication.AppEventManager
+import cloud.pace.sdk.appkit.geo.GeoAPIFeature
 import cloud.pace.sdk.appkit.geo.GeoAPIManager
 import cloud.pace.sdk.appkit.geo.GeoAPIResponse
 import cloud.pace.sdk.appkit.geo.GeoGasStation
@@ -204,4 +205,5 @@ open class TestCacheModel : CacheModel {
 open class TestGeoAPIManager : GeoAPIManager {
 
     override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {}
+    override fun features(poiId: String, latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {}
 }

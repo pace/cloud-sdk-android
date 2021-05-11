@@ -5,7 +5,6 @@ import cloud.pace.sdk.appkit.utils.TestAppAPI
 import cloud.pace.sdk.utils.CompletableFutureCompat
 import cloud.pace.sdk.utils.SystemManager
 import junit.framework.Assert.assertEquals
-import junit.framework.Assert.assertNotNull
 import org.junit.Test
 import org.mockito.Mockito.mock
 import java.util.*
@@ -129,10 +128,12 @@ class GeoAPIManagerTest {
     }
 
     @Test
-    fun `cache returns failure`() {
+    fun `cache returns failure when fetching apps`() {
+        val exception = Exception("What a terrible failure")
+
         val appApi = object : TestAppAPI() {
             override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
-                completion(Result.failure(RuntimeException()))
+                completion(Result.failure(exception))
             }
         }
 
@@ -143,7 +144,50 @@ class GeoAPIManagerTest {
             it.onFailure { exceptionFuture.complete(it) }
         }
 
-        assertNotNull(exceptionFuture.get(2, TimeUnit.SECONDS))
+        assertEquals(exception, exceptionFuture.get(2, TimeUnit.SECONDS))
+    }
+
+    @Test
+    fun `cache successfully returns features`() {
+        val id = "e3211b77-03f0-4d49-83aa-4adaa46d95ae"
+
+        val appApi = object : TestAppAPI() {
+            override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
+                completion(Result.success(createGeoAPIResponse(listOf(polygon), id)))
+            }
+        }
+
+        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java))
+        val geoAPIFeature = CompletableFutureCompat<List<GeoAPIFeature>>()
+        geoApiManager.features(id, 49.012713, 8.427777) {
+            it.onSuccess { geoAPIFeature.complete(it) }
+            it.onFailure { throw it }
+        }
+
+        val features = geoAPIFeature.get(2, TimeUnit.SECONDS)
+        assertEquals(1, features.size)
+        assertEquals(id, features.first().id)
+    }
+
+    @Test
+    fun `cache returns failure when fetching features`() {
+        val id = "e3211b77-03f0-4d49-83aa-4adaa46d95ae"
+        val exception = Exception("What a terrible failure")
+
+        val appApi = object : TestAppAPI() {
+            override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
+                completion(Result.failure(exception))
+            }
+        }
+
+        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java))
+        val exceptionFuture = CompletableFutureCompat<Throwable?>()
+        geoApiManager.features(id, 49.012713, 8.427777) {
+            it.onSuccess { exceptionFuture.complete(null) }
+            it.onFailure { exceptionFuture.complete(it) }
+        }
+
+        assertEquals(exception, exceptionFuture.get(2, TimeUnit.SECONDS))
     }
 
     private fun get2000PolygonsResponse(): GeoAPIResponse {
@@ -155,12 +199,12 @@ class GeoAPIManagerTest {
         return createGeoAPIResponse(shapes)
     }
 
-    private fun createGeoAPIResponse(shapes: List<List<List<Double>>>): GeoAPIResponse {
+    private fun createGeoAPIResponse(shapes: List<List<List<Double>>>, id: String? = null): GeoAPIResponse {
         return GeoAPIResponse(
             "FeatureCollection",
             shapes.map {
                 GeoAPIFeature(
-                    UUID.randomUUID().toString(),
+                    id ?: UUID.randomUUID().toString(),
                     "Feature",
                     GeoAPIGeometry(
                         "Polygon",

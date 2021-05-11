@@ -8,10 +8,12 @@ import cloud.pace.sdk.appkit.geo.GeoAPIManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.persistence.CacheModel
+import cloud.pace.sdk.poikit.utils.distanceTo
 import cloud.pace.sdk.utils.CompletableFutureCompat
 import cloud.pace.sdk.utils.IconUtils
 import cloud.pace.sdk.utils.dp
 import cloud.pace.sdk.utils.resourceUuid
+import com.google.android.gms.maps.model.LatLng
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -97,9 +99,27 @@ class AppRepositoryImpl(
 
     override fun isPoiInRange(poiId: String, latitude: Double, longitude: Double, completion: (Boolean) -> Unit) {
         // Try to load the apps from the cache
-        geoApiManager.apps(latitude, longitude) { response ->
-            response.onSuccess { geoGasStations ->
-                completion(geoGasStations.any { it.id == poiId })
+        geoApiManager.features(poiId, latitude, longitude) { response ->
+            response.onSuccess { geoAPIFeatures ->
+                val isPoiRange = geoAPIFeatures.firstOrNull { it.id == poiId }?.let {
+                    val currentLocation = LatLng(latitude, longitude)
+                    it.geometry?.coordinates
+                        ?.flatten()
+                        ?.mapNotNull { coordinate ->
+                            val lat = coordinate.lastOrNull()
+                            val lng = coordinate.firstOrNull()
+                            if (lat != null && lng != null) {
+                                LatLng(lat, lng)
+                            } else {
+                                null
+                            }
+                        }
+                        ?.any { coordinate ->
+                            currentLocation.distanceTo(coordinate) <= IS_POI_IN_RANGE_DISTANCE_THRESHOLD
+                        } ?: false
+                } ?: false
+
+                completion(isPoiRange)
             }
 
             response.onFailure {
@@ -175,5 +195,9 @@ class AppRepositoryImpl(
         val preferredIcon = IconUtils.getBestMatchingIcon(buttonWidth, icons) ?: return null
 
         return uriUtil.buildUrl(url, preferredIcon.src)
+    }
+
+    companion object {
+        private const val IS_POI_IN_RANGE_DISTANCE_THRESHOLD = 500 // meters
     }
 }

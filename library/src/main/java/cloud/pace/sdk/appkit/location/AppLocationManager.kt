@@ -112,6 +112,6 @@ class AppLocationManagerImpl(
 
         private const val BEST_ACCURACY = 20 // m
         private const val MEDIUM_ACCURACY = 50 // m
-        private const val LOW_ACCURACY = 200 // m
+        private const val LOW_ACCURACY = 250 // m
     }
 }
