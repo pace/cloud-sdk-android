@@ -72,7 +72,6 @@ It uses the following dependencies:
 - [Retrofit Gson Converter](https://github.com/square/retrofit/tree/master/retrofit-converters/gson): A Converter which uses Gson for serialization to and from JSON.
 - [Retrofit RxJava3 Adapter](https://github.com/square/retrofit/tree/master/retrofit-adapters/rxjava3): An Retrofit call adapter for adapting RxJava 3.x types.
 - [OkHttp logging interceptor](https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor): An OkHttp interceptor which logs HTTP request and response data.
-- [OkHttp logging interceptor](https://github.com/square/okhttp/tree/master/okhttp-logging-interceptor): An OkHttp interceptor which logs HTTP request and response data.
 - [Moshi](https://github.com/square/moshi): Moshi is a modern JSON library for Android and Java.
 - [Moshi adapters](https://github.com/square/moshi/tree/master/adapters): Prebuilt Moshi JsonAdapters for various things, such as Rfc3339DateJsonAdapter for parsing java.util.Date objects.
 - [moshi-jsonapi](https://github.com/kamikat/moshi-jsonapi): Java implementation of JSON:API specification v1.0 for Moshi.
@@ -202,9 +201,22 @@ IDKit.discoverConfiguration(issuerUri) {
 ```
 
 ### Authorization
-The authorization request to the authorization service can be dispatched using **one** of the following two approaches:
+The authorization request to the authorization service can be dispatched using **one** of the following three approaches:
 
-#### 1. Getting result from an activity
+#### 1. Launching request and handle result inline in Activity or Fragment (using Kotlin Coroutines)
+
+```kotlin
+lifecycleScope.launch(Dispatchers.Main) {
+    IDKit.authorize(this@MainActivity) {
+        when (it) {
+            is Success -> // it.result contains accessToken
+            is Failure -> // it.throwable contains error
+        }
+    }
+}
+```
+
+#### 2. Getting result from an activity
 
 ##### a. Using `Activity Result API` and a `StartActivityForResult` contract and handle the result in `ActivityResultCallback` inline:
 
@@ -256,7 +268,7 @@ IDKit.handleAuthorizationResponse(intent) {
 }
 ```
 
-#### 2. Using `PendingIntent` and providing completion and cancellation handling activities:
+#### 3. Using `PendingIntent` and providing completion and cancellation handling activities:
 
 ```kotlin
 if (IDKit.isAuthorizationValid()) {
@@ -318,9 +330,22 @@ fun containsException(intent: Intent)
 ```
 
 ### End session
-The end session request works the same way as the authorization request. It can also be performed using **one** of the following two approaches (a new authorization will be required afterwards):
+The end session request works the same way as the authorization request. It can also be performed using **one** of the following three approaches (a new authorization will be required afterwards):
 
-#### 1. Getting result from an activity
+#### 1. Launching request and handle result inline in Activity or Fragment (using Kotlin Coroutines)
+
+```kotlin
+lifecycleScope.launch(Dispatchers.Main) {
+    IDKit.endSession(this@MainActivity) {
+        when (it) {
+            is Success -> // it.result contains Unit (success)
+            is Failure -> // it.throwable contains error
+        }
+    }
+}
+```
+
+#### 2. Getting result from an activity
 
 ##### a. Using `Activity Result API` and a `StartActivityForResult` contract and handle the result in `ActivityResultCallback` inline:
 
@@ -364,7 +389,7 @@ IDKit.handleEndSessionResponse(intent) {
 }
 ```
 
-#### 2. Using `PendingIntent` and providing completion and cancellation handling activities:
+#### 3. Using `PendingIntent` and providing completion and cancellation handling activities:
 
 ```kotlin
 IDKit.endSession(completedActivity, canceledActivity)
@@ -720,9 +745,11 @@ Some of our services (e.g. `PayPal`) do not open the URL in the WebView, but in 
 If the client app uses its own login and wants to pass an access token to the apps, follow these steps:
 
 1. Initialize the `PACECloudSDK` with `authenticationMode = AuthenticationMode.NATIVE`
-2. Pass an `AppCallbackImpl` instance to `AppKit.openApps(...)` or `AppKit.openAppActivity(...)` and override the required callbacks (`onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit)` in this case)
-3. If the access token is invalid, the *AppKit* calls the `onTokenInvalid` function. The client app needs to call the `onResult` function to set a new access token. In case that you can't retrieve a new valid token, don't call `onResult`, otherwise you will most likely end up
+2. (Optional) Pass an `AppCallbackImpl` instance to `AppKit.openApps(...)` or `AppKit.openAppActivity(...)` and override the required callbacks (`onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit)` in this case)
+3. (Optional) If the access token is invalid, the *AppKit* calls the `onTokenInvalid` function. The client app needs to call the `onResult` function to set a new access token. In case that you can't retrieve a new valid token, don't call `onResult`, otherwise you will most likely end up
 in an endless loop. Make sure to clean up all the app related views as well (see [Removal of Apps](#removal-of-apps)).
+
+**Note**: Step 2 and 3 are optional because the `onTokenInvalid` callback has a default implementation that tries to refresh the access token once via *IDKit* and if it is still invalid then it shows the login form again.
 
 ##### Kotlin example
 ```kotlin

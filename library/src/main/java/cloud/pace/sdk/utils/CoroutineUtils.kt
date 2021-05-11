@@ -2,6 +2,7 @@ package cloud.pace.sdk.utils
 
 import android.os.Looper
 import kotlinx.coroutines.*
+import kotlin.coroutines.resume
 
 /**
  * [launch] a new coroutine on a background thread.
@@ -75,4 +76,11 @@ inline fun dispatchOnMainThread(crossinline block: () -> Unit) {
     } else {
         block()
     }
+}
+
+/**
+ * Resumes the execution of the corresponding coroutine if it is still active and passes [value] as the return value of the last suspension point.
+ */
+fun <T> CancellableContinuation<T>.resumeIfActive(value: T) {
+    if (isActive) resume(value)
 }

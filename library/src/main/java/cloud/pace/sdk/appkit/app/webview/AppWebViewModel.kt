@@ -28,14 +28,13 @@ import cloud.pace.sdk.appkit.utils.EncryptionUtils
 import cloud.pace.sdk.utils.DispatcherProvider
 import cloud.pace.sdk.utils.Event
 import cloud.pace.sdk.utils.onMainThread
+import cloud.pace.sdk.utils.resumeIfActive
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
 import timber.log.Timber
 import java.net.HttpURLConnection
 import java.util.*
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.resume
 
 abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback {
 
@@ -158,7 +157,7 @@ class AppWebViewModelImpl(
                 val reason = messageBundle.message.reason
                 val invalidTokenReason = InvalidTokenReason.values().associateBy(InvalidTokenReason::value)[reason] ?: InvalidTokenReason.OTHER
                 appModel.onTokenInvalid(invalidTokenReason, messageBundle.message.oldToken) { token ->
-                    continuation.resume(token)
+                    continuation.resumeIfActive(token)
                 }
             }?.let {
                 newToken.postValue(ResponseEvent(messageBundle.id, it))
@@ -193,7 +192,7 @@ class AppWebViewModelImpl(
                             false -> VerifyLocationResponse.FALSE
                             else -> VerifyLocationResponse.UNKNOWN
                         }
-                        continuation.resume(value)
+                        continuation.resumeIfActive(value)
                     }
                 }
             }?.let {
@@ -272,13 +271,13 @@ class AppWebViewModelImpl(
 
                 if (!payAuthenticationManager.isFingerprintAvailable()) {
                     statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("No biometric authentication is available or none has been set.", HttpURLConnection.HTTP_BAD_METHOD)))
-                    continuation.resume(null)
+                    continuation.resumeIfActive(null)
                     return@suspendCoroutineWithTimeout
                 }
 
                 val host = getHost() ?: run {
                     statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("The host is null.", HttpURLConnection.HTTP_INTERNAL_ERROR)))
-                    continuation.resume(null)
+                    continuation.resumeIfActive(null)
                     return@suspendCoroutineWithTimeout
                 }
 
@@ -287,12 +286,12 @@ class AppWebViewModelImpl(
                         // Get master TOTP secret data
                         sharedPreferencesModel.getTotpSecret() ?: run {
                             statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("No biometric data found in the SharedPreferences.", HttpURLConnection.HTTP_NOT_FOUND)))
-                            continuation.resume(null)
+                            continuation.resumeIfActive(null)
                             return@suspendCoroutineWithTimeout
                         }
                     } else {
                         statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("The host $host is not in the access control list.", HttpURLConnection.HTTP_INTERNAL_ERROR)))
-                        continuation.resume(null)
+                        continuation.resumeIfActive(null)
                         return@suspendCoroutineWithTimeout
                     }
                 }
@@ -304,9 +303,10 @@ class AppWebViewModelImpl(
                             val decryptedSecret = EncryptionUtils.decrypt(totpSecret.encryptedSecret)
                             val otp = EncryptionUtils.generateOTP(decryptedSecret, totpSecret.digits, totpSecret.period, totpSecret.algorithm, Date(messageBundle.message.serverTime * 1000L))
 
-                            continuation.resume(otp)
+                            continuation.resumeIfActive(otp)
                         } catch (e: Exception) {
                             statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("Could not decrypt the encrypted TOTP secret.", HttpURLConnection.HTTP_INTERNAL_ERROR)))
+                            continuation.resumeIfActive(null)
                         }
                     },
                     onFailure = { errorCode, errString ->
@@ -315,6 +315,7 @@ class AppWebViewModelImpl(
                                 id, StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", HttpURLConnection.HTTP_UNAUTHORIZED)
                             )
                         )
+                        continuation.resumeIfActive(null)
                     }
                 )))
             }?.let {
@@ -349,13 +350,13 @@ class AppWebViewModelImpl(
 
                 if (!payAuthenticationManager.isFingerprintAvailable()) {
                     statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("No biometric authentication is available or none has been set.", HttpURLConnection.HTTP_BAD_METHOD)))
-                    continuation.resume(null)
+                    continuation.resumeIfActive(null)
                     return@suspendCoroutineWithTimeout
                 }
 
                 val host = getHost() ?: run {
                     statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("The host is null.", HttpURLConnection.HTTP_INTERNAL_ERROR)))
-                    continuation.resume(null)
+                    continuation.resumeIfActive(null)
                     return@suspendCoroutineWithTimeout
                 }
                 val preferenceKey = getSecureDataPreferenceKey(host, messageBundle.message.key)
@@ -363,7 +364,7 @@ class AppWebViewModelImpl(
                     statusCode.postValue(
                         ResponseEvent(id, StatusCodeResponse.Failure("No encrypted value with the key $preferenceKey was found in the SharedPreferences.", HttpURLConnection.HTTP_NOT_FOUND))
                     )
-                    continuation.resume(null)
+                    continuation.resumeIfActive(null)
                     return@suspendCoroutineWithTimeout
                 }
 
@@ -372,18 +373,19 @@ class AppWebViewModelImpl(
                     onSuccess = {
                         try {
                             val value = EncryptionUtils.decrypt(encryptedValue)
-                            continuation.resume(value)
+                            continuation.resumeIfActive(value)
                         } catch (e: Exception) {
                             statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("Could not decrypt the encrypted secure data value.", HttpURLConnection.HTTP_INTERNAL_ERROR)))
+                            continuation.resumeIfActive(null)
                         }
                     },
                     onFailure = { errorCode, errString ->
                         statusCode.postValue(
                             ResponseEvent(
-                                id,
-                                StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", HttpURLConnection.HTTP_UNAUTHORIZED)
+                                id, StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", HttpURLConnection.HTTP_UNAUTHORIZED)
                             )
                         )
+                        continuation.resumeIfActive(null)
                     }
                 )))
             }?.let {
@@ -469,7 +471,7 @@ class AppWebViewModelImpl(
         launch {
             val config = suspendCoroutineWithTimeout<String?>(message, MessageHandler.GET_CONFIG.timeoutMillis) { continuation ->
                 appModel.getConfig(messageBundle.message.key) { config ->
-                    continuation.resume(config)
+                    continuation.resumeIfActive(config)
                 }
             }
 
@@ -527,7 +529,7 @@ class AppWebViewModelImpl(
             null
         }
 
-    private suspend inline fun <T> suspendCoroutineWithTimeout(message: String, timeoutMillis: Long, crossinline block: (Continuation<T>) -> Unit): T? =
+    private suspend inline fun <T> suspendCoroutineWithTimeout(message: String, timeoutMillis: Long, crossinline block: (CancellableContinuation<T>) -> Unit): T? =
         timeout(message, timeoutMillis) {
             suspendCancellableCoroutine(block)
         }
