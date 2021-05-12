@@ -6,13 +6,13 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Internal
+
+* Refactor `LocationProvider` so that every one-time location e.g. used in `isPoiInRange` or `requestLocalApps` is returned inline
+
+
 7.4.0 Release notes (2021-05-12)
 =============================================================
-
-<!-- ### Breaking changes - Include, if needed -->
-<!-- ### Enhancements - Include, if needed -->
-<!-- ### Fixes - Include, if needed -->
-<!-- ### Internal - Include, if needed -->
 
 ### Enhancements
 

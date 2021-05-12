@@ -12,12 +12,12 @@ import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.communication.AppModelImpl
 import cloud.pace.sdk.appkit.geo.*
-import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.persistence.CacheModel
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.utils.*
 import cloud.pace.sdk.utils.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -32,8 +32,12 @@ import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnitRunner
 import java.util.concurrent.CompletableFuture
 
+@ExperimentalCoroutinesApi
 @RunWith(MockitoJUnitRunner::class)
 class AppManagerTest : CloudSDKKoinComponent {
+
+    @get:Rule
+    var coroutineTestRule = CoroutineTestRule()
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
@@ -44,6 +48,7 @@ class AppManagerTest : CloudSDKKoinComponent {
     @Mock
     private lateinit var mockLocation: Location
 
+    private val appManager = AppManager(coroutineTestRule.testDispatcherProvider)
     private val polygon = listOf(
         listOf(8.427429, 49.01304015764206),
         listOf(8.427166935031618, 49.013005967255644),
@@ -81,15 +86,15 @@ class AppManagerTest : CloudSDKKoinComponent {
         `when`(mockLocation.speed).then { 20f }
 
         val testModule = module {
-            single<AppLocationManager> {
-                TestAppLocationManager(mockLocation)
+            single<LocationProvider> {
+                TestLocationProvider(mockLocation)
             }
         }
 
         setupKoinForTests(testModule)
 
         val future = CompletableFuture<Throwable>()
-        AppManager().requestLocalApps {
+        appManager.requestLocalApps {
             if (it is Failure) {
                 future.complete(it.throwable)
             }
@@ -101,15 +106,15 @@ class AppManagerTest : CloudSDKKoinComponent {
     @Test
     fun `no app due to missing location permissions`() {
         val testModule = module {
-            single<AppLocationManager> {
-                TestAppLocationManager(throwable = PermissionDenied)
+            single<LocationProvider> {
+                TestLocationProvider(throwable = PermissionDenied)
             }
         }
 
         setupKoinForTests(testModule)
 
         val future = CompletableFuture<Throwable>()
-        AppManager().requestLocalApps {
+        appManager.requestLocalApps {
             if (it is Failure) {
                 future.complete(it.throwable)
             }
@@ -121,15 +126,15 @@ class AppManagerTest : CloudSDKKoinComponent {
     @Test
     fun `no app due to missing location`() {
         val testModule = module {
-            single<AppLocationManager> {
-                TestAppLocationManager(throwable = NoLocationFound)
+            single<LocationProvider> {
+                TestLocationProvider(throwable = NoLocationFound)
             }
         }
 
         setupKoinForTests(testModule)
 
         val future = CompletableFuture<Throwable>()
-        AppManager().requestLocalApps {
+        appManager.requestLocalApps {
             if (it is Failure) {
                 future.complete(it.throwable)
             }
@@ -147,8 +152,8 @@ class AppManagerTest : CloudSDKKoinComponent {
         }
 
         val testModule = module {
-            single<AppLocationManager> {
-                TestAppLocationManager(throwable = NetworkError)
+            single<LocationProvider> {
+                TestLocationProvider(throwable = NetworkError)
             }
 
             single<AppRepository> {
@@ -159,7 +164,7 @@ class AppManagerTest : CloudSDKKoinComponent {
         setupKoinForTests(testModule)
 
         val future = CompletableFuture<Throwable>()
-        AppManager().requestLocalApps {
+        appManager.requestLocalApps {
             if (it is Failure) {
                 future.complete(it.throwable)
             }
@@ -177,8 +182,8 @@ class AppManagerTest : CloudSDKKoinComponent {
         }
 
         val testModule = module {
-            single<AppLocationManager> {
-                TestAppLocationManager(location = mockLocation)
+            single<LocationProvider> {
+                TestLocationProvider(mockLocation)
             }
 
             single<AppRepository> {
@@ -201,7 +206,7 @@ class AppManagerTest : CloudSDKKoinComponent {
         setupKoinForTests(testModule)
 
         val future = CompletableFuture<List<App>>()
-        AppManager().requestLocalApps {
+        appManager.requestLocalApps {
             if (it is Success) {
                 future.complete(it.result)
             }
@@ -242,8 +247,8 @@ class AppManagerTest : CloudSDKKoinComponent {
         }
 
         val testModule = module {
-            single<AppLocationManager> {
-                TestAppLocationManager(mockLocation)
+            single<LocationProvider> {
+                TestLocationProvider(mockLocation)
             }
 
             single<AppRepository> {
@@ -266,7 +271,7 @@ class AppManagerTest : CloudSDKKoinComponent {
         setupKoinForTests(testModule)
 
         val future = CompletableFuture<List<App>>()
-        AppManager().requestLocalApps {
+        appManager.requestLocalApps {
             if (it is Success) {
                 future.complete(it.result)
             }
@@ -308,8 +313,8 @@ class AppManagerTest : CloudSDKKoinComponent {
                 TestUriUtils()
             }
 
-            single<AppLocationManager> {
-                TestAppLocationManager(mockLocation)
+            single<LocationProvider> {
+                TestLocationProvider(mockLocation)
             }
 
             single<GeoAPIManager> {
@@ -324,7 +329,7 @@ class AppManagerTest : CloudSDKKoinComponent {
         setupKoinForTests(testModule)
 
         val future = CompletableFuture<Boolean>()
-        AppManager().isPoiInRange(id) {
+        appManager.isPoiInRange(id) {
             future.complete(it)
         }
 
@@ -355,8 +360,8 @@ class AppManagerTest : CloudSDKKoinComponent {
                 TestUriUtils()
             }
 
-            single<AppLocationManager> {
-                TestAppLocationManager(mockLocation)
+            single<LocationProvider> {
+                TestLocationProvider(mockLocation)
             }
 
             single<GeoAPIManager> {
@@ -371,7 +376,7 @@ class AppManagerTest : CloudSDKKoinComponent {
         setupKoinForTests(testModule)
 
         val future = CompletableFuture<Boolean>()
-        AppManager().isPoiInRange(id1) {
+        appManager.isPoiInRange(id1) {
             future.complete(it)
         }
 

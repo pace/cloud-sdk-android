@@ -5,8 +5,6 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import cloud.pace.sdk.api.API
-import cloud.pace.sdk.poikit.utils.GasStationCodes
-import cloud.pace.sdk.poikit.utils.GasStationMovedResponse
 import cloud.pace.sdk.api.poi.POIAPI.gasStations
 import cloud.pace.sdk.api.poi.POIAPI.metadataFilters
 import cloud.pace.sdk.api.poi.POIAPI.priceHistories
@@ -29,6 +27,8 @@ import cloud.pace.sdk.poikit.search.AddressSearchClient
 import cloud.pace.sdk.poikit.search.AddressSearchRequest
 import cloud.pace.sdk.poikit.search.PhotonResult
 import cloud.pace.sdk.poikit.utils.ApiException
+import cloud.pace.sdk.poikit.utils.GasStationCodes
+import cloud.pace.sdk.poikit.utils.GasStationMovedResponse
 import cloud.pace.sdk.utils.*
 import com.google.android.gms.maps.model.VisibleRegion
 import io.reactivex.rxjava3.core.Observable
@@ -71,17 +71,18 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
     }
 
     fun getRoute(destination: LocationPoint, completion: (Completion<Route?>) -> Unit) {
-        locationProvider.getLastKnownLocation {
-            if (it != null) {
-                val navigationRequest = NavigationRequest(
-                    UUID.randomUUID().toString(),
-                    listOf(LocationPoint(it.latitude, it.longitude), destination),
-                    alternatives = false,
-                    navigationMode = NavigationMode.CAR
-                )
-                navigationApi.getRoute(navigationRequest, completion)
-            } else {
-                completion(Failure(Exception("Could not get last known location")))
+        onBackgroundThread {
+            when (val location = locationProvider.getLastKnownLocation()) {
+                is Success -> {
+                    val navigationRequest = NavigationRequest(
+                        UUID.randomUUID().toString(),
+                        listOf(LocationPoint(location.result.latitude, location.result.longitude), destination),
+                        alternatives = false,
+                        navigationMode = NavigationMode.CAR
+                    )
+                    navigationApi.getRoute(navigationRequest, completion)
+                }
+                is Failure -> completion(Failure(location.throwable))
             }
         }
     }

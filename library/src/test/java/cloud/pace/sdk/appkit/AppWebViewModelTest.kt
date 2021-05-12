@@ -8,7 +8,6 @@ import cloud.pace.sdk.appkit.app.webview.AppWebViewModel
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModelImpl
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.communication.AppModelImpl
-import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.pay.PayAuthenticationManager
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getTotpSecretPreferenceKey
@@ -20,6 +19,7 @@ import cloud.pace.sdk.appkit.utils.TestAppEventManager
 import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.Environment
 import cloud.pace.sdk.utils.Event
+import cloud.pace.sdk.utils.LocationProvider
 import com.google.gson.Gson
 import io.mockk.every
 import io.mockk.mockkObject
@@ -53,7 +53,7 @@ class AppWebViewModelTest {
     }
     private val appCallback = mock(AppCallbackImpl::class.java)
     private val appModel = AppModelImpl()
-    private val viewModel = AppWebViewModelImpl(context, coroutineTestRule.testDispatcherProvider, sharedPreferencesModel, eventManager, payManager, appModel, mock(AppLocationManager::class.java))
+    private val viewModel = AppWebViewModelImpl(context, coroutineTestRule.testDispatcherProvider, sharedPreferencesModel, eventManager, payManager, appModel, mock(LocationProvider::class.java))
 
     @Before
     fun init() {

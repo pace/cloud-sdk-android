@@ -19,8 +19,6 @@ import cloud.pace.sdk.appkit.geo.GeoAPIClient
 import cloud.pace.sdk.appkit.geo.GeoAPIManager
 import cloud.pace.sdk.appkit.geo.GeoAPIManagerImpl
 import cloud.pace.sdk.appkit.geofences.GeofenceCallback
-import cloud.pace.sdk.appkit.location.AppLocationManager
-import cloud.pace.sdk.appkit.location.AppLocationManagerImpl
 import cloud.pace.sdk.appkit.network.NetworkChangeListener
 import cloud.pace.sdk.appkit.network.NetworkChangeListenerImpl
 import cloud.pace.sdk.appkit.pay.PayAuthenticationManager
@@ -86,12 +84,11 @@ object KoinConfig {
                 single<AppEventManager> { AppEventManagerImpl() }
                 single<PayAuthenticationManager> { PayAuthenticationManagerImpl(get()) }
                 single<UriManager> { UriManagerImpl() }
-                single<AppLocationManager> { AppLocationManagerImpl(get(), get()) }
                 single<AppAPI> { AppAPIImpl(get()) }
                 single { GeofenceCallback() }
                 single { LocationServices.getGeofencingClient(get<Context>()) }
                 single<AppModel> { AppModelImpl() }
-                single { AppManager() }
+                single { AppManager(DefaultDispatcherProvider()) }
                 single<GeoAPIManager> { GeoAPIManagerImpl(get(), get()) }
                 viewModel<AppFragmentViewModel> { AppFragmentViewModelImpl(get(), get()) }
                 viewModel<AppWebViewModel> { (context: Context) -> AppWebViewModelImpl(context, DefaultDispatcherProvider(), get(), get(), get(), get(), get()) }
