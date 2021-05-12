@@ -6,6 +6,14 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+7.4.0 Release notes (2021-05-12)
+=============================================================
+
+<!-- ### Breaking changes - Include, if needed -->
+<!-- ### Enhancements - Include, if needed -->
+<!-- ### Fixes - Include, if needed -->
+<!-- ### Internal - Include, if needed -->
+
 ### Enhancements
 
 * Add functions to launch the authorization and end session request as well as the handling of the response inline
