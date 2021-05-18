@@ -127,6 +127,7 @@ object AppKit : CloudSDKKoinComponent {
      * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
+    @JvmOverloads
     fun openPaceID(context: Context, enableBackToFinish: Boolean = true, autoClose: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
         appManager.openAppActivity(context, PACECloudSDK.configuration.environment.idUrl, enableBackToFinish, autoClose, callback)
     }
@@ -139,6 +140,7 @@ object AppKit : CloudSDKKoinComponent {
      * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
+    @JvmOverloads
     fun openPaymentApp(context: Context, enableBackToFinish: Boolean = true, autoClose: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
         appManager.openAppActivity(context, PACECloudSDK.configuration.environment.payUrl, enableBackToFinish, autoClose, callback)
     }
@@ -151,6 +153,7 @@ object AppKit : CloudSDKKoinComponent {
      * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
+    @JvmOverloads
     fun openTransactions(context: Context, enableBackToFinish: Boolean = true, autoClose: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
         appManager.openAppActivity(context, PACECloudSDK.configuration.environment.transactionUrl, enableBackToFinish, autoClose, callback)
     }
@@ -164,6 +167,7 @@ object AppKit : CloudSDKKoinComponent {
      * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
+    @JvmOverloads
     fun openFuelingApp(context: Context, id: String? = null, enableBackToFinish: Boolean = true, autoClose: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
         if (id == null) {
             appManager.openAppActivity(context, PACECloudSDK.configuration.environment.fuelingUrl, enableBackToFinish, autoClose, callback)

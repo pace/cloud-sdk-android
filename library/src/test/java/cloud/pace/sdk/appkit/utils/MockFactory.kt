@@ -18,22 +18,22 @@ import cloud.pace.sdk.appkit.geo.GeoAPIFeature
 import cloud.pace.sdk.appkit.geo.GeoAPIManager
 import cloud.pace.sdk.appkit.geo.GeoAPIResponse
 import cloud.pace.sdk.appkit.geo.GeoGasStation
-import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.model.Car
 import cloud.pace.sdk.appkit.persistence.CacheModel
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.persistence.TotpSecret
-import cloud.pace.sdk.utils.Event
-import cloud.pace.sdk.utils.LocationProvider
-import cloud.pace.sdk.utils.LocationState
-import cloud.pace.sdk.utils.SystemManager
+import cloud.pace.sdk.utils.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import org.mockito.Mockito.mock
 import java.util.*
 
-open class TestLocationProvider(private val mockedLocationState: LocationState, private val mockedLocation: Location?) : LocationProvider {
+open class TestLocationProvider(
+    private val mockedLocation: Location? = null,
+    private val throwable: Throwable = NoLocationFound,
+    private val mockedLocationState: LocationState = LocationState.LOCATION_HIGH_ACCURACY,
+) : LocationProvider {
 
     override val locationState = MutableLiveData<LocationState>()
     override val location = MutableLiveData<Location>()
@@ -43,28 +43,15 @@ open class TestLocationProvider(private val mockedLocationState: LocationState, 
         location.value = mockedLocation
     }
 
-    override fun getLastKnownLocation(completion: (Location?) -> Unit) {
-        completion(mockedLocation)
-    }
-
-    override fun getLocationState(): LocationState {
-        return mockedLocationState
-    }
-
     override fun removeLocationUpdates() {}
-}
 
-open class TestAppLocationManager(private val location: Location? = null, private val throwable: Throwable? = null) : AppLocationManager {
-
-    override fun start(callback: (Result<Location>) -> Unit) {
-        if (location != null) {
-            callback(Result.success(location))
-        } else if (throwable != null) {
-            callback(Result.failure(throwable))
-        }
+    override suspend fun getFirstValidLocation(): Completion<Location> {
+        return mockedLocation?.let { Success(it) } ?: Failure(throwable)
     }
 
-    override fun stop() {}
+    override suspend fun getLastKnownLocation(): Completion<Location> {
+        return mockedLocation?.let { Success(it) } ?: Failure(throwable)
+    }
 }
 
 open class TestAppRepository : AppRepository {

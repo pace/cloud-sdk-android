@@ -15,16 +15,15 @@ import cloud.pace.sdk.appkit.app.drawer.AppDrawer
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
-import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.Car
 import cloud.pace.sdk.appkit.network.NetworkChangeListener
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getDisableTimePreferenceKey
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
-import cloud.pace.sdk.appkit.utils.InvalidSpeed
-import cloud.pace.sdk.appkit.utils.NetworkError
-import cloud.pace.sdk.appkit.utils.RunningCheck
 import cloud.pace.sdk.utils.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.core.inject
 import timber.log.Timber
 import java.io.IOException
@@ -32,10 +31,10 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.util.*
 
-internal class AppManager : CloudSDKKoinComponent {
+internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSDKKoinComponent {
 
     private val context: Context by inject()
-    private val appLocationManager: AppLocationManager by inject()
+    private val locationProvider: LocationProvider by inject()
     private val appRepository: AppRepository by inject()
     private val networkChangeListener: NetworkChangeListener by inject()
     private val sharedPreferencesModel: SharedPreferencesModel by inject()
@@ -45,27 +44,26 @@ internal class AppManager : CloudSDKKoinComponent {
     private var checkRunning = false
     private var lastApps = emptyList<String>()
 
-    internal fun requestLocalApps(completion: (Completion<List<App>>) -> Unit) {
+    internal fun requestLocalApps(completion: (Completion<List<App>>) -> Unit) = CoroutineScope(dispatchers.default()).launch {
         Timber.i("Check local available Apps")
 
         if (checkRunning) {
             Timber.w("App check already running")
-            completion(Failure(RunningCheck))
-            return
-        }
-        checkRunning = true
+            withContext(dispatchers.main()) { completion(Failure(RunningCheck)) }
+        } else {
+            checkRunning = true
 
-        appLocationManager.start { result ->
-            result.onSuccess {
-                if (isSpeedValid(it)) {
-                    getAppsByLocation(it, completion)
-                } else {
-                    completion(Failure(InvalidSpeed))
+            when (val location = locationProvider.getFirstValidLocation()) {
+                is Success -> {
+                    if (isSpeedValid(location.result)) {
+                        getAppsByLocation(location.result, completion)
+                    } else {
+                        withContext(dispatchers.main()) { completion(Failure(InvalidSpeed)) }
+                    }
                 }
-            }
-
-            result.onFailure {
-                completion(Failure(it))
+                is Failure -> {
+                    withContext(dispatchers.main()) { completion(Failure(location.throwable)) }
+                }
             }
 
             checkRunning = false
@@ -117,7 +115,7 @@ internal class AppManager : CloudSDKKoinComponent {
 
                 lastApps = notDisabledUrls
 
-                completion(Success(notDisabled))
+                CoroutineScope(dispatchers.main()).launch { completion(Success(notDisabled)) }
             }
 
             result.onFailure { error ->
@@ -129,11 +127,13 @@ internal class AppManager : CloudSDKKoinComponent {
                         if (networkChanged) {
                             requestLocalApps(completion)
                         } else {
-                            completion(Failure(NetworkError))
+                            Timber.e(NetworkError)
+                            CoroutineScope(dispatchers.main()).launch { completion(Failure(NetworkError)) }
                         }
                     }
                 } else {
-                    completion(Failure(NetworkError))
+                    Timber.e(NetworkError)
+                    CoroutineScope(dispatchers.main()).launch { completion(Failure(NetworkError)) }
                 }
             }
         }
@@ -161,13 +161,12 @@ internal class AppManager : CloudSDKKoinComponent {
     }
 
     internal fun isPoiInRange(poiId: String, completion: (Boolean) -> Unit) {
-        appLocationManager.start { result ->
-            result.onSuccess {
-                appRepository.isPoiInRange(poiId, it.latitude, it.longitude, completion)
-            }
-
-            result.onFailure {
-                completion(false)
+        CoroutineScope(dispatchers.default()).launch {
+            when (val location = locationProvider.getFirstValidLocation()) {
+                is Success -> appRepository.isPoiInRange(poiId, location.result.latitude, location.result.longitude) {
+                    CoroutineScope(dispatchers.main()).launch { completion(it) }
+                }
+                is Failure -> withContext(dispatchers.main()) { completion(false) }
             }
         }
     }

@@ -11,9 +11,13 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.distinctUntilChanged
+import cloud.pace.sdk.PACECloudSDK
+import com.google.android.gms.location.LocationAvailability
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
+import kotlinx.coroutines.suspendCancellableCoroutine
+import timber.log.Timber
 
 interface LocationProvider {
 
@@ -21,9 +25,9 @@ interface LocationProvider {
     val location: LiveData<Location>
 
     fun requestLocationUpdates()
-    fun getLastKnownLocation(completion: (Location?) -> Unit)
-    fun getLocationState(): LocationState
     fun removeLocationUpdates()
+    suspend fun getFirstValidLocation(): Completion<Location>
+    suspend fun getLastKnownLocation(): Completion<Location>
 }
 
 class LocationProviderImpl(
@@ -48,6 +52,13 @@ class LocationProviderImpl(
     }
     private val locationCallback by lazy {
         object : LocationCallback() {
+            override fun onLocationAvailability(locationAvailability: LocationAvailability?) {
+                if (locationAvailability?.isLocationAvailable == false) {
+                    Timber.w("No location available with Fused Location Provider API")
+                    poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
+                }
+            }
+
             override fun onLocationResult(locationResult: LocationResult?) {
                 val lastLocation = locationResult?.lastLocation ?: return
                 location.postValue(lastLocation)
@@ -77,73 +88,15 @@ class LocationProviderImpl(
                     fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
                 } else if (provider != null) {
                     // Use LocationManager as fallback
-                    locationManager?.requestLocationUpdates(provider, LOCATION_REQUEST_INTERVAL, LOCATION_REQUEST_SMALLEST_DISPLACEMENT, locationListener)
+                    locationManager?.requestLocationUpdates(provider, LOCATION_REQUEST_INTERVAL, LOCATION_REQUEST_SMALLEST_DISPLACEMENT, locationListener, Looper.getMainLooper())
                 }
             } catch (e: SecurityException) {
+                Timber.w(PermissionDenied)
                 poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
             }
         } else {
+            Timber.w(PermissionDenied)
             poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
-        }
-    }
-
-    override fun getLastKnownLocation(completion: (Location?) -> Unit) {
-        if (systemManager.isLocationPermissionGranted()) {
-            try {
-                val provider = checkLocationState()
-
-                if (systemManager.isGooglePlayServicesAvailable()) {
-                    // Use Fused Location Provider API
-                    fusedLocationClient.getCurrentLocation(LOCATION_REQUEST_PRIORITY, null).addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            completion(it.result)
-                        } else {
-                            completion(null)
-                        }
-                    }
-                } else if (provider != null) {
-                    // Use LocationManager as fallback
-                    completion(locationManager?.getLastKnownLocation(provider))
-                }
-            } catch (e: SecurityException) {
-                poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
-            }
-        } else {
-            poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
-        }
-    }
-
-    private fun checkLocationState(): String? {
-        return when {
-            locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true -> {
-                poiKitLocationState.postValue(LocationState.LOCATION_HIGH_ACCURACY)
-                LocationManager.GPS_PROVIDER
-            }
-            locationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true -> {
-                poiKitLocationState.postValue(LocationState.LOCATION_LOW_ACCURACY)
-                LocationManager.NETWORK_PROVIDER
-            }
-            else -> {
-                poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
-                null
-            }
-        }
-    }
-
-    override fun getLocationState(): LocationState {
-        return when {
-            !systemManager.isLocationPermissionGranted() -> {
-                LocationState.PERMISSION_DENIED
-            }
-            locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true -> {
-                LocationState.LOCATION_HIGH_ACCURACY
-            }
-            locationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true -> {
-                LocationState.LOCATION_LOW_ACCURACY
-            }
-            else -> {
-                LocationState.NO_LOCATION_FOUND
-            }
         }
     }
 
@@ -160,10 +113,217 @@ class LocationProviderImpl(
         }
     }
 
+    /**
+     * Requests location updates from Fused Location Provider API or LocationManager as fallback and returns the first valid [Location] or a [Throwable].
+     *
+     * @return The first valid [Location] or a [Throwable] in case of error.
+     *
+     * @see isLocationValid
+     */
+    override suspend fun getFirstValidLocation(): Completion<Location> {
+        val location = try {
+            suspendCoroutineWithTimeout<Location>(LOCATION_TIMEOUT) { continuation ->
+                if (systemManager.isLocationPermissionGranted()) {
+                    try {
+                        val startTime = systemManager.getCurrentTimeMillis()
+                        val provider = checkLocationState()
+
+                        when {
+                            systemManager.isGooglePlayServicesAvailable() -> {
+                                // Use Fused Location Provider API
+                                val client = systemManager.getFusedLocationProviderClient()
+                                val callback = object : LocationCallback() {
+                                    override fun onLocationAvailability(locationAvailability: LocationAvailability?) {
+                                        if (locationAvailability?.isLocationAvailable == false) {
+                                            Timber.w("No location available with Fused Location Provider API")
+                                            poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
+                                            continuation.resumeWithExceptionIfActive(NoLocationFound)
+                                        }
+                                    }
+
+                                    override fun onLocationResult(locationResult: LocationResult?) {
+                                        val location = locationResult?.lastLocation ?: return
+                                        if (isLocationValid(location, startTime)) {
+                                            client.removeLocationUpdates(this)
+                                            continuation.resumeIfActive(location)
+                                        }
+                                    }
+                                }
+                                client.requestLocationUpdates(locationRequest, callback, Looper.getMainLooper()).addOnFailureListener {
+                                    Timber.e(it, "Could no request location updates with Fused Location Provider API")
+                                    poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
+                                    continuation.resumeWithExceptionIfActive(it)
+                                }
+                                continuation.invokeOnCancellation {
+                                    client.removeLocationUpdates(callback)
+                                }
+                            }
+                            provider != null -> {
+                                // Use LocationManager as fallback
+                                val listener = object : LocationListener {
+                                    override fun onLocationChanged(location: Location) {
+                                        if (isLocationValid(location, startTime)) {
+                                            locationManager?.removeUpdates(this)
+                                            continuation.resumeIfActive(location)
+                                        }
+                                    }
+                                }
+                                locationManager?.requestLocationUpdates(provider, LOCATION_REQUEST_INTERVAL, LOCATION_REQUEST_SMALLEST_DISPLACEMENT, listener, Looper.getMainLooper())
+                                continuation.invokeOnCancellation {
+                                    locationManager?.removeUpdates(listener)
+                                }
+                            }
+                            else -> {
+                                Timber.w(NoLocationFound)
+                                poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
+                                continuation.resumeWithExceptionIfActive(NoLocationFound)
+                            }
+                        }
+                    } catch (e: SecurityException) {
+                        Timber.w(PermissionDenied)
+                        poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
+                        continuation.resumeWithExceptionIfActive(PermissionDenied)
+                    }
+                } else {
+                    Timber.w(PermissionDenied)
+                    poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
+                    continuation.resumeWithExceptionIfActive(PermissionDenied)
+                }
+            }
+        } catch (e: Exception) {
+            return Failure(e)
+        }
+
+        return Success(location)
+    }
+
+    /**
+     * Requests the last known [Location] from Fused Location Provider API or LocationManager as fallback without checking if it is valid.
+     *
+     * @return The last known [Location] or a [Throwable] in case of error.
+     *
+     * @see isLocationValid
+     */
+    override suspend fun getLastKnownLocation(): Completion<Location> {
+        val location = try {
+            suspendCancellableCoroutine<Location> { continuation ->
+                if (systemManager.isLocationPermissionGranted()) {
+                    try {
+                        val provider = checkLocationState()
+
+                        when {
+                            systemManager.isGooglePlayServicesAvailable() -> {
+                                // Use Fused Location Provider API
+                                systemManager.getFusedLocationProviderClient().getCurrentLocation(LOCATION_REQUEST_PRIORITY, null)
+                                    .addOnSuccessListener {
+                                        continuation.resumeIfActive(it)
+                                    }
+                                    .addOnFailureListener {
+                                        Timber.e(it, "Could no request location updates with Fused Location Provider API")
+                                        poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
+                                        continuation.resumeWithExceptionIfActive(it)
+                                    }
+                            }
+                            provider != null -> {
+                                // Use LocationManager as fallback
+                                val location = locationManager?.getLastKnownLocation(provider)
+                                if (location != null) {
+                                    continuation.resumeIfActive(location)
+                                } else {
+                                    Timber.w(NoLocationFound)
+                                    poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
+                                    continuation.resumeWithExceptionIfActive(NoLocationFound)
+                                }
+                            }
+                            else -> {
+                                Timber.w(NoLocationFound)
+                                poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
+                                continuation.resumeWithExceptionIfActive(NoLocationFound)
+                            }
+                        }
+                    } catch (e: SecurityException) {
+                        Timber.w(PermissionDenied)
+                        poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
+                        continuation.resumeWithExceptionIfActive(PermissionDenied)
+                    }
+                } else {
+                    Timber.w(PermissionDenied)
+                    poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
+                    continuation.resumeWithExceptionIfActive(PermissionDenied)
+                }
+            }
+        } catch (e: Exception) {
+            return Failure(e)
+        }
+
+        return Success(location)
+    }
+
+    private fun checkLocationState(): String? {
+        return when {
+            locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true -> {
+                poiKitLocationState.postValue(LocationState.LOCATION_HIGH_ACCURACY)
+                LocationManager.GPS_PROVIDER
+            }
+            locationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true -> {
+                poiKitLocationState.postValue(LocationState.LOCATION_LOW_ACCURACY)
+                LocationManager.NETWORK_PROVIDER
+            }
+            else -> {
+                Timber.w(NoLocationFound)
+                poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
+                null
+            }
+        }
+    }
+
+    private fun isLocationValid(location: Location?, startTime: Long): Boolean {
+        if (location == null) {
+            Timber.w("Discard null location")
+            return false
+        }
+
+        // Discard inaccurate locations
+        val minAccuracy = getNeededAccuracy(startTime)
+        if (location.accuracy > minAccuracy) {
+            Timber.w("Discard inaccurate location: location.accuracy (${location.accuracy} m) > minAccuracy ($minAccuracy m)")
+            return false
+        }
+
+        // Discard old locations
+        if (systemManager.getCurrentTimeMillis() - location.time >= MAX_LOCATION_AGE) {
+            Timber.w("Discard old location: location.time (${location.time} ms) >= MAX_LOCATION_AGE (${MAX_LOCATION_AGE} ms)")
+            return false
+        }
+
+        Timber.d("Location found: lat = ${location.latitude} lon = ${location.longitude}")
+        return true
+    }
+
+    private fun getNeededAccuracy(startTime: Long): Int {
+        val currentTime = systemManager.getCurrentTimeMillis()
+        val requestedTime = currentTime - startTime
+        val segmentTime = LOCATION_TIMEOUT / LOCATION_SEGMENTS
+
+        return when {
+            requestedTime <= segmentTime -> BEST_ACCURACY
+            requestedTime <= segmentTime * 2 -> MEDIUM_ACCURACY
+            else -> PACECloudSDK.configuration.locationAccuracy ?: LOW_ACCURACY
+        }
+    }
+
     companion object {
         private const val LOCATION_REQUEST_INTERVAL = 500L // In ms
         private const val LOCATION_REQUEST_FASTEST_INTERVAL = 200L // In ms
         private const val LOCATION_REQUEST_PRIORITY = LocationRequest.PRIORITY_HIGH_ACCURACY
         private const val LOCATION_REQUEST_SMALLEST_DISPLACEMENT = 0f // In m
+
+        private const val LOCATION_TIMEOUT = 30 * 1000L // 30sec
+        private const val LOCATION_SEGMENTS = 5
+        private const val MAX_LOCATION_AGE = 60 * 1000 // 1min
+
+        private const val BEST_ACCURACY = 20 // m
+        private const val MEDIUM_ACCURACY = 50 // m
+        private const val LOW_ACCURACY = 250 // m
     }
 }

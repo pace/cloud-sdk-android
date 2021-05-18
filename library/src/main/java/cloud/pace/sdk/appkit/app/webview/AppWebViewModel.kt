@@ -17,7 +17,6 @@ import cloud.pace.sdk.api.utils.InterceptorUtils
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.communication.MessageHandler
-import cloud.pace.sdk.appkit.location.AppLocationManager
 import cloud.pace.sdk.appkit.model.InvalidTokenReason
 import cloud.pace.sdk.appkit.pay.PayAuthenticationManager
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getDisableTimePreferenceKey
@@ -25,10 +24,7 @@ import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getSecu
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.persistence.TotpSecret
 import cloud.pace.sdk.appkit.utils.EncryptionUtils
-import cloud.pace.sdk.utils.DispatcherProvider
-import cloud.pace.sdk.utils.Event
-import cloud.pace.sdk.utils.onMainThread
-import cloud.pace.sdk.utils.resumeIfActive
+import cloud.pace.sdk.utils.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
@@ -115,7 +111,7 @@ class AppWebViewModelImpl(
     private val eventManager: AppEventManager,
     private val payAuthenticationManager: PayAuthenticationManager,
     private val appModel: AppModel,
-    private val appLocationManager: AppLocationManager
+    private val locationProvider: LocationProvider
 ) : AppWebViewModel() {
 
     override val url = MutableLiveData<Event<String>>()
@@ -181,19 +177,21 @@ class AppWebViewModelImpl(
         val messageBundle = getMessageBundle<MessageBundle<VerifyLocationRequest>>(message) ?: return
         launch {
             suspendCoroutineWithTimeout<VerifyLocationResponse>(message, MessageHandler.VERIFY_LOCATION.timeoutMillis) { continuation ->
-                onMainThread {
-                    appLocationManager.start { result ->
-                        val targetLocation = Location("").apply {
-                            latitude = messageBundle.message.lat
-                            longitude = messageBundle.message.lon
+                launch {
+                    val value = when (val location = locationProvider.getFirstValidLocation()) {
+                        is Success -> {
+                            val targetLocation = Location("").apply {
+                                latitude = messageBundle.message.lat
+                                longitude = messageBundle.message.lon
+                            }
+                            when (location.result.distanceTo(targetLocation) <= messageBundle.message.threshold) {
+                                true -> VerifyLocationResponse.TRUE
+                                false -> VerifyLocationResponse.FALSE
+                            }
                         }
-                        val value = when (result.getOrNull()?.distanceTo(targetLocation)?.let { distance -> distance <= messageBundle.message.threshold }) {
-                            true -> VerifyLocationResponse.TRUE
-                            false -> VerifyLocationResponse.FALSE
-                            else -> VerifyLocationResponse.UNKNOWN
-                        }
-                        continuation.resumeIfActive(value)
+                        is Failure -> VerifyLocationResponse.UNKNOWN
                     }
+                    continuation.resumeIfActive(value)
                 }
             }?.let {
                 verifyLocationResponse.postValue(ResponseEvent(messageBundle.id, it.value))

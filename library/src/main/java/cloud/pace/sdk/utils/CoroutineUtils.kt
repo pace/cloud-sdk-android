@@ -3,6 +3,7 @@ package cloud.pace.sdk.utils
 import android.os.Looper
 import kotlinx.coroutines.*
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * [launch] a new coroutine on a background thread.
@@ -83,4 +84,23 @@ inline fun dispatchOnMainThread(crossinline block: () -> Unit) {
  */
 fun <T> CancellableContinuation<T>.resumeIfActive(value: T) {
     if (isActive) resume(value)
+}
+
+/**
+ * Resumes the execution of the corresponding coroutine if it is still active so that the [exception] is re-thrown right after the last suspension point.
+ */
+fun <T> CancellableContinuation<T>.resumeWithExceptionIfActive(exception: Throwable) {
+    if (isActive) resumeWithException(exception)
+}
+
+/**
+ * Runs a given suspending [block] of code inside a [suspendCancellableCoroutine] with a specified [timeout][timeoutMillis] and throws
+ * a [TimeoutCancellationException] if the timeout was exceeded.
+ */
+@Throws(TimeoutCancellationException::class, CancellationException::class)
+suspend inline fun <T> suspendCoroutineWithTimeout(
+    timeoutMillis: Long,
+    crossinline block: (CancellableContinuation<T>) -> Unit
+) = withTimeout(timeoutMillis) {
+    suspendCancellableCoroutine(block)
 }

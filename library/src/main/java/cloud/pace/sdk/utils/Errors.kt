@@ -1,4 +1,4 @@
-package cloud.pace.sdk.appkit.utils
+package cloud.pace.sdk.utils
 
 import cloud.pace.sdk.PACECloudSDK
 
