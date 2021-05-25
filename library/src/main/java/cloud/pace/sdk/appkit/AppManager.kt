@@ -43,6 +43,7 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
 
     private var checkRunning = false
     private var lastApps = emptyList<String>()
+    private var lastLocation: Location? = null
 
     internal fun requestLocalApps(completion: (Completion<List<App>>) -> Unit) = CoroutineScope(dispatchers.default()).launch {
         Timber.i("Check local available Apps")
@@ -109,11 +110,30 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
                     }
 
                 val notDisabledUrls = notDisabled.map { it.url }
+                val disabledUrls = apps.map { it.url }.minus(notDisabledUrls)
                 val invalidUrls = lastApps.minus(notDisabledUrls)
+
+                appEventManager.setInvalidApps(disabledUrls)
+                appModel.close(urls = disabledUrls)
+
+                if (notDisabledUrls.isEmpty() && lastApps.isNotEmpty()) {
+                    val distance = lastLocation?.distanceTo(location)
+                    distance?.let {
+                        if (it < LOCATION_DIFFERENCE_THRESHOLD) {
+                            return@getLocationBasedApps
+                        }
+                    }
+                }
+
+                if (notDisabledUrls.isNotEmpty() && notDisabledUrls.equalsTo(lastApps)) {
+                    return@getLocationBasedApps
+                }
+
                 appEventManager.setInvalidApps(invalidUrls)
                 appModel.close(urls = invalidUrls)
 
                 lastApps = notDisabledUrls
+                lastLocation = location
 
                 CoroutineScope(dispatchers.main()).launch { completion(Success(notDisabled)) }
             }
@@ -245,5 +265,6 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
 
     companion object {
         private const val SPEED_ACCURACY_THRESHOLD = 3 // in m/s ~= 10km/h
+        private const val LOCATION_DIFFERENCE_THRESHOLD = 150f
     }
 }

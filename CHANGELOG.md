@@ -6,6 +6,9 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Enhancements
+* Make app drawer more robust by increasing distance threshhold and checking whether same apps are returning when requesting local apps
+
 ### Fixes
 
 * Implement a default handler for `getConfig` PWA message which returns `null` to prevent waiting for result
