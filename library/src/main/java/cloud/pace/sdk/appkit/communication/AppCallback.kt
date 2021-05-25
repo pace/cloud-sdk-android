@@ -117,5 +117,7 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
     override fun onImageDataReceived(bitmap: Bitmap) {}
     override fun setUserProperty(key: String, value: String, update: Boolean) {}
     override fun logEvent(key: String, parameters: Map<String, Any>) {}
-    override fun getConfig(key: String, config: (String?) -> Unit) {}
+    override fun getConfig(key: String, config: (String?) -> Unit) {
+        config(null)
+    }
 }
