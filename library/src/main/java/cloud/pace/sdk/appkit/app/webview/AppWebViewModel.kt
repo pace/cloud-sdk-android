@@ -178,15 +178,21 @@ class AppWebViewModelImpl(
         launch {
             suspendCoroutineWithTimeout<VerifyLocationResponse>(message, MessageHandler.VERIFY_LOCATION.timeoutMillis) { continuation ->
                 launch {
-                    val value = when (val location = locationProvider.getFirstValidLocation()) {
+                    val value = when (val location = locationProvider.currentLocation(true)) {
                         is Success -> {
                             val targetLocation = Location("").apply {
                                 latitude = messageBundle.message.lat
                                 longitude = messageBundle.message.lon
                             }
-                            when (location.result.distanceTo(targetLocation) <= messageBundle.message.threshold) {
-                                true -> VerifyLocationResponse.TRUE
-                                false -> VerifyLocationResponse.FALSE
+                            when {
+                                location.result == null -> {
+                                    when (val validLocation = locationProvider.firstValidLocation()) {
+                                        is Success -> if (validLocation.result.distanceTo(targetLocation) <= messageBundle.message.threshold) VerifyLocationResponse.TRUE else VerifyLocationResponse.FALSE
+                                        is Failure -> VerifyLocationResponse.UNKNOWN
+                                    }
+                                }
+                                location.result.distanceTo(targetLocation) <= messageBundle.message.threshold -> VerifyLocationResponse.TRUE
+                                else -> VerifyLocationResponse.FALSE
                             }
                         }
                         is Failure -> VerifyLocationResponse.UNKNOWN
