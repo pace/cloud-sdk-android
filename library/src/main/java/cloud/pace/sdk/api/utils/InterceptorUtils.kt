@@ -1,8 +1,8 @@
 package cloud.pace.sdk.api.utils
 
+import android.net.Uri
 import android.os.Build
 import cloud.pace.sdk.BuildConfig
-import android.net.Uri
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.utils.DeviceUtils

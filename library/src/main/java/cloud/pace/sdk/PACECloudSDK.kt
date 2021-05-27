@@ -15,7 +15,19 @@ object PACECloudSDK {
 
     internal lateinit var configuration: Configuration
     var additionalQueryParams: Map<String, String> = mapOf()
+        set(value) {
+            val newQueryParams = mutableMapOf<String, String>()
+            newQueryParams.putAll(value)
 
+            defaultUtmParams.forEach {
+                val oldValue = field[it]
+                if (!newQueryParams.containsKey(it) && oldValue != null)
+                    newQueryParams[it] = oldValue
+            }
+            field = newQueryParams
+        }
+
+    private val defaultUtmParams = listOf("utm_source")
     private var loggingListener: ((String) -> Unit)? = null
     private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ROOT)
     private val cloudSDKTree: Timber.DebugTree by lazy {
@@ -58,6 +70,7 @@ object PACECloudSDK {
      */
     fun setup(context: Context, configuration: Configuration) {
         this.configuration = configuration
+        addQueryParam("utm_source", configuration.clientAppName)
 
         // Do not log to logcat on production
         if (configuration.environment != Environment.PRODUCTION) {
@@ -87,6 +100,15 @@ object PACECloudSDK {
             configuration.extensions = extensions
             AppKit.updateUserAgent()
         }
+    }
+
+    /**
+     * Adds param to additionalQueryParams. If additionalQueryParams already contains specified [key], the old value will be replaced.
+     */
+    fun addQueryParam(key: String, value: String) {
+        val currentParams = additionalQueryParams.toMutableMap()
+        currentParams[key] = value
+        additionalQueryParams = currentParams
     }
 
     internal fun setLocationAccuracy(locationAccuracy: Int?) {
