@@ -72,15 +72,17 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
 
     fun getRoute(destination: LocationPoint, completion: (Completion<Route?>) -> Unit) {
         onBackgroundThread {
-            when (val location = locationProvider.getLastKnownLocation()) {
+            when (val location = locationProvider.currentLocation(false)) {
                 is Success -> {
-                    val navigationRequest = NavigationRequest(
-                        UUID.randomUUID().toString(),
-                        listOf(LocationPoint(location.result.latitude, location.result.longitude), destination),
-                        alternatives = false,
-                        navigationMode = NavigationMode.CAR
-                    )
-                    navigationApi.getRoute(navigationRequest, completion)
+                    location.result?.let {
+                        val navigationRequest = NavigationRequest(
+                            UUID.randomUUID().toString(),
+                            listOf(LocationPoint(it.latitude, it.longitude), destination),
+                            alternatives = false,
+                            navigationMode = NavigationMode.CAR
+                        )
+                        navigationApi.getRoute(navigationRequest, completion)
+                    } ?: completion(Failure(Exception("Could not get current location")))
                 }
                 is Failure -> completion(Failure(location.throwable))
             }

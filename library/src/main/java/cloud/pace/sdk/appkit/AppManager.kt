@@ -53,7 +53,7 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
         } else {
             checkRunning = true
 
-            when (val location = locationProvider.getFirstValidLocation()) {
+            when (val location = locationProvider.firstValidLocation()) {
                 is Success -> {
                     if (isSpeedValid(location.result)) {
                         getAppsByLocation(location.result, completion)
@@ -162,7 +162,7 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
 
     internal fun isPoiInRange(poiId: String, completion: (Boolean) -> Unit) {
         CoroutineScope(dispatchers.default()).launch {
-            when (val location = locationProvider.getFirstValidLocation()) {
+            when (val location = locationProvider.firstValidLocation()) {
                 is Success -> appRepository.isPoiInRange(poiId, location.result.latitude, location.result.longitude) {
                     CoroutineScope(dispatchers.main()).launch { completion(it) }
                 }

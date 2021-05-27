@@ -12,6 +12,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 ### Internal
 
+* Use `LocationProvider.currentLocation()` first and `LocationProvider.firstValidLocation()` as fallback to speed up the verify location call in the PWA
 * Refactor `LocationProvider` so that every one-time location e.g. used in `isPoiInRange` or `requestLocalApps` is returned inline
 * Decrease `getConfig` PWA message handling timeout to 5 seconds
 
