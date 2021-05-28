@@ -26,6 +26,11 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
          * Invoked when the page has started or finished loading
          */
         fun onLoadingChanged(isLoading: Boolean)
+
+        /**
+         * Invoked when the URL has changed
+         */
+        fun onUrlChanged(newUrl: String)
     }
 
     private var isInErrorState = false
@@ -72,12 +77,16 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
         }
     }
 
+    override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
+        url?.let { callback.onUrlChanged(it) }
+    }
+
     @TargetApi(Build.VERSION_CODES.N)
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
         injectFeatureFlags(view)
         val newUrl = request?.url ?: return false
         this.url = newUrl.toString()
-        return super.shouldOverrideUrlLoading(view, request)
+        return false
     }
 
     @Suppress("DEPRECATION")
@@ -85,7 +94,7 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
         injectFeatureFlags(view)
         val newUrl = url?.let { Uri.parse(it) } ?: return false
         this.url = newUrl.toString()
-        return super.shouldOverrideUrlLoading(view, url)
+        return false
     }
 
     private fun injectFeatureFlags(view: WebView?) {

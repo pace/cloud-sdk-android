@@ -34,7 +34,8 @@ import java.util.*
 
 abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback {
 
-    abstract val url: LiveData<Event<String>>
+    abstract val currentUrl: MutableLiveData<String?>
+    abstract val loadUrl: LiveData<Event<String>>
     abstract val isInErrorState: LiveData<Event<Boolean>>
     abstract val showLoadingIndicator: LiveData<Event<Boolean>>
     abstract val biometricRequest: LiveData<Event<BiometricRequest>>
@@ -110,7 +111,8 @@ class AppWebViewModelImpl(
     private val locationProvider: LocationProvider
 ) : AppWebViewModel() {
 
-    override val url = MutableLiveData<Event<String>>()
+    override val currentUrl = MutableLiveData<String?>()
+    override val loadUrl = MutableLiveData<Event<String>>()
     override val isInErrorState = MutableLiveData<Event<Boolean>>()
     override val showLoadingIndicator = MutableLiveData<Event<Boolean>>()
     override val biometricRequest = MutableLiveData<Event<BiometricRequest>>()
@@ -127,7 +129,7 @@ class AppWebViewModelImpl(
     private val gson = Gson()
 
     override fun init(url: String) {
-        this.url.value = Event(url)
+        this.loadUrl.value = Event(url)
     }
 
     override fun close() {
@@ -140,6 +142,10 @@ class AppWebViewModelImpl(
 
     override fun onLoadingChanged(isLoading: Boolean) {
         showLoadingIndicator.value = Event(isLoading)
+    }
+
+    override fun onUrlChanged(newUrl: String) {
+        currentUrl.value = newUrl
     }
 
     override fun handleInvalidToken(message: String) {
@@ -413,7 +419,7 @@ class AppWebViewModelImpl(
             timeout(message, MessageHandler.OPEN_URL_IN_NEW_TAB.timeoutMillis) {
                 val redirectScheme = getRedirectScheme()
                 onMainThread {
-                    url.value = Event(messageBundle.message.cancelUrl)
+                    loadUrl.value = Event(messageBundle.message.cancelUrl)
                 }
 
                 if (!redirectScheme.isNullOrEmpty()) {
@@ -492,7 +498,7 @@ class AppWebViewModelImpl(
         return applicationInfo?.metaData?.get("pace_redirect_scheme")?.toString()
     }
 
-    private fun getHost() = url.value?.peekContent()?.let { Uri.parse(it).host }
+    private fun getHost() = currentUrl.value?.let { Uri.parse(it).host }
 
     private fun isDomainInACL(domain: String): Boolean {
         return PACECloudSDK.configuration.domainACL.any {

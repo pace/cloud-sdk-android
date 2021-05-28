@@ -45,7 +45,8 @@ class AppWebViewModelTest {
     private val payManager = mock(PayAuthenticationManager::class.java)
     private var disabled = ""
     private val host = "pace.cloud"
-    private val url = "https://$host"
+    private val startUrl = "https://$host"
+    private val payHost = "pay.$host"
     private val eventManager = object : TestAppEventManager() {
         override fun setDisabledHost(host: String) {
             disabled = host
@@ -69,12 +70,13 @@ class AppWebViewModelTest {
         every { EncryptionUtils.encrypt(capture(slot)) } answers { slot.captured }
         every { EncryptionUtils.decrypt(capture(slot2)) } answers { slot2.captured }
 
-        viewModel.init(url)
+        viewModel.init(startUrl)
+        viewModel.currentUrl.value = "https://$payHost"
     }
 
     @Test
     fun `open app with passed URL`() {
-        assertEquals(url, viewModel.url.value?.getContentIfNotHandled())
+        assertEquals(startUrl, viewModel.loadUrl.value?.getContentIfNotHandled())
     }
 
     @Test
@@ -129,7 +131,7 @@ class AppWebViewModelTest {
         val totpRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.SetTOTPRequest(secret, period, digits, algorithm, key)))
         viewModel.handleSetTOTPSecret(totpRequest)
 
-        verify(sharedPreferencesModel, times(1)).setTotpSecret(host, key, TotpSecret(secret, digits, period, algorithm))
+        verify(sharedPreferencesModel, times(1)).setTotpSecret(payHost, key, TotpSecret(secret, digits, period, algorithm))
         assertEquals("id", viewModel.statusCode.value?.peekContent()?.id)
         assertEquals(AppWebViewModel.StatusCodeResponse.Success().statusCode, viewModel.statusCode.value?.getContentIfNotHandled()?.message?.statusCode)
     }
@@ -149,11 +151,11 @@ class AppWebViewModelTest {
         viewModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
-        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, key))).thenReturn(secret)
-        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, key))).thenReturn(algorithm)
-        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, key))).thenReturn(digits)
-        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, key))).thenReturn(period)
-        `when`(sharedPreferencesModel.getTotpSecret(host, key)).thenReturn(TotpSecret(secret, digits, period, algorithm))
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, payHost, key))).thenReturn(secret)
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, payHost, key))).thenReturn(algorithm)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, payHost, key))).thenReturn(digits)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, payHost, key))).thenReturn(period)
+        `when`(sharedPreferencesModel.getTotpSecret(payHost, key)).thenReturn(TotpSecret(secret, digits, period, algorithm))
 
         val totpRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.GetTOTPRequest(1611158191, key)))
         viewModel.handleGetTOTP(totpRequest)
@@ -181,11 +183,11 @@ class AppWebViewModelTest {
         viewModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
-        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, key))).thenReturn(secret)
-        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, key))).thenReturn(algorithm)
-        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, key))).thenReturn(digits)
-        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, key))).thenReturn(period)
-        `when`(sharedPreferencesModel.getTotpSecret(host, key)).thenReturn(TotpSecret(secret, period, digits, algorithm))
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, payHost, key))).thenReturn(secret)
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, payHost, key))).thenReturn(algorithm)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, payHost, key))).thenReturn(digits)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, payHost, key))).thenReturn(period)
+        `when`(sharedPreferencesModel.getTotpSecret(payHost, key)).thenReturn(TotpSecret(secret, period, digits, algorithm))
 
         val totpRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.GetTOTPRequest(1611158191, key)))
         viewModel.handleGetTOTP(totpRequest)
@@ -233,11 +235,11 @@ class AppWebViewModelTest {
         viewModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
-        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, host, key))).thenReturn(null)
-        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, host, key))).thenReturn(algorithm)
-        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, host, key))).thenReturn(digits)
-        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, host, key))).thenReturn(period)
-        `when`(sharedPreferencesModel.getTotpSecret(host, key)).thenReturn(null)
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, payHost, key))).thenReturn(null)
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, payHost, key))).thenReturn(algorithm)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, payHost, key))).thenReturn(digits)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, payHost, key))).thenReturn(period)
+        `when`(sharedPreferencesModel.getTotpSecret(payHost, key)).thenReturn(null)
 
         val totpRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.GetTOTPRequest(1611158191, key)))
         viewModel.handleGetTOTP(totpRequest)
@@ -257,7 +259,7 @@ class AppWebViewModelTest {
         val secureDataRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.SetSecureDataRequest(key, value)))
         viewModel.handleSetSecureData(secureDataRequest)
 
-        verify(sharedPreferencesModel, times(1)).putString(SharedPreferencesImpl.getSecureDataPreferenceKey(host, key), value)
+        verify(sharedPreferencesModel, times(1)).putString(SharedPreferencesImpl.getSecureDataPreferenceKey(payHost, key), value)
         assertEquals(AppWebViewModel.StatusCodeResponse.Success().statusCode, viewModel.statusCode.value?.getContentIfNotHandled()?.message?.statusCode)
     }
 
@@ -273,7 +275,7 @@ class AppWebViewModelTest {
         viewModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
-        `when`(sharedPreferencesModel.getString(SharedPreferencesImpl.getSecureDataPreferenceKey(host, key))).thenReturn(value)
+        `when`(sharedPreferencesModel.getString(SharedPreferencesImpl.getSecureDataPreferenceKey(payHost, key))).thenReturn(value)
 
         viewModel.handleGetSecureData(Gson().toJson(AppWebViewModel.MessageBundle("id", mapOf("key" to key))))
 
@@ -288,8 +290,8 @@ class AppWebViewModelTest {
 
         viewModel.handleDisable(Gson().toJson(AppWebViewModel.MessageBundle("id", mapOf("until" to until))))
 
-        verify(sharedPreferencesModel, times(1)).putLong(SharedPreferencesImpl.getDisableTimePreferenceKey(host), until)
-        assertEquals(host, disabled)
+        verify(sharedPreferencesModel, times(1)).putLong(SharedPreferencesImpl.getDisableTimePreferenceKey(payHost), until)
+        assertEquals(payHost, disabled)
         assertEquals(AppWebViewModel.StatusCodeResponse.Success().statusCode, viewModel.statusCode.value?.getContentIfNotHandled()?.message?.statusCode)
     }
 
@@ -301,7 +303,7 @@ class AppWebViewModelTest {
         val openURLInNewTabRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.OpenURLInNewTabRequest(redirectUri, cancelUrl)))
         viewModel.handleOpenURLInNewTab(openURLInNewTabRequest)
 
-        assertEquals(cancelUrl, viewModel.url.value?.getContentIfNotHandled())
+        assertEquals(cancelUrl, viewModel.loadUrl.value?.getContentIfNotHandled())
     }
 
     @Test

@@ -13,6 +13,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Fixes
 
 * Implement a default handler for `getConfig` PWA message which returns `null` to prevent waiting for result
+* Fix host in key under which secure data is persisted
 
 ### Internal
 
