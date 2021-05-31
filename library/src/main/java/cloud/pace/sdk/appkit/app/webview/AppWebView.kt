@@ -12,7 +12,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.R
-import cloud.pace.sdk.api.utils.InterceptorUtils
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.MessageHandler
 import cloud.pace.sdk.appkit.utils.BiometricUtils
@@ -82,7 +81,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         }
     }
 
-    private val verifyLocationResponseObserver = Observer<AppWebViewModel.ResponseEvent<String>> {
+    private val verifyLocationResponseObserver = Observer<AppWebViewModel.ResponseEvent<AppWebViewModel.VerifyLocationResponse>> {
         it.getContentIfNotHandled()?.let { response ->
             sendMessageCallback(response)
         }

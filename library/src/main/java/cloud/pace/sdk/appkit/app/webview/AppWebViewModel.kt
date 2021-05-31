@@ -39,7 +39,7 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     abstract val showLoadingIndicator: LiveData<Event<Boolean>>
     abstract val biometricRequest: LiveData<Event<BiometricRequest>>
     abstract val newToken: LiveData<ResponseEvent<String>>
-    abstract val verifyLocationResponse: LiveData<ResponseEvent<String>>
+    abstract val verifyLocationResponse: LiveData<ResponseEvent<VerifyLocationResponse>>
     abstract val goBack: LiveData<Event<Unit>>
     abstract val isBiometricAvailable: LiveData<ResponseEvent<Boolean>>
     abstract val statusCode: LiveData<ResponseEvent<StatusCodeResponse>>
@@ -80,21 +80,17 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     class KeyRequest(val key: String)
     class DisableRequest(val until: Long)
     class OpenURLInNewTabRequest(val url: String, val cancelUrl: String)
-    class TOTPResponse(val totp: String, val biometryMethod: String)
-    class AppInterceptableLinkResponse(val link: String)
     class SetUserPropertyRequest(val key: String, val value: String, val update: Boolean = false)
     class LogEventRequest(val key: String, val parameters: Map<String, Any> = emptyMap())
+
+    class VerifyLocationResponse(val verified: Boolean?, val accuracy: Float?)
+    class TOTPResponse(val totp: String, val biometryMethod: String)
+    class AppInterceptableLinkResponse(val link: String)
     class ValueResponse(val value: String)
 
     sealed class StatusCodeResponse(val statusCode: Int) {
         class Success(statusCode: Int = HttpURLConnection.HTTP_OK) : StatusCodeResponse(statusCode)
         class Failure(val error: String, statusCode: Int) : StatusCodeResponse(statusCode)
-    }
-
-    enum class VerifyLocationResponse(val value: String) {
-        TRUE("true"),
-        FALSE("false"),
-        UNKNOWN("unknown")
     }
 
     enum class BiometryMethod(val value: String) {
@@ -119,7 +115,7 @@ class AppWebViewModelImpl(
     override val showLoadingIndicator = MutableLiveData<Event<Boolean>>()
     override val biometricRequest = MutableLiveData<Event<BiometricRequest>>()
     override val newToken = MutableLiveData<ResponseEvent<String>>()
-    override val verifyLocationResponse = MutableLiveData<ResponseEvent<String>>()
+    override val verifyLocationResponse = MutableLiveData<ResponseEvent<VerifyLocationResponse>>()
     override val goBack = MutableLiveData<Event<Unit>>()
     override val isBiometricAvailable = MutableLiveData<ResponseEvent<Boolean>>()
     override val statusCode = MutableLiveData<ResponseEvent<StatusCodeResponse>>()
@@ -178,29 +174,24 @@ class AppWebViewModelImpl(
         launch {
             suspendCoroutineWithTimeout<VerifyLocationResponse>(message, MessageHandler.VERIFY_LOCATION.timeoutMillis) { continuation ->
                 launch {
-                    val value = when (val location = locationProvider.currentLocation(true)) {
-                        is Success -> {
-                            val targetLocation = Location("").apply {
-                                latitude = messageBundle.message.lat
-                                longitude = messageBundle.message.lon
-                            }
-                            when {
-                                location.result == null -> {
-                                    when (val validLocation = locationProvider.firstValidLocation()) {
-                                        is Success -> if (validLocation.result.distanceTo(targetLocation) <= messageBundle.message.threshold) VerifyLocationResponse.TRUE else VerifyLocationResponse.FALSE
-                                        is Failure -> VerifyLocationResponse.UNKNOWN
-                                    }
-                                }
-                                location.result.distanceTo(targetLocation) <= messageBundle.message.threshold -> VerifyLocationResponse.TRUE
-                                else -> VerifyLocationResponse.FALSE
-                            }
+                    val currentLocation = locationProvider.currentLocation(true)
+                    val location = if (currentLocation is Success) {
+                        val currentLocationResult = currentLocation.result
+                        if (currentLocationResult != null) {
+                            currentLocationResult
+                        } else {
+                            val validLocation = locationProvider.firstValidLocation()
+                            if (validLocation is Success) validLocation.result else null
                         }
-                        is Failure -> VerifyLocationResponse.UNKNOWN
-                    }
-                    continuation.resumeIfActive(value)
+                    } else null
+
+                    val targetLocation = Location("").apply { latitude = messageBundle.message.lat; longitude = messageBundle.message.lon }
+                    val verified = location?.let { it.distanceTo(targetLocation) <= messageBundle.message.threshold }
+
+                    continuation.resumeIfActive(VerifyLocationResponse(verified, location?.accuracy))
                 }
             }?.let {
-                verifyLocationResponse.postValue(ResponseEvent(messageBundle.id, it.value))
+                verifyLocationResponse.postValue(ResponseEvent(messageBundle.id, it))
             }
         }
     }
