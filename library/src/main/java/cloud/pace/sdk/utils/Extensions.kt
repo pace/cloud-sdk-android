@@ -56,3 +56,7 @@ fun String.Companion.randomHexString(length: Int): String {
     }
     return stringBuilder.toString().substring(0, length)
 }
+
+fun <T> List<T>.equalsTo(other: List<T>): Boolean {
+    return size == other.size && containsAll(other)
+}
