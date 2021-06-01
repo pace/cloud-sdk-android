@@ -122,7 +122,7 @@ dependencies {
     testImplementation "org.koin:koin-test:$koin_version"
     testImplementation "org.mockito:mockito-core:$mockito_version"
     testImplementation "org.mockito:mockito-inline:$mockito_version"
-    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockito_kotlin_version"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:$mockito_kotlin_version"
     testImplementation "io.mockk:mockk:$mockk_version"
     testImplementation "org.robolectric:robolectric:$robolectric_version"
     androidTestImplementation "androidx.test:core:$test_core_version"

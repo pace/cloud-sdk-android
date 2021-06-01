@@ -177,6 +177,7 @@ open class TestWebClientCallback : AppWebViewClient.WebClientCallback {
 
     override fun onSwitchErrorState(isError: Boolean, isHttpError: Boolean) {}
     override fun onLoadingChanged(isLoading: Boolean) {}
+    override fun onUrlChanged(newUrl: String) {}
 }
 
 open class TestAppAPI : AppAPI {

@@ -32,14 +32,14 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         loadingIndicator?.visibility = View.VISIBLE
     }
 
-    private val urlObserver = Observer<Event<String>> {
-        val url = it.getContentIfNotHandled() ?: return@Observer
+    private val openUrlObserver = Observer<Event<String>> {
+        val newUrl = it.getContentIfNotHandled() ?: return@Observer
 
-        val appWebViewClient = AppWebViewClient(url, webViewModel, context)
+        val appWebViewClient = AppWebViewClient(newUrl, webViewModel, context)
         webView.webViewClient = appWebViewClient
         webView.webChromeClient = appWebViewClient.chromeClient
 
-        webView?.loadUrl(url)
+        webView?.loadUrl(newUrl)
     }
 
     private val isInErrorStateObserver = Observer<Event<Boolean>> {
@@ -196,7 +196,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
             ?: throw RuntimeException("lifecycle owner not found ")
 
         // TODO: should this be moved to "onResume" and "onPause" and replaced with "observeForever"?
-        webViewModel.url.observe(lifecycleOwner, urlObserver)
+        webViewModel.loadUrl.observe(lifecycleOwner, openUrlObserver)
         webViewModel.isInErrorState.observe(lifecycleOwner, isInErrorStateObserver)
         webViewModel.showLoadingIndicator.observe(lifecycleOwner, showLoadingIndicatorObserver)
         webViewModel.biometricRequest.observe(lifecycleOwner, biometricRequestObserver)
