@@ -118,12 +118,20 @@ internal class CredentialsManager(
         }
     }
 
-    internal fun setPINWithBiometry(fragment: Fragment, title: String, subTitle: String?, cancelText: String?, pin: String, completion: (Completion<Boolean>) -> Unit) {
+    internal fun setPINWithBiometry(
+        fragment: Fragment,
+        title: String,
+        subTitle: String?,
+        cancelText: String?,
+        isDeviceCredentialsAllowed: Boolean,
+        pin: String,
+        completion: (Completion<Boolean>) -> Unit
+    ) {
         if (payAuthenticationManager.isFingerprintAvailable()) {
             if (setAuthorizationHeader()) {
                 val totpSecret = sharedPreferencesModel.getTotpSecret()
                 if (totpSecret != null) {
-                    BiometricUtils.requestAuthentication(fragment, title, subTitle, cancelText,
+                    BiometricUtils.requestAuthentication(fragment, title, subTitle, cancelText, isDeviceCredentialsAllowed,
                         onSuccess = { updateUserPIN(pin, totpSecret, completion) },
                         onFailure = { errorCode, errString -> completion(Failure(Throwable("Error code = $errorCode error message = $errString"))) }
                     )
@@ -138,12 +146,20 @@ internal class CredentialsManager(
         }
     }
 
-    internal fun setPINWithBiometry(activity: FragmentActivity, title: String, subTitle: String?, cancelText: String?, pin: String, completion: (Completion<Boolean>) -> Unit) {
+    internal fun setPINWithBiometry(
+        activity: FragmentActivity,
+        title: String,
+        subTitle: String?,
+        cancelText: String?,
+        isDeviceCredentialsAllowed: Boolean,
+        pin: String,
+        completion: (Completion<Boolean>) -> Unit
+    ) {
         if (payAuthenticationManager.isFingerprintAvailable()) {
             if (setAuthorizationHeader()) {
                 val totpSecret = sharedPreferencesModel.getTotpSecret()
                 if (totpSecret != null) {
-                    BiometricUtils.requestAuthentication(activity, title, subTitle, cancelText,
+                    BiometricUtils.requestAuthentication(activity, title, subTitle, cancelText, isDeviceCredentialsAllowed,
                         onSuccess = { updateUserPIN(pin, totpSecret, completion) },
                         onFailure = { errorCode, errString -> completion(Failure(Throwable("Error code = $errorCode error message = $errString"))) }
                     )

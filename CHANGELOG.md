@@ -9,6 +9,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Enhancements
 
 * Make app drawer more robust by increasing distance threshold and checking whether same apps are returning when requesting local apps
+* Add option to `IDKit.setPINWithBiometry(...)` to authenticate with the device PIN, pattern, or password instead of biometry (defaults to `true`)
 
 ### Fixes
 
@@ -22,6 +23,7 @@ x.y.z Release notes (yyyy-MM-dd)
 * Decrease `getConfig` PWA message handling timeout to 5 seconds
 * Set `utm_source` per default and add defined list of default `utm_params` to make sure these params won't be removed
 * Return location accuracy in `verifyLocation` PWA message response
+* Add option to authenticate payments with the device PIN, pattern, or password instead of biometry
 
 
 7.4.0 Release notes (2021-05-12)
