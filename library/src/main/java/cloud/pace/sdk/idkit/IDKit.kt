@@ -263,12 +263,22 @@ object IDKit : IDKitKoinComponent {
      * @param title The title of the [androidx.biometric.BiometricPrompt].
      * @param subtitle The subtitle of the [androidx.biometric.BiometricPrompt].
      * @param cancelText The negative button text of the [androidx.biometric.BiometricPrompt].
+     * @param isDeviceCredentialsAllowed Sets whether the user should be given the option to authenticate with their device PIN, pattern, or password instead of biometry. Defaults to `true`.
+     * Note that if this option is set to `true` [cancelText] will not be set because it will replace the negative button on the BiometricPrompt.
      * @param pin The PIN to be set.
      * @param completion The block to be called when the request is completed including either the information if the PIN has been set / updated `successfully` or a [Throwable].
      */
     @JvmOverloads
-    fun setPINWithBiometry(fragment: Fragment, title: String, subtitle: String? = null, cancelText: String? = null, pin: String, completion: (Completion<Boolean>) -> Unit) =
-        credentialsManager.setPINWithBiometry(fragment, title, subtitle, cancelText, pin, completion)
+    fun setPINWithBiometry(
+        fragment: Fragment,
+        title: String,
+        subtitle: String? = null,
+        cancelText: String? = null,
+        isDeviceCredentialsAllowed: Boolean = true,
+        pin: String,
+        completion: (Completion<Boolean>) -> Unit
+    ) =
+        credentialsManager.setPINWithBiometry(fragment, title, subtitle, cancelText, isDeviceCredentialsAllowed, pin, completion)
 
     /**
      * Sets or updates the user's PIN using biometric authentication.
@@ -277,12 +287,22 @@ object IDKit : IDKitKoinComponent {
      * @param title The title of the [androidx.biometric.BiometricPrompt].
      * @param subtitle The subtitle of the [androidx.biometric.BiometricPrompt].
      * @param cancelText The negative button text of the [androidx.biometric.BiometricPrompt].
+     * @param isDeviceCredentialsAllowed Sets whether the user should be given the option to authenticate with their device PIN, pattern, or password instead of biometry. Defaults to `true`.
+     * Note that if this option is set to `true` [cancelText] will not be set because it will replace the negative button on the BiometricPrompt.
      * @param pin The PIN to be set.
      * @param completion The block to be called when the request is completed including either the information if the PIN has been set / updated `successfully` or a [Throwable].
      */
     @JvmOverloads
-    fun setPINWithBiometry(activity: FragmentActivity, title: String, subtitle: String? = null, cancelText: String? = null, pin: String, completion: (Completion<Boolean>) -> Unit) =
-        credentialsManager.setPINWithBiometry(activity, title, subtitle, cancelText, pin, completion)
+    fun setPINWithBiometry(
+        activity: FragmentActivity,
+        title: String,
+        subtitle: String? = null,
+        cancelText: String? = null,
+        isDeviceCredentialsAllowed: Boolean = true,
+        pin: String,
+        completion: (Completion<Boolean>) -> Unit
+    ) =
+        credentialsManager.setPINWithBiometry(activity, title, subtitle, cancelText, isDeviceCredentialsAllowed, pin, completion)
 
     /**
      * Sets or updates the user's PIN using the account password.
