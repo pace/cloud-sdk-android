@@ -83,3 +83,15 @@ maven_central_close_and_release:
     when: manual
     only:
         - tags
+
+# GitHub Release
+framework_publish_github:
+    script:
+        - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${COMMON_REPO} tmp/common
+        - pip3 install -r tmp/common/scripts/screenshots/requirements.txt
+        - python3 tmp/common/scripts/tags/create_github_release.py -d pace/cloud-sdk-android
+    allow_failure: true
+    stage: publish
+    only:
+        - tags
+    when: manual
