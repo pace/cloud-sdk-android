@@ -69,8 +69,8 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     abstract fun handleGetConfig(message: String)
     abstract fun handleGetTraceId(message: String)
 
-    class MessageBundle<T>(val id: String, val message: T)
-    class ResponseEvent<T>(id: String, content: T) : Event<MessageBundle<T>>(MessageBundle(id, content))
+    class MessageBundle<T>(val id: String?, val message: T)
+    class ResponseEvent<T>(id: String?, content: T) : Event<MessageBundle<T>>(MessageBundle(id, content))
 
     class InvalidTokenRequest(val reason: String, val oldToken: String?)
     class VerifyLocationRequest(val lat: Double, val lon: Double, val threshold: Double)
@@ -149,7 +149,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleInvalidToken(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<InvalidTokenRequest>>(message) ?: return
+        val messageBundle = getMessageBundle<InvalidTokenRequest>(message) ?: return
         launch {
             suspendCoroutineWithTimeout<String>(message, MessageHandler.INVALID_TOKEN.timeoutMillis) { continuation ->
                 val reason = messageBundle.message.reason
@@ -164,7 +164,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleImageData(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<String>>(message) ?: return
+        val messageBundle = getMessageBundle<String>(message) ?: return
         launch {
             timeout(message, MessageHandler.IMAGE_DATA.timeoutMillis) {
                 val decodedString = Base64.decode(messageBundle.message, Base64.DEFAULT)
@@ -176,7 +176,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleVerifyLocation(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<VerifyLocationRequest>>(message) ?: return
+        val messageBundle = getMessageBundle<VerifyLocationRequest>(message) ?: return
         launch {
             suspendCoroutineWithTimeout<VerifyLocationResponse>(message, MessageHandler.VERIFY_LOCATION.timeoutMillis) { continuation ->
                 launch {
@@ -203,7 +203,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleBack(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<String>>(message) ?: return
+        val messageBundle = getMessageBundle<String>(message) ?: return
         launch {
             timeout(message, MessageHandler.BACK.timeoutMillis) {
                 onMainThread {
@@ -215,7 +215,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleClose(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<String>>(message) ?: return
+        val messageBundle = getMessageBundle<String>(message) ?: return
         launch {
             timeout(message, MessageHandler.CLOSE.timeoutMillis) {
                 close()
@@ -225,7 +225,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleGetBiometricStatus(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<String>>(message) ?: return
+        val messageBundle = getMessageBundle<String>(message) ?: return
         launch {
             timeout(message, MessageHandler.GET_BIOMETRIC_STATUS.timeoutMillis) {
                 isBiometricAvailable.postValue(ResponseEvent(messageBundle.id, payAuthenticationManager.isFingerprintAvailable()))
@@ -234,7 +234,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleSetTOTPSecret(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<SetTOTPRequest>>(message, HttpURLConnection.HTTP_INTERNAL_ERROR) ?: return
+        val messageBundle = getMessageBundle<SetTOTPRequest>(message, HttpURLConnection.HTTP_INTERNAL_ERROR) ?: return
         launch {
             timeout(message, MessageHandler.SET_TOTP_SECRET.timeoutMillis) {
                 val request = messageBundle.message
@@ -265,7 +265,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleGetTOTP(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<GetTOTPRequest>>(message, HttpURLConnection.HTTP_INTERNAL_ERROR) ?: return
+        val messageBundle = getMessageBundle<GetTOTPRequest>(message, HttpURLConnection.HTTP_INTERNAL_ERROR) ?: return
         launch {
             suspendCoroutineWithTimeout<String?>(message, MessageHandler.GET_TOTP.timeoutMillis) { continuation ->
                 val id = messageBundle.id
@@ -327,7 +327,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleSetSecureData(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<SetSecureDataRequest>>(message, HttpURLConnection.HTTP_INTERNAL_ERROR) ?: return
+        val messageBundle = getMessageBundle<SetSecureDataRequest>(message, HttpURLConnection.HTTP_INTERNAL_ERROR) ?: return
         launch {
             timeout(message, MessageHandler.SET_SECURE_DATA.timeoutMillis) {
                 val host = getHost() ?: run {
@@ -344,7 +344,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleGetSecureData(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<KeyRequest>>(message, HttpURLConnection.HTTP_INTERNAL_ERROR) ?: return
+        val messageBundle = getMessageBundle<KeyRequest>(message, HttpURLConnection.HTTP_INTERNAL_ERROR) ?: return
         launch {
             suspendCoroutineWithTimeout<String?>(message, MessageHandler.GET_SECURE_DATA.timeoutMillis) { continuation ->
                 val id = messageBundle.id
@@ -396,7 +396,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleDisable(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<DisableRequest>>(message, HttpURLConnection.HTTP_INTERNAL_ERROR) ?: return
+        val messageBundle = getMessageBundle<DisableRequest>(message, HttpURLConnection.HTTP_INTERNAL_ERROR) ?: return
         launch {
             timeout(message, MessageHandler.DISABLE.timeoutMillis) {
                 val host = getHost()
@@ -414,7 +414,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleOpenURLInNewTab(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<OpenURLInNewTabRequest>>(message) ?: return
+        val messageBundle = getMessageBundle<OpenURLInNewTabRequest>(message) ?: return
         launch {
             timeout(message, MessageHandler.OPEN_URL_IN_NEW_TAB.timeoutMillis) {
                 val redirectScheme = getRedirectScheme()
@@ -434,7 +434,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleGetAppInterceptableLink(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<String>>(message) ?: return
+        val messageBundle = getMessageBundle<String>(message) ?: return
         launch {
             timeout(message, MessageHandler.GET_APP_INTERCEPTABLE_LINK.timeoutMillis) {
                 val redirectScheme = getRedirectScheme()
@@ -448,7 +448,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleSetUserProperty(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<SetUserPropertyRequest>>(message) ?: return
+        val messageBundle = getMessageBundle<SetUserPropertyRequest>(message) ?: return
         launch {
             timeout(message, MessageHandler.SET_USER_PROPERTY.timeoutMillis) {
                 appModel.setUserProperty(messageBundle.message.key, messageBundle.message.value, messageBundle.message.update)
@@ -458,7 +458,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleLogEvent(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<LogEventRequest>>(message) ?: return
+        val messageBundle = getMessageBundle<LogEventRequest>(message) ?: return
         launch {
             timeout(message, MessageHandler.LOG_EVENT.timeoutMillis) {
                 appModel.logEvent(messageBundle.message.key, messageBundle.message.parameters)
@@ -468,7 +468,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleGetConfig(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<KeyRequest>>(message) ?: return
+        val messageBundle = getMessageBundle<KeyRequest>(message) ?: return
         launch {
             val config = suspendCoroutineWithTimeout<String?>(message, MessageHandler.GET_CONFIG.timeoutMillis) { continuation ->
                 appModel.getConfig(messageBundle.message.key) { config ->
@@ -485,7 +485,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleGetTraceId(message: String) {
-        val messageBundle = getMessageBundle<MessageBundle<String>>(message) ?: return
+        val messageBundle = getMessageBundle<Unit>(message) ?: return
         launch {
             timeout(message, MessageHandler.GET_TRACE_ID.timeoutMillis) {
                 valueResponse.postValue(ResponseEvent(messageBundle.id, ValueResponse(InterceptorUtils.getTraceId())))
@@ -507,24 +507,33 @@ class AppWebViewModelImpl(
         }
     }
 
-    private inline fun <reified T> Gson.fromJson(json: String) = fromJson<T>(json, object : TypeToken<T>() {}.type)
+    private inline fun <reified T> Gson.fromJson(json: String): MessageBundle<T>? {
+        return try {
+            val type = TypeToken.getParameterized(MessageBundle::class.java, T::class.java).type
+            fromJson(json, type)
+        } catch (e: Exception) {
+            null
+        }
+    }
 
     private fun launch(block: suspend CoroutineScope.() -> Unit) = viewModelScope.launch(context = dispatchers.default(), block = block)
 
-    private inline fun <reified T> getMessageBundle(message: String, errorCode: Int = HttpURLConnection.HTTP_BAD_REQUEST) =
-        try {
-            gson.fromJson<T>(message)
-        } catch (e: Exception) {
-            val id = gson.fromJson<MessageBundle<Any>>(message).id
+    private inline fun <reified T> getMessageBundle(message: String, errorCode: Int = HttpURLConnection.HTTP_BAD_REQUEST): MessageBundle<T>? {
+        val bundle = gson.fromJson<T>(message)
+        return if (bundle?.id != null && bundle.message != null) {
+            bundle
+        } else {
+            val id = gson.fromJson<MessageBundle<Any>>(message)?.id
             statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("Could not deserialize the following JSON message: $message", errorCode)))
             null
         }
+    }
 
     private suspend fun <T> timeout(message: String, timeoutMillis: Long, block: suspend CoroutineScope.() -> T) =
         try {
             withTimeout(timeoutMillis, block)
         } catch (e: TimeoutCancellationException) {
-            val id = gson.fromJson<MessageBundle<Any>>(message).id
+            val id = gson.fromJson<MessageBundle<Any>>(message)?.id
             Timber.w(e, "Timeout for request with ID $id")
             statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(e.message.orEmpty(), HttpURLConnection.HTTP_CLIENT_TIMEOUT)))
             null
