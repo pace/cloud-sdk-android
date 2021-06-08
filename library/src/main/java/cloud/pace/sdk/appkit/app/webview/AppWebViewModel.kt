@@ -485,7 +485,7 @@ class AppWebViewModelImpl(
     }
 
     override fun handleGetTraceId(message: String) {
-        val messageBundle = getMessageBundle<Unit>(message) ?: return
+        val messageBundle = getMessageBundle<String>(message) ?: return
         launch {
             timeout(message, MessageHandler.GET_TRACE_ID.timeoutMillis) {
                 valueResponse.postValue(ResponseEvent(messageBundle.id, ValueResponse(InterceptorUtils.getTraceId())))
