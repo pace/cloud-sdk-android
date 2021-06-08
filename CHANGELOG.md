@@ -10,6 +10,9 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Adjust Geo API to new version `2021-1`
 * Add function to `AppKit` to request Connected Fueling gas stations
+### Internal
+
+* Improve selection of app drawer icon size
 
 
 7.5.2 Release notes (2021-06-08)
