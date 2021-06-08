@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+7.5.1 Release notes (2021-06-08)
+=============================================================
+
+
 ### Fixes
 
 * Fix NullPointerExceptions while deserializing JSON messages from PWA
