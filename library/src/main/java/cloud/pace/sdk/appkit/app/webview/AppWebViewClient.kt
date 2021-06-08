@@ -98,7 +98,11 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
     }
 
     private fun injectFeatureFlags(view: WebView?) {
-        view?.evaluateJavascript("window.features = { messageIds: true }") {}
+        val script = "window.features = { messageIds: true }"
+        Timber.d("Excecute the following Javascript: $script")
+        view?.evaluateJavascript(script) {
+            Timber.d("Javascript execution completed with the following result: $it")
+        }
     }
 
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
