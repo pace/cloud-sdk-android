@@ -1,6 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 apply plugin: 'io.codearte.nexus-staging'
 
+import java.util.regex.Pattern
+
 buildscript {
     ext {
         compile_sdk_version = 30
@@ -78,4 +80,19 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+task bumpVersion {
+    doLast {
+        def buildFile = file("build.gradle")
+        def pattern = Pattern.compile("\"versionName\", \".*")
+        def newVersion = System.getenv("NEW_VERSION") as String
+        def buildText = buildFile.getText()
+        def matcher = pattern.matcher(buildText)
+        matcher.find()
+        def buildContent = matcher.replaceAll("\"versionName\", \"${newVersion}\")")
+        buildFile.write(buildContent)
+
+        System.out.println("Bump version to ===> " + newVersion)
+    }
 }
