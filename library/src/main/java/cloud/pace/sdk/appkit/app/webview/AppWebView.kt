@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.AppKit
+import cloud.pace.sdk.appkit.communication.GetAccessTokenResponse
 import cloud.pace.sdk.appkit.communication.MessageHandler
 import cloud.pace.sdk.appkit.utils.BiometricUtils
 import cloud.pace.sdk.utils.AuthenticationMode
@@ -73,7 +74,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         }
     }
 
-    private val newTokenObserver = Observer<AppWebViewModel.ResponseEvent<String>> {
+    private val getAccessTokenResponseObserver = Observer<AppWebViewModel.ResponseEvent<GetAccessTokenResponse>> {
         it.getContentIfNotHandled()?.let { event ->
             if (PACECloudSDK.configuration.authenticationMode == AuthenticationMode.NATIVE) {
                 sendMessageCallback(event)
@@ -147,7 +148,8 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
             userAgentString = AppKit.userAgent
         }
 
-        webView.addJavascriptInterface(InvalidTokenInterface(), MessageHandler.INVALID_TOKEN.id)
+        webView.addJavascriptInterface(GetAccessTokenInterface(), MessageHandler.GET_ACCESS_TOKEN.id)
+        webView.addJavascriptInterface(LogoutInterface(), MessageHandler.LOGOUT.id)
         webView.addJavascriptInterface(ImageDataInterface(), MessageHandler.IMAGE_DATA.id)
         webView.addJavascriptInterface(VerifyLocationInterface(), MessageHandler.VERIFY_LOCATION.id)
         webView.addJavascriptInterface(BackInterface(), MessageHandler.BACK.id)
@@ -200,7 +202,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         webViewModel.isInErrorState.observe(lifecycleOwner, isInErrorStateObserver)
         webViewModel.showLoadingIndicator.observe(lifecycleOwner, showLoadingIndicatorObserver)
         webViewModel.biometricRequest.observe(lifecycleOwner, biometricRequestObserver)
-        webViewModel.newToken.observe(lifecycleOwner, newTokenObserver)
+        webViewModel.getAccessTokenResponse.observe(lifecycleOwner, getAccessTokenResponseObserver)
         webViewModel.verifyLocationResponse.observe(lifecycleOwner, verifyLocationResponseObserver)
         webViewModel.goBack.observe(lifecycleOwner, goBackObserver)
         webViewModel.isBiometricAvailable.observe(lifecycleOwner, isBiometricAvailableObserver)
@@ -215,10 +217,17 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         webView.evaluateJavascript("window.postMessage('${gson.toJson(bundle)}', window.origin)") {}
     }
 
-    inner class InvalidTokenInterface {
+    inner class GetAccessTokenInterface {
         @JavascriptInterface
         fun postMessage(message: String) {
-            webViewModel.handleInvalidToken(message)
+            webViewModel.handleGetAccessToken(message)
+        }
+    }
+
+    inner class LogoutInterface {
+        @JavascriptInterface
+        fun postMessage(message: String) {
+            webViewModel.handleLogout(message)
         }
     }
 

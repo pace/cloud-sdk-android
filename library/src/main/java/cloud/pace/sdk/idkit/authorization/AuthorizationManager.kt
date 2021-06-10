@@ -168,6 +168,8 @@ internal class AuthorizationManager(
                 completion(Failure(throwable))
             }
             response != null -> {
+                IDKit.disableBiometricAuthentication()
+
                 val serviceConfiguration = session.authorizationServiceConfiguration
                 if (serviceConfiguration != null) {
                     val clearedState = AuthState(serviceConfiguration)
