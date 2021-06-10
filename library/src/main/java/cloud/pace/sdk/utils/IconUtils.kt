@@ -1,29 +1,41 @@
 package cloud.pace.sdk.utils
 
 import cloud.pace.sdk.appkit.model.AppManifest
+import kotlin.math.abs
 
 object IconUtils {
 
-    fun getBestMatchingIcon(buttonWidth: Double, icons: Array<AppManifest.AppIcons>): AppManifest.AppIcons? {
-        val sizeDiffs = mutableListOf<Pair<AppManifest.AppIcons, Double>>()
-        icons.forEach { icon ->
-            try {
-                val iconSizes = icon.sizes.split("\\s+".toRegex())
-                iconSizes.forEach {
-                    val iconSize = it.split("x").first().toInt()
-                    sizeDiffs.add(Pair(icon, iconSize - buttonWidth))
-                }
-            } catch (e: NumberFormatException) {
+    fun getBestMatchingIcon(requestedSize: Double, icons: Array<AppManifest.AppIcons>): AppManifest.AppIcons? {
+        val pngIcons = icons.filter { it.type.contains("png") }.toTypedArray()
+        val prefIcons = if (pngIcons.isEmpty()) icons else pngIcons
+
+        return prefIcons
+            .filter { appIcons ->
+                appIcons.sizes
+                    .split(" ")
+                    .any {
+                        val dimensions = it.split("x")
+                        val width = dimensions.firstOrNull()?.toIntOrNull()
+                        val height = dimensions.lastOrNull()?.toIntOrNull()
+
+                        width != null && height != null
+                    }
             }
-        }
+            .minByOrNull { appIcons ->
+                appIcons.sizes
+                    .split(" ")
+                    .mapNotNull {
+                        val dimensions = it.split("x")
+                        val width = dimensions.firstOrNull()?.toIntOrNull()
+                        val height = dimensions.lastOrNull()?.toIntOrNull()
 
-        val pngIcons = sizeDiffs.filter { it.first.type.contains("png") }
-        var bestSizePNGIcon = pngIcons.filter { it.second >= 0 }.minByOrNull { it.second }
-
-        if (bestSizePNGIcon == null) {
-            bestSizePNGIcon = pngIcons.maxByOrNull { it.second }
-        }
-
-        return bestSizePNGIcon?.first ?: sizeDiffs.minByOrNull { it.second }?.first
+                        if (width != null && height != null) {
+                            abs(requestedSize - width) + abs(requestedSize - height)
+                        } else {
+                            null
+                        }
+                    }
+                    .minOrNull() ?: return null
+            }
     }
 }
