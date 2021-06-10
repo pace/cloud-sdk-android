@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+7.6.0 Release notes (2021-06-10)
+=============================================================
+
+
 ### Enhancements
 
 * Adjust Geo API to new version `2021-1`
