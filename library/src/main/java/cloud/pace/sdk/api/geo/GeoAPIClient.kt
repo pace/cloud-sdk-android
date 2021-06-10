@@ -1,4 +1,4 @@
-package cloud.pace.sdk.appkit.geo
+package cloud.pace.sdk.api.geo
 
 import android.content.Context
 import cloud.pace.sdk.PACECloudSDK
@@ -7,6 +7,7 @@ import cloud.pace.sdk.poikit.utils.ApiException
 import cloud.pace.sdk.utils.Environment
 import cloud.pace.sdk.utils.enqueue
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -55,6 +56,12 @@ class GeoAPIClient(environment: Environment, private val context: Context) {
             .addConverterFactory(
                 MoshiConverterFactory.create(
                     Moshi.Builder()
+                        .add(
+                            PolymorphicJsonAdapterFactory.of(Geometry::class.java, "type")
+                                .withSubtype(Polygon::class.java, POLYGON_NAME)
+                                .withSubtype(Point::class.java, POINT_NAME)
+                                .withSubtype(GeometryCollection::class.java, GEOMETRY_COLLECTION_NAME)
+                        )
                         .add(KotlinJsonAdapterFactory())
                         .build()
                 )

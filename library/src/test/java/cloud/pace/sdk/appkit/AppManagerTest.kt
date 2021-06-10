@@ -4,6 +4,9 @@ import android.content.Context
 import android.location.Location
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import cloud.pace.sdk.PACECloudSDK
+import cloud.pace.sdk.api.geo.GeoAPIFeature
+import cloud.pace.sdk.api.geo.GeoGasStation
+import cloud.pace.sdk.api.geo.Polygon
 import cloud.pace.sdk.appkit.app.api.AppAPI
 import cloud.pace.sdk.appkit.app.api.AppRepository
 import cloud.pace.sdk.appkit.app.api.AppRepositoryImpl
@@ -11,7 +14,7 @@ import cloud.pace.sdk.appkit.app.api.UriManager
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.communication.AppModelImpl
-import cloud.pace.sdk.appkit.geo.*
+import cloud.pace.sdk.appkit.geo.GeoAPIManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.persistence.CacheModel
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
@@ -295,6 +298,10 @@ class AppManagerTest : CloudSDKKoinComponent {
         val id = "e3211b77-03f0-4d49-83aa-4adaa46d95ae"
 
         val geoApiManager = object : TestGeoAPIManager() {
+            override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {
+                completion(Result.success(listOf(GeoGasStation(id, listOf("https://app.test")))))
+            }
+
             override fun features(poiId: String, latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {
                 completion(Result.success(listOf(getGeoAPIFeature(id))))
             }
@@ -342,6 +349,10 @@ class AppManagerTest : CloudSDKKoinComponent {
         val id2 = "992b77b6-5982-4848-88fe-ae2633308279"
 
         val geoApiManager = object : TestGeoAPIManager() {
+            override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {
+                completion(Result.success(listOf(GeoGasStation(id1, listOf("https://app.test")))))
+            }
+
             override fun features(poiId: String, latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {
                 completion(Result.success(listOf(getGeoAPIFeature(id2))))
             }
@@ -387,16 +398,11 @@ class AppManagerTest : CloudSDKKoinComponent {
         return GeoAPIFeature(
             id,
             "Feature",
-            GeoAPIGeometry(
-                "Polygon",
-                listOf(polygon)
-            ),
-            GeoAPIProperties(
-                listOf(
-                    GeoAPIApp(
-                        "fueling",
-                        "https://fueling.app.test"
-                    )
+            Polygon(listOf(polygon)),
+            mapOf(
+                "apps" to listOf(
+                    "type" to "fueling",
+                    "url" to "https://fueling.app.test"
                 )
             )
         )

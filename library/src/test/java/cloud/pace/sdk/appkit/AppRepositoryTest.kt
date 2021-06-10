@@ -3,11 +3,10 @@ package cloud.pace.sdk.appkit
 import android.content.Context
 import android.location.Location
 import cloud.pace.sdk.PACECloudSDK
+import cloud.pace.sdk.api.geo.GeoGasStation
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppWithRefs
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppsWithRefs
 import cloud.pace.sdk.appkit.app.api.AppRepositoryImpl
-import cloud.pace.sdk.appkit.geo.GeoAPIApp
-import cloud.pace.sdk.appkit.geo.GeoGasStation
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.utils.TestAppAPI
@@ -72,7 +71,7 @@ class AppRepositoryTest {
     private val geoApiManager = object : TestGeoAPIManager() {
         override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {
             if (latitude == locationWithApp.latitude && longitude == locationWithApp.longitude) {
-                completion(Result.success(listOf(GeoGasStation(id, listOf(GeoAPIApp("fueling", urlLocationBasedApp))))))
+                completion(Result.success(listOf(GeoGasStation(id, listOf(urlLocationBasedApp)))))
             } else {
                 completion(Result.success(emptyList()))
             }

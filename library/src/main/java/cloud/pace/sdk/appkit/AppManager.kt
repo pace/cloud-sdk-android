@@ -9,6 +9,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.children
 import cloud.pace.sdk.PACECloudSDK
+import cloud.pace.sdk.api.geo.CofuGasStation
 import cloud.pace.sdk.appkit.app.AppActivity
 import cloud.pace.sdk.appkit.app.api.AppRepository
 import cloud.pace.sdk.appkit.app.drawer.AppDrawer
@@ -175,6 +176,13 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
 
     internal fun fetchUrlByAppId(appId: String, completion: (Completion<String?>) -> Unit) {
         appRepository.getUrlByAppId(appId) { result ->
+            result.onSuccess { completion(Success(it)) }
+            result.onFailure { completion(Failure(it)) }
+        }
+    }
+
+    internal fun requestCofuGasStations(completion: (Completion<List<CofuGasStation>>) -> Unit) {
+        appRepository.getCofuGasStations { result ->
             result.onSuccess { completion(Success(it)) }
             result.onFailure { completion(Failure(it)) }
         }

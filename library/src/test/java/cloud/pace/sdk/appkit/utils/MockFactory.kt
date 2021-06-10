@@ -6,6 +6,10 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Handler
 import androidx.lifecycle.MutableLiveData
+import cloud.pace.sdk.api.geo.CofuGasStation
+import cloud.pace.sdk.api.geo.GeoAPIFeature
+import cloud.pace.sdk.api.geo.GeoAPIResponse
+import cloud.pace.sdk.api.geo.GeoGasStation
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApps
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppsWithRefs
@@ -14,10 +18,7 @@ import cloud.pace.sdk.appkit.app.api.AppRepository
 import cloud.pace.sdk.appkit.app.api.UriManager
 import cloud.pace.sdk.appkit.app.webview.AppWebViewClient
 import cloud.pace.sdk.appkit.communication.AppEventManager
-import cloud.pace.sdk.appkit.geo.GeoAPIFeature
 import cloud.pace.sdk.appkit.geo.GeoAPIManager
-import cloud.pace.sdk.appkit.geo.GeoAPIResponse
-import cloud.pace.sdk.appkit.geo.GeoGasStation
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.model.Car
@@ -64,6 +65,7 @@ open class TestAppRepository : AppRepository {
     override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {}
     override fun getAllApps(context: Context, completion: (Result<List<App>>) -> Unit) {}
     override fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit) {}
+    override fun getCofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit) {}
     override fun isPoiInRange(poiId: String, latitude: Double, longitude: Double, completion: (Boolean) -> Unit) {}
 }
 
@@ -198,4 +200,5 @@ open class TestGeoAPIManager : GeoAPIManager {
 
     override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {}
     override fun features(poiId: String, latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {}
+    override fun cofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit) {}
 }

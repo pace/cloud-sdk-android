@@ -4,6 +4,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import cloud.pace.sdk.R
+import cloud.pace.sdk.api.geo.CofuGasStation
+import cloud.pace.sdk.api.geo.GeometryCollection
+import cloud.pace.sdk.api.geo.Polygon
 import cloud.pace.sdk.appkit.geo.GeoAPIManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
@@ -24,6 +27,7 @@ interface AppRepository {
     fun getAllApps(context: Context, completion: (Result<List<App>>) -> Unit)
     fun getAppsByUrl(context: Context, url: String, references: List<String>, completion: (Result<List<App>>) -> Unit)
     fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit)
+    fun getCofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit)
     fun isPoiInRange(poiId: String, latitude: Double, longitude: Double, completion: (Boolean) -> Unit)
 }
 
@@ -41,8 +45,8 @@ class AppRepositoryImpl(
             response.onSuccess {
                 val apps = it
                     .flatMap { geoGasStation ->
-                        geoGasStation.apps.mapNotNull { geoApp ->
-                            castLocationBasedApp(context, geoApp.url, listOf(geoGasStation.id))
+                        geoGasStation.appUrls.mapNotNull { url ->
+                            castLocationBasedApp(context, url, listOf(geoGasStation.id))
                         }
                     }.flatten()
 
@@ -97,26 +101,37 @@ class AppRepositoryImpl(
         }
     }
 
+    override fun getCofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit) {
+        geoApiManager.cofuGasStations(completion)
+    }
+
     override fun isPoiInRange(poiId: String, latitude: Double, longitude: Double, completion: (Boolean) -> Unit) {
         // Try to load the apps from the cache
         geoApiManager.features(poiId, latitude, longitude) { response ->
             response.onSuccess { geoAPIFeatures ->
                 val isPoiRange = geoAPIFeatures.firstOrNull { it.id == poiId }?.let {
                     val currentLocation = LatLng(latitude, longitude)
-                    it.geometry?.coordinates
-                        ?.flatten()
-                        ?.mapNotNull { coordinate ->
-                            val lat = coordinate.lastOrNull()
-                            val lng = coordinate.firstOrNull()
-                            if (lat != null && lng != null) {
-                                LatLng(lat, lng)
-                            } else {
-                                null
+                    val polygons = when (it.geometry) {
+                        is GeometryCollection -> it.geometry.geometries.filterIsInstance<Polygon>()
+                        is Polygon -> listOf(it.geometry)
+                        else -> emptyList()
+                    }
+
+                    polygons.map { polygon ->
+                        polygon.coordinates.flatMap { ring ->
+                            ring.mapNotNull { coordinate ->
+                                val lat = coordinate.lastOrNull()
+                                val lng = coordinate.firstOrNull()
+                                if (lat != null && lng != null) {
+                                    LatLng(lat, lng)
+                                } else {
+                                    null
+                                }
                             }
                         }
-                        ?.any { coordinate ->
-                            currentLocation.distanceTo(coordinate) <= IS_POI_IN_RANGE_DISTANCE_THRESHOLD
-                        } ?: false
+                    }.flatten().any { coordinate ->
+                        currentLocation.distanceTo(coordinate) <= IS_POI_IN_RANGE_DISTANCE_THRESHOLD
+                    }
                 } ?: false
 
                 completion(isPoiRange)
