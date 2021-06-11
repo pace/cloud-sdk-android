@@ -41,9 +41,7 @@ class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
         appModel.authorize.observe(this) { event ->
             event.getContentIfNotHandled()?.let { result ->
                 lifecycleScope.launch(Dispatchers.Main) {
-                    IDKit.authorize(this@AppActivity) { completion ->
-                        (completion as? Success)?.result?.let { result.onResult(GetAccessTokenResponse(it, true)) } ?: finish()
-                    }
+                    IDKit.authorize(this@AppActivity, result.onResult)
                 }
             }
         }

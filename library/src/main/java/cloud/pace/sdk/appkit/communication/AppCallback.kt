@@ -3,7 +3,6 @@ package cloud.pace.sdk.appkit.communication
 import android.content.Context
 import android.graphics.Bitmap
 import cloud.pace.sdk.appkit.model.App
-import cloud.pace.sdk.appkit.utils.TokenValidator
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Success
@@ -47,6 +46,17 @@ interface AppCallback {
      * @param oldToken The last access token.
      */
     fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (GetAccessTokenResponse) -> Unit)
+
+    /**
+     * Is called if an automatic session renewal triggered by the SDK itself fails.
+     * The client app needs to call the [onResult] function to set a new access token or null in case of error.
+     *
+     * Implement this method to specify a custom behavior for the token retrieval.
+     * If not implemented an authorization will be performed automatically which will result in showing a sign in mask for the user.
+     *
+     * @param throwable The error that caused the session renewal to fail if available.
+     */
+    fun onSessionRenewalFailed(throwable: Throwable?, onResult: (String?) -> Unit)
 
     /**
      * Is called when the app sends a request to logout the current user.
@@ -104,21 +114,10 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
     override fun onClose() {}
     override fun onOpenInNewTab(url: String) {}
     override fun onDisable(host: String) {}
-    override fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (GetAccessTokenResponse) -> Unit) {
-        if (!IDKit.isInitialized) return
-
-        if (IDKit.isAuthorizationValid()) {
-            if (reason == InvalidTokenReason.UNAUTHORIZED && oldToken != null && TokenValidator.isTokenValid(oldToken)) {
-                appModel.close(true)
-            } else {
-                IDKit.refreshToken {
-                    (it as? Success)?.result?.let { token ->
-                        onResult(GetAccessTokenResponse(token))
-                    } ?: appModel.authorize(onResult)
-                }
-            }
-        } else {
-            appModel.authorize(onResult)
+    override fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (GetAccessTokenResponse) -> Unit) {}
+    override fun onSessionRenewalFailed(throwable: Throwable?, onResult: (String?) -> Unit) {
+        appModel.authorize {
+            onResult((it as? Success)?.result)
         }
     }
 

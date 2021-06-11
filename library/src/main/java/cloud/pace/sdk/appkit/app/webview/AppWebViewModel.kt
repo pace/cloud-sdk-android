@@ -153,11 +153,17 @@ class AppWebViewModelImpl(
     override fun handleGetAccessToken(message: String) {
         val messageBundle = getMessageBundle<GetAccessTokenRequest>(message) ?: return
         launch {
-            suspendCoroutineWithTimeout<GetAccessTokenResponse>(message, MessageHandler.GET_ACCESS_TOKEN.timeoutMillis) { continuation ->
+            suspendCoroutineWithTimeout<GetAccessTokenResponse?>(message, MessageHandler.GET_ACCESS_TOKEN.timeoutMillis) { continuation ->
                 val reason = messageBundle.message.reason
                 val invalidTokenReason = InvalidTokenReason.values().associateBy(InvalidTokenReason::value)[reason] ?: InvalidTokenReason.OTHER
-                appModel.getAccessToken(invalidTokenReason, messageBundle.message.oldToken) { response ->
-                    continuation.resumeIfActive(response)
+                appModel.getAccessToken(invalidTokenReason, messageBundle.message.oldToken) {
+                    when (it) {
+                        is Success -> continuation.resumeIfActive(it.result)
+                        is Failure -> {
+                            statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, it.throwable.message)))
+                            continuation.resumeIfActive(null)
+                        }
+                    }
                 }
             }?.let {
                 getAccessTokenResponse.postValue(ResponseEvent(messageBundle.id, it))

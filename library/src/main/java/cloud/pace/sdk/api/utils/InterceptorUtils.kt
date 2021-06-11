@@ -65,7 +65,6 @@ object InterceptorUtils {
                     }
                 }
             }.getOrNull()?.let {
-                API.addAuthorizationHeader(it)
                 response.request().newBuilder().header(AUTHORIZATION_HEADER, "Bearer $it").build()
             }
         } else {

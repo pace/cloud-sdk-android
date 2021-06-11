@@ -5,7 +5,7 @@ object FailedRetrievingSessionWhileAuthorizing : Exception("The authorization re
 object FailedRetrievingConfigurationWhileDiscovering : Exception("The discovery failed because the configuration couldn't be retrieved.")
 object FailedRetrievingSessionWhileEnding : Exception("The end session request failed because the session couldn't be retrieved.")
 object UserEndpointNotDefined : Exception("The user endpoint was not defined.")
-object InternalError : Exception("An internal error occured.")
+object InternalError : Exception("An internal error occurred.")
 object BiometricAuthenticationNotSupported : Exception("The device doesn't have biometric authentication.")
 object BiometricAuthenticationNotSet : Exception("Biometric authentication is not set.")
 object PINNotSecure : Exception("PIN not secure.")
