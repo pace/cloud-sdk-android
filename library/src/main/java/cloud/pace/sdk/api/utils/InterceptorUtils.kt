@@ -5,8 +5,14 @@ import android.os.Build
 import cloud.pace.sdk.BuildConfig
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.API
+import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.utils.DeviceUtils
+import cloud.pace.sdk.utils.Success
 import cloud.pace.sdk.utils.randomHexString
+import cloud.pace.sdk.utils.resumeIfActive
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.suspendCancellableCoroutine
+import okhttp3.Authenticator
 import okhttp3.Interceptor
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -27,26 +33,43 @@ object InterceptorUtils {
     private var traceId: Pair<String, Long>? = null
     private var traceIdMaxAge = TimeUnit.MINUTES.toMillis(15)
 
-    fun getInterceptor(accept: String?, contentType: String?): Interceptor {
-        return Interceptor {
-            val httpUrl = it.request().url().newBuilder()
-            PACECloudSDK.additionalQueryParams.forEach { param ->
-                httpUrl.addQueryParameter(param.key, param.value)
+    fun getInterceptor(accept: String?, contentType: String?) = Interceptor {
+        val httpUrl = it.request().url().newBuilder()
+        PACECloudSDK.additionalQueryParams.forEach { param ->
+            httpUrl.addQueryParameter(param.key, param.value)
+        }
+
+        val builder = it.request().newBuilder().url(httpUrl.build())
+
+        API.additionalHeaders.forEach { header ->
+            builder.header(header.key, header.value)
+        }
+
+        if (accept != null) builder.header(ACCEPT_HEADER, accept)
+        if (contentType != null) builder.header(CONTENT_TYPE_HEADER, contentType)
+
+        builder.header(API_KEY_HEADER, API.apiKey)
+        builder.header(UBER_TRACE_ID_HEADER, getUberTraceId())
+
+        it.proceed(builder.build())
+    }
+
+    fun getAuthenticator() = Authenticator { _, response ->
+        if (IDKit.isInitialized && IDKit.isAuthorizationValid()) {
+            runCatching {
+                runBlocking {
+                    suspendCancellableCoroutine<String?> { continuation ->
+                        IDKit.refreshToken {
+                            continuation.resumeIfActive((it as? Success)?.result)
+                        }
+                    }
+                }
+            }.getOrNull()?.let {
+                API.addAuthorizationHeader(it)
+                response.request().newBuilder().header(AUTHORIZATION_HEADER, "Bearer $it").build()
             }
-
-            val builder = it.request().newBuilder().url(httpUrl.build())
-
-            API.additionalHeaders.forEach { header ->
-                builder.header(header.key, header.value)
-            }
-
-            if (accept != null) builder.header(ACCEPT_HEADER, accept)
-            if (contentType != null) builder.header(CONTENT_TYPE_HEADER, contentType)
-
-            builder.header(API_KEY_HEADER, API.apiKey)
-            builder.header(UBER_TRACE_ID_HEADER, getUberTraceId())
-
-            it.proceed(builder.build())
+        } else {
+            null
         }
     }
 

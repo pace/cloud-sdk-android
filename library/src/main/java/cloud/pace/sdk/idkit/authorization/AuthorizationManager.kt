@@ -51,9 +51,8 @@ internal class AuthorizationManager(
         AuthorizationServiceConfiguration.fetchFromIssuer(Uri.parse(issuerUri)) { configuration, exception ->
             when {
                 exception != null -> {
-                    val throwable = AuthorizationError(exception.type, exception.code, exception.error, exception.errorDescription, exception.errorUri, exception.message, exception.cause)
-                    Timber.e(throwable, "Failed to discover configuration")
-                    completion(Failure(throwable))
+                    Timber.e(exception, "Failed to discover configuration")
+                    completion(Failure(exception))
                 }
                 configuration != null -> {
                     Timber.i("Configuration discovery successful")
@@ -99,9 +98,8 @@ internal class AuthorizationManager(
         when {
             exception != null -> {
                 session.update(response, exception)
-                val throwable = AuthorizationError(exception.type, exception.code, exception.error, exception.errorDescription, exception.errorUri, exception.message, exception.cause)
-                Timber.e(throwable, "Failed to handle authorization response")
-                completion(Failure(throwable))
+                Timber.e(exception, "Failed to handle authorization response")
+                completion(Failure(exception))
             }
             response != null -> {
                 session.update(response, exception)
@@ -163,9 +161,8 @@ internal class AuthorizationManager(
 
         when {
             exception != null -> {
-                val throwable = AuthorizationError(exception.type, exception.code, exception.error, exception.errorDescription, exception.errorUri, exception.message, exception.cause)
-                Timber.e(throwable, "Failed to handle end session response")
-                completion(Failure(throwable))
+                Timber.e(exception, "Failed to handle end session response")
+                completion(Failure(exception))
             }
             response != null -> {
                 IDKit.disableBiometricAuthentication()
@@ -272,9 +269,8 @@ internal class AuthorizationManager(
 
         when {
             exception != null -> {
-                val throwable = AuthorizationError(exception.type, exception.code, exception.error, exception.errorDescription, exception.errorUri, exception.message, exception.cause)
-                Timber.e(throwable, "Failed to handle token response")
-                completion(Failure(throwable))
+                Timber.e(exception, "Failed to handle token response")
+                completion(Failure(exception))
             }
             tokenResponse != null -> {
                 completion(Success(session.accessToken))
