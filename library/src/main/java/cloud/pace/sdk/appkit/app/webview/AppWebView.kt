@@ -88,6 +88,12 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         }
     }
 
+    private val getLocationResponseObserver = Observer<AppWebViewModel.ResponseEvent<AppWebViewModel.GetLocationResponse>> {
+        it.getContentIfNotHandled()?.let { response ->
+            sendMessageCallback(response)
+        }
+    }
+
     private val goBackObserver = Observer<Event<Unit>> {
         it.getContentIfNotHandled()?.let {
             if (webView.canGoBack()) {
@@ -152,6 +158,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         webView.addJavascriptInterface(LogoutInterface(), MessageHandler.LOGOUT.id)
         webView.addJavascriptInterface(ImageDataInterface(), MessageHandler.IMAGE_DATA.id)
         webView.addJavascriptInterface(VerifyLocationInterface(), MessageHandler.VERIFY_LOCATION.id)
+        webView.addJavascriptInterface(GetLocationInterface(), MessageHandler.GET_LOCATION.id)
         webView.addJavascriptInterface(BackInterface(), MessageHandler.BACK.id)
         webView.addJavascriptInterface(CloseInterface(), MessageHandler.CLOSE.id)
         webView.addJavascriptInterface(GetBiometricStatusInterface(), MessageHandler.GET_BIOMETRIC_STATUS.id)
@@ -204,6 +211,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         webViewModel.biometricRequest.observe(lifecycleOwner, biometricRequestObserver)
         webViewModel.getAccessTokenResponse.observe(lifecycleOwner, getAccessTokenResponseObserver)
         webViewModel.verifyLocationResponse.observe(lifecycleOwner, verifyLocationResponseObserver)
+        webViewModel.getLocationResponse.observe(lifecycleOwner, getLocationResponseObserver)
         webViewModel.goBack.observe(lifecycleOwner, goBackObserver)
         webViewModel.isBiometricAvailable.observe(lifecycleOwner, isBiometricAvailableObserver)
         webViewModel.statusCode.observe(lifecycleOwner, statusCodeObserver)
@@ -242,6 +250,13 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         @JavascriptInterface
         fun postMessage(message: String) {
             webViewModel.handleVerifyLocation(message)
+        }
+    }
+
+    inner class GetLocationInterface {
+        @JavascriptInterface
+        fun postMessage(message: String) {
+            webViewModel.handleGetLocation(message)
         }
     }
 

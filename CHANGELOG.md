@@ -15,6 +15,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Add `logout` handler to PWA communication
 * Automatically refresh the access token and retry the request if it returns status code 401 (unauthorized). If `IDKit` is not initialized, no session is available or the token renewal failed, the error is passed to the client app.
+* Add `getLocation` handler to PWA communication
 
 
 7.6.0 Release notes (2021-06-10)

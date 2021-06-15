@@ -38,6 +38,7 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     abstract val biometricRequest: LiveData<Event<BiometricRequest>>
     abstract val getAccessTokenResponse: LiveData<ResponseEvent<GetAccessTokenResponse>>
     abstract val verifyLocationResponse: LiveData<ResponseEvent<VerifyLocationResponse>>
+    abstract val getLocationResponse: LiveData<ResponseEvent<GetLocationResponse>>
     abstract val goBack: LiveData<Event<Unit>>
     abstract val isBiometricAvailable: LiveData<ResponseEvent<Boolean>>
     abstract val statusCode: LiveData<ResponseEvent<StatusCodeResponse>>
@@ -52,6 +53,7 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     abstract fun handleLogout(message: String)
     abstract fun handleImageData(message: String)
     abstract fun handleVerifyLocation(message: String)
+    abstract fun handleGetLocation(message: String)
     abstract fun handleBack(message: String)
     abstract fun handleClose(message: String)
     abstract fun handleGetBiometricStatus(message: String)
@@ -83,6 +85,7 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     class LogEventRequest(val key: String, val parameters: Map<String, Any> = emptyMap())
 
     class VerifyLocationResponse(val verified: Boolean?, val accuracy: Float?)
+    class GetLocationResponse(val lat: Double, val lon: Double, val accuracy: Float?)
     class TOTPResponse(val totp: String, val biometryMethod: String)
     class AppInterceptableLinkResponse(val link: String)
     class ValueResponse(val value: String)
@@ -116,6 +119,7 @@ class AppWebViewModelImpl(
     override val biometricRequest = MutableLiveData<Event<BiometricRequest>>()
     override val getAccessTokenResponse = MutableLiveData<ResponseEvent<GetAccessTokenResponse>>()
     override val verifyLocationResponse = MutableLiveData<ResponseEvent<VerifyLocationResponse>>()
+    override val getLocationResponse = MutableLiveData<ResponseEvent<GetLocationResponse>>()
     override val goBack = MutableLiveData<Event<Unit>>()
     override val isBiometricAvailable = MutableLiveData<ResponseEvent<Boolean>>()
     override val statusCode = MutableLiveData<ResponseEvent<StatusCodeResponse>>()
@@ -189,26 +193,59 @@ class AppWebViewModelImpl(
     override fun handleVerifyLocation(message: String) {
         val messageBundle = getMessageBundle<VerifyLocationRequest>(message) ?: return
         launch {
-            suspendCoroutineWithTimeout<VerifyLocationResponse>(message, MessageHandler.VERIFY_LOCATION.timeoutMillis) { continuation ->
-                launch {
-                    val currentLocation = locationProvider.currentLocation(true)
-                    val location = if (currentLocation is Success) {
-                        val currentLocationResult = currentLocation.result
-                        if (currentLocationResult != null) {
-                            currentLocationResult
-                        } else {
-                            val validLocation = locationProvider.firstValidLocation()
-                            if (validLocation is Success) validLocation.result else null
+            timeout(message, MessageHandler.VERIFY_LOCATION.timeoutMillis) {
+                val currentLocation = locationProvider.currentLocation(true)
+                val location = if (currentLocation is Success) {
+                    val currentLocationResult = currentLocation.result
+                    if (currentLocationResult != null) {
+                        currentLocationResult
+                    } else {
+                        val validLocation = locationProvider.firstValidLocation()
+                        if (validLocation is Success) validLocation.result else null
+                    }
+                } else null
+
+                val targetLocation = Location("").apply { latitude = messageBundle.message.lat; longitude = messageBundle.message.lon }
+                val verified = location?.let { it.distanceTo(targetLocation) <= messageBundle.message.threshold }
+
+                verifyLocationResponse.postValue(ResponseEvent(messageBundle.id, VerifyLocationResponse(verified, location?.accuracy)))
+            }
+        }
+    }
+
+    override fun handleGetLocation(message: String) {
+        val messageBundle = getMessageBundle<String>(message) ?: return
+        launch {
+            timeout(message, MessageHandler.GET_LOCATION.timeoutMillis) {
+                val result = when (val currentLocation = locationProvider.currentLocation(true)) {
+                    is Success -> {
+                        currentLocation.result ?: run {
+                            when (val validLocation = locationProvider.firstValidLocation()) {
+                                is Success -> validLocation.result
+                                is Failure -> {
+                                    val code = when (validLocation.throwable) {
+                                        is PermissionDenied -> HttpURLConnection.HTTP_FORBIDDEN
+                                        is NoLocationFound -> HttpURLConnection.HTTP_NOT_FOUND
+                                        else -> HttpURLConnection.HTTP_INTERNAL_ERROR
+                                    }
+                                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(code, validLocation.throwable.message)))
+                                    return@timeout
+                                }
+                            }
                         }
-                    } else null
-
-                    val targetLocation = Location("").apply { latitude = messageBundle.message.lat; longitude = messageBundle.message.lon }
-                    val verified = location?.let { it.distanceTo(targetLocation) <= messageBundle.message.threshold }
-
-                    continuation.resumeIfActive(VerifyLocationResponse(verified, location?.accuracy))
+                    }
+                    is Failure -> {
+                        val code = when (currentLocation.throwable) {
+                            is PermissionDenied -> HttpURLConnection.HTTP_FORBIDDEN
+                            is NoLocationFound -> HttpURLConnection.HTTP_NOT_FOUND
+                            else -> HttpURLConnection.HTTP_INTERNAL_ERROR
+                        }
+                        statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(code, currentLocation.throwable.message)))
+                        return@timeout
+                    }
                 }
-            }?.let {
-                verifyLocationResponse.postValue(ResponseEvent(messageBundle.id, it))
+
+                getLocationResponse.postValue(ResponseEvent(messageBundle.id, GetLocationResponse(result.latitude, result.longitude, result.accuracy)))
             }
         }
     }
