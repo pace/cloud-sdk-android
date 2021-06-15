@@ -14,10 +14,7 @@ import androidx.lifecycle.viewModelScope
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.R
 import cloud.pace.sdk.api.utils.InterceptorUtils
-import cloud.pace.sdk.appkit.communication.AppEventManager
-import cloud.pace.sdk.appkit.communication.AppModel
-import cloud.pace.sdk.appkit.communication.MessageHandler
-import cloud.pace.sdk.appkit.model.InvalidTokenReason
+import cloud.pace.sdk.appkit.communication.*
 import cloud.pace.sdk.appkit.pay.PayAuthenticationManager
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getDisableTimePreferenceKey
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getSecureDataPreferenceKey
@@ -39,7 +36,7 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     abstract val isInErrorState: LiveData<Event<Boolean>>
     abstract val showLoadingIndicator: LiveData<Event<Boolean>>
     abstract val biometricRequest: LiveData<Event<BiometricRequest>>
-    abstract val newToken: LiveData<ResponseEvent<String>>
+    abstract val getAccessTokenResponse: LiveData<ResponseEvent<GetAccessTokenResponse>>
     abstract val verifyLocationResponse: LiveData<ResponseEvent<VerifyLocationResponse>>
     abstract val goBack: LiveData<Event<Unit>>
     abstract val isBiometricAvailable: LiveData<ResponseEvent<Boolean>>
@@ -51,7 +48,8 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
 
     abstract fun init(url: String)
     abstract fun close()
-    abstract fun handleInvalidToken(message: String)
+    abstract fun handleGetAccessToken(message: String)
+    abstract fun handleLogout(message: String)
     abstract fun handleImageData(message: String)
     abstract fun handleVerifyLocation(message: String)
     abstract fun handleBack(message: String)
@@ -72,7 +70,7 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     class MessageBundle<T>(val id: String?, val message: T)
     class ResponseEvent<T>(id: String?, content: T) : Event<MessageBundle<T>>(MessageBundle(id, content))
 
-    class InvalidTokenRequest(val reason: String, val oldToken: String?)
+    class GetAccessTokenRequest(val reason: String, val oldToken: String?)
     class VerifyLocationRequest(val lat: Double, val lon: Double, val threshold: Double)
     class BiometricRequest(@StringRes val title: Int, val onSuccess: () -> Unit, val onFailure: (errorCode: Int, errString: CharSequence) -> Unit)
     class SetTOTPRequest(val secret: String, val period: Int, val digits: Int, val algorithm: String, val key: String)
@@ -91,7 +89,7 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
 
     sealed class StatusCodeResponse(val statusCode: Int) {
         class Success(statusCode: Int = HttpURLConnection.HTTP_OK) : StatusCodeResponse(statusCode)
-        class Failure(val error: String, statusCode: Int) : StatusCodeResponse(statusCode)
+        class Failure(statusCode: Int, val message: String? = null) : StatusCodeResponse(statusCode)
     }
 
     enum class BiometryMethod(val value: String) {
@@ -116,7 +114,7 @@ class AppWebViewModelImpl(
     override val isInErrorState = MutableLiveData<Event<Boolean>>()
     override val showLoadingIndicator = MutableLiveData<Event<Boolean>>()
     override val biometricRequest = MutableLiveData<Event<BiometricRequest>>()
-    override val newToken = MutableLiveData<ResponseEvent<String>>()
+    override val getAccessTokenResponse = MutableLiveData<ResponseEvent<GetAccessTokenResponse>>()
     override val verifyLocationResponse = MutableLiveData<ResponseEvent<VerifyLocationResponse>>()
     override val goBack = MutableLiveData<Event<Unit>>()
     override val isBiometricAvailable = MutableLiveData<ResponseEvent<Boolean>>()
@@ -148,17 +146,30 @@ class AppWebViewModelImpl(
         currentUrl.value = newUrl
     }
 
-    override fun handleInvalidToken(message: String) {
-        val messageBundle = getMessageBundle<InvalidTokenRequest>(message) ?: return
+    override fun handleGetAccessToken(message: String) {
+        val messageBundle = getMessageBundle<GetAccessTokenRequest>(message) ?: return
         launch {
-            suspendCoroutineWithTimeout<String>(message, MessageHandler.INVALID_TOKEN.timeoutMillis) { continuation ->
+            suspendCoroutineWithTimeout<GetAccessTokenResponse>(message, MessageHandler.GET_ACCESS_TOKEN.timeoutMillis) { continuation ->
                 val reason = messageBundle.message.reason
                 val invalidTokenReason = InvalidTokenReason.values().associateBy(InvalidTokenReason::value)[reason] ?: InvalidTokenReason.OTHER
-                appModel.onTokenInvalid(invalidTokenReason, messageBundle.message.oldToken) { token ->
-                    continuation.resumeIfActive(token)
+                appModel.getAccessToken(invalidTokenReason, messageBundle.message.oldToken) { response ->
+                    continuation.resumeIfActive(response)
                 }
             }?.let {
-                newToken.postValue(ResponseEvent(messageBundle.id, it))
+                getAccessTokenResponse.postValue(ResponseEvent(messageBundle.id, it))
+            }
+        }
+    }
+
+    override fun handleLogout(message: String) {
+        val messageBundle = getMessageBundle<String>(message) ?: return
+        launch {
+            suspendCoroutineWithTimeout<LogoutResponse>(message, MessageHandler.LOGOUT.timeoutMillis) { continuation ->
+                appModel.onLogout {
+                    continuation.resumeIfActive(it)
+                }
+            }?.let {
+                statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Success(it.statusCode)))
             }
         }
     }
@@ -242,14 +253,14 @@ class AppWebViewModelImpl(
                 EncryptionUtils.stringToAlgorithm(request.algorithm) ?: run {
                     statusCode.postValue(
                         ResponseEvent(
-                            messageBundle.id, StatusCodeResponse.Failure("Invalid HMAC algorithm: ${messageBundle.message.algorithm}", HttpURLConnection.HTTP_INTERNAL_ERROR)
+                            messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "Invalid HMAC algorithm: ${messageBundle.message.algorithm}")
                         )
                     )
                     return@timeout
                 }
 
                 val host = getHost() ?: run {
-                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The host is null.", HttpURLConnection.HTTP_INTERNAL_ERROR)))
+                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "The host is null.")))
                     return@timeout
                 }
 
@@ -258,7 +269,7 @@ class AppWebViewModelImpl(
                     sharedPreferencesModel.setTotpSecret(host, request.key, TotpSecret(encryptedSecret, request.digits, request.period, request.algorithm))
                     statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Success()))
                 } catch (e: Exception) {
-                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("Could not encrypt the TOTP secret.", HttpURLConnection.HTTP_INTERNAL_ERROR)))
+                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "Could not encrypt the TOTP secret.")))
                 }
             }
         }
@@ -271,13 +282,13 @@ class AppWebViewModelImpl(
                 val id = messageBundle.id
 
                 if (!payAuthenticationManager.isFingerprintAvailable()) {
-                    statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("No biometric authentication is available or none has been set.", HttpURLConnection.HTTP_BAD_METHOD)))
+                    statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_BAD_METHOD, "No biometric authentication is available or none has been set.")))
                     continuation.resumeIfActive(null)
                     return@suspendCoroutineWithTimeout
                 }
 
                 val host = getHost() ?: run {
-                    statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("The host is null.", HttpURLConnection.HTTP_INTERNAL_ERROR)))
+                    statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "The host is null.")))
                     continuation.resumeIfActive(null)
                     return@suspendCoroutineWithTimeout
                 }
@@ -286,12 +297,12 @@ class AppWebViewModelImpl(
                     if (isDomainInACL(host)) {
                         // Get master TOTP secret data
                         sharedPreferencesModel.getTotpSecret() ?: run {
-                            statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("No biometric data found in the SharedPreferences.", HttpURLConnection.HTTP_NOT_FOUND)))
+                            statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_NOT_FOUND, "No biometric data found in the SharedPreferences.")))
                             continuation.resumeIfActive(null)
                             return@suspendCoroutineWithTimeout
                         }
                     } else {
-                        statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("The host $host is not in the access control list.", HttpURLConnection.HTTP_INTERNAL_ERROR)))
+                        statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "The host $host is not in the access control list.")))
                         continuation.resumeIfActive(null)
                         return@suspendCoroutineWithTimeout
                     }
@@ -306,14 +317,14 @@ class AppWebViewModelImpl(
 
                             continuation.resumeIfActive(otp)
                         } catch (e: Exception) {
-                            statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("Could not decrypt the encrypted TOTP secret.", HttpURLConnection.HTTP_INTERNAL_ERROR)))
+                            statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "Could not decrypt the encrypted TOTP secret.")))
                             continuation.resumeIfActive(null)
                         }
                     },
                     onFailure = { errorCode, errString ->
                         statusCode.postValue(
                             ResponseEvent(
-                                id, StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", HttpURLConnection.HTTP_UNAUTHORIZED)
+                                id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_UNAUTHORIZED, "Biometric authentication failed: errorCode was $errorCode, errString was $errString")
                             )
                         )
                         continuation.resumeIfActive(null)
@@ -331,7 +342,7 @@ class AppWebViewModelImpl(
         launch {
             timeout(message, MessageHandler.SET_SECURE_DATA.timeoutMillis) {
                 val host = getHost() ?: run {
-                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The host is null.", HttpURLConnection.HTTP_INTERNAL_ERROR)))
+                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "The host is null.")))
                     return@timeout
                 }
                 val preferenceKey = getSecureDataPreferenceKey(host, messageBundle.message.key)
@@ -350,20 +361,20 @@ class AppWebViewModelImpl(
                 val id = messageBundle.id
 
                 if (!payAuthenticationManager.isFingerprintAvailable()) {
-                    statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("No biometric authentication is available or none has been set.", HttpURLConnection.HTTP_BAD_METHOD)))
+                    statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_BAD_METHOD, "No biometric authentication is available or none has been set.")))
                     continuation.resumeIfActive(null)
                     return@suspendCoroutineWithTimeout
                 }
 
                 val host = getHost() ?: run {
-                    statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("The host is null.", HttpURLConnection.HTTP_INTERNAL_ERROR)))
+                    statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "The host is null.")))
                     continuation.resumeIfActive(null)
                     return@suspendCoroutineWithTimeout
                 }
                 val preferenceKey = getSecureDataPreferenceKey(host, messageBundle.message.key)
                 val encryptedValue = sharedPreferencesModel.getString(preferenceKey) ?: run {
                     statusCode.postValue(
-                        ResponseEvent(id, StatusCodeResponse.Failure("No encrypted value with the key $preferenceKey was found in the SharedPreferences.", HttpURLConnection.HTTP_NOT_FOUND))
+                        ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_NOT_FOUND, "No encrypted value with the key $preferenceKey was found in the SharedPreferences."))
                     )
                     continuation.resumeIfActive(null)
                     return@suspendCoroutineWithTimeout
@@ -376,14 +387,14 @@ class AppWebViewModelImpl(
                             val value = EncryptionUtils.decrypt(encryptedValue)
                             continuation.resumeIfActive(value)
                         } catch (e: Exception) {
-                            statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("Could not decrypt the encrypted secure data value.", HttpURLConnection.HTTP_INTERNAL_ERROR)))
+                            statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "Could not decrypt the encrypted secure data value.")))
                             continuation.resumeIfActive(null)
                         }
                     },
                     onFailure = { errorCode, errString ->
                         statusCode.postValue(
                             ResponseEvent(
-                                id, StatusCodeResponse.Failure("Biometric authentication failed: errorCode was $errorCode, errString was $errString", HttpURLConnection.HTTP_UNAUTHORIZED)
+                                id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_UNAUTHORIZED, "Biometric authentication failed: errorCode was $errorCode, errString was $errString")
                             )
                         )
                         continuation.resumeIfActive(null)
@@ -406,7 +417,7 @@ class AppWebViewModelImpl(
                     appModel.disable(host)
                     statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Success()))
                 } else {
-                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("The host is null.", HttpURLConnection.HTTP_INTERNAL_ERROR)))
+                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "The host is null.")))
                 }
                 close()
             }
@@ -427,7 +438,7 @@ class AppWebViewModelImpl(
                     statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Success(HttpURLConnection.HTTP_NO_CONTENT)))
                 } else {
                     appModel.onCustomSchemeError(context, "${redirectScheme}://redirect")
-                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("Redirect scheme for deep linking has not been specified.", HttpURLConnection.HTTP_NOT_FOUND)))
+                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_NOT_FOUND, "Redirect scheme for deep linking has not been specified.")))
                 }
             }
         }
@@ -441,7 +452,7 @@ class AppWebViewModelImpl(
                 if (!redirectScheme.isNullOrEmpty()) {
                     appInterceptableLink.postValue(ResponseEvent(messageBundle.id, AppInterceptableLinkResponse(redirectScheme)))
                 } else {
-                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("Redirect scheme for deep linking has not been specified.", HttpURLConnection.HTTP_NOT_FOUND)))
+                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_NOT_FOUND, "Redirect scheme for deep linking has not been specified.")))
                 }
             }
         }
@@ -479,7 +490,7 @@ class AppWebViewModelImpl(
             if (config != null) {
                 valueResponse.postValue(ResponseEvent(messageBundle.id, ValueResponse(config)))
             } else {
-                statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure("No config value found.", HttpURLConnection.HTTP_NOT_FOUND)))
+                statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_NOT_FOUND, "No config value found.")))
             }
         }
     }
@@ -524,7 +535,7 @@ class AppWebViewModelImpl(
             bundle
         } else {
             val id = gson.fromJson<MessageBundle<Any>>(message)?.id
-            statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure("Could not deserialize the following JSON message: $message", errorCode)))
+            statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(errorCode, "Could not deserialize the following JSON message: $message")))
             null
         }
     }
@@ -535,7 +546,7 @@ class AppWebViewModelImpl(
         } catch (e: TimeoutCancellationException) {
             val id = gson.fromJson<MessageBundle<Any>>(message)?.id
             Timber.w(e, "Timeout for request with ID $id")
-            statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(e.message.orEmpty(), HttpURLConnection.HTTP_CLIENT_TIMEOUT)))
+            statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_CLIENT_TIMEOUT, e.message)))
             null
         }
 

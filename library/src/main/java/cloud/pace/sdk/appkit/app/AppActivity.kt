@@ -5,9 +5,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import cloud.pace.sdk.R
-import cloud.pace.sdk.appkit.communication.AppEventManager
-import cloud.pace.sdk.appkit.communication.AppModel
+import cloud.pace.sdk.appkit.communication.*
 import cloud.pace.sdk.idkit.IDKit
+import cloud.pace.sdk.idkit.model.FailedRetrievingSessionWhileEnding
 import cloud.pace.sdk.utils.*
 import kotlinx.android.synthetic.main.fragment_app.*
 import kotlinx.coroutines.Dispatchers
@@ -39,10 +39,25 @@ class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
         backToFinish = intent.extras?.getBoolean(BACK_TO_FINISH, true) ?: true
 
         appModel.authorize.observe(this) { event ->
-            event.getContentIfNotHandled()?.let { authorizationResult ->
+            event.getContentIfNotHandled()?.let { result ->
                 lifecycleScope.launch(Dispatchers.Main) {
                     IDKit.authorize(this@AppActivity) { completion ->
-                        (completion as? Success)?.result?.let { authorizationResult.onResult(it) } ?: finish()
+                        (completion as? Success)?.result?.let { result.onResult(GetAccessTokenResponse(it, true)) } ?: finish()
+                    }
+                }
+            }
+        }
+
+        appModel.endSession.observe(this) { event ->
+            event.getContentIfNotHandled()?.let { result ->
+                lifecycleScope.launch(Dispatchers.Main) {
+                    IDKit.endSession(this@AppActivity) {
+                        val logoutResponse = when {
+                            it is Success -> LogoutResponse.SUCCESSFUL
+                            it is Failure && it.throwable is FailedRetrievingSessionWhileEnding -> LogoutResponse.UNAUTHORIZED
+                            else -> LogoutResponse.OTHER
+                        }
+                        result.onResult(logoutResponse)
                     }
                 }
             }

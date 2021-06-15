@@ -6,14 +6,24 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Breaking changes
+
+* Deprecated the `AppCallback.onTokenInvalid` method:
+> **_NOTE:_** Use `AppCallback.getAccessToken` instead that introduces the `isInitialToken` flag
+
+### Internal
+
+* Add `logout` handler to PWA communication
+
+
 7.6.0 Release notes (2021-06-10)
 =============================================================
-
 
 ### Enhancements
 
 * Adjust Geo API to new version `2021-1`
 * Add function to `AppKit` to request Connected Fueling gas stations
+
 ### Internal
 
 * Improve selection of app drawer icon size

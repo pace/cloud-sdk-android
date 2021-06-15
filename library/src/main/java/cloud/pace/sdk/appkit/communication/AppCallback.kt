@@ -3,7 +3,6 @@ package cloud.pace.sdk.appkit.communication
 import android.content.Context
 import android.graphics.Bitmap
 import cloud.pace.sdk.appkit.model.App
-import cloud.pace.sdk.appkit.model.InvalidTokenReason
 import cloud.pace.sdk.appkit.utils.TokenValidator
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
@@ -41,12 +40,20 @@ interface AppCallback {
 
     /**
      * Is called when the app sends the access token is invalid action.
-     * The client app needs to call the [onResult] function to set a new access token.
+     * The client app needs to call the [onResult] function to set the [GetAccessTokenResponse].
      *
-     * @param reason Specifies the reason why the token is invalid. `UNAUTHORIZED` means that the session was invalidated and `OTHER` if the token expired and should be renewed via [onResult].
+     * @param reason Specifies the reason why the token is invalid. [InvalidTokenReason.UNAUTHORIZED] means that the session had been invalidated
+     * and [InvalidTokenReason.OTHER] if the token has expired and should be renewed via [onResult].
      * @param oldToken The last access token.
      */
-    fun onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit)
+    fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (GetAccessTokenResponse) -> Unit)
+
+    /**
+     * Is called when the app sends a request to logout the current user.
+     * The client app needs to call the [onResult] function to set the [LogoutResponse].
+     * Use [LogoutResponse.SUCCESSFUL] to signal a successful logout, [LogoutResponse.UNAUTHORIZED] if the user was not logged in at all and [LogoutResponse.OTHER] for all other errors.
+     */
+    fun onLogout(onResult: (LogoutResponse) -> Unit)
 
     /**
      * Is called when the client app hasn't set up deep linking via a custom scheme,
@@ -97,7 +104,7 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
     override fun onClose() {}
     override fun onOpenInNewTab(url: String) {}
     override fun onDisable(host: String) {}
-    override fun onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit) {
+    override fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (GetAccessTokenResponse) -> Unit) {
         if (!IDKit.isInitialized) return
 
         if (IDKit.isAuthorizationValid()) {
@@ -105,11 +112,19 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
                 appModel.close(true)
             } else {
                 IDKit.refreshToken {
-                    (it as? Success)?.result?.let(onResult) ?: appModel.authorize(onResult)
+                    (it as? Success)?.result?.let { token ->
+                        onResult(GetAccessTokenResponse(token))
+                    } ?: appModel.authorize(onResult)
                 }
             }
         } else {
             appModel.authorize(onResult)
+        }
+    }
+
+    override fun onLogout(onResult: (LogoutResponse) -> Unit) {
+        if (IDKit.isInitialized) {
+            appModel.endSession(onResult)
         }
     }
 

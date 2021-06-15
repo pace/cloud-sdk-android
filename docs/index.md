@@ -10,6 +10,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
     * [Setup](#setup)
     * [Migration](#migration)
         + [2.x.x -> 3.x.x](#from-2xx-to-3xx)
+        + [7.x.x -> 8.x.x](#from-7xx-to-8xx)
     * [IDKit](#idkit)
         + [Setup](#setup-1)
         + [Discover configuration](#discover-configuration)
@@ -37,7 +38,9 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
             + [Default AppDrawer](#default-appdrawer)
             + [Custom AppDrawer](#custom-appdrawer)
         + [Deep Linking](#deep-linking)
-        + [Native login](#native-login)
+        + [Native login, token renewal and logout](#native-login-token-renewal-and-logout)
+            + [Login and token renewal](#login-and-token-renewal)
+            + [Logout](#logout)
         + [Removal of Apps](#removal-of-apps)
         + [Miscellaneous](#miscellaneous)
             + [Preset Urls](#preset-urls)
@@ -109,7 +112,7 @@ The `PACECloudSDK` needs to be setup before any of its `Kits` can be used. There
 
 The `Configuration` only has `clientAppName`, `clientAppVersion`, `clientAppBuild` and `apiKey` as mandatory properties. All others are optional and can be passed as necessary.
 
-**Note**: `PACECloudSDK` is using the `PRODUCTION` environment as default. In case you are still doing tests, you probably want to change it to `SANDBOX` or `STAGING`.
+**Note:** `PACECloudSDK` is using the `PRODUCTION` environment as default. In case you are still doing tests, you probably want to change it to `SANDBOX` or `STAGING`.
 
 Available parameters:
 
@@ -149,10 +152,17 @@ In `3.0.0` we've introduced a universal setup method: `PACECloudSDK.setup(contex
 
 The universal `Configuration` almost has the same signature as the previous *AppKit* `Configuration`, only the `isDarkTheme` parameter has been removed, which is now an enum instead of a Boolean and defaults to `Theme.LIGHT`. In case you want to change it, you can set it via `AppKit`'s `theme` property: `AppKit.theme = Theme.LIGHT/Theme.DARK`.
 
+### From 7.x.x to 8.x.x
+We've added two new `AppCallback`s: `getAccessToken` and `logout`. The `getAccessToken` method replaces the `invalidToken` call.
+While its callback is equal to the `invalidToken` callback, we changed the response to be an object with an `accessToken` property and a new `isInitialToken` boolean.
+The `logout` callback is used to handle the logout natively
+Please refer to [Native login, token renewal and logout](#native-login-token-renewal-and-logout) for more information.
+
 ## IDKit
 **IDKit** manages the OpenID (OID) authorization and the general session flow with its token handling via **PACE ID**.
 
 ### Setup
+**Note:** For authorization and session ending please make sure that the `appAuthRedirectScheme` is set in your app's `build.gradle` file as described in the general [setup](#setup) section.
 This code example shows how to setup *IDKit*. The parameter `additionalCaching` defines if *IDKit* persists the session additionally to the native WebView/Browser caching.
 ```kotlin
 val config = OIDConfiguration(
@@ -511,7 +521,7 @@ The `PACECloudSDK` provides the following methods to check and set the PIN:
 Please make sure that the user grants the following permission:
 * `Manifest.permission.ACCESS_FINE_LOCATION`
 
-**_Note:_** *AppKit* needs this permission to get the user location but it will not request the permission.
+**Note:** *AppKit* needs this permission to get the user location but it will not request the permission.
 
 #### Biometric authentication
 To be able to authorize payments with biometry, the `domainACL` must be set during the [setup](#setup) of the `PACECloudSDK`.
@@ -602,7 +612,7 @@ Moreover the *AppKit* contains a default `AppWebView`. To display an app in this
 #### Default AppDrawer
 The default `AppDrawer` is an expandable button that can be used to display an app. It shows an icon in collapsed state and additionally a title and subtitle in expanded state. By default it will be opened in expanded mode. To fade in the button with an animation, use `appDrawer.show()`. The `AppDrawer` will be removed if the app is not returned on the next App check again.
 
-**_Note:_** You need to call `AppKit.requestLocalApps(...)` periodically to make sure that Apps get closed when they are not longer available. This can be done when the app comes into the foreground or the location changes.
+**Note:** You need to call `AppKit.requestLocalApps(...)` periodically to make sure that Apps get closed when they are not longer available. This can be done when the app comes into the foreground or the location changes.
 
 The button can be added dynamically by the *AppKit* or statically as view.
 
@@ -733,7 +743,7 @@ AppKit.requestLocalApps { app ->
     }
 }
 ```
-**Note**: For a more detailed example, where the apps are displayed in a `RecyclerView`, see the `PACECloudSDK` example app.
+**Note:** For a more detailed example, where the apps are displayed in a `RecyclerView`, see the `PACECloudSDK` example app.
 
 ### Deep Linking
 Some of our services (e.g. `PayPal`) do not open the URL in the WebView, but in a Chrome Custom Tab within the app, due to security reasons. After completion of the process the user is redirected back to the WebView via deep linking. In order to set the redirect URL correctly and to ensure that the client app intercepts the deep link, the following requirements must be met:
@@ -741,38 +751,87 @@ Some of our services (e.g. `PayPal`) do not open the URL in the WebView, but in 
 * Specify the `pace_redirect_scheme` as manifest placeholder in your app's `build.gradle` file (see [setup](#setup))
 * If the scheme is empty, the *AppKit* calls the `onCustomSchemeError(context: Context?, scheme: String)` callback
 
-### Native login
-If the client app uses its own login and wants to pass an access token to the apps, follow these steps:
+### Native login, token renewal and logout
+If you want to natively handle the login, access token renewal and logout, then follow these steps:
+
+#### Login and token renewal
+**Note:** Step 3 and 4 are optional because the `getAccessToken` callback has a default implementation that tries to refresh the access token once via *IDKit* and if it is still invalid then it shows the login form again.
 
 1. Initialize the `PACECloudSDK` with `authenticationMode = AuthenticationMode.NATIVE`
-2. (Optional) Pass an `AppCallbackImpl` instance to `AppKit.openApps(...)` or `AppKit.openAppActivity(...)` and override the required callbacks (`onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit)` in this case)
-3. (Optional) If the access token is invalid, the *AppKit* calls the `onTokenInvalid` function. The client app needs to call the `onResult` function to set a new access token. In case that you can't retrieve a new valid token, don't call `onResult`, otherwise you will most likely end up
+2. If you want to use the default implementation via the *IDKit*, make sure that the `appAuthRedirectScheme` is specified as manifest placeholder in your app's `build.gradle` file (see [setup](#setup))
+3. (Optional) Pass an `AppCallbackImpl` instance to `AppKit.openApps(...)` or `AppKit.openAppActivity(...)` and override `fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (GetAccessTokenResponse) -> Unit)`
+4. (Optional) If the access token is invalid, the *AppKit* calls the `getAccessToken` function. Make sure to call the `onResult` function with the new token result. In case that you can't retrieve a new valid token, don't call `onResult`, otherwise you will most likely end up
 in an endless loop. Make sure to clean up all the app related views as well (see [Removal of Apps](#removal-of-apps)).
-
-**Note**: Step 2 and 3 are optional because the `onTokenInvalid` callback has a default implementation that tries to refresh the access token once via *IDKit* and if it is still invalid then it shows the login form again.
 
 ##### Kotlin example
 ```kotlin
 AppKit.openAppActivity(context, url, object : AppCallbackImpl() {
-    override fun onTokenInvalid(reason: InvalidTokenReason, oldToken: String?, onResult: (String) -> Unit) {
+    override fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (GetAccessTokenResponse) -> Unit) {
         // Token is invalid, check reason and oldToken parameters
-        // Call your function to request a new one (async or not) and pass the new token to onResult
-        getTokenAsnyc { token ->
-            onResult(token)
+        // Call your function to request a new one (async or not) or start authorization and pass the token result to onResult
+        if (isAuthorizationValid) {
+            getTokenAsnyc { token ->
+                onResult(GetAccessTokenResponse(token))
+            }   
+        } else {
+            authorize { token ->
+                onResult(GetAccessTokenResponse(token, true))
+            }
         }
     }
-}
+})
 ```
 
 ##### Java example
 ```java
 AppKit.INSTANCE.openAppActivity(context, url, true, false, new AppCallbackImpl() {
     @Override
-    public void onTokenInvalid(@NotNull InvalidTokenReason reason, @Nullable String oldToken, @NotNull Function1<? super String, Unit> onResult) {
+    public void getAccessToken(@NotNull InvalidTokenReason reason, @Nullable String oldToken, @NotNull Function1<? super GetAccessTokenResponse, Unit> onResult) {
         // Token is invalid, check reason and oldToken parameters
-        // Call your function to request a new one (async or not) and pass the new token to onResult
-        getTokenAsnyc( token -> {
-            onResult.invoke(token);
+        // Call your function to request a new one (async or not) or start authorization and pass the token result to onResult
+        if (isAuthorizationValid) {
+            getTokenAsnyc(token -> {
+                onResult.invoke(new GetAccessTokenResponse(token));
+            });
+        } else {
+            authorize(token -> {
+                onResult.invoke(new GetAccessTokenResponse(token, true));
+            });
+        }
+    }
+});
+```
+
+#### Logout
+**Note:** Step 3 and 4 are optional because the `onLogout` callback has a default implementation that logs out via *IDKit*.
+
+1. Initialize the `PACECloudSDK` with `authenticationMode = AuthenticationMode.NATIVE`
+2. If you want to use the default implementation via the *IDKit*, make sure that the `appAuthRedirectScheme` is specified as manifest placeholder in your app's `build.gradle` file (see [setup](#setup))
+3. (Optional) Pass an `AppCallbackImpl` instance to `AppKit.openApps(...)` or `AppKit.openAppActivity(...)` and override `fun onLogout(onResult: (LogoutResponse) -> Unit)`
+4. (Optional) If a logout is requested, the *AppKit* calls the `onLogout` function. Make sure to call the `onResult` function with the `LogoutResponse`. Use `LogoutResponse.SUCCESSFUL` to signal a successful logout, `LogoutResponse.UNAUTHORIZED` if the user was not logged in at all and `LogoutResponse.OTHER` for all other errors.
+
+##### Kotlin example (optional)
+```kotlin
+AppKit.openAppActivity(context, url, object : AppCallbackImpl() {
+    override fun onLogout(onResult: (LogoutResponse) -> Unit) {
+        // Logout is needed
+        // Call your function to logout (async or not) and pass the LogoutResponse to onResult
+        logout { response ->
+            onResult(response)    
+        }
+    }
+})
+```
+
+##### Java example (optional)
+```java
+AppKit.INSTANCE.openAppActivity(context, url, true, false, new AppCallbackImpl() {
+    @Override
+    public void onLogout(@NotNull Function1<? super LogoutResponse, Unit> onResult) {
+        // Logout is needed
+        // Call your function to logout (async or not) and pass the LogoutResponse to onResult
+        logout(response -> {
+            onResult.invoke(response);
         });
     }
 });

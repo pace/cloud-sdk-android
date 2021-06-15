@@ -195,7 +195,7 @@ class AppWebViewModelTest {
         assertEquals("id", viewModel.statusCode.value?.peekContent()?.id)
         assertEquals(
             "Biometric authentication failed: errorCode was $errorCode, errString was $errString",
-            (viewModel.statusCode.value?.peekContent()?.message as? AppWebViewModel.StatusCodeResponse.Failure)?.error
+            (viewModel.statusCode.value?.peekContent()?.message as? AppWebViewModel.StatusCodeResponse.Failure)?.message
         )
         assertEquals(HttpURLConnection.HTTP_UNAUTHORIZED, viewModel.statusCode.value?.peekContent()?.message?.statusCode)
 
@@ -215,7 +215,7 @@ class AppWebViewModelTest {
         val totpRequest = Gson().toJson(AppWebViewModel.MessageBundle("id", AppWebViewModel.GetTOTPRequest(1611158191, "fueling-app")))
         viewModel.handleGetTOTP(totpRequest)
 
-        assertEquals("No biometric authentication is available or none has been set.", (viewModel.statusCode.value?.peekContent()?.message as? AppWebViewModel.StatusCodeResponse.Failure)?.error)
+        assertEquals("No biometric authentication is available or none has been set.", (viewModel.statusCode.value?.peekContent()?.message as? AppWebViewModel.StatusCodeResponse.Failure)?.message)
         assertEquals(HttpURLConnection.HTTP_BAD_METHOD, viewModel.statusCode.value?.peekContent()?.message?.statusCode)
 
         viewModel.biometricRequest.removeObserver(observer)
@@ -245,7 +245,7 @@ class AppWebViewModelTest {
         viewModel.handleGetTOTP(totpRequest)
 
         assertEquals("id", viewModel.statusCode.value?.peekContent()?.id)
-        assertEquals("No biometric data found in the SharedPreferences.", (viewModel.statusCode.value?.peekContent()?.message as? AppWebViewModel.StatusCodeResponse.Failure)?.error)
+        assertEquals("No biometric data found in the SharedPreferences.", (viewModel.statusCode.value?.peekContent()?.message as? AppWebViewModel.StatusCodeResponse.Failure)?.message)
         assertEquals(HttpURLConnection.HTTP_NOT_FOUND, viewModel.statusCode.value?.peekContent()?.message?.statusCode)
 
         viewModel.biometricRequest.removeObserver(observer)
