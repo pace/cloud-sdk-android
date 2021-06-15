@@ -26,6 +26,7 @@ interface AppModel {
     fun openUrlInNewTab(url: String)
     fun disable(host: String)
     fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (Completion<GetAccessTokenResponse>) -> Unit)
+    fun onLogin(context: Context, result: Completion<String?>)
     fun onLogout(onResult: (LogoutResponse) -> Unit)
     fun onCustomSchemeError(context: Context?, scheme: String)
     fun onImageDataReceived(bitmap: Bitmap)
@@ -128,6 +129,12 @@ class AppModelImpl : AppModel {
             callback?.onSessionRenewalFailed(throwable) {
                 it?.let { onResult(Success(GetAccessTokenResponse(it))) } ?: onResult(Failure(InternalError))
             }
+        }
+    }
+
+    override fun onLogin(context: Context, result: Completion<String?>) {
+        onMainThread {
+            callback?.onLogin(context, result)
         }
     }
 

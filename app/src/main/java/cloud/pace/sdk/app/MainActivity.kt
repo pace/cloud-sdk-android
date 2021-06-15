@@ -1,6 +1,7 @@
 package cloud.pace.sdk.app
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -10,12 +11,14 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.geo.ConnectedFuelingStatus
 import cloud.pace.sdk.appkit.AppKit
+import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.OIDConfiguration
 import cloud.pace.sdk.poikit.POIKit
@@ -27,6 +30,32 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private var lastLocation: Location? = null
+    private val defaultAppCallback = object : AppCallbackImpl() {
+        override fun onLogin(context: Context, result: Completion<String?>) {
+            when (result) {
+                is Success -> {
+                    AlertDialog.Builder(context)
+                        .setTitle("Biometric authentication")
+                        .setMessage("Do you want to use biometric authentication to authorize payments?")
+                        .setNegativeButton("No") { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .setPositiveButton("Yes") { dialog, _ ->
+                            IDKit.enableBiometricAuthentication {
+                                when (it) {
+                                    is Success -> Toast.makeText(context, if (it.result) "Biometric authentication set" else "Biometric authentication not set", Toast.LENGTH_SHORT).show()
+                                    is Failure -> Toast.makeText(context, it.throwable.toString(), Toast.LENGTH_LONG).show()
+                                }
+                            }
+                            dialog.dismiss()
+                        }
+                        .create()
+                        .show()
+                }
+                is Failure -> Toast.makeText(context, result.throwable.toString(), Toast.LENGTH_LONG).show()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,19 +96,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         payment_app.setOnClickListener {
-            AppKit.openPaymentApp(this)
+            AppKit.openPaymentApp(this, callback = defaultAppCallback)
         }
 
         fueling_app.setOnClickListener {
-            AppKit.openFuelingApp(this)
+            AppKit.openFuelingApp(this, callback = defaultAppCallback)
         }
 
         transactions_app.setOnClickListener {
-            AppKit.openTransactions(this)
+            AppKit.openTransactions(this, callback = defaultAppCallback)
         }
 
         pace_id_app.setOnClickListener {
-            AppKit.openPaceID(this)
+            AppKit.openPaceID(this, callback = defaultAppCallback)
         }
 
         user_info.setOnClickListener {
@@ -124,7 +153,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val appListAdapter = AppListAdapter {
-            AppKit.openAppActivity(this, it, autoClose = false)
+            AppKit.openAppActivity(this, it, autoClose = false, callback = defaultAppCallback)
         }
         app_list.adapter = appListAdapter
         show_app_list.setOnClickListener { button ->
@@ -157,7 +186,7 @@ class MainActivity : AppCompatActivity() {
             if (lastLocation == null || lastLocation.distanceTo(it) > APP_DISTANCE_THRESHOLD) {
                 AppKit.requestLocalApps { completion ->
                     if (completion is Success) {
-                        AppKit.openApps(this, completion.result, root_layout, bottomMargin = 100f)
+                        AppKit.openApps(this, completion.result, root_layout, bottomMargin = 100f, callback = defaultAppCallback)
                     }
                 }
 
