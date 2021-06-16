@@ -33,6 +33,7 @@ interface AppModel {
     fun setUserProperty(key: String, value: String, update: Boolean)
     fun logEvent(key: String, parameters: Map<String, Any>)
     fun getConfig(key: String, config: (String?) -> Unit)
+    fun isAppRedirectAllowed(app: String, isAllowed: (Boolean) -> Unit)
 
     class Result<T>(val onResult: (T) -> Unit)
 }
@@ -171,6 +172,12 @@ class AppModelImpl : AppModel {
     override fun getConfig(key: String, config: (String?) -> Unit) {
         onMainThread {
             callback?.getConfig(key, config)
+        }
+    }
+
+    override fun isAppRedirectAllowed(app: String, isAllowed: (Boolean) -> Unit) {
+        onMainThread {
+            callback?.isAppRedirectAllowed(app, isAllowed)
         }
     }
 }

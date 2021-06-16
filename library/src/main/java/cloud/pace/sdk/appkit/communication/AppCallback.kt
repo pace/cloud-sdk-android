@@ -114,6 +114,16 @@ interface AppCallback {
      * @param config Call this function to pass the configuration or `null` if none is available
      */
     fun getConfig(key: String, config: (String?) -> Unit)
+
+    /**
+     * Is called whenever the current app tries to redirect to another specified [app].
+     * The client app can then decide, if this should be allowed (set [isAllowed] to `true`) or if the client intercepts the app (set [isAllowed] to `false`),
+     * e.g. native apps with a map probably don't want to show the fuel station finder, but show their own map instead.
+     *
+     * @param app The app the current app is redirecting to, e.g. `fuel-station-finder`, `fueling`, `pay`, or `legal`
+     * @param isAllowed Call this function to specify whether to redirect or not (defaults to `true`)
+     */
+    fun isAppRedirectAllowed(app: String, isAllowed: (Boolean) -> Unit)
 }
 
 abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
@@ -144,5 +154,9 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
     override fun logEvent(key: String, parameters: Map<String, Any>) {}
     override fun getConfig(key: String, config: (String?) -> Unit) {
         config(null)
+    }
+
+    override fun isAppRedirectAllowed(app: String, isAllowed: (Boolean) -> Unit) {
+        isAllowed(true)
     }
 }
