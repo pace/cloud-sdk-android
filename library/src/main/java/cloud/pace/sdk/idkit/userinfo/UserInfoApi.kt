@@ -56,6 +56,7 @@ class UserInfoApiClient(userInfoEndpoint: String, accessToken: String) {
                                     .build()
                             )
                         }
+                        .authenticator(InterceptorUtils.getAuthenticator())
                         .build())
                 .baseUrl(baseUrl)
                 .addConverterFactory(

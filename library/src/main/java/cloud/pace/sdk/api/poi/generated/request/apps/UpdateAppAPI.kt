@@ -50,7 +50,11 @@ object UpdateAppAPI {
 
     private val service: UpdateAppService by lazy {
         Retrofit.Builder()
-            .client(OkHttpClient.Builder().addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
+            .client(OkHttpClient.Builder()
+                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json"))
+                .authenticator(InterceptorUtils.getAuthenticator())
+                .build()
+            )
             .baseUrl(POIAPI.baseUrl)
             .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(

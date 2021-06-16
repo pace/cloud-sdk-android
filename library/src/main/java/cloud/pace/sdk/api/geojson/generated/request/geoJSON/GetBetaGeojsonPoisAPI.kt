@@ -81,7 +81,11 @@ object GetBetaGeojsonPoisAPI {
 
     private val service: GetBetaGeojsonPoisService by lazy {
         Retrofit.Builder()
-            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .client(OkHttpClient.Builder()
+                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json"))
+                .authenticator(InterceptorUtils.getAuthenticator())
+                .build()
+            )
             .baseUrl(GeoJSONAPI.baseUrl)
             .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(

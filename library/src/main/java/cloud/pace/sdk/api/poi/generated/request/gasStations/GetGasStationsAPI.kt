@@ -84,7 +84,11 @@ To search inside a bounding box provide the following query parameter:
 
     private val service: GetGasStationsService by lazy {
         Retrofit.Builder()
-            .client(OkHttpClient.Builder().addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
+            .client(OkHttpClient.Builder()
+                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json"))
+                .authenticator(InterceptorUtils.getAuthenticator())
+                .build()
+            )
             .baseUrl(POIAPI.baseUrl)
             .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(

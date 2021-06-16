@@ -68,7 +68,11 @@ In order to identify the user any oauth2 token must be passed.
 
     private val service: CheckTermsService by lazy {
         Retrofit.Builder()
-            .client(OkHttpClient.Builder().addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
+            .client(OkHttpClient.Builder()
+                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json"))
+                .authenticator(InterceptorUtils.getAuthenticator())
+                .build()
+            )
             .baseUrl(UserAPI.baseUrl)
             .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(

@@ -56,7 +56,11 @@ PaymentSession that can be used to obtain the applePay payload.
 
     private val service: AuthorizeApplePayPaymentTokenService by lazy {
         Retrofit.Builder()
-            .client(OkHttpClient.Builder().addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
+            .client(OkHttpClient.Builder()
+                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json"))
+                .authenticator(InterceptorUtils.getAuthenticator())
+                .build()
+            )
             .baseUrl(PayAPI.baseUrl)
             .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
