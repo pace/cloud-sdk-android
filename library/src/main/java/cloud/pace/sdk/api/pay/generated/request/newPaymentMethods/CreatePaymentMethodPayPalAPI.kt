@@ -54,7 +54,11 @@ If you provide a valid Billing Agreement ID, the payment method is created direc
 
     private val service: CreatePaymentMethodPayPalService by lazy {
         Retrofit.Builder()
-            .client(OkHttpClient.Builder().addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
+            .client(OkHttpClient.Builder()
+                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json"))
+                .authenticator(InterceptorUtils.getAuthenticator())
+                .build()
+            )
             .baseUrl(PayAPI.baseUrl)
             .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(

@@ -50,7 +50,11 @@ For the latitude and longitude values used in the request, returns the available
 
     private val service: GetMetadataFiltersService by lazy {
         Retrofit.Builder()
-            .client(OkHttpClient.Builder().addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json")).build())
+            .client(OkHttpClient.Builder()
+                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json"))
+                .authenticator(InterceptorUtils.getAuthenticator())
+                .build()
+            )
             .baseUrl(POIAPI.baseUrl)
             .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
