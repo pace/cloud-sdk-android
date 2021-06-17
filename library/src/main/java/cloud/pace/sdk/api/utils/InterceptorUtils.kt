@@ -33,7 +33,7 @@ object InterceptorUtils {
     private var traceId: Pair<String, Long>? = null
     private var traceIdMaxAge = TimeUnit.MINUTES.toMillis(15)
 
-    fun getInterceptor(accept: String?, contentType: String?) = Interceptor {
+    fun getInterceptor(accept: String?, contentType: String?, authorizationRequired: Boolean) = Interceptor {
         val httpUrl = it.request().url().newBuilder()
         PACECloudSDK.additionalQueryParams.forEach { param ->
             httpUrl.addQueryParameter(param.key, param.value)
@@ -42,7 +42,12 @@ object InterceptorUtils {
         val builder = it.request().newBuilder().url(httpUrl.build())
 
         API.additionalHeaders.forEach { header ->
-            builder.header(header.key, header.value)
+            if (header.key == AUTHORIZATION_HEADER) {
+                if (authorizationRequired)
+                    builder.header(header.key, header.value)
+            } else {
+                builder.header(header.key, header.value)
+            }
         }
 
         if (accept != null) builder.header(ACCEPT_HEADER, accept)

@@ -49,7 +49,7 @@ class GeoAPIClient(environment: Environment, private val context: Context) {
             .client(
                 OkHttpClient.Builder()
                     .cache(Cache(context.cacheDir, CACHE_SIZE))
-                    .addInterceptor(InterceptorUtils.getInterceptor("application/geo+json", "application/geo+json"))
+                    .addInterceptor(InterceptorUtils.getInterceptor("application/geo+json", "application/geo+json", true))
                     .build()
             )
             .baseUrl(baseUrl)

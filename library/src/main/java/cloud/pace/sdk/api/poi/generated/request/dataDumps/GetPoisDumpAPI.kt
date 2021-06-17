@@ -38,7 +38,7 @@ object GetPoisDumpAPI {
  */
         @GET("datadumps/pois")
         fun getPoisDump(
-            @Query("Accept") accept: Accept
+            @Header("Accept") accept: Accept
         ): Call<Void>
     }
 
@@ -53,7 +53,7 @@ object GetPoisDumpAPI {
     private val service: GetPoisDumpService by lazy {
         Retrofit.Builder()
             .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json"))
+                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
                 .authenticator(InterceptorUtils.getAuthenticator())
                 .build()
             )

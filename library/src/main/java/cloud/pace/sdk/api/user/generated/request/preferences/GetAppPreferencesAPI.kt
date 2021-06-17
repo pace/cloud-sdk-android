@@ -43,13 +43,13 @@ In case no preferences were ever set an empty object `{}` is returned.
         @GET("preferences/{clientId}")
         fun getAppPreferences(
             @Path("clientId") clientId: String? = null
-        ): Call<Void>
+        ): Call<Map<String, Any>>
     }
 
     private val service: GetAppPreferencesService by lazy {
         Retrofit.Builder()
             .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json"))
+                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
                 .authenticator(InterceptorUtils.getAuthenticator())
                 .build()
             )

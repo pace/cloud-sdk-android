@@ -43,7 +43,7 @@ object GetAppRedirectAPI {
     private val service: GetAppRedirectService by lazy {
         Retrofit.Builder()
             .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json"))
+                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false))
                 .authenticator(InterceptorUtils.getAuthenticator())
                 .build()
             )

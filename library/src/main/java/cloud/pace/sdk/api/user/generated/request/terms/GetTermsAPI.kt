@@ -38,14 +38,15 @@ object GetTermsAPI {
         @GET("terms/{termsId}")
         fun getTerms(
             @Path("termsId") termsId: String? = null,
-            @Query("redirectUri") redirectUri: String? = null
+            @Query("redirectUri") redirectUri: String? = null,
+            @Header("Accept-Language") acceptLanguage: String? = null
         ): Call<Terms>
     }
 
     private val service: GetTermsService by lazy {
         Retrofit.Builder()
             .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json"))
+                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", false))
                 .authenticator(InterceptorUtils.getAuthenticator())
                 .build()
             )
@@ -74,6 +75,6 @@ object GetTermsAPI {
             .create(GetTermsService::class.java)
     }
 
-    fun UserAPI.TermsAPI.getTerms(termsId: String? = null, redirectUri: String? = null) =
-        service.getTerms(termsId, redirectUri)
+    fun UserAPI.TermsAPI.getTerms(termsId: String? = null, redirectUri: String? = null, acceptLanguage: String? = null) =
+        service.getTerms(termsId, redirectUri, acceptLanguage)
 }

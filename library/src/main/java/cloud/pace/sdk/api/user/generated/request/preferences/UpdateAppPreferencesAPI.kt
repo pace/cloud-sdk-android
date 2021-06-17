@@ -43,8 +43,9 @@ Any key must not be longer than 128 bytes and any
 value not longer than 255 bytes (including complex json objects).
  */
         @PUT("preferences/{clientId}")
+        @JvmSuppressWildcards
         fun updateAppPreferences(
-            @Path("clientId") clientId: String? = null, 
+            @Path("clientId") clientId: String? = null,
             @retrofit2.http.Body body: Map<String, Any>
         ): Call<Void>
     }
@@ -52,7 +53,7 @@ value not longer than 255 bytes (including complex json objects).
     private val service: UpdateAppPreferencesService by lazy {
         Retrofit.Builder()
             .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json"))
+                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
                 .authenticator(InterceptorUtils.getAuthenticator())
                 .build()
             )

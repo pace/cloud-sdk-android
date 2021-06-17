@@ -45,7 +45,7 @@ object UpdateAppPOIsRelationshipsAPI {
     private val service: UpdateAppPOIsRelationshipsService by lazy {
         Retrofit.Builder()
             .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json"))
+                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                 .authenticator(InterceptorUtils.getAuthenticator())
                 .build()
             )
