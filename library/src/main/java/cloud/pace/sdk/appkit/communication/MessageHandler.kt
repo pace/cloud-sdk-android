@@ -6,6 +6,7 @@ enum class MessageHandler(val id: String, val timeoutMillis: Long) {
     LOGOUT("pace_logout", 30_000),
     IMAGE_DATA("pace_imageData", 5_000),
     VERIFY_LOCATION("pace_verifyLocation", 60_000),
+    GET_LOCATION("pace_getLocation", 60_000),
     BACK("pace_back", 5_000),
     CLOSE("pace_close", 5_000),
     GET_BIOMETRIC_STATUS("pace_getBiometricStatus", 5_000),
