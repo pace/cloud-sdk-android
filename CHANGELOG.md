@@ -11,6 +11,10 @@ x.y.z Release notes (yyyy-MM-dd)
 * Deprecated the `AppCallback.onTokenInvalid` method. Use `AppCallback.getAccessToken` instead that introduces the `isInitialToken` flag.
 * Implement automatic session handling for apps. If `IDKit` is used, the SDK will now try to renew the session automatically when an app requests a new token. In this case the `getAccessToken` AppCallback will no longer be called. If the renewal fails the `onSessionRenewalFailed` AppCallback may be implemented to specify a custom behavior for the token retrieval. Otherwise the sign in mask will be shown.
 
+### Enhancements
+
+* Add a new `onLogin` AppCallback that is invoked when the user logs in via an automatic authorization request from the SDK within the PWA (not if `IDKit.authorize(...)` is called manually). This callback provides the `AppActivity` context and the authorization result.
+
 ### Internal
 
 * Add `logout` handler to PWA communication

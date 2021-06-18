@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
+import cloud.pace.sdk.utils.Completion
 import cloud.pace.sdk.utils.Success
 import org.koin.core.inject
 
@@ -57,6 +58,15 @@ interface AppCallback {
      * @param throwable The error that caused the session renewal to fail if available.
      */
     fun onSessionRenewalFailed(throwable: Throwable?, onResult: (String?) -> Unit)
+
+    /**
+     * Is called when the user logs in via an automatic authorization request from the SDK within the PWA.
+     * This callback can be used to display an [AlertDialog][androidx.appcompat.app.AlertDialog] after an authorization within the PWA, for which the [AppActivity][cloud.pace.sdk.appkit.app.AppActivity] context is needed.
+     *
+     * @param context The [AppActivity][cloud.pace.sdk.appkit.app.AppActivity] context.
+     * @param result A valid `accessToken` or [Throwable] in case of error.
+     */
+    fun onLogin(context: Context, result: Completion<String?>)
 
     /**
      * Is called when the app sends a request to logout the current user.
@@ -121,6 +131,7 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
         }
     }
 
+    override fun onLogin(context: Context, result: Completion<String?>) {}
     override fun onLogout(onResult: (LogoutResponse) -> Unit) {
         if (IDKit.isInitialized) {
             appModel.endSession(onResult)
