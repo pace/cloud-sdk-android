@@ -4,24 +4,28 @@ import android.content.Context
 import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import cloud.pace.sdk.utils.Event
-import cloud.pace.sdk.utils.onMainThread
+import cloud.pace.sdk.appkit.utils.TokenValidator
+import cloud.pace.sdk.idkit.IDKit
+import cloud.pace.sdk.idkit.model.InternalError
+import cloud.pace.sdk.utils.*
+import net.openid.appauth.AuthorizationException
+import timber.log.Timber
 
 interface AppModel {
 
     var callback: AppCallbackImpl?
     val close: LiveData<Pair<Boolean, List<String>?>>
     val openUrlInNewTab: LiveData<String>
-    val authorize: LiveData<Event<Result<GetAccessTokenResponse>>>
+    val authorize: LiveData<Event<Result<Completion<String?>>>>
     val endSession: LiveData<Event<Result<LogoutResponse>>>
 
     fun reset()
-    fun authorize(onResult: (GetAccessTokenResponse) -> Unit)
+    fun authorize(onResult: (Completion<String?>) -> Unit)
     fun endSession(onResult: (LogoutResponse) -> Unit)
     fun close(force: Boolean = false, urls: List<String>? = null)
     fun openUrlInNewTab(url: String)
     fun disable(host: String)
-    fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (GetAccessTokenResponse) -> Unit)
+    fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (Completion<GetAccessTokenResponse>) -> Unit)
     fun onLogout(onResult: (LogoutResponse) -> Unit)
     fun onCustomSchemeError(context: Context?, scheme: String)
     fun onImageDataReceived(bitmap: Bitmap)
@@ -37,7 +41,7 @@ class AppModelImpl : AppModel {
     override var callback: AppCallbackImpl? = null
     override var close = MutableLiveData<Pair<Boolean, List<String>?>>()
     override var openUrlInNewTab = MutableLiveData<String>()
-    override val authorize = MutableLiveData<Event<AppModel.Result<GetAccessTokenResponse>>>()
+    override val authorize = MutableLiveData<Event<AppModel.Result<Completion<String?>>>>()
     override val endSession = MutableLiveData<Event<AppModel.Result<LogoutResponse>>>()
 
     override fun reset() {
@@ -45,7 +49,7 @@ class AppModelImpl : AppModel {
         openUrlInNewTab = MutableLiveData()
     }
 
-    override fun authorize(onResult: (GetAccessTokenResponse) -> Unit) {
+    override fun authorize(onResult: (Completion<String?>) -> Unit) {
         onMainThread {
             authorize.value = Event(AppModel.Result(onResult))
         }
@@ -77,9 +81,53 @@ class AppModelImpl : AppModel {
         }
     }
 
-    override fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (GetAccessTokenResponse) -> Unit) {
+    override fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (Completion<GetAccessTokenResponse>) -> Unit) {
+        if (IDKit.isInitialized) {
+            if (reason == InvalidTokenReason.UNAUTHORIZED && oldToken != null && TokenValidator.isTokenValid(oldToken)) {
+                Timber.wtf("Reason is UNAUTHORIZED and token is still valid -> send onSessionRenewalFailed()")
+                sendOnSessionRenewalFailed(null, onResult)
+            } else {
+                if (IDKit.isAuthorizationValid()) {
+                    IDKit.refreshToken { completion ->
+                        when (completion) {
+                            is Success -> completion.result?.let { token -> onResult(Success(GetAccessTokenResponse(token))) } ?: onResult(Failure(InternalError))
+                            is Failure -> {
+                                val code = (completion.throwable as? AuthorizationException)?.code
+                                if (code != null && code >= 1000) {
+                                    /**
+                                     * Keycloak error --> For a full list of codes see [net.openid.appauth.AuthorizationException]
+                                     */
+                                    Timber.wtf("Keycloak error -> send onSessionRenewalFailed()")
+                                    sendOnSessionRenewalFailed(completion.throwable, onResult)
+                                } else {
+                                    // General error (e.g. network error)
+                                    onResult(Failure(InternalError))
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    authorize { completion ->
+                        (completion as? Success)?.result?.let {
+                            onResult(Success(GetAccessTokenResponse(it, true)))
+                        } ?: onResult(Failure(InternalError))
+                    }
+                }
+            }
+        } else {
+            onMainThread {
+                callback?.getAccessToken(reason, oldToken) {
+                    onResult(Success(it))
+                }
+            }
+        }
+    }
+
+    private fun sendOnSessionRenewalFailed(throwable: Throwable?, onResult: (Completion<GetAccessTokenResponse>) -> Unit) {
         onMainThread {
-            callback?.getAccessToken(reason, oldToken, onResult)
+            callback?.onSessionRenewalFailed(throwable) {
+                it?.let { onResult(Success(GetAccessTokenResponse(it))) } ?: onResult(Failure(InternalError))
+            }
         }
     }
 

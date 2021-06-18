@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
+import cloud.pace.sdk.api.API
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.SESSION_CACHE
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.idkit.IDKit
@@ -273,6 +274,7 @@ internal class AuthorizationManager(
                 completion(Failure(exception))
             }
             tokenResponse != null -> {
+                session.accessToken?.let { API.addAuthorizationHeader(it) }
                 completion(Success(session.accessToken))
                 Timber.i("Token refresh successful")
             }

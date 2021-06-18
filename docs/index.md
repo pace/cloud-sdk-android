@@ -153,10 +153,11 @@ In `3.0.0` we've introduced a universal setup method: `PACECloudSDK.setup(contex
 The universal `Configuration` almost has the same signature as the previous *AppKit* `Configuration`, only the `isDarkTheme` parameter has been removed, which is now an enum instead of a Boolean and defaults to `Theme.LIGHT`. In case you want to change it, you can set it via `AppKit`'s `theme` property: `AppKit.theme = Theme.LIGHT/Theme.DARK`.
 
 ### From 7.x.x to 8.x.x
-We've added two new `AppCallback`s: `getAccessToken` and `logout`. The `getAccessToken` method replaces the `invalidToken` call.
-While its callback is equal to the `invalidToken` callback, we changed the response to be an object with an `accessToken` property and a new `isInitialToken` boolean.
-The `logout` callback is used to handle the logout natively
-Please refer to [Native login, token renewal and logout](#native-login-token-renewal-and-logout) for more information.
+We've added two new `AppCallback`s: `getAccessToken` and `logout`. The `getAccessToken` method replaces the `invalidToken` call. While its callback is equal to the `invalidToken` callback, we changed the response to be an object with an `accessToken` property and a new `isInitialToken` boolean. 
+
+The `logout` callback is used to handle the logout natively. Please refer to [Native login, token renewal and logout](#native-login-token-renewal-and-logout) for more information.
+
+Also from now on this callback will only be sent if `IDKit` is not used/set up. If you're using `IDKit` the SDK will now first try to renew the session automatically. If the renewal fails there is a new `fun onSessionRenewalFailed(throwable: Throwable?, onResult: (String?) -> Unit)` AppCallback that you may implement to specify your own behavior to retrieve a new access token. To implement this method pass an `AppCallbackImpl` instance to `AppKit.openApps(...)` or `AppKit.openAppActivity(...)` and override `onSessionRenewalFailed`. If either this method is not implemented or you didn't pass an `AppCallbackImpl` instance at all the SDK will automatically perform an authorization hence showing a sign in mask for the user.
 
 ## IDKit
 **IDKit** manages the OpenID (OID) authorization and the general session flow with its token handling via **PACE ID**.
@@ -752,10 +753,10 @@ Some of our services (e.g. `PayPal`) do not open the URL in the WebView, but in 
 * If the scheme is empty, the *AppKit* calls the `onCustomSchemeError(context: Context?, scheme: String)` callback
 
 ### Native login, token renewal and logout
-If you want to natively handle the login, access token renewal and logout, then follow these steps:
+You can use *AppKit* with your native login, access token renewal and logout (given that your token has the necessary scopes) as well.
 
 #### Login and token renewal
-**Note:** Step 3 and 4 are optional because the `getAccessToken` callback has a default implementation that tries to refresh the access token once via *IDKit* and if it is still invalid then it shows the login form again.
+**Note:** Step 3 and 4 are optional because the `getAccessToken` callback will only be sent if you're **not** using `IDKit` (see [7.x.x -> 8.x.x](#from-7xx-to-8xx)).
 
 1. Initialize the `PACECloudSDK` with `authenticationMode = AuthenticationMode.NATIVE`
 2. If you want to use the default implementation via the *IDKit*, make sure that the `appAuthRedirectScheme` is specified as manifest placeholder in your app's `build.gradle` file (see [setup](#setup))

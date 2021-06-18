@@ -1,7 +1,6 @@
 package cloud.pace.sdk.app
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -11,14 +10,12 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.geo.ConnectedFuelingStatus
 import cloud.pace.sdk.appkit.AppKit
-import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.OIDConfiguration
 import cloud.pace.sdk.poikit.POIKit
@@ -30,19 +27,6 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private var lastLocation: Location? = null
-    private val defaultAppCallback = object : AppCallbackImpl() {
-        override fun onCustomSchemeError(context: Context?, scheme: String) {
-            context ?: return
-            AlertDialog.Builder(context)
-                .setTitle("Payment method not available")
-                .setMessage("Sorry, this payment method is not supported by this app.")
-                .setNeutralButton("Close") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .create()
-                .show()
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,19 +67,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         payment_app.setOnClickListener {
-            AppKit.openPaymentApp(this, callback = defaultAppCallback)
+            AppKit.openPaymentApp(this)
         }
 
         fueling_app.setOnClickListener {
-            AppKit.openFuelingApp(this, callback = defaultAppCallback)
+            AppKit.openFuelingApp(this)
         }
 
         transactions_app.setOnClickListener {
-            AppKit.openTransactions(this, callback = defaultAppCallback)
+            AppKit.openTransactions(this)
         }
 
         pace_id_app.setOnClickListener {
-            AppKit.openPaceID(this, callback = defaultAppCallback)
+            AppKit.openPaceID(this)
         }
 
         user_info.setOnClickListener {
@@ -140,7 +124,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val appListAdapter = AppListAdapter {
-            AppKit.openAppActivity(this, it, autoClose = false, callback = defaultAppCallback)
+            AppKit.openAppActivity(this, it, autoClose = false)
         }
         app_list.adapter = appListAdapter
         show_app_list.setOnClickListener { button ->
@@ -173,7 +157,7 @@ class MainActivity : AppCompatActivity() {
             if (lastLocation == null || lastLocation.distanceTo(it) > APP_DISTANCE_THRESHOLD) {
                 AppKit.requestLocalApps { completion ->
                     if (completion is Success) {
-                        AppKit.openApps(this, completion.result, root_layout, bottomMargin = 100f, callback = defaultAppCallback)
+                        AppKit.openApps(this, completion.result, root_layout, bottomMargin = 100f)
                     }
                 }
 

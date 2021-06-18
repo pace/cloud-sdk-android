@@ -8,8 +8,8 @@ x.y.z Release notes (yyyy-MM-dd)
 
 ### Breaking changes
 
-* Deprecated the `AppCallback.onTokenInvalid` method:
-> **_NOTE:_** Use `AppCallback.getAccessToken` instead that introduces the `isInitialToken` flag
+* Deprecated the `AppCallback.onTokenInvalid` method. Use `AppCallback.getAccessToken` instead that introduces the `isInitialToken` flag.
+* Implement automatic session handling for apps. If `IDKit` is used, the SDK will now try to renew the session automatically when an app requests a new token. In this case the `getAccessToken` AppCallback will no longer be called. If the renewal fails the `onSessionRenewalFailed` AppCallback may be implemented to specify a custom behavior for the token retrieval. Otherwise the sign in mask will be shown.
 
 ### Internal
 
