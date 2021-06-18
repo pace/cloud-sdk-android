@@ -21,6 +21,7 @@ import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.utils.*
 import cloud.pace.sdk.utils.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -294,7 +295,7 @@ class AppManagerTest : CloudSDKKoinComponent {
     }
 
     @Test
-    fun `poi id is in range`() {
+    fun `poi id is in range`() = runBlocking {
         val id = "e3211b77-03f0-4d49-83aa-4adaa46d95ae"
 
         val geoApiManager = object : TestGeoAPIManager() {
@@ -344,7 +345,7 @@ class AppManagerTest : CloudSDKKoinComponent {
     }
 
     @Test
-    fun `poi id is not in range`() {
+    fun `poi id is not in range`() = runBlocking {
         val id1 = "e3211b77-03f0-4d49-83aa-4adaa46d95ae"
         val id2 = "992b77b6-5982-4848-88fe-ae2633308279"
 

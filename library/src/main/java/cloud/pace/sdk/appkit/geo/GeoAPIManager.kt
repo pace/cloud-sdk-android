@@ -3,9 +3,10 @@ package cloud.pace.sdk.appkit.geo
 import cloud.pace.sdk.api.geo.*
 import cloud.pace.sdk.appkit.app.api.AppAPI
 import cloud.pace.sdk.poikit.utils.distanceTo
-import cloud.pace.sdk.utils.SystemManager
+import cloud.pace.sdk.utils.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.PolyUtil
+import timber.log.Timber
 
 interface GeoAPIManager {
 
@@ -16,11 +17,44 @@ interface GeoAPIManager {
 
 class GeoAPIManagerImpl(
     private val appAPI: AppAPI,
-    private val systemManager: SystemManager
+    private val systemManager: SystemManager,
+    private val locationProvider: LocationProvider
 ) : GeoAPIManager {
 
     private var appsCache: AppsCache? = null
     private var cofuGasStationsCache: CofuGasStationsCache? = null
+
+    init {
+        loadCofuGasStationsCache { result ->
+            result.onSuccess {
+                Timber.d("Successfully loaded initial CoFu gas stations cache")
+            }
+            result.onFailure { throwable ->
+                Timber.e(throwable, "Failed loading initial CoFu gas stations cache")
+            }
+        }
+
+        onBackgroundThread {
+            when (val completion = locationProvider.currentLocation(false)) {
+                is Success -> {
+                    val location = completion.result
+                    if (location != null) {
+                        loadAppsCache(location.latitude, location.longitude) { result ->
+                            result.onSuccess {
+                                Timber.d("Successfully loaded initial apps cache")
+                            }
+                            result.onFailure { throwable ->
+                                Timber.e(throwable, "Failed loading initial apps cache")
+                            }
+                        }
+                    } else {
+                        Timber.e("Failed loading initial apps cache because location is null")
+                    }
+                }
+                is Failure -> Timber.e(completion.throwable, "Failed loading initial apps cache")
+            }
+        }
+    }
 
     override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {
         if (isAppsCacheValid(latitude, longitude)) {

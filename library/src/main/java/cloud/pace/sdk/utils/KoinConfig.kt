@@ -58,6 +58,7 @@ object KoinConfig {
                 single { AuthorizationManager(get(), get(), get()) }
                 single { CredentialsManager(get(), get(), get()) }
             })
+            createEagerInstances()
         }
     }
 
@@ -89,11 +90,12 @@ object KoinConfig {
                 single { LocationServices.getGeofencingClient(get<Context>()) }
                 single<AppModel> { AppModelImpl() }
                 single { AppManager(DefaultDispatcherProvider()) }
-                single<GeoAPIManager> { GeoAPIManagerImpl(get(), get()) }
+                single<GeoAPIManager>(createdAtStart = true) { GeoAPIManagerImpl(get(), get(), get()) }
                 viewModel<AppFragmentViewModel> { AppFragmentViewModelImpl(get(), get()) }
                 viewModel<AppWebViewModel> { (context: Context) -> AppWebViewModelImpl(context, DefaultDispatcherProvider(), get(), get(), get(), get(), get()) }
                 viewModel<AppDrawerViewModel> { AppDrawerViewModelImpl(get()) }
             })
+            createEagerInstances()
         }
     }
 
