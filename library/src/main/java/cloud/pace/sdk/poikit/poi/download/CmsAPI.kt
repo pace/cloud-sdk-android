@@ -18,7 +18,7 @@ object CmsAPI {
 
     private val service: GetPaymentMethodVendorsService by lazy {
         Retrofit.Builder()
-            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json")).build())
+            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true)).build())
             .baseUrl(API.baseUrl)
             .addConverterFactory(
                 MoshiConverterFactory.create(

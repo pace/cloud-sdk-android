@@ -82,7 +82,7 @@ object GetBetaGeojsonPoisAPI {
     private val service: GetBetaGeojsonPoisService by lazy {
         Retrofit.Builder()
             .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json"))
+                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
                 .authenticator(InterceptorUtils.getAuthenticator())
                 .build()
             )

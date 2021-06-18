@@ -51,7 +51,7 @@ object UpdateSourceAPI {
     private val service: UpdateSourceService by lazy {
         Retrofit.Builder()
             .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json"))
+                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                 .authenticator(InterceptorUtils.getAuthenticator())
                 .build()
             )

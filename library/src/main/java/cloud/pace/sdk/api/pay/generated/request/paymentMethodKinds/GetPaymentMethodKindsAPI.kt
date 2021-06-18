@@ -37,14 +37,14 @@ object GetPaymentMethodKindsAPI {
         @GET("payment-method-kinds")
         fun getPaymentMethodKinds(
             /* Language preference of localized response properties. The full standard of RFC 7231 (https://tools.ietf.org/html/rfc7231#section-5.3.5) is supported. */
-            @Query("Accept-Language") acceptLanguage: String? = null
+            @Header("Accept-Language") acceptLanguage: String? = null
         ): Call<PaymentMethodKinds>
     }
 
     private val service: GetPaymentMethodKindsService by lazy {
         Retrofit.Builder()
             .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json"))
+                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false))
                 .authenticator(InterceptorUtils.getAuthenticator())
                 .build()
             )
