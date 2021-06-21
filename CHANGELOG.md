@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+8.0.0 Release notes (2021-06-21)
+=============================================================
+
+
 ### Breaking changes
 
 * Deprecated the `AppCallback.onTokenInvalid` method. Use `AppCallback.getAccessToken` instead that introduces the `isInitialToken` flag.
