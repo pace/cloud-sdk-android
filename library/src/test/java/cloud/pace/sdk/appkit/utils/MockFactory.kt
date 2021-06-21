@@ -177,6 +177,7 @@ open class TestSystemManager(
 
 open class TestWebClientCallback : AppWebViewClient.WebClientCallback {
 
+    override fun onClose() {}
     override fun onSwitchErrorState(isError: Boolean, isHttpError: Boolean) {}
     override fun onLoadingChanged(isLoading: Boolean) {}
     override fun onUrlChanged(newUrl: String) {}

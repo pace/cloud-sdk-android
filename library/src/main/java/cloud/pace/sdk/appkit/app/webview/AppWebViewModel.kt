@@ -138,6 +138,10 @@ class AppWebViewModelImpl(
         appModel.close(true)
     }
 
+    override fun onClose() {
+        close()
+    }
+
     override fun onSwitchErrorState(isError: Boolean, isHttpError: Boolean) {
         isInErrorState.value = Event(isError)
     }

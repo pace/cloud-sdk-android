@@ -15,6 +15,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Enhancements
 
 * Add a new `onLogin` AppCallback that is invoked when the user logs in via an automatic authorization request from the SDK within the PWA (not if `IDKit.authorize(...)` is called manually). This callback provides the `AppActivity` context and the authorization result.
+* Intercept the URLs and close the PWA if it is the close redirect URI `cloudsdk://close`
 
 ### Internal
 
