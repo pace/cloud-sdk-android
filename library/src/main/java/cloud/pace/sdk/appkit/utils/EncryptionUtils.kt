@@ -69,10 +69,10 @@ object EncryptionUtils {
     }
 
     fun stringToAlgorithm(algorithm: String): HmacAlgorithm? {
-        return when (algorithm) {
-            "SHA1" -> HmacAlgorithm.SHA1
-            "SHA256" -> HmacAlgorithm.SHA256
-            "SHA512" -> HmacAlgorithm.SHA512
+        return when (algorithm.toLowerCase(Locale.ROOT)) {
+            "sha1" -> HmacAlgorithm.SHA1
+            "sha256" -> HmacAlgorithm.SHA256
+            "sha512" -> HmacAlgorithm.SHA512
             else -> {
                 Timber.w("Unknown algorithm: $algorithm")
                 null

@@ -66,13 +66,23 @@
                 android:textColor="@android:color/white"
                 app:layout_constraintTop_toBottomOf="@id/transactions_app" />
 
+            <Button
+                android:id="@+id/pwa_simulator_app"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@color/accent"
+                android:text="Start PWA simulator app"
+                android:textColor="@android:color/white"
+                app:layout_constraintTop_toBottomOf="@id/pace_id_app" />
+
             <EditText
                 android:id="@+id/poi_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:hint="POI ID"
-                app:layout_constraintTop_toBottomOf="@id/pace_id_app" />
+                app:layout_constraintTop_toBottomOf="@id/pwa_simulator_app" />
 
             <Button
                 android:id="@+id/is_poi_in_range"
@@ -111,6 +121,7 @@
                 android:layout_marginTop="10dp"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/discover_configuration"
                 tools:text="Authorization endpoint: https://authorization.endpoint" />
 
@@ -121,6 +132,7 @@
                 android:layout_marginTop="5dp"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/authorization_endpoint"
                 tools:text="Token endpoint: https://token.endpoint" />
 
@@ -131,6 +143,7 @@
                 android:layout_marginTop="5dp"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/token_endpoint"
                 tools:text="Endsession endpoint: https://endsession.endpoint" />
 
@@ -141,6 +154,7 @@
                 android:layout_marginTop="5dp"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/end_session_endpoint"
                 tools:text="Registration endpoint: https://registration.endpoint" />
 
@@ -158,9 +172,9 @@
                 android:id="@+id/radius"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
                 android:layout_marginTop="20dp"
                 android:hint="Radius in meters"
+                android:inputType="number"
                 app:layout_constraintTop_toBottomOf="@id/end_session" />
 
             <Button

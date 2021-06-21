@@ -8,6 +8,7 @@ import android.location.Location
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -106,6 +107,10 @@ class MainActivity : AppCompatActivity() {
             AppKit.openPaceID(this, callback = defaultAppCallback)
         }
 
+        pwa_simulator_app.setOnClickListener {
+            AppKit.openAppActivity(this, "https://pwa-simulator.dev.k8s.pacelink.net/", enableBackToFinish = true)
+        }
+
         is_poi_in_range.setOnClickListener {
             val poiId = poi_id.text.toString()
             if (poiId.isBlank()) {
@@ -163,14 +168,24 @@ class MainActivity : AppCompatActivity() {
 
         discover_configuration.setOnClickListener {
             IDKit.discoverConfiguration("https://id.dev.pace.cloud/auth/realms/pace") {
+                authorization_endpoint.visibility = View.VISIBLE
+
                 when (it) {
                     is Success -> {
+                        token_endpoint.visibility = View.VISIBLE
+                        end_session_endpoint.visibility = View.VISIBLE
+                        registration_endpoint.visibility = View.VISIBLE
+
                         authorization_endpoint.text = "Authorization endpoint: ${it.result.authorizationEndpoint}"
                         token_endpoint.text = "Token endpoint: ${it.result.tokenEndpoint}"
                         end_session_endpoint.text = "End session endpoint: ${it.result.endSessionEndpoint}"
                         registration_endpoint.text = "Registration endpoint: ${it.result.registrationEndpoint}"
                     }
                     is Failure -> {
+                        token_endpoint.visibility = View.GONE
+                        end_session_endpoint.visibility = View.GONE
+                        registration_endpoint.visibility = View.GONE
+
                         authorization_endpoint.text = it.throwable.message
                     }
                 }
