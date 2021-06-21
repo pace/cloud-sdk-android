@@ -10,6 +10,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Deprecated the `AppCallback.onTokenInvalid` method. Use `AppCallback.getAccessToken` instead that introduces the `isInitialToken` flag.
 * Implement automatic session handling for apps. If `IDKit` is used, the SDK will now try to renew the session automatically when an app requests a new token. In this case the `getAccessToken` AppCallback will no longer be called. If the renewal fails the `onSessionRenewalFailed` AppCallback may be implemented to specify a custom behavior for the token retrieval. Otherwise the sign in mask will be shown.
+* Speed up `isPoiInRange` call. Add optional `location` parameter which will be used instead of the current location if specified. Also make `isPoiInRange` suspend to call it in a own Coroutine.
 
 ### Enhancements
 

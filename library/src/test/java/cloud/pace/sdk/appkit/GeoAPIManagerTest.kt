@@ -7,6 +7,7 @@ import cloud.pace.sdk.api.geo.Polygon
 import cloud.pace.sdk.appkit.geo.GeoAPIManagerImpl
 import cloud.pace.sdk.appkit.utils.TestAppAPI
 import cloud.pace.sdk.utils.CompletableFutureCompat
+import cloud.pace.sdk.utils.LocationProvider
 import cloud.pace.sdk.utils.SystemManager
 import junit.framework.Assert.assertEquals
 import org.junit.Test
@@ -44,7 +45,7 @@ class GeoAPIManagerTest {
             }
         }
 
-        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java))
+        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
         val gasStationFuture = CompletableFutureCompat<List<GeoGasStation>>()
         geoApiManager.apps(49.012713, 8.427777) {
             it.onSuccess { gasStationFuture.complete(it) }
@@ -63,7 +64,7 @@ class GeoAPIManagerTest {
             }
         }
 
-        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java))
+        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
         val gasStationFuture = CompletableFutureCompat<List<GeoGasStation>>()
         geoApiManager.apps(49.012679, 8.426794) {
             it.onSuccess { gasStationFuture.complete(it) }
@@ -82,7 +83,7 @@ class GeoAPIManagerTest {
             }
         }
 
-        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java))
+        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
         val gasStationFuture = CompletableFutureCompat<List<GeoGasStation>>()
         geoApiManager.apps(49.011819, 8.426067) {
             it.onSuccess { gasStationFuture.complete(it) }
@@ -101,7 +102,7 @@ class GeoAPIManagerTest {
             }
         }
 
-        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java))
+        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
         val gasStationFuture = CompletableFutureCompat<List<GeoGasStation>>()
         geoApiManager.apps(49.012716, 8.426764) {
             it.onSuccess { gasStationFuture.complete(it) }
@@ -120,7 +121,7 @@ class GeoAPIManagerTest {
             }
         }
 
-        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java))
+        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
         val gasStationFuture = CompletableFutureCompat<List<GeoGasStation>>()
         geoApiManager.apps(49.012716, 8.426764) {
             it.onSuccess { gasStationFuture.complete(it) }
@@ -141,7 +142,7 @@ class GeoAPIManagerTest {
             }
         }
 
-        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java))
+        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
         val exceptionFuture = CompletableFutureCompat<Throwable?>()
         geoApiManager.apps(49.012722, 8.427326) {
             it.onSuccess { exceptionFuture.complete(null) }
@@ -161,7 +162,7 @@ class GeoAPIManagerTest {
             }
         }
 
-        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java))
+        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
         val geoAPIFeature = CompletableFutureCompat<List<GeoAPIFeature>>()
         geoApiManager.features(id, 49.012713, 8.427777) {
             it.onSuccess { geoAPIFeature.complete(it) }
@@ -184,7 +185,7 @@ class GeoAPIManagerTest {
             }
         }
 
-        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java))
+        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
         val exceptionFuture = CompletableFutureCompat<Throwable?>()
         geoApiManager.features(id, 49.012713, 8.427777) {
             it.onSuccess { exceptionFuture.complete(null) }

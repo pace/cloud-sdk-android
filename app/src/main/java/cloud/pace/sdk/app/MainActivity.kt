@@ -24,7 +24,6 @@ import cloud.pace.sdk.idkit.model.OIDConfiguration
 import cloud.pace.sdk.poikit.POIKit
 import cloud.pace.sdk.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -111,13 +110,28 @@ class MainActivity : AppCompatActivity() {
             AppKit.openPaceID(this, callback = defaultAppCallback)
         }
 
+        is_poi_in_range.setOnClickListener {
+            val poiId = poi_id.text.toString()
+            if (poiId.isBlank()) {
+                Toast.makeText(this, "POI ID must not be empty", Toast.LENGTH_SHORT).show()
+            } else {
+                val start = System.currentTimeMillis()
+                lifecycleScope.launch {
+                    AppKit.isPoiInRange(poiId) {
+                        val elapsedTime = System.currentTimeMillis() - start
+                        Toast.makeText(this@MainActivity, "Is POI in range result is $it and took $elapsedTime ms", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+
         user_info.setOnClickListener {
             if (IDKit.isAuthorizationValid()) {
                 IDKit.refreshToken {
                     showUserEmail(it)
                 }
             } else {
-                lifecycleScope.launch(Dispatchers.Main) {
+                lifecycleScope.launch {
                     IDKit.authorize(this@MainActivity) {
                         showUserEmail(it)
                     }
@@ -142,7 +156,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         end_session.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.Main) {
+            lifecycleScope.launch {
                 IDKit.endSession(this@MainActivity) {
                     when (it) {
                         is Success -> info_label.text = "Unauthorized"

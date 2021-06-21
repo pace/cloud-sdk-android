@@ -1,6 +1,7 @@
 package cloud.pace.sdk.appkit
 
 import android.content.Context
+import android.location.Location
 import androidx.constraintlayout.widget.ConstraintLayout
 import cloud.pace.sdk.BuildConfig
 import cloud.pace.sdk.PACECloudSDK
@@ -97,10 +98,11 @@ object AppKit : CloudSDKKoinComponent {
     /**
      * Checks if there is at least one app for the given [poiId] at the current location.
      *
+     * @param location Can be specified optionally if the current location should not be determined.
      * @param completion Completes with true if at least one app is available at the current location, otherwise false.
      */
-    fun isPoiInRange(poiId: String, completion: (Boolean) -> Unit) {
-        appManager.isPoiInRange(poiId, completion)
+    suspend fun isPoiInRange(poiId: String, location: Location? = null, completion: (Boolean) -> Unit) {
+        appManager.isPoiInRange(poiId, location, completion)
     }
 
     /**

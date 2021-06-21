@@ -66,6 +66,24 @@
                 android:textColor="@android:color/white"
                 app:layout_constraintTop_toBottomOf="@id/transactions_app" />
 
+            <EditText
+                android:id="@+id/poi_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:hint="POI ID"
+                app:layout_constraintTop_toBottomOf="@id/pace_id_app" />
+
+            <Button
+                android:id="@+id/is_poi_in_range"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@android:color/holo_orange_dark"
+                android:text="Is POI in range?"
+                android:textColor="@android:color/white"
+                app:layout_constraintTop_toBottomOf="@+id/poi_id" />
+
             <Button
                 android:id="@+id/user_info"
                 android:layout_width="match_parent"
@@ -74,7 +92,7 @@
                 android:background="@android:color/holo_purple"
                 android:text="Get user info"
                 android:textColor="@android:color/white"
-                app:layout_constraintTop_toBottomOf="@+id/pace_id_app" />
+                app:layout_constraintTop_toBottomOf="@+id/is_poi_in_range" />
 
             <Button
                 android:id="@+id/discover_configuration"
@@ -114,7 +132,7 @@
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
                 app:layout_constraintTop_toBottomOf="@id/token_endpoint"
-                tools:text="Registration endpoint: https://endsession.endpoint" />
+                tools:text="Endsession endpoint: https://endsession.endpoint" />
 
             <TextView
                 android:id="@+id/registration_endpoint"

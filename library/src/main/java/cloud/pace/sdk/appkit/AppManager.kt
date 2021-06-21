@@ -188,15 +188,18 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
         }
     }
 
-    internal fun isPoiInRange(poiId: String, completion: (Boolean) -> Unit) {
-        CoroutineScope(dispatchers.default()).launch {
-            when (val location = locationProvider.firstValidLocation()) {
-                is Success -> appRepository.isPoiInRange(poiId, location.result.latitude, location.result.longitude) {
-                    CoroutineScope(dispatchers.main()).launch { completion(it) }
+    internal suspend fun isPoiInRange(poiId: String, location: Location? = null, completion: (Boolean) -> Unit) {
+        location ?: when (val currentLocation = locationProvider.currentLocation(true)) {
+            is Success -> {
+                currentLocation.result ?: when (val validLocation = locationProvider.firstValidLocation()) {
+                    is Success -> validLocation.result
+                    is Failure -> null
                 }
-                is Failure -> withContext(dispatchers.main()) { completion(false) }
             }
-        }
+            is Failure -> null
+        }?.let {
+            appRepository.isPoiInRange(poiId, it.latitude, it.longitude, completion)
+        } ?: completion(false)
     }
 
     internal fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, autoClose: Boolean, callback: AppCallbackImpl) {
