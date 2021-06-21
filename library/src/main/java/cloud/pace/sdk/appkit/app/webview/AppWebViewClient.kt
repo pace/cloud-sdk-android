@@ -15,20 +15,26 @@ import timber.log.Timber
 class AppWebViewClient(var url: String, val callback: WebClientCallback, val context: Context? = null) : WebViewClient() {
 
     interface WebClientCallback {
+
         /**
-         * Invoked when the WebClient changes it's error state (e.g. a website that couldn't be loaded
-         * previously is now ready)
+         * Invoked when the WebClient catch a close URI.
+         */
+        fun onClose()
+
+        /**
+         * Invoked when the WebClient changes it's error state (e.g. a website that couldn't be loaded previously is now ready).
+         *
          * @param isError true, if the current state is an error page
          */
         fun onSwitchErrorState(isError: Boolean, isHttpError: Boolean)
 
         /**
-         * Invoked when the page has started or finished loading
+         * Invoked when the page has started or finished loading.
          */
         fun onLoadingChanged(isLoading: Boolean)
 
         /**
-         * Invoked when the URL has changed
+         * Invoked when the URL has changed.
          */
         fun onUrlChanged(newUrl: String)
     }
@@ -83,18 +89,14 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
 
     @TargetApi(Build.VERSION_CODES.N)
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-        injectFeatureFlags(view)
-        val newUrl = request?.url ?: return false
-        this.url = newUrl.toString()
-        return false
+        val newUrl = request?.url?.toString()
+        return intercept(view, newUrl)
     }
 
     @Suppress("DEPRECATION")
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-        injectFeatureFlags(view)
-        val newUrl = url?.let { Uri.parse(it) } ?: return false
-        this.url = newUrl.toString()
-        return false
+        val newUrl = url?.let { Uri.parse(it) }?.toString()
+        return intercept(view, newUrl)
     }
 
     private fun injectFeatureFlags(view: WebView?) {
@@ -103,6 +105,18 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
         view?.evaluateJavascript(script) {
             Timber.d("Javascript execution completed with the following result: $it")
         }
+    }
+
+    private fun intercept(view: WebView?, url: String?): Boolean {
+        injectFeatureFlags(view)
+
+        this.url = url ?: return false
+        if (url == CLOSE_URI) {
+            callback.onClose()
+            return true
+        }
+
+        return false
     }
 
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -141,5 +155,9 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
         isInErrorState = true
         wasInErrorState = true
         wasHttpError = isHttpError
+    }
+
+    companion object {
+        const val CLOSE_URI = "cloudsdk://close"
     }
 }
