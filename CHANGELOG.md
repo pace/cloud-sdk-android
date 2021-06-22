@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+8.0.1 Release notes (2021-06-22)
+=============================================================
+
+
 # Fixes
 
 * Remove completion lambda from `isPoiInRange` and return `true` or `false` synchronously
