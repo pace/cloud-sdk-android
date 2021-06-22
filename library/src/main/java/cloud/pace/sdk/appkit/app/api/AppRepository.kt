@@ -12,11 +12,9 @@ import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.persistence.CacheModel
 import cloud.pace.sdk.poikit.utils.distanceTo
-import cloud.pace.sdk.utils.CompletableFutureCompat
-import cloud.pace.sdk.utils.IconUtils
-import cloud.pace.sdk.utils.dp
-import cloud.pace.sdk.utils.resourceUuid
+import cloud.pace.sdk.utils.*
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -28,7 +26,7 @@ interface AppRepository {
     fun getAppsByUrl(context: Context, url: String, references: List<String>, completion: (Result<List<App>>) -> Unit)
     fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit)
     fun getCofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit)
-    fun isPoiInRange(poiId: String, latitude: Double, longitude: Double, completion: (Boolean) -> Unit)
+    suspend fun isPoiInRange(poiId: String, latitude: Double, longitude: Double): Boolean
 }
 
 class AppRepositoryImpl(
@@ -105,50 +103,56 @@ class AppRepositoryImpl(
         geoApiManager.cofuGasStations(completion)
     }
 
-    override fun isPoiInRange(poiId: String, latitude: Double, longitude: Double, completion: (Boolean) -> Unit) {
-        // Try to load the apps from the cache
-        geoApiManager.features(poiId, latitude, longitude) { response ->
-            response.onSuccess { geoAPIFeatures ->
-                val isPoiRange = geoAPIFeatures.firstOrNull { it.id == poiId }?.let {
-                    val currentLocation = LatLng(latitude, longitude)
-                    val polygons = when (it.geometry) {
-                        is GeometryCollection -> it.geometry.geometries.filterIsInstance<Polygon>()
-                        is Polygon -> listOf(it.geometry)
-                        else -> emptyList()
-                    }
-
-                    polygons.map { polygon ->
-                        polygon.coordinates.flatMap { ring ->
-                            ring.mapNotNull { coordinate ->
-                                val lat = coordinate.lastOrNull()
-                                val lng = coordinate.firstOrNull()
-                                if (lat != null && lng != null) {
-                                    LatLng(lat, lng)
-                                } else {
-                                    null
-                                }
+    override suspend fun isPoiInRange(poiId: String, latitude: Double, longitude: Double): Boolean {
+        return try {
+            suspendCancellableCoroutine { continuation ->
+                // Try to load the apps from the cache
+                geoApiManager.features(poiId, latitude, longitude) { response ->
+                    response.onSuccess { geoAPIFeatures ->
+                        val isPoiInRange = geoAPIFeatures.firstOrNull { it.id == poiId }?.let {
+                            val currentLocation = LatLng(latitude, longitude)
+                            val polygons = when (it.geometry) {
+                                is GeometryCollection -> it.geometry.geometries.filterIsInstance<Polygon>()
+                                is Polygon -> listOf(it.geometry)
+                                else -> emptyList()
                             }
-                        }
-                    }.flatten().any { coordinate ->
-                        currentLocation.distanceTo(coordinate) <= IS_POI_IN_RANGE_DISTANCE_THRESHOLD
-                    }
-                } ?: false
 
-                completion(isPoiRange)
-            }
+                            polygons.map { polygon ->
+                                polygon.coordinates.flatMap { ring ->
+                                    ring.mapNotNull { coordinate ->
+                                        val lat = coordinate.lastOrNull()
+                                        val lng = coordinate.firstOrNull()
+                                        if (lat != null && lng != null) {
+                                            LatLng(lat, lng)
+                                        } else {
+                                            null
+                                        }
+                                    }
+                                }
+                            }.flatten().any { coordinate ->
+                                currentLocation.distanceTo(coordinate) <= IS_POI_IN_RANGE_DISTANCE_THRESHOLD
+                            }
+                        } ?: false
 
-            response.onFailure {
-                // Fetch the apps from the API
-                appApi.getLocationBasedApps(latitude, longitude) { response ->
-                    response.onSuccess { apps ->
-                        completion(apps.any { it.references?.any { reference -> reference.resourceUuid == poiId } ?: false })
+                        continuation.resumeIfActive(isPoiInRange)
                     }
 
                     response.onFailure {
-                        completion(false)
+                        // Fetch the apps from the API
+                        appApi.getLocationBasedApps(latitude, longitude) { response ->
+                            response.onSuccess { apps ->
+                                continuation.resumeIfActive(apps.any { it.references?.any { reference -> reference.resourceUuid == poiId } ?: false })
+                            }
+
+                            response.onFailure {
+                                continuation.resumeIfActive(false)
+                            }
+                        }
                     }
                 }
             }
+        } catch (e: Exception) {
+            false
         }
     }
 

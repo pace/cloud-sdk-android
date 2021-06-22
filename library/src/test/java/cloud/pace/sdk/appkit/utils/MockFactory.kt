@@ -59,14 +59,14 @@ open class TestLocationProvider(
     }
 }
 
-open class TestAppRepository : AppRepository {
+open class TestAppRepository(private val isPoiInRange: Boolean = false) : AppRepository {
 
     override fun getAppsByUrl(context: Context, url: String, references: List<String>, completion: (Result<List<App>>) -> Unit) {}
     override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {}
     override fun getAllApps(context: Context, completion: (Result<List<App>>) -> Unit) {}
     override fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit) {}
     override fun getCofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit) {}
-    override fun isPoiInRange(poiId: String, latitude: Double, longitude: Double, completion: (Boolean) -> Unit) {}
+    override suspend fun isPoiInRange(poiId: String, latitude: Double, longitude: Double) = isPoiInRange
 }
 
 open class TestSharedPreferencesModel : SharedPreferencesModel {

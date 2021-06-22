@@ -117,10 +117,9 @@ class MainActivity : AppCompatActivity() {
             } else {
                 val start = System.currentTimeMillis()
                 lifecycleScope.launch {
-                    AppKit.isPoiInRange(poiId) {
-                        val elapsedTime = System.currentTimeMillis() - start
-                        Toast.makeText(this@MainActivity, "Is POI in range result is $it and took $elapsedTime ms", Toast.LENGTH_LONG).show()
-                    }
+                    val isPoiInRange = AppKit.isPoiInRange(poiId)
+                    val elapsedTime = System.currentTimeMillis() - start
+                    Toast.makeText(this@MainActivity, "Is POI in range result is $isPoiInRange and took $elapsedTime ms", Toast.LENGTH_LONG).show()
                 }
             }
         }

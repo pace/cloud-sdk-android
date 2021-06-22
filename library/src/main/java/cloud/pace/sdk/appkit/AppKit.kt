@@ -99,10 +99,11 @@ object AppKit : CloudSDKKoinComponent {
      * Checks if there is at least one app for the given [poiId] at the current location.
      *
      * @param location Can be specified optionally if the current location should not be determined.
-     * @param completion Completes with true if at least one app is available at the current location, otherwise false.
+     *
+     * @return True if POI with [poiId] is in range, false otherwise.
      */
-    suspend fun isPoiInRange(poiId: String, location: Location? = null, completion: (Boolean) -> Unit) {
-        appManager.isPoiInRange(poiId, location, completion)
+    suspend fun isPoiInRange(poiId: String, location: Location? = null): Boolean {
+        return appManager.isPoiInRange(poiId, location)
     }
 
     /**
