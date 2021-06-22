@@ -336,12 +336,7 @@ class AppManagerTest : CloudSDKKoinComponent {
 
         setupKoinForTests(testModule)
 
-        val future = CompletableFuture<Boolean>()
-        appManager.isPoiInRange(id) {
-            future.complete(it)
-        }
-
-        assertTrue(future.get())
+        assertTrue(appManager.isPoiInRange(id))
     }
 
     @Test
@@ -387,12 +382,7 @@ class AppManagerTest : CloudSDKKoinComponent {
 
         setupKoinForTests(testModule)
 
-        val future = CompletableFuture<Boolean>()
-        appManager.isPoiInRange(id1) {
-            future.complete(it)
-        }
-
-        assertFalse(future.get())
+        assertFalse(appManager.isPoiInRange(id1))
     }
 
     private fun getGeoAPIFeature(id: String): GeoAPIFeature {
