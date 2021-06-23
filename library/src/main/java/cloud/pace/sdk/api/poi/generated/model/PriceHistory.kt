@@ -18,7 +18,8 @@ import java.util.*
 @JsonApi(type = "priceHistory")
 class PriceHistory : Resource() {
 
-    var currency: Currency? = null
+    /* Currency as specified in ISO-4217. */
+    var currency: String? = null
     /* Beginning of time interval */
     var from: Date? = null
     var fuelPrices: List<FuelPrices>? = null
