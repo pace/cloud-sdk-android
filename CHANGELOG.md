@@ -6,13 +6,16 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
-### Internal
+8.1.0 Release notes (2021-06-24)
+=============================================================
+
+
+### Enhancements
 
 * Added new `Stats` endpoint to determine total number of connected fueling gas stations
 
 8.0.1 Release notes (2021-06-22)
 =============================================================
-
 
 # Fixes
 
