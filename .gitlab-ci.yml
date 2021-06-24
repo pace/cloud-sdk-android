@@ -34,9 +34,9 @@ unit_test:
 android_test:
     extends: .testing
     before_script:
-        - "/usr/local/share/android-sdk/tools/bin/sdkmanager 'system-images;android-28;google_apis;x86_64'"
-        - "/usr/local/share/android-sdk/tools/bin/sdkmanager 'emulator'"
-        - "echo no | /usr/local/share/android-sdk/tools/bin/avdmanager create avd --force --name api28 --package 'system-images;android-28;google_apis;x86_64' --abi 'x86_64' --device '5.4in FWVGA'"
+      #- "/usr/local/share/android-sdk/tools/bin/sdkmanager 'system-images;android-28;google_apis;x86_64'"
+      #- "/usr/local/share/android-sdk/tools/bin/sdkmanager 'emulator'"
+      #- "echo no | /usr/local/share/android-sdk/tools/bin/avdmanager create avd --force --name api28 --package 'system-images;android-28;google_apis;x86_64' --abi 'x86_64' --device '5.4in FWVGA'"
         - "/usr/local/share/android-sdk/tools/emulator -avd api28 > /dev/null 2>&1 -skin 480x854 -no-audio -no-boot-anim -no-snapshot -memory 2048 &"
         - "/usr/local/share/android-sdk/platform-tools/adb wait-for-device"
     script:
