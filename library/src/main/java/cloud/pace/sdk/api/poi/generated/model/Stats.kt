@@ -15,8 +15,10 @@ import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 import java.util.*
 
-enum class Currency(val value: String) {
-    @SerializedName("EUR")
-    @Json(name = "EUR")
-    EUR("EUR")
+@JsonApi(type = "stats")
+class Stats : Resource() {
+
+    /* Number of available CoFu stations */
+    var connectedFueling: Double? = null
+
 }

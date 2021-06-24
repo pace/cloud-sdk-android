@@ -27,6 +27,7 @@ object POIAPI {
     class PriceHistoriesAPI
     class PricesAPI
     class SourcesAPI
+    class StatsAPI
     class SubscriptionsAPI
     class TilesAPI
 
@@ -42,6 +43,7 @@ object POIAPI {
     val API.priceHistories: PriceHistoriesAPI by lazy { PriceHistoriesAPI() }
     val API.prices: PricesAPI by lazy { PricesAPI() }
     val API.sources: SourcesAPI by lazy { SourcesAPI() }
+    val API.stats: StatsAPI by lazy { StatsAPI() }
     val API.subscriptions: SubscriptionsAPI by lazy { SubscriptionsAPI() }
     val API.tiles: TilesAPI by lazy { TilesAPI() }
 }

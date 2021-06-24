@@ -18,7 +18,8 @@ import java.util.*
 @JsonApi(type = "fuelPrice")
 class FuelPrice : Resource() {
 
-    var currency: Currency? = null
+    /* Currency as specified in ISO-4217. */
+    var currency: String? = null
     var fuelType: Fuel? = null
     /* per liter */
     var price: Double? = null
