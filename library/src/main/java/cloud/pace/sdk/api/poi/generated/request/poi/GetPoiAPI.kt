@@ -28,6 +28,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.File
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object GetPoiAPI {
 
@@ -41,39 +42,40 @@ object GetPoiAPI {
         ): Call<POI>
     }
 
-    private val service: GetPoiService by lazy {
-        Retrofit.Builder()
-            .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                .authenticator(InterceptorUtils.getAuthenticator())
-                .build()
-            )
-            .baseUrl(POIAPI.baseUrl)
-            .addConverterFactory(EnumConverterFactory())
-            .addConverterFactory(
-                JsonApiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(ResourceAdapterFactory.builder()
-                            .add(ReferenceStatus::class.java)
+    fun POIAPI.POIAPI.getPoi(poiId: String? = null, readTimeout: Long? = null): Call<POI> {
+        val service: GetPoiService =
+            Retrofit.Builder()
+                .client(OkHttpClient.Builder()
+                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                    .authenticator(InterceptorUtils.getAuthenticator())
+                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
+                    .build()
+                )
+                .baseUrl(POIAPI.baseUrl)
+                .addConverterFactory(EnumConverterFactory())
+                .addConverterFactory(
+                    JsonApiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(ResourceAdapterFactory.builder()
+                                .add(ReferenceStatus::class.java)
+                                .build()
+                            )
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
                             .build()
-                        )
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                    )
                 )
-            )
-            .addConverterFactory(
-                MoshiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                .addConverterFactory(
+                    MoshiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
+                            .build()
+                    )
                 )
-            )
-            .build()
-            .create(GetPoiService::class.java)
-    }
+                .build()
+                .create(GetPoiService::class.java)    
 
-    fun POIAPI.POIAPI.getPoi(poiId: String? = null) =
-        service.getPoi(poiId)
+        return service.getPoi(poiId)
+    }
 }

@@ -28,6 +28,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.File
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object ListTransactionsAPI {
 
@@ -122,38 +123,39 @@ object ListTransactionsAPI {
         FUELTYPEDESCENDING("-fuel.type")
     }
 
-    private val service: ListTransactionsService by lazy {
-        Retrofit.Builder()
-            .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                .authenticator(InterceptorUtils.getAuthenticator())
-                .build()
-            )
-            .baseUrl(PayAPI.baseUrl)
-            .addConverterFactory(EnumConverterFactory())
-            .addConverterFactory(
-                JsonApiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(ResourceAdapterFactory.builder()
+    fun PayAPI.PaymentTransactionsAPI.listTransactions(pagenumber: Int? = null, pagesize: Int? = null, sort: Sort? = null, filterid: String? = null, filtercreatedAt: Date? = null, filterupdatedAt: Date? = null, filterpaymentMethodId: String? = null, filterpaymentMethodKind: String? = null, filterpurposePRN: String? = null, filterproviderPRN: String? = null, filterfuelProductName: String? = null, filterfuelType: String? = null, readTimeout: Long? = null): Call<Transactions> {
+        val service: ListTransactionsService =
+            Retrofit.Builder()
+                .client(OkHttpClient.Builder()
+                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                    .authenticator(InterceptorUtils.getAuthenticator())
+                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
+                    .build()
+                )
+                .baseUrl(PayAPI.baseUrl)
+                .addConverterFactory(EnumConverterFactory())
+                .addConverterFactory(
+                    JsonApiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(ResourceAdapterFactory.builder()
+                                .build()
+                            )
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
                             .build()
-                        )
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                    )
                 )
-            )
-            .addConverterFactory(
-                MoshiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                .addConverterFactory(
+                    MoshiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
+                            .build()
+                    )
                 )
-            )
-            .build()
-            .create(ListTransactionsService::class.java)
-    }
+                .build()
+                .create(ListTransactionsService::class.java)    
 
-    fun PayAPI.PaymentTransactionsAPI.listTransactions(pagenumber: Int? = null, pagesize: Int? = null, sort: Sort? = null, filterid: String? = null, filtercreatedAt: Date? = null, filterupdatedAt: Date? = null, filterpaymentMethodId: String? = null, filterpaymentMethodKind: String? = null, filterpurposePRN: String? = null, filterproviderPRN: String? = null, filterfuelProductName: String? = null, filterfuelType: String? = null) =
-        service.listTransactions(pagenumber, pagesize, sort, filterid, filtercreatedAt?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filterupdatedAt?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filterpaymentMethodId, filterpaymentMethodKind, filterpurposePRN, filterproviderPRN, filterfuelProductName, filterfuelType)
+        return service.listTransactions(pagenumber, pagesize, sort, filterid, filtercreatedAt?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filterupdatedAt?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filterpaymentMethodId, filterpaymentMethodKind, filterpurposePRN, filterproviderPRN, filterfuelProductName, filterfuelType)
+    }
 }

@@ -28,6 +28,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.File
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object UpdateAppPOIsRelationshipsAPI {
 
@@ -42,38 +43,39 @@ object UpdateAppPOIsRelationshipsAPI {
         ): Call<AppPOIsRelationships>
     }
 
-    private val service: UpdateAppPOIsRelationshipsService by lazy {
-        Retrofit.Builder()
-            .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
-                .authenticator(InterceptorUtils.getAuthenticator())
-                .build()
-            )
-            .baseUrl(POIAPI.baseUrl)
-            .addConverterFactory(EnumConverterFactory())
-            .addConverterFactory(
-                JsonApiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(ResourceAdapterFactory.builder()
+    fun POIAPI.AppsAPI.updateAppPOIsRelationships(appID: String? = null, body: AppPOIsRelationships, readTimeout: Long? = null): Call<AppPOIsRelationships> {
+        val service: UpdateAppPOIsRelationshipsService =
+            Retrofit.Builder()
+                .client(OkHttpClient.Builder()
+                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                    .authenticator(InterceptorUtils.getAuthenticator())
+                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
+                    .build()
+                )
+                .baseUrl(POIAPI.baseUrl)
+                .addConverterFactory(EnumConverterFactory())
+                .addConverterFactory(
+                    JsonApiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(ResourceAdapterFactory.builder()
+                                .build()
+                            )
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
                             .build()
-                        )
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                    )
                 )
-            )
-            .addConverterFactory(
-                MoshiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                .addConverterFactory(
+                    MoshiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
+                            .build()
+                    )
                 )
-            )
-            .build()
-            .create(UpdateAppPOIsRelationshipsService::class.java)
-    }
+                .build()
+                .create(UpdateAppPOIsRelationshipsService::class.java)    
 
-    fun POIAPI.AppsAPI.updateAppPOIsRelationships(appID: String? = null, body: AppPOIsRelationships) =
-        service.updateAppPOIsRelationships(appID, body)
+        return service.updateAppPOIsRelationships(appID, body)
+    }
 }

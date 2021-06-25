@@ -28,6 +28,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.File
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object DeleteCurrentUserAPI {
 
@@ -42,38 +43,39 @@ An account OTP is required to perform the action.
         ): Call<Void>
     }
 
-    private val service: DeleteCurrentUserService by lazy {
-        Retrofit.Builder()
-            .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                .authenticator(InterceptorUtils.getAuthenticator())
-                .build()
-            )
-            .baseUrl(UserAPI.baseUrl)
-            .addConverterFactory(EnumConverterFactory())
-            .addConverterFactory(
-                JsonApiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(ResourceAdapterFactory.builder()
+    fun UserAPI.UserAPI.deleteCurrentUser(body: PlainOTP, readTimeout: Long? = null): Call<Void> {
+        val service: DeleteCurrentUserService =
+            Retrofit.Builder()
+                .client(OkHttpClient.Builder()
+                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                    .authenticator(InterceptorUtils.getAuthenticator())
+                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
+                    .build()
+                )
+                .baseUrl(UserAPI.baseUrl)
+                .addConverterFactory(EnumConverterFactory())
+                .addConverterFactory(
+                    JsonApiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(ResourceAdapterFactory.builder()
+                                .build()
+                            )
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
                             .build()
-                        )
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                    )
                 )
-            )
-            .addConverterFactory(
-                MoshiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                .addConverterFactory(
+                    MoshiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
+                            .build()
+                    )
                 )
-            )
-            .build()
-            .create(DeleteCurrentUserService::class.java)
-    }
+                .build()
+                .create(DeleteCurrentUserService::class.java)    
 
-    fun UserAPI.UserAPI.deleteCurrentUser(body: PlainOTP) =
-        service.deleteCurrentUser(body)
+        return service.deleteCurrentUser(body)
+    }
 }

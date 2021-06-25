@@ -16,6 +16,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
+import java.util.concurrent.TimeUnit
 
 interface GeoAPI {
 
@@ -44,12 +45,13 @@ class GeoAPIClient(environment: Environment, private val context: Context) {
         }
     }
 
-    private fun create(baseUrl: String): GeoAPI {
+    private fun create(baseUrl: String, readTimeout: Long? = null): GeoAPI {
         return Retrofit.Builder()
             .client(
                 OkHttpClient.Builder()
                     .cache(Cache(context.cacheDir, CACHE_SIZE))
                     .addInterceptor(InterceptorUtils.getInterceptor("application/geo+json", "application/geo+json", true))
+                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
                     .build()
             )
             .baseUrl(baseUrl)

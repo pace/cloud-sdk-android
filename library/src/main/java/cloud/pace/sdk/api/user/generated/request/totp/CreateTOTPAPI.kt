@@ -28,12 +28,13 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.File
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object CreateTOTPAPI {
 
     interface CreateTOTPService {
         /* Create device TOTP */
-        /* Creates a device TOTP token using either PIN, password or an user OTP. In case the PIN, password or OTP is invalid `403` is returned. If multiple values are provided first the OTP is checked, then the password, then the PIN. In case the one of the provided values is correct, a TOTP will be created.
+        /* A device TOTP token is created within 5 minutes of registration without PIN, password or an user OTP or  it is created using either PIN, password or an user OTP. In case the PIN, password or OTP is invalid `403` is returned. If multiple values are provided first the OTP is checked, then the password, then the PIN. In case the one of the provided values is correct, a TOTP will be created.
  */
         @POST("user/devices/totp")
         fun createTOTP(
@@ -41,45 +42,46 @@ object CreateTOTPAPI {
         ): Call<DeviceTOTP>
     }
 
-    /* Creates a device TOTP token using either PIN, password or an user OTP. In case the PIN, password or OTP is invalid `403` is returned. If multiple values are provided first the OTP is checked, then the password, then the PIN. In case the one of the provided values is correct, a TOTP will be created.
+    /* A device TOTP token is created within 5 minutes of registration without PIN, password or an user OTP or  it is created using either PIN, password or an user OTP. In case the PIN, password or OTP is invalid `403` is returned. If multiple values are provided first the OTP is checked, then the password, then the PIN. In case the one of the provided values is correct, a TOTP will be created.
      */
     class Body {
 
         var data: DeviceTOTPBody? = null
     }
 
-    private val service: CreateTOTPService by lazy {
-        Retrofit.Builder()
-            .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
-                .authenticator(InterceptorUtils.getAuthenticator())
-                .build()
-            )
-            .baseUrl(UserAPI.baseUrl)
-            .addConverterFactory(EnumConverterFactory())
-            .addConverterFactory(
-                JsonApiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(ResourceAdapterFactory.builder()
+    fun UserAPI.TOTPAPI.createTOTP(body: Body, readTimeout: Long? = null): Call<DeviceTOTP> {
+        val service: CreateTOTPService =
+            Retrofit.Builder()
+                .client(OkHttpClient.Builder()
+                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                    .authenticator(InterceptorUtils.getAuthenticator())
+                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
+                    .build()
+                )
+                .baseUrl(UserAPI.baseUrl)
+                .addConverterFactory(EnumConverterFactory())
+                .addConverterFactory(
+                    JsonApiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(ResourceAdapterFactory.builder()
+                                .build()
+                            )
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
                             .build()
-                        )
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                    )
                 )
-            )
-            .addConverterFactory(
-                MoshiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                .addConverterFactory(
+                    MoshiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
+                            .build()
+                    )
                 )
-            )
-            .build()
-            .create(CreateTOTPService::class.java)
-    }
+                .build()
+                .create(CreateTOTPService::class.java)    
 
-    fun UserAPI.TOTPAPI.createTOTP(body: Body) =
-        service.createTOTP(body)
+        return service.createTOTP(body)
+    }
 }

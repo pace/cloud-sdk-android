@@ -28,6 +28,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.File
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object GetAppsAPI {
 
@@ -69,38 +70,39 @@ object GetAppsAPI {
         APPROACHING("approaching")
     }
 
-    private val service: GetAppsService by lazy {
-        Retrofit.Builder()
-            .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                .authenticator(InterceptorUtils.getAuthenticator())
-                .build()
-            )
-            .baseUrl(POIAPI.baseUrl)
-            .addConverterFactory(EnumConverterFactory())
-            .addConverterFactory(
-                JsonApiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(ResourceAdapterFactory.builder()
+    fun POIAPI.AppsAPI.getApps(pagenumber: Int? = null, pagesize: Int? = null, filterappType: FilterappType? = null, filtercache: Filtercache? = null, filtersince: Date? = null, readTimeout: Long? = null): Call<LocationBasedApps> {
+        val service: GetAppsService =
+            Retrofit.Builder()
+                .client(OkHttpClient.Builder()
+                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                    .authenticator(InterceptorUtils.getAuthenticator())
+                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
+                    .build()
+                )
+                .baseUrl(POIAPI.baseUrl)
+                .addConverterFactory(EnumConverterFactory())
+                .addConverterFactory(
+                    JsonApiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(ResourceAdapterFactory.builder()
+                                .build()
+                            )
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
                             .build()
-                        )
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                    )
                 )
-            )
-            .addConverterFactory(
-                MoshiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                .addConverterFactory(
+                    MoshiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
+                            .build()
+                    )
                 )
-            )
-            .build()
-            .create(GetAppsService::class.java)
-    }
+                .build()
+                .create(GetAppsService::class.java)    
 
-    fun POIAPI.AppsAPI.getApps(pagenumber: Int? = null, pagesize: Int? = null, filterappType: FilterappType? = null, filtercache: Filtercache? = null, filtersince: Date? = null) =
-        service.getApps(pagenumber, pagesize, filterappType, filtercache, filtersince?.toIso8601()?.dropLast(9)?.let { it +'Z'} )
+        return service.getApps(pagenumber, pagesize, filterappType, filtercache, filtersince?.toIso8601()?.dropLast(9)?.let { it +'Z'} )
+    }
 }

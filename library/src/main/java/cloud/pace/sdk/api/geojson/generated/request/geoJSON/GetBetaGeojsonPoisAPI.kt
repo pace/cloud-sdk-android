@@ -23,6 +23,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object GetBetaGeojsonPoisAPI {
 
@@ -79,27 +80,28 @@ object GetBetaGeojsonPoisAPI {
         SPEEDCAMERA("SpeedCamera")
     }
 
-    private val service: GetBetaGeojsonPoisService by lazy {
-        Retrofit.Builder()
-            .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                .authenticator(InterceptorUtils.getAuthenticator())
-                .build()
-            )
-            .baseUrl(GeoJSONAPI.baseUrl)
-            .addConverterFactory(EnumConverterFactory())
-            .addConverterFactory(
-                MoshiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+    fun GeoJSONAPI.GeoJSONAPI.getBetaGeojsonPois(fieldsgasStation: String? = null, filterpoiType: FilterpoiType? = null, filteronlinePaymentMethod: String? = null, filtermerchant: String? = null, filtercountry: String? = null, filterconnectedFueling: String? = null, filterdkvAppAndGo: String? = null, readTimeout: Long? = null): Call<GeoJson> {
+         val service: GetBetaGeojsonPoisService =
+            Retrofit.Builder()
+                .client(OkHttpClient.Builder()
+                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                    .authenticator(InterceptorUtils.getAuthenticator())
+                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
+                    .build()
                 )
-            )
-            .build()
-            .create(GetBetaGeojsonPoisService::class.java)
-    }
+                .baseUrl(GeoJSONAPI.baseUrl)
+                .addConverterFactory(EnumConverterFactory())
+                .addConverterFactory(
+                    MoshiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
+                            .build()
+                    )
+                )
+                .build()
+                .create(GetBetaGeojsonPoisService::class.java)
 
-    fun GeoJSONAPI.GeoJSONAPI.getBetaGeojsonPois(fieldsgasStation: String? = null, filterpoiType: FilterpoiType? = null, filteronlinePaymentMethod: String? = null, filtermerchant: String? = null, filtercountry: String? = null, filterconnectedFueling: String? = null, filterdkvAppAndGo: String? = null) =
-        service.getBetaGeojsonPois(fieldsgasStation, filterpoiType, filteronlinePaymentMethod, filtermerchant, filtercountry, filterconnectedFueling, filterdkvAppAndGo)
+        return service.getBetaGeojsonPois(fieldsgasStation, filterpoiType, filteronlinePaymentMethod, filtermerchant, filtercountry, filterconnectedFueling, filterdkvAppAndGo)
+    }
 }

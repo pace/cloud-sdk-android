@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Enhancements
+
+* Added new generated request with possibility to set readTimeout times for requests
+
 8.1.0 Release notes (2021-06-24)
 =============================================================
 

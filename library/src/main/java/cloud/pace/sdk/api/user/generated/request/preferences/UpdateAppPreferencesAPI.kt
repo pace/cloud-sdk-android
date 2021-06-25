@@ -28,6 +28,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.File
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object UpdateAppPreferencesAPI {
 
@@ -42,46 +43,47 @@ The preferences should not have more than 10 key-value pairs per app.
 Any key must not be longer than 128 bytes and any
 value not longer than 255 bytes (including complex json objects).
  */
-        @PUT("preferences/{clientId}")
         @JvmSuppressWildcards
+        @PUT("preferences/{clientId}")
         fun updateAppPreferences(
             @Path("clientId") clientId: String? = null,
             @retrofit2.http.Body body: Map<String, Any>
         ): Call<Void>
     }
 
-    private val service: UpdateAppPreferencesService by lazy {
-        Retrofit.Builder()
-            .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                .authenticator(InterceptorUtils.getAuthenticator())
-                .build()
-            )
-            .baseUrl(UserAPI.baseUrl)
-            .addConverterFactory(EnumConverterFactory())
-            .addConverterFactory(
-                JsonApiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(ResourceAdapterFactory.builder()
+    fun UserAPI.PreferencesAPI.updateAppPreferences(clientId: String? = null, body: Map<String, Any>, readTimeout: Long? = null): Call<Void> {
+        val service: UpdateAppPreferencesService =
+            Retrofit.Builder()
+                .client(OkHttpClient.Builder()
+                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                    .authenticator(InterceptorUtils.getAuthenticator())
+                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
+                    .build()
+                )
+                .baseUrl(UserAPI.baseUrl)
+                .addConverterFactory(EnumConverterFactory())
+                .addConverterFactory(
+                    JsonApiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(ResourceAdapterFactory.builder()
+                                .build()
+                            )
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
                             .build()
-                        )
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                    )
                 )
-            )
-            .addConverterFactory(
-                MoshiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                .addConverterFactory(
+                    MoshiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
+                            .build()
+                    )
                 )
-            )
-            .build()
-            .create(UpdateAppPreferencesService::class.java)
-    }
+                .build()
+                .create(UpdateAppPreferencesService::class.java)
 
-    fun UserAPI.PreferencesAPI.updateAppPreferences(clientId: String? = null, body: Map<String, Any>) =
-        service.updateAppPreferences(clientId, body)
+        return service.updateAppPreferences(clientId, body)
+    }
 }

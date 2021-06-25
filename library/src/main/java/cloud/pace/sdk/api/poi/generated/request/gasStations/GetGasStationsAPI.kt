@@ -28,6 +28,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.File
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object GetGasStationsAPI {
 
@@ -82,41 +83,42 @@ To search inside a bounding box provide the following query parameter:
         FUELING("fueling")
     }
 
-    private val service: GetGasStationsService by lazy {
-        Retrofit.Builder()
-            .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                .authenticator(InterceptorUtils.getAuthenticator())
-                .build()
-            )
-            .baseUrl(POIAPI.baseUrl)
-            .addConverterFactory(EnumConverterFactory())
-            .addConverterFactory(
-                JsonApiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(ResourceAdapterFactory.builder()
-                            .add(FuelPrice::class.java)
-                            .add(LocationBasedApp::class.java)
-                            .add(ReferenceStatus::class.java)
+    fun POIAPI.GasStationsAPI.getGasStations(pagenumber: Int? = null, pagesize: Int? = null, filterpoiType: FilterpoiType? = null, filterappType: List<FilterappType>? = null, filterlatitude: Float? = null, filterlongitude: Float? = null, filterradius: Float? = null, filterboundingBox: List<Float>? = null, compileopeningHours: Boolean? = null, filtersource: String? = null, readTimeout: Long? = null): Call<GasStations> {
+        val service: GetGasStationsService =
+            Retrofit.Builder()
+                .client(OkHttpClient.Builder()
+                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                    .authenticator(InterceptorUtils.getAuthenticator())
+                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
+                    .build()
+                )
+                .baseUrl(POIAPI.baseUrl)
+                .addConverterFactory(EnumConverterFactory())
+                .addConverterFactory(
+                    JsonApiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(ResourceAdapterFactory.builder()
+                                .add(FuelPrice::class.java)
+                                .add(LocationBasedApp::class.java)
+                                .add(ReferenceStatus::class.java)
+                                .build()
+                            )
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
                             .build()
-                        )
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                    )
                 )
-            )
-            .addConverterFactory(
-                MoshiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                .addConverterFactory(
+                    MoshiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
+                            .build()
+                    )
                 )
-            )
-            .build()
-            .create(GetGasStationsService::class.java)
-    }
+                .build()
+                .create(GetGasStationsService::class.java)    
 
-    fun POIAPI.GasStationsAPI.getGasStations(pagenumber: Int? = null, pagesize: Int? = null, filterpoiType: FilterpoiType? = null, filterappType: List<FilterappType>? = null, filterlatitude: Float? = null, filterlongitude: Float? = null, filterradius: Float? = null, filterboundingBox: List<Float>? = null, compileopeningHours: Boolean? = null, filtersource: String? = null) =
-        service.getGasStations(pagenumber, pagesize, filterpoiType, filterappType, filterlatitude, filterlongitude, filterradius, filterboundingBox, compileopeningHours, filtersource)
+        return service.getGasStations(pagenumber, pagesize, filterpoiType, filterappType, filterlatitude, filterlongitude, filterradius, filterboundingBox, compileopeningHours, filtersource)
+    }
 }
