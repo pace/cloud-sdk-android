@@ -28,6 +28,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.File
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object WaitOnPumpStatusChangeAPI {
 
@@ -81,38 +82,39 @@ Only use after approaching, otherwise returns `403 Forbidden`.
         OUTOFORDER("outOfOrder")
     }
 
-    private val service: WaitOnPumpStatusChangeService by lazy {
-        Retrofit.Builder()
-            .client(OkHttpClient.Builder()
-                .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                .authenticator(InterceptorUtils.getAuthenticator())
-                .build()
-            )
-            .baseUrl(FuelingAPI.baseUrl)
-            .addConverterFactory(EnumConverterFactory())
-            .addConverterFactory(
-                JsonApiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(ResourceAdapterFactory.builder()
+    fun FuelingAPI.FuelingAPI.waitOnPumpStatusChange(gasStationId: String, pumpId: String, update: Update? = null, lastStatus: LastStatus? = null, timeout: Int? = null, readTimeout: Long? = null): Call<PumpResponse> {
+        val service: WaitOnPumpStatusChangeService =
+            Retrofit.Builder()
+                .client(OkHttpClient.Builder()
+                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                    .authenticator(InterceptorUtils.getAuthenticator())
+                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
+                    .build()
+                )
+                .baseUrl(FuelingAPI.baseUrl)
+                .addConverterFactory(EnumConverterFactory())
+                .addConverterFactory(
+                    JsonApiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(ResourceAdapterFactory.builder()
+                                .build()
+                            )
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
                             .build()
-                        )
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                    )
                 )
-            )
-            .addConverterFactory(
-                MoshiConverterFactory.create(
-                    Moshi.Builder()
-                        .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                        .add(KotlinJsonAdapterFactory())
-                        .build()
+                .addConverterFactory(
+                    MoshiConverterFactory.create(
+                        Moshi.Builder()
+                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
+                            .add(KotlinJsonAdapterFactory())
+                            .build()
+                    )
                 )
-            )
-            .build()
-            .create(WaitOnPumpStatusChangeService::class.java)
-    }
+                .build()
+                .create(WaitOnPumpStatusChangeService::class.java)    
 
-    fun FuelingAPI.FuelingAPI.waitOnPumpStatusChange(gasStationId: String, pumpId: String, update: Update? = null, lastStatus: LastStatus? = null, timeout: Int? = null) =
-        service.waitOnPumpStatusChange(gasStationId, pumpId, update, lastStatus, timeout)
+        return service.waitOnPumpStatusChange(gasStationId, pumpId, update, lastStatus, timeout)
+    }
 }
