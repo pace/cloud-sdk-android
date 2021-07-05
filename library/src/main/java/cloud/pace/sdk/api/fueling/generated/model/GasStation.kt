@@ -25,14 +25,8 @@ class GasStation : Resource() {
     var latitude: Float? = null
     var longitude: Float? = null
     var openingHours: CommonOpeningHours? = null
-    var paymentMethods: List<PaymentMethods>? = null
+    var paymentMethods: List<String>? = null
     var stationName: String? = null
-
-    enum class PaymentMethods(val value: String) {
-        @SerializedName("sepa")
-        @Json(name = "sepa")
-        SEPA("sepa")
-    }
 
     class Address {
 

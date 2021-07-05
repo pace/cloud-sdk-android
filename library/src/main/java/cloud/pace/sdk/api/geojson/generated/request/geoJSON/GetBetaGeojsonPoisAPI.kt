@@ -81,14 +81,17 @@ object GetBetaGeojsonPoisAPI {
     }
 
     fun GeoJSONAPI.GeoJSONAPI.getBetaGeojsonPois(fieldsgasStation: String? = null, filterpoiType: FilterpoiType? = null, filteronlinePaymentMethod: String? = null, filtermerchant: String? = null, filtercountry: String? = null, filterconnectedFueling: String? = null, filterdkvAppAndGo: String? = null, readTimeout: Long? = null): Call<GeoJson> {
-         val service: GetBetaGeojsonPoisService =
+        val client = OkHttpClient.Builder()
+            .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+            .authenticator(InterceptorUtils.getAuthenticator())
+
+        if (readTimeout != null) {
+            client.readTimeout(readTimeout, TimeUnit.SECONDS)
+        }
+
+        val service: GetBetaGeojsonPoisService =
             Retrofit.Builder()
-                .client(OkHttpClient.Builder()
-                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                    .authenticator(InterceptorUtils.getAuthenticator())
-                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
-                    .build()
-                )
+                .client(client.build())
                 .baseUrl(GeoJSONAPI.baseUrl)
                 .addConverterFactory(EnumConverterFactory())
                 .addConverterFactory(

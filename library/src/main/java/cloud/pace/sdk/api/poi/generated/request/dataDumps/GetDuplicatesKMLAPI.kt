@@ -43,14 +43,17 @@ object GetDuplicatesKMLAPI {
     }
 
     fun POIAPI.DataDumpsAPI.getDuplicatesKML(countryCode: String? = null, readTimeout: Long? = null): Call<Void> {
+        val client = OkHttpClient.Builder()
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .authenticator(InterceptorUtils.getAuthenticator())
+
+        if (readTimeout != null) {
+            client.readTimeout(readTimeout, TimeUnit.SECONDS)
+        }
+
         val service: GetDuplicatesKMLService =
             Retrofit.Builder()
-                .client(OkHttpClient.Builder()
-                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                    .authenticator(InterceptorUtils.getAuthenticator())
-                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
-                    .build()
-                )
+                .client(client.build())
                 .baseUrl(POIAPI.baseUrl)
                 .addConverterFactory(EnumConverterFactory())
                 .addConverterFactory(

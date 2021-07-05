@@ -45,14 +45,17 @@ In case the query returns a `404` (`Not Found`) the app was deleted and should b
     }
 
     fun POIAPI.AppsAPI.getApp(appID: String? = null, readTimeout: Long? = null): Call<LocationBasedApp> {
+        val client = OkHttpClient.Builder()
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .authenticator(InterceptorUtils.getAuthenticator())
+
+        if (readTimeout != null) {
+            client.readTimeout(readTimeout, TimeUnit.SECONDS)
+        }
+
         val service: GetAppService =
             Retrofit.Builder()
-                .client(OkHttpClient.Builder()
-                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                    .authenticator(InterceptorUtils.getAuthenticator())
-                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
-                    .build()
-                )
+                .client(client.build())
                 .baseUrl(POIAPI.baseUrl)
                 .addConverterFactory(EnumConverterFactory())
                 .addConverterFactory(

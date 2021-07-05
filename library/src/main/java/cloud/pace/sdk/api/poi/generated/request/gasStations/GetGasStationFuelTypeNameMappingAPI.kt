@@ -46,14 +46,17 @@ object GetGasStationFuelTypeNameMappingAPI {
     }
 
     fun POIAPI.GasStationsAPI.getGasStationFuelTypeNameMapping(id: String, filterproductName: String, readTimeout: Long? = null): Call<FuelType> {
+        val client = OkHttpClient.Builder()
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .authenticator(InterceptorUtils.getAuthenticator())
+
+        if (readTimeout != null) {
+            client.readTimeout(readTimeout, TimeUnit.SECONDS)
+        }
+
         val service: GetGasStationFuelTypeNameMappingService =
             Retrofit.Builder()
-                .client(OkHttpClient.Builder()
-                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                    .authenticator(InterceptorUtils.getAuthenticator())
-                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
-                    .build()
-                )
+                .client(client.build())
                 .baseUrl(POIAPI.baseUrl)
                 .addConverterFactory(EnumConverterFactory())
                 .addConverterFactory(

@@ -71,14 +71,17 @@ object GetAppsAPI {
     }
 
     fun POIAPI.AppsAPI.getApps(pagenumber: Int? = null, pagesize: Int? = null, filterappType: FilterappType? = null, filtercache: Filtercache? = null, filtersince: Date? = null, readTimeout: Long? = null): Call<LocationBasedApps> {
+        val client = OkHttpClient.Builder()
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .authenticator(InterceptorUtils.getAuthenticator())
+
+        if (readTimeout != null) {
+            client.readTimeout(readTimeout, TimeUnit.SECONDS)
+        }
+
         val service: GetAppsService =
             Retrofit.Builder()
-                .client(OkHttpClient.Builder()
-                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                    .authenticator(InterceptorUtils.getAuthenticator())
-                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
-                    .build()
-                )
+                .client(client.build())
                 .baseUrl(POIAPI.baseUrl)
                 .addConverterFactory(EnumConverterFactory())
                 .addConverterFactory(

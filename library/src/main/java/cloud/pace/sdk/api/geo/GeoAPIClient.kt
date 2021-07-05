@@ -46,14 +46,15 @@ class GeoAPIClient(environment: Environment, private val context: Context) {
     }
 
     private fun create(baseUrl: String, readTimeout: Long? = null): GeoAPI {
+        val client = OkHttpClient.Builder()
+            .cache(Cache(context.cacheDir, CACHE_SIZE))
+            .addInterceptor(InterceptorUtils.getInterceptor("application/geo+json", "application/geo+json", true))
+
+        if (readTimeout != null)
+            client.readTimeout(readTimeout, TimeUnit.SECONDS)
+
         return Retrofit.Builder()
-            .client(
-                OkHttpClient.Builder()
-                    .cache(Cache(context.cacheDir, CACHE_SIZE))
-                    .addInterceptor(InterceptorUtils.getInterceptor("application/geo+json", "application/geo+json", true))
-                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
-                    .build()
-            )
+            .client(client.build())
             .baseUrl(baseUrl)
             .addConverterFactory(
                 MoshiConverterFactory.create(

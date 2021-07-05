@@ -21,23 +21,12 @@ class PaymentMethod : Resource() {
     var meta: Meta? = null
 
     var identificationString: String? = null
-    var kind: Kind? = null
+    /* one of sepa, creditcard, paypal, paydirekt, dkv, applepay, ... */
+    var kind: String? = null
     /* indicates if the payment method kind requires two factors later on */
     var twoFactor: Boolean? = null
     /* PACE resource name(s) to payment method vendor */
     var vendorPRN: String? = null
-
-    enum class Kind(val value: String) {
-        @SerializedName("sepa")
-        @Json(name = "sepa")
-        SEPA("sepa"),
-        @SerializedName("creditcard")
-        @Json(name = "creditcard")
-        CREDITCARD("creditcard"),
-        @SerializedName("paypal")
-        @Json(name = "paypal")
-        PAYPAL("paypal")
-    }
 
 
     class Meta {

@@ -84,14 +84,17 @@ To search inside a bounding box provide the following query parameter:
     }
 
     fun POIAPI.GasStationsAPI.getGasStations(pagenumber: Int? = null, pagesize: Int? = null, filterpoiType: FilterpoiType? = null, filterappType: List<FilterappType>? = null, filterlatitude: Float? = null, filterlongitude: Float? = null, filterradius: Float? = null, filterboundingBox: List<Float>? = null, compileopeningHours: Boolean? = null, filtersource: String? = null, readTimeout: Long? = null): Call<GasStations> {
+        val client = OkHttpClient.Builder()
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .authenticator(InterceptorUtils.getAuthenticator())
+
+        if (readTimeout != null) {
+            client.readTimeout(readTimeout, TimeUnit.SECONDS)
+        }
+
         val service: GetGasStationsService =
             Retrofit.Builder()
-                .client(OkHttpClient.Builder()
-                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                    .authenticator(InterceptorUtils.getAuthenticator())
-                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
-                    .build()
-                )
+                .client(client.build())
                 .baseUrl(POIAPI.baseUrl)
                 .addConverterFactory(EnumConverterFactory())
                 .addConverterFactory(
