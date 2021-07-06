@@ -1,6 +1,6 @@
 package cloud.pace.sdk.poikit.poi
 
-import cloud.pace.sdk.poikit.poi.download.VectorTile
+import vector_tile.VectorTile
 
 class Geometry {
 
