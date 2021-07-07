@@ -124,14 +124,17 @@ object ListTransactionsCSVAPI {
     }
 
     fun PayAPI.PaymentTransactionsAPI.listTransactionsCSV(pagenumber: Int? = null, pagesize: Int? = null, sort: Sort? = null, filterid: String? = null, filtercreatedAt: Date? = null, filterupdatedAt: Date? = null, filterpaymentMethodId: String? = null, filterpaymentMethodKind: String? = null, filterpurposePRN: String? = null, filterproviderPRN: String? = null, filterfuelProductName: String? = null, filterfuelType: String? = null, readTimeout: Long? = null): Call<Void> {
+        val client = OkHttpClient.Builder()
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .authenticator(InterceptorUtils.getAuthenticator())
+
+        if (readTimeout != null) {
+            client.readTimeout(readTimeout, TimeUnit.SECONDS)
+        }
+
         val service: ListTransactionsCSVService =
             Retrofit.Builder()
-                .client(OkHttpClient.Builder()
-                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                    .authenticator(InterceptorUtils.getAuthenticator())
-                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
-                    .build()
-                )
+                .client(client.build())
                 .baseUrl(PayAPI.baseUrl)
                 .addConverterFactory(EnumConverterFactory())
                 .addConverterFactory(

@@ -58,20 +58,28 @@ The approaching is a necessary first api call for connected fueling. Without a v
     }
 
     fun FuelingAPI.FuelingAPI.approachingAtTheForecourt(gasStationId: String, compileopeningHours: Boolean? = null, readTimeout: Long? = null): Call<ApproachingResponse> {
+        val client = OkHttpClient.Builder()
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .authenticator(InterceptorUtils.getAuthenticator())
+
+        if (readTimeout != null) {
+            client.readTimeout(readTimeout, TimeUnit.SECONDS)
+        }
+
         val service: ApproachingAtTheForecourtService =
             Retrofit.Builder()
-                .client(OkHttpClient.Builder()
-                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                    .authenticator(InterceptorUtils.getAuthenticator())
-                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
-                    .build()
-                )
+                .client(client.build())
                 .baseUrl(FuelingAPI.baseUrl)
                 .addConverterFactory(EnumConverterFactory())
                 .addConverterFactory(
                     JsonApiConverterFactory.create(
                         Moshi.Builder()
                             .add(ResourceAdapterFactory.builder()
+                                .add(GasStation::class.java)
+                                .add(FuelPrice::class.java)
+                                .add(Pump::class.java)
+                                .add(PaymentMethod::class.java)
+                                .add(PaymentMethodKind::class.java)
                                 .build()
                             )
                             .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
@@ -88,7 +96,7 @@ The approaching is a necessary first api call for connected fueling. Without a v
                     )
                 )
                 .build()
-                .create(ApproachingAtTheForecourtService::class.java)    
+                .create(ApproachingAtTheForecourtService::class.java)
 
         return service.approachingAtTheForecourt(gasStationId, compileopeningHours)
     }

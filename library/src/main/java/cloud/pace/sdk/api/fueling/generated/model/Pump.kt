@@ -19,7 +19,8 @@ import java.util.*
 class Pump : Resource() {
 
     var vat: VAT? = null
-    var currency: Currency? = null
+    /* Currency as specified in ISO-4217. */
+    var currency: String? = null
     /* Fuel amount in liters */
     var fuelAmount: Double? = null
     var fuelType: String? = null
@@ -47,12 +48,6 @@ class Pump : Resource() {
     var status: Status? = null
     /* Provided if the user pre-authorized the pump */
     var transactionId: String? = null
-
-    enum class Currency(val value: String) {
-        @SerializedName("EUR")
-        @Json(name = "EUR")
-        EUR("EUR")
-    }
 
     /* The fueling process that has to be followed
     * `postPay` the pump is *free* and needs to be [paid](#operation/ProcessPayment) after fueling

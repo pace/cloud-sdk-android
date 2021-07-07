@@ -16,7 +16,7 @@ import moe.banana.jsonapi2.Resource
 import java.util.*
 
 @JsonApi(type = "transactionRequest")
-class TransactionRequest : Resource() {
+class TransactionRequest: Resource() {
 
     /* 'Value' field of the payment token (not the payment token ID) */
     lateinit var paymentToken: String
@@ -24,7 +24,8 @@ class TransactionRequest : Resource() {
     lateinit var pumpId: String
     /* Fuel type for cars, based on the EU fuel marking */
     var carFuelType: CarFuelType? = null
-    var currency: Currency? = null
+    /* Currency as specified in ISO-4217. */
+    var currency: String? = null
     /* Current mileage in meters */
     var mileage: Int? = null
     var priceIncludingVAT: Double? = null
@@ -99,11 +100,5 @@ class TransactionRequest : Resource() {
         @SerializedName("heatingOil")
         @Json(name = "heatingOil")
         HEATINGOIL("heatingOil")
-    }
-
-    enum class Currency(val value: String) {
-        @SerializedName("EUR")
-        @Json(name = "EUR")
-        EUR("EUR")
     }
 }

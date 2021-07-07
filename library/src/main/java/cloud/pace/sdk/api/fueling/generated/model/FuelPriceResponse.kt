@@ -16,20 +16,15 @@ import moe.banana.jsonapi2.Resource
 import java.util.*
 
 @JsonApi(type = "fuelPriceResponse")
-class FuelPriceResponse : Resource() {
+class FuelPriceResponse: Resource() {
 
-    var currency: Currency? = null
+    /* Currency as specified in ISO-4217. */
+    var currency: String? = null
     /* Fuel type for cars, based on the EU fuel marking */
     var fuelType: FuelType? = null
     /* Price in liters */
     var price: Double? = null
     var productName: String? = null
-
-    enum class Currency(val value: String) {
-        @SerializedName("EUR")
-        @Json(name = "EUR")
-        EUR("EUR")
-    }
 
     /* Fuel type for cars, based on the EU fuel marking */
     enum class FuelType(val value: String) {

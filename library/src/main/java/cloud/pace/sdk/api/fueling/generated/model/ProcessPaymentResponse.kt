@@ -19,7 +19,8 @@ import java.util.*
 class ProcessPaymentResponse : Resource() {
 
     var vat: VAT? = null
-    var currency: Currency? = null
+    /* Currency as specified in ISO-4217. */
+    var currency: String? = null
     var gasStationId: String? = null
     /* Mileage in meters */
     var mileage: Int? = null
@@ -29,12 +30,6 @@ class ProcessPaymentResponse : Resource() {
     var pumpId: String? = null
     /* Vehicle identification number */
     var vin: String? = null
-
-    enum class Currency(val value: String) {
-        @SerializedName("EUR")
-        @Json(name = "EUR")
-        EUR("EUR")
-    }
 
     class VAT {
 

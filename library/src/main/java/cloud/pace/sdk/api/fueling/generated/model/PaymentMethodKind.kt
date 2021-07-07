@@ -57,28 +57,4 @@ This field is optional and if not present should be assumed to indicate `implici
         }
     }
 
-    enum class Id(val value: String) {
-        @SerializedName("sepa")
-        @Json(name = "sepa")
-        SEPA("sepa"),
-        @SerializedName("creditcard")
-        @Json(name = "creditcard")
-        CREDITCARD("creditcard"),
-        @SerializedName("paypal")
-        @Json(name = "paypal")
-        PAYPAL("paypal"),
-        @SerializedName("paydirekt")
-        @Json(name = "paydirekt")
-        PAYDIREKT("paydirekt"),
-        @SerializedName("dkv")
-        @Json(name = "dkv")
-        DKV("dkv"),
-        @SerializedName("hoyer")
-        @Json(name = "hoyer")
-        HOYER("hoyer"),
-        @SerializedName("applepay")
-        @Json(name = "applepay")
-        APPLEPAY("applepay")
-    }
-
 }

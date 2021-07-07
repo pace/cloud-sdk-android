@@ -83,14 +83,17 @@ Only use after approaching, otherwise returns `403 Forbidden`.
     }
 
     fun FuelingAPI.FuelingAPI.waitOnPumpStatusChange(gasStationId: String, pumpId: String, update: Update? = null, lastStatus: LastStatus? = null, timeout: Int? = null, readTimeout: Long? = null): Call<PumpResponse> {
+        val client = OkHttpClient.Builder()
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .authenticator(InterceptorUtils.getAuthenticator())
+
+        if (readTimeout != null) {
+            client.readTimeout(readTimeout, TimeUnit.SECONDS)
+        }
+
         val service: WaitOnPumpStatusChangeService =
             Retrofit.Builder()
-                .client(OkHttpClient.Builder()
-                    .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-                    .authenticator(InterceptorUtils.getAuthenticator())
-                    .readTimeout(readTimeout ?: 10L, TimeUnit.SECONDS)
-                    .build()
-                )
+                .client(client.build())
                 .baseUrl(FuelingAPI.baseUrl)
                 .addConverterFactory(EnumConverterFactory())
                 .addConverterFactory(
