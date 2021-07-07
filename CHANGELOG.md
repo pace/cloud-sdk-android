@@ -9,12 +9,15 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Enhancements
 
 * Added new generated request with possibility to set readTimeout times for requests
+* Added classes to generated requests
 
-* Added classes to generated requests 
+### Internal
+
+* Update protobuf dependency and regenerate protobuf code
+
 
 8.1.0 Release notes (2021-06-24)
 =============================================================
-
 
 ### Enhancements
 

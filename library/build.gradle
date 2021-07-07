@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'org.jetbrains.dokka'
+apply plugin: 'com.google.protobuf'
 apply from: 'publish.gradle'
 
 android {
@@ -88,7 +89,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:$play_services_location_version"
     api "com.google.android.gms:play-services-maps:$play_services_maps_version"
     implementation "com.google.maps.android:android-maps-utils:$google_maps_utils_version"
-    implementation "com.google.protobuf:protobuf-java:$protobuf_version"
+    implementation "com.google.protobuf:protobuf-javalite:$protobuf_version"
 
     // Dependency injection
     api "org.koin:koin-android:$koin_version"
@@ -129,4 +130,29 @@ dependencies {
     androidTestImplementation "androidx.test:runner:$test_core_version"
     androidTestImplementation "androidx.test.ext:junit:$test_junit_version"
     api "androidx.room:room-testing:$room_version"
+}
+
+sourceSets {
+    main.java.srcDirs += "${protobuf.generatedFilesBaseDir}/main/javalite"
+    main.java.srcDirs += "$projectDir/src/main/proto"
+}
+
+processResources {
+    exclude('**/*.proto')
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.17.3'
+    }
+    // this is a task which wil generate classes for our proto files
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option "lite"
+                }
+            }
+        }
+    }
 }

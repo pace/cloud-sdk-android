@@ -1,11 +1,12 @@
 package cloud.pace.sdk.poikit.poi
 
+import TileQueryRequestOuterClass
+import TileQueryRequestOuterClass.TileQueryRequest.newBuilder
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import cloud.pace.sdk.poikit.database.GasStationDAO
 import cloud.pace.sdk.poikit.poi.download.TileDownloader
-import cloud.pace.sdk.poikit.poi.download.TileQueryRequestOuterClass.TileQueryRequest.*
 import cloud.pace.sdk.poikit.utils.POIKitConfig
 import cloud.pace.sdk.poikit.utils.addPadding
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
@@ -70,9 +71,9 @@ class VisibleRegionNotificationToken(
         val northEast = visibleRegion.latLngBounds.northeast.toLocationPoint().tileInfo(zoom = zoomLevel)
         val southWest = visibleRegion.latLngBounds.southwest.toLocationPoint().tileInfo(zoom = zoomLevel)
 
-        val areaQuery = AreaQuery.newBuilder().also {
-            it.northEast = Coordinate.newBuilder().setX(northEast.x).setY(northEast.y).build()
-            it.southWest = Coordinate.newBuilder().setX(southWest.x).setY(southWest.y).build()
+        val areaQuery = TileQueryRequestOuterClass.TileQueryRequest.AreaQuery.newBuilder().also {
+            it.northEast = TileQueryRequestOuterClass.TileQueryRequest.Coordinate.newBuilder().setX(northEast.x).setY(northEast.y).build()
+            it.southWest = TileQueryRequestOuterClass.TileQueryRequest.Coordinate.newBuilder().setX(southWest.x).setY(southWest.y).build()
         }
 
         val tileRequest = newBuilder()
@@ -138,8 +139,8 @@ class IDsNotificationToken(
                 .map { it.tileInfo(zoomLevel) }
                 .distinct()
                 .map { tile ->
-                    IndividualTileQuery.newBuilder().also {
-                        it.geo = Coordinate.newBuilder().setX(tile.x).setY(tile.y).build()
+                    TileQueryRequestOuterClass.TileQueryRequest.IndividualTileQuery.newBuilder().also {
+                        it.geo = TileQueryRequestOuterClass.TileQueryRequest.Coordinate.newBuilder().setX(tile.x).setY(tile.y).build()
                     }.build()
                 }
 

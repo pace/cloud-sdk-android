@@ -1,5 +1,7 @@
 package cloud.pace.sdk.poikit.poi.download
 
+import TileQueryRequestOuterClass
+import TileQueryResponseOuterClass
 import cloud.pace.sdk.api.utils.InterceptorUtils
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.Geometry
@@ -14,6 +16,7 @@ import cloud.pace.sdk.utils.Environment
 import com.google.protobuf.InvalidProtocolBufferException
 import okhttp3.*
 import timber.log.Timber
+import vector_tile.VectorTile
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.math.atan
