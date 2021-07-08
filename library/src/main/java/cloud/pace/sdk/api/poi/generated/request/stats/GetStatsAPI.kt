@@ -42,7 +42,7 @@ object GetStatsAPI {
 
     fun POIAPI.StatsAPI.getStats(readTimeout: Long? = null): Call<Stats> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", false))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

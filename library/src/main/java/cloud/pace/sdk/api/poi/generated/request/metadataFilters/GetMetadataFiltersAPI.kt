@@ -51,7 +51,7 @@ For the latitude and longitude values used in the request, returns the available
 
     fun POIAPI.MetadataFiltersAPI.getMetadataFilters(latitude: Float, longitude: Float, readTimeout: Long? = null): Call<Categories> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

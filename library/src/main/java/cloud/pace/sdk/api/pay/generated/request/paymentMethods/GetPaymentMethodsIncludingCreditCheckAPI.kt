@@ -57,7 +57,7 @@ If the list is empty, you can ask the user to add a payment method to use PACE f
 
     fun PayAPI.PaymentMethodsAPI.getPaymentMethodsIncludingCreditCheck(filterstatus: Filterstatus, filterpurpose: PRN? = null, readTimeout: Long? = null): Call<PaymentMethods> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

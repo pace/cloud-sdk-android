@@ -84,7 +84,7 @@ Only use after approaching, otherwise returns `403 Forbidden`.
 
     fun FuelingAPI.FuelingAPI.waitOnPumpStatusChange(gasStationId: String, pumpId: String, update: Update? = null, lastStatus: LastStatus? = null, timeout: Int? = null, readTimeout: Long? = null): Call<PumpResponse> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

@@ -62,7 +62,7 @@ Please note that calling this API is very cheap and can be done regularly.
 
     fun POIAPI.AppsAPI.checkForPaceApp(filterlatitude: Float, filterlongitude: Float, filterappType: FilterappType? = null, readTimeout: Long? = null): Call<LocationBasedAppsWithRefs> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

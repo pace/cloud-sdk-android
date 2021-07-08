@@ -44,7 +44,7 @@ object GetPaymentMethodKindsAPI {
 
     fun PayAPI.PaymentMethodKindsAPI.getPaymentMethodKinds(acceptLanguage: String? = null, readTimeout: Long? = null): Call<PaymentMethodKinds> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", false))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

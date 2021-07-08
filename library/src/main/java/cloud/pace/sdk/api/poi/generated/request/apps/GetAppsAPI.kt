@@ -72,7 +72,7 @@ object GetAppsAPI {
 
     fun POIAPI.AppsAPI.getApps(pagenumber: Int? = null, pagesize: Int? = null, filterappType: FilterappType? = null, filtercache: Filtercache? = null, filtersince: Date? = null, readTimeout: Long? = null): Call<LocationBasedApps> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

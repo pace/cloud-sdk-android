@@ -96,7 +96,7 @@ The approaching is a necessary first api call for connected fueling. Without a v
                     )
                 )
                 .build()
-                .create(ApproachingAtTheForecourtService::class.java)
+                .create(ApproachingAtTheForecourtService::class.java)    
 
         return service.approachingAtTheForecourt(gasStationId, compileopeningHours)
     }
