@@ -50,7 +50,7 @@ object GetEventsAPI {
 
     fun POIAPI.EventsAPI.getEvents(pagenumber: Int? = null, pagesize: Int? = null, filtersourceId: String? = null, filteruserId: String? = null, readTimeout: Long? = null): Call<Events> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

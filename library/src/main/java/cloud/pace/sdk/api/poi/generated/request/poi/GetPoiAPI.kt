@@ -44,7 +44,7 @@ object GetPoiAPI {
 
     fun POIAPI.POIAPI.getPoi(poiId: String? = null, readTimeout: Long? = null): Call<POI> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

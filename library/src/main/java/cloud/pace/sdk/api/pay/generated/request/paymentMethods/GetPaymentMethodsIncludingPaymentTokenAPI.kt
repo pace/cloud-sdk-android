@@ -53,7 +53,7 @@ The list will contain the pre-authorized amount (incl. currency), the purpose PR
 
     fun PayAPI.PaymentMethodsAPI.getPaymentMethodsIncludingPaymentToken(include: Include, filterpurpose: PRN? = null, readTimeout: Long? = null): Call<PaymentMethods> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

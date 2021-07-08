@@ -10,6 +10,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Added new generated request with possibility to set readTimeout times for requests
 * Added classes to generated requests
+* Correctly set content type for request with object schema
 
 ### Internal
 

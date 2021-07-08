@@ -78,7 +78,7 @@ object GetTermsAPI {
                     )
                 )
                 .build()
-                .create(GetTermsService::class.java)
+                .create(GetTermsService::class.java)    
 
         return service.getTerms(termsId, redirectUri, acceptLanguage)
     }

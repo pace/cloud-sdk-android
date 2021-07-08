@@ -44,7 +44,7 @@ object SetUserAPI {
 
     fun UserAPI.UserAPI.setUser(userId: String? = null, readTimeout: Long? = null): Call<User> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {
