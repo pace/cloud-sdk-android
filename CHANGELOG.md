@@ -8,6 +8,9 @@ x.y.z Release notes (yyyy-MM-dd)
 
 8.2.0 Release notes (2021-07-12)
 =============================================================
+### Breaking changes
+
+* Change default authentication mode to `AuthenticationMode.NATIVE`
 
 ### Enhancements
 
@@ -15,6 +18,7 @@ x.y.z Release notes (yyyy-MM-dd)
 * Added classes to generated requests
 * Correctly set content type for request with object schema
 * Add function to POIKit to observe gas stations by ID and location
+* Offer default configurations for all environments for clients that login with PACE ID (IDKit)
 
 ### Internal
 

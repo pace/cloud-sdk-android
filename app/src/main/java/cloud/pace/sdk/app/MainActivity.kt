@@ -60,16 +60,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        IDKit.setup(
-            this, OIDConfiguration(
-                authorizationEndpoint = "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/auth",
-                endSessionEndpoint = "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/logout",
-                tokenEndpoint = "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/token",
-                userInfoEndpoint = "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/userinfo",
-                clientId = "cloud-sdk-example-app",
-                redirectUri = "pace://cloud-sdk-example"
-            )
-        )
+        IDKit.setup(this, OIDConfiguration.development(clientId = "cloud-sdk-example-app", redirectUri = "pace://cloud-sdk-example"))
 
         PACECloudSDK.setup(
             this, Configuration(
@@ -77,7 +68,6 @@ class MainActivity : AppCompatActivity() {
                 clientAppVersion = BuildConfig.VERSION_NAME,
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),
                 apiKey = "YOUR_API_KEY",
-                authenticationMode = AuthenticationMode.NATIVE,
                 environment = Environment.DEVELOPMENT,
                 domainACL = listOf("pace.cloud"),
                 geoAppsScope = "pace-drive-android"
