@@ -1,5 +1,6 @@
 package cloud.pace.sdk.poikit.poi
 
+import TileQueryRequestOuterClass
 import android.location.Location
 import android.os.Parcelable
 import cloud.pace.sdk.poikit.poi.download.TileInformation
@@ -106,4 +107,21 @@ fun LatLng.toLocationPoint(): LocationPoint {
 
 fun Location.toLocationPoint(): LocationPoint {
     return LocationPoint(this.latitude, this.longitude)
+}
+
+fun Collection<LocationPoint>.toTileQueryRequest(zoomLevel: Int): TileQueryRequestOuterClass.TileQueryRequest {
+    // Build request from bounding box
+    val tiles = this
+        .map { it.tileInfo(zoomLevel) }
+        .distinct()
+        .map { tile ->
+            TileQueryRequestOuterClass.TileQueryRequest.IndividualTileQuery.newBuilder().also {
+                it.geo = TileQueryRequestOuterClass.TileQueryRequest.Coordinate.newBuilder().setX(tile.x).setY(tile.y).build()
+            }.build()
+        }
+
+    return TileQueryRequestOuterClass.TileQueryRequest.newBuilder()
+        .addAllTiles(tiles)
+        .setZoom(zoomLevel)
+        .build()
 }
