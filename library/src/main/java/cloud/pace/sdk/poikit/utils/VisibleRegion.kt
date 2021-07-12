@@ -1,5 +1,6 @@
 package cloud.pace.sdk.poikit.utils
 
+import TileQueryRequestOuterClass
 import cloud.pace.sdk.poikit.poi.toLocationPoint
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
@@ -86,4 +87,19 @@ fun incrementalPadding(maxIncrements: Int, currentIncrement: Int, maxPadding: Do
     val padding = relativePadding + minPadding
 
     return padding.coerceIn(minPadding, maxPadding)
+}
+
+fun VisibleRegion.toTileQueryRequest(zoomLevel: Int): TileQueryRequestOuterClass.TileQueryRequest {
+    val northEast = this.latLngBounds.northeast.toLocationPoint().tileInfo(zoom = zoomLevel)
+    val southWest = this.latLngBounds.southwest.toLocationPoint().tileInfo(zoom = zoomLevel)
+
+    val areaQuery = TileQueryRequestOuterClass.TileQueryRequest.AreaQuery.newBuilder().also {
+        it.northEast = TileQueryRequestOuterClass.TileQueryRequest.Coordinate.newBuilder().setX(northEast.x).setY(northEast.y).build()
+        it.southWest = TileQueryRequestOuterClass.TileQueryRequest.Coordinate.newBuilder().setX(southWest.x).setY(southWest.y).build()
+    }
+
+    return TileQueryRequestOuterClass.TileQueryRequest.newBuilder()
+        .addAreas(areaQuery)
+        .setZoom(zoomLevel)
+        .build()
 }

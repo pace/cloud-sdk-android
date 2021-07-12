@@ -70,6 +70,10 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
         return IDsNotificationToken(ids.toList(), database.gasStationDao(), completion)
     }
 
+    fun observe(locations: Map<String, LocationPoint>, completion: (Completion<List<PointOfInterest>>) -> Unit): LocationsNotificationToken {
+        return LocationsNotificationToken(locations, database.gasStationDao(), completion)
+    }
+
     fun getRoute(destination: LocationPoint, completion: (Completion<Route?>) -> Unit) {
         onBackgroundThread {
             when (val location = locationProvider.currentLocation(false)) {

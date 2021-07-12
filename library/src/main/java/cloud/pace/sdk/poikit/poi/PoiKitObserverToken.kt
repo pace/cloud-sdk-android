@@ -1,7 +1,5 @@
 package cloud.pace.sdk.poikit.poi
 
-import TileQueryRequestOuterClass
-import TileQueryRequestOuterClass.TileQueryRequest.newBuilder
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -9,6 +7,7 @@ import cloud.pace.sdk.poikit.database.GasStationDAO
 import cloud.pace.sdk.poikit.poi.download.TileDownloader
 import cloud.pace.sdk.poikit.utils.POIKitConfig
 import cloud.pace.sdk.poikit.utils.addPadding
+import cloud.pace.sdk.poikit.utils.toTileQueryRequest
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Completion
 import cloud.pace.sdk.utils.Failure
@@ -68,18 +67,7 @@ class VisibleRegionNotificationToken(
 
         loading.value = true
 
-        val northEast = visibleRegion.latLngBounds.northeast.toLocationPoint().tileInfo(zoom = zoomLevel)
-        val southWest = visibleRegion.latLngBounds.southwest.toLocationPoint().tileInfo(zoom = zoomLevel)
-
-        val areaQuery = TileQueryRequestOuterClass.TileQueryRequest.AreaQuery.newBuilder().also {
-            it.northEast = TileQueryRequestOuterClass.TileQueryRequest.Coordinate.newBuilder().setX(northEast.x).setY(northEast.y).build()
-            it.southWest = TileQueryRequestOuterClass.TileQueryRequest.Coordinate.newBuilder().setX(southWest.x).setY(southWest.y).build()
-        }
-
-        val tileRequest = newBuilder()
-            .addAreas(areaQuery)
-            .setZoom(zoomLevel)
-            .build()
+        val tileRequest = visibleRegion.toTileQueryRequest(zoomLevel)
 
         downloadTask = tileDownloader.load(tileRequest) {
             it.onSuccess { stations ->
@@ -132,22 +120,50 @@ class IDsNotificationToken(
         loading.value = true
 
         GlobalScope.launch {
-            // Build request from bounding box
-            val tiles = gasStationDao
-                .getByIds(ids)
-                .mapNotNull { it.center }
-                .map { it.tileInfo(zoomLevel) }
-                .distinct()
-                .map { tile ->
-                    TileQueryRequestOuterClass.TileQueryRequest.IndividualTileQuery.newBuilder().also {
-                        it.geo = TileQueryRequestOuterClass.TileQueryRequest.Coordinate.newBuilder().setX(tile.x).setY(tile.y).build()
-                    }.build()
+            val tileRequest = gasStationDao.getByIds(ids).mapNotNull { it.center }.toTileQueryRequest(zoomLevel)
+
+            downloadTask = tileDownloader.load(tileRequest) {
+                it.onSuccess { stations ->
+                    stations.forEach { station -> station.updatedAt = Date() }
+                    gasStationDao.insertGasStations(stations)
+                    MainScope().launch { loading.value = false }
                 }
 
-            val tileRequest = newBuilder()
-                .addAllTiles(tiles)
-                .setZoom(zoomLevel)
-                .build()
+                it.onFailure { error ->
+                    completion(Failure(error))
+                    MainScope().launch { loading.value = false }
+                }
+            }
+        }
+
+        super.refresh(zoomLevel)
+    }
+
+    override fun invalidate() {
+        gasStations.removeObserver(gasStationsObserver)
+        downloadTask?.cancel()
+    }
+}
+
+class LocationsNotificationToken(
+    private val locations: Map<String, LocationPoint>,
+    private val gasStationDao: GasStationDAO,
+    private val completion: (Completion<List<PointOfInterest>>) -> Unit
+) : PoiKitObserverToken() {
+
+    private val gasStations = gasStationDao.getByIdsLive(locations.map { it.key })
+    private val gasStationsObserver = Observer<List<GasStation>> { completion(Success(it)) }
+    private var downloadTask: Call? = null
+
+    init {
+        gasStations.observeForever(gasStationsObserver)
+    }
+
+    override fun refresh(zoomLevel: Int) {
+        loading.value = true
+
+        GlobalScope.launch {
+            val tileRequest = locations.values.toTileQueryRequest(zoomLevel)
 
             downloadTask = tileDownloader.load(tileRequest) {
                 it.onSuccess { stations ->
