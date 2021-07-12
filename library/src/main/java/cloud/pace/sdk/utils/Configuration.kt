@@ -5,7 +5,7 @@ data class Configuration @JvmOverloads constructor(
     var clientAppVersion: String,
     var clientAppBuild: String,
     var apiKey: String,
-    var authenticationMode: AuthenticationMode = AuthenticationMode.WEB,
+    var authenticationMode: AuthenticationMode = AuthenticationMode.NATIVE,
     var environment: Environment = Environment.PRODUCTION,
     var extensions: List<String> = emptyList(),
     var domainACL: List<String> = emptyList(),

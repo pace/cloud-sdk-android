@@ -121,7 +121,7 @@ clientAppName: String
 clientAppVersion: String
 clientAppBuild: String
 apiKey: String
-authenticationMode: AuthenticationMode // Default: AuthenticationMode.WEB
+authenticationMode: AuthenticationMode // Default: AuthenticationMode.NATIVE
 environment: Environment // Default: Environment.PRODUCTION
 extensions: List<String> // Default: emptyList()
 domainACL: List<String> // Default: emptyList()
@@ -164,20 +164,14 @@ Also from now on this callback will only be sent if `IDKit` is not used/set up. 
 
 ### Setup
 **Note:** For authorization and session ending please make sure that the `appAuthRedirectScheme` is set in your app's `build.gradle` file as described in the general [setup](#setup) section.
-This code example shows how to setup *IDKit*. The parameter `additionalCaching` defines if *IDKit* persists the session additionally to the native WebView/Browser caching.
+
+The parameter `additionalCaching` defines if *IDKit* persists the session additionally to the native WebView/Browser caching.
+
+To initialize the *IDKit* you have to pass an `OIDConfiguration`. For this you can either use the preconfigured environments using the `OIDConfiguration.$environment` factory methods or you can also create an `OIDConfiguration` with your own identity provider endpoints.
+
+This example shows the initialization with the development environment. For production apps, use `OIDConfiguration.production(...)`.
 ```kotlin
-val config = OIDConfiguration(
-    authorizationEndpoint,
-    endSessionEndpoint,
-    tokenEndpoint,
-    userInfoEndpoint, // optional
-    clientSecret, // optional
-    scopes, // optional
-    redirectUri,
-    responseType, // Default: `ResponseTypeValues.CODE`
-    additionalParameters // optional
-)
-IDKit.setup(context, config, true)
+IDKit.setup(context, OIDConfiguration.development(clientId = "cloud-sdk-example-app", redirectUri = "pace://cloud-sdk-example"))
 ```
 
 Once the authorization flow is completed in the browser, the authorization service will redirect to a URI specified as part of the authorization request.
