@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
-                android:background="@android:color/holo_blue_light"
+                android:background="@color/accent"
                 android:text="Start payment app"
                 android:textColor="@android:color/white"
                 app:layout_constraintTop_toBottomOf="@id/info_label" />
@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:background="@android:color/holo_blue_light"
+                android:background="@color/accent"
                 android:text="Start fueling app"
                 android:textColor="@android:color/white"
                 app:layout_constraintTop_toBottomOf="@id/payment_app" />
@@ -51,7 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:background="@android:color/holo_blue_light"
+                android:background="@color/accent"
                 android:text="Start transactions app"
                 android:textColor="@android:color/white"
                 app:layout_constraintTop_toBottomOf="@id/fueling_app" />
@@ -61,7 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:background="@android:color/holo_blue_light"
+                android:background="@color/accent"
                 android:text="Start PACE ID app"
                 android:textColor="@android:color/white"
                 app:layout_constraintTop_toBottomOf="@id/transactions_app" />
@@ -154,37 +154,45 @@
                 android:textColor="@android:color/white"
                 app:layout_constraintTop_toBottomOf="@id/registration_endpoint" />
 
-            <Button
-                android:id="@+id/show_app_list"
+            <EditText
+                android:id="@+id/radius"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="number"
                 android:layout_marginTop="20dp"
-                android:background="@android:color/holo_red_light"
-                android:text="Show App list"
-                android:textColor="@android:color/white"
+                android:hint="Radius in meters"
                 app:layout_constraintTop_toBottomOf="@id/end_session" />
 
+            <Button
+                android:id="@+id/request_cofu_gas_stations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@android:color/holo_orange_dark"
+                android:text="Request CoFu gas stations"
+                android:textColor="@android:color/white"
+                app:layout_constraintTop_toBottomOf="@id/radius" />
+
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/app_list"
+                android:id="@+id/cofu_gas_stations_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:nestedScrollingEnabled="false"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/show_app_list"
-                tools:listitem="@layout/app_item" />
+                app:layout_constraintTop_toBottomOf="@id/request_cofu_gas_stations"
+                tools:listitem="@layout/cofu_gas_station" />
 
             <TextView
                 android:id="@+id/empty_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="20dp"
-                android:text="No apps available at the current location"
+                android:text="No CoFu gas stations found"
                 android:textAlignment="center"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/show_app_list" />
+                app:layout_constraintTop_toBottomOf="@id/cofu_gas_stations_list" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

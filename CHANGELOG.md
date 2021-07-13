@@ -17,6 +17,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Fixes
 
 * Fix bug that could occur when the user tried to log in but was still logged in with another account
+* Add function to Appkit to request Connected Fueling gas stations by location and radius
 
 
 8.2.0 Release notes (2021-07-12)

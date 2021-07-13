@@ -21,6 +21,7 @@ import cloud.pace.sdk.appkit.model.Car
 import cloud.pace.sdk.appkit.network.NetworkChangeListener
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getDisableTimePreferenceKey
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
+import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -183,6 +184,13 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
 
     internal fun requestCofuGasStations(completion: (Completion<List<CofuGasStation>>) -> Unit) {
         appRepository.getCofuGasStations { result ->
+            result.onSuccess { completion(Success(it)) }
+            result.onFailure { completion(Failure(it)) }
+        }
+    }
+
+    internal fun requestCofuGasStations(location: Location, radius: Int, completion: (Completion<List<GasStation>>) -> Unit) {
+        appRepository.getCofuGasStations(location, radius) { result ->
             result.onSuccess { completion(Success(it)) }
             result.onFailure { completion(Failure(it)) }
         }
