@@ -3,6 +3,7 @@ package cloud.pace.sdk.appkit.app.api
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.location.Location
 import cloud.pace.sdk.R
 import cloud.pace.sdk.api.geo.CofuGasStation
 import cloud.pace.sdk.api.geo.GeometryCollection
@@ -11,6 +12,7 @@ import cloud.pace.sdk.appkit.geo.GeoAPIManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.persistence.CacheModel
+import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.utils.distanceTo
 import cloud.pace.sdk.utils.*
 import com.google.android.gms.maps.model.LatLng
@@ -26,6 +28,7 @@ interface AppRepository {
     fun getAppsByUrl(context: Context, url: String, references: List<String>, completion: (Result<List<App>>) -> Unit)
     fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit)
     fun getCofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit)
+    fun getCofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit)
     suspend fun isPoiInRange(poiId: String, latitude: Double, longitude: Double): Boolean
 }
 
@@ -101,6 +104,10 @@ class AppRepositoryImpl(
 
     override fun getCofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit) {
         geoApiManager.cofuGasStations(completion)
+    }
+
+    override fun getCofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit) {
+        geoApiManager.cofuGasStations(location, radius, completion)
     }
 
     override suspend fun isPoiInRange(poiId: String, latitude: Double, longitude: Double): Boolean {

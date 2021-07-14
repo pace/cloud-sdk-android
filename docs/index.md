@@ -738,7 +738,6 @@ AppKit.requestLocalApps { app ->
     }
 }
 ```
-**Note:** For a more detailed example, where the apps are displayed in a `RecyclerView`, see the `PACECloudSDK` example app.
 
 ### Deep Linking
 Some of our services (e.g. `PayPal`) do not open the URL in the WebView, but in a Chrome Custom Tab within the app, due to security reasons. After completion of the process the user is redirected back to the WebView via deep linking. In order to set the redirect URL correctly and to ensure that the client app intercepts the deep link, the following requirements must be met:

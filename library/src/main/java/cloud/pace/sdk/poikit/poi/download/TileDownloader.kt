@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.atan
 import kotlin.math.exp
 
-internal class TileDownloader(environment: Environment) {
+class TileDownloader(environment: Environment) {
     private val client =
         OkHttpClient.Builder()
             .addInterceptor {

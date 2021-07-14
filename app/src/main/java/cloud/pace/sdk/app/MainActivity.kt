@@ -8,13 +8,13 @@ import android.location.Location
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.geo.ConnectedFuelingStatus
 import cloud.pace.sdk.appkit.AppKit
@@ -84,6 +84,12 @@ class MainActivity : AppCompatActivity() {
             startLocationListener()
         }
 
+        val coFuGasStationsAdapter = CoFuGasStationsAdapter {
+            AppKit.openFuelingApp(this, it, false, callback = defaultAppCallback)
+        }
+        cofu_gas_stations_list.adapter = coFuGasStationsAdapter
+        cofu_gas_stations_list.layoutManager = GridLayoutManager(this, 2)
+
         payment_app.setOnClickListener {
             AppKit.openPaymentApp(this, callback = defaultAppCallback)
         }
@@ -110,6 +116,33 @@ class MainActivity : AppCompatActivity() {
                     val isPoiInRange = AppKit.isPoiInRange(poiId)
                     val elapsedTime = System.currentTimeMillis() - start
                     Toast.makeText(this@MainActivity, "Is POI in range result is $isPoiInRange and took $elapsedTime ms", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        request_cofu_gas_stations.setOnClickListener {
+            val location = lastLocation
+            if (location == null) {
+                Toast.makeText(this, "No location found", Toast.LENGTH_SHORT).show()
+            } else {
+                val radius = radius.text.toString().toIntOrNull()
+                if (radius == null) {
+                    Toast.makeText(this, "The radius is not a valid representation of a number", Toast.LENGTH_SHORT).show()
+                } else {
+                    request_cofu_gas_stations.isEnabled = false
+                    AppKit.requestCofuGasStations(location, radius) {
+                        request_cofu_gas_stations.isEnabled = true
+                        when (it) {
+                            is Success -> {
+                                coFuGasStationsAdapter.entries = it.result
+                                empty_view.isVisible = it.result.isEmpty()
+                            }
+                            is Failure -> {
+                                coFuGasStationsAdapter.entries = emptyList()
+                                empty_view.isVisible = true
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -152,27 +185,6 @@ class MainActivity : AppCompatActivity() {
                         is Failure -> info_label.text = it.throwable.message
                     }
                 }
-            }
-        }
-
-        val appListAdapter = AppListAdapter {
-            AppKit.openAppActivity(this, it, autoClose = false, callback = defaultAppCallback)
-        }
-        app_list.adapter = appListAdapter
-        show_app_list.setOnClickListener { button ->
-            button.isEnabled = false
-            AppKit.requestLocalApps {
-                when (it) {
-                    is Success -> {
-                        appListAdapter.entries = it.result
-                        empty_view.isVisible = it.result.isEmpty()
-                    }
-                    is Failure -> {
-                        appListAdapter.entries = emptyList()
-                        empty_view.visibility = View.VISIBLE
-                    }
-                }
-                button.isEnabled = true
             }
         }
 

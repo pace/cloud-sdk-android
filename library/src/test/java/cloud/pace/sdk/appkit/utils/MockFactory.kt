@@ -25,6 +25,7 @@ import cloud.pace.sdk.appkit.model.Car
 import cloud.pace.sdk.appkit.persistence.CacheModel
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.persistence.TotpSecret
+import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.utils.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import org.mockito.Mockito.mock
@@ -66,6 +67,7 @@ open class TestAppRepository(private val isPoiInRange: Boolean = false) : AppRep
     override fun getAllApps(context: Context, completion: (Result<List<App>>) -> Unit) {}
     override fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit) {}
     override fun getCofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit) {}
+    override fun getCofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit) {}
     override suspend fun isPoiInRange(poiId: String, latitude: Double, longitude: Double) = isPoiInRange
 }
 
@@ -202,4 +204,5 @@ open class TestGeoAPIManager : GeoAPIManager {
     override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {}
     override fun features(poiId: String, latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {}
     override fun cofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit) {}
+    override fun cofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit) {}
 }

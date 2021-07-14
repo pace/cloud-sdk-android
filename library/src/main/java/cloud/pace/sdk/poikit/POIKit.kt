@@ -19,6 +19,7 @@ import cloud.pace.sdk.api.poi.generated.request.priceHistories.GetPriceHistoryAP
 import cloud.pace.sdk.api.poi.generated.request.prices.GetRegionalPricesAPI.getRegionalPrices
 import cloud.pace.sdk.poikit.database.POIKitDatabase
 import cloud.pace.sdk.poikit.poi.*
+import cloud.pace.sdk.poikit.poi.download.TileDownloader
 import cloud.pace.sdk.poikit.routing.NavigationApiClient
 import cloud.pace.sdk.poikit.routing.NavigationMode
 import cloud.pace.sdk.poikit.routing.NavigationRequest
@@ -29,6 +30,7 @@ import cloud.pace.sdk.poikit.search.PhotonResult
 import cloud.pace.sdk.poikit.utils.ApiException
 import cloud.pace.sdk.poikit.utils.GasStationCodes
 import cloud.pace.sdk.poikit.utils.GasStationMovedResponse
+import cloud.pace.sdk.poikit.utils.POIKitConfig
 import cloud.pace.sdk.utils.*
 import com.google.android.gms.maps.model.VisibleRegion
 import io.reactivex.rxjava3.core.Observable
@@ -41,6 +43,7 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
     private val navigationApi: NavigationApiClient by inject()
     private val addressSearchApi: AddressSearchClient by inject()
     private val locationProvider: LocationProvider by inject()
+    private val tileDownloader: TileDownloader by inject()
 
     fun startLocationListener(): LocationProvider {
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
@@ -72,6 +75,29 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
 
     fun observe(locations: Map<String, LocationPoint>, completion: (Completion<List<PointOfInterest>>) -> Unit): LocationsNotificationToken {
         return LocationsNotificationToken(locations, database.gasStationDao(), completion)
+    }
+
+    @JvmOverloads
+    fun requestGasStations(locations: Map<String, LocationPoint>, zoomLevel: Int = POIKitConfig.ZOOMLEVEL, completion: (Completion<List<GasStation>>) -> Unit) {
+        onBackgroundThread {
+            val tileRequest = locations.values.toTileQueryRequest(zoomLevel)
+
+            tileDownloader.load(tileRequest) {
+                it.onSuccess { stations ->
+                    stations.forEach { station -> station.updatedAt = Date() }
+                    database.gasStationDao().insertGasStations(stations)
+                    onMainThread {
+                        completion(Success(stations))
+                    }
+                }
+
+                it.onFailure { error ->
+                    onMainThread {
+                        completion(Failure(error))
+                    }
+                }
+            }
+        }
     }
 
     fun getRoute(destination: LocationPoint, completion: (Completion<Route?>) -> Unit) {

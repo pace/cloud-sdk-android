@@ -1,7 +1,11 @@
 package cloud.pace.sdk.appkit.geo
 
+import android.location.Location
 import cloud.pace.sdk.api.geo.*
 import cloud.pace.sdk.appkit.app.api.AppAPI
+import cloud.pace.sdk.poikit.POIKit
+import cloud.pace.sdk.poikit.poi.GasStation
+import cloud.pace.sdk.poikit.poi.toLocationPoint
 import cloud.pace.sdk.poikit.utils.distanceTo
 import cloud.pace.sdk.utils.*
 import com.google.android.gms.maps.model.LatLng
@@ -13,6 +17,7 @@ interface GeoAPIManager {
     fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit)
     fun features(poiId: String, latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit)
     fun cofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit)
+    fun cofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit)
 }
 
 class GeoAPIManagerImpl(
@@ -86,6 +91,29 @@ class GeoAPIManagerImpl(
             completion(Result.success(cache.cofuGasStations))
         } else {
             loadCofuGasStationsCache(completion)
+        }
+    }
+
+    override fun cofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit) {
+        cofuGasStations { result ->
+            val targetLocation = LatLng(location.latitude, location.longitude)
+            result.onSuccess { cofuGasStations ->
+                val locations = cofuGasStations
+                    .filter { station -> station.coordinate.distanceTo(targetLocation) < radius }
+                    .map { station -> station.id to station.coordinate.toLocationPoint() }
+                    .toMap()
+
+                POIKit.requestGasStations(locations) { gasStations ->
+                    when (gasStations) {
+                        is Success -> completion(Result.success(gasStations.result.filter { it.isConnectedFuelingAvailable == true }))
+                        is Failure -> completion(Result.failure(gasStations.throwable))
+                    }
+                }
+            }
+
+            result.onFailure {
+                completion(Result.failure(it))
+            }
         }
     }
 

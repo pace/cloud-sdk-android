@@ -11,6 +11,7 @@ import cloud.pace.sdk.appkit.app.drawer.AppDrawer
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.Car
+import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.utils.*
 import org.koin.core.inject
 
@@ -93,6 +94,17 @@ object AppKit : CloudSDKKoinComponent {
      */
     fun requestCofuGasStations(completion: (Completion<List<CofuGasStation>>) -> Unit) {
         appManager.requestCofuGasStations(completion)
+    }
+
+    /**
+     * Returns a list of Connected Fueling gas stations within the [radius] of the specified [location].
+     *
+     * @param location The center of the search radius.
+     * @param radius The search radius in meters.
+     * @param completion Returns a list of [GasStation]s where Connected Fueling is available on success or a [Throwable] on failure.
+     */
+    fun requestCofuGasStations(location: Location, radius: Int, completion: (Completion<List<GasStation>>) -> Unit) {
+        appManager.requestCofuGasStations(location, radius, completion)
     }
 
     /**
