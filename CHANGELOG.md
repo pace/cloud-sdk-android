@@ -6,11 +6,21 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
-8.2.0 Release notes (2021-07-12)
-=============================================================
 ### Breaking changes
 
 * Change default authentication mode to `AuthenticationMode.NATIVE`
+
+### Enhancements
+
+* Offer default configurations for all environments for clients that login with PACE ID (IDKit)
+
+### Fixes
+
+* Fix bug that could occur when the user tried to log in but was still logged in with another account
+
+
+8.2.0 Release notes (2021-07-12)
+=============================================================
 
 ### Enhancements
 
@@ -18,7 +28,6 @@ x.y.z Release notes (yyyy-MM-dd)
 * Added classes to generated requests
 * Correctly set content type for request with object schema
 * Add function to POIKit to observe gas stations by ID and location
-* Offer default configurations for all environments for clients that login with PACE ID (IDKit)
 
 ### Internal
 
