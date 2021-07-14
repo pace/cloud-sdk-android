@@ -23,6 +23,31 @@ data class Polygon(val coordinates: List<List<List<Double>>>) : Geometry(POLYGON
 data class Point(val coordinates: List<Double>) : Geometry(POINT_NAME)
 data class GeometryCollection(val geometries: List<Geometry>) : Geometry(GEOMETRY_COLLECTION_NAME)
 
+fun Point.toLatLngs(): List<LatLng> {
+    val lat = coordinates.lastOrNull()
+    val lng = coordinates.firstOrNull()
+
+    return if (lat != null && lng != null) {
+        listOf(LatLng(lat, lng))
+    } else {
+        emptyList()
+    }
+}
+
+fun Polygon.toLatLngs(): List<LatLng> {
+    return coordinates.flatMap { ring ->
+        ring.mapNotNull { coordinate ->
+            val lat = coordinate.lastOrNull()
+            val lng = coordinate.firstOrNull()
+            if (lat != null && lng != null) {
+                LatLng(lat, lng)
+            } else {
+                null
+            }
+        }
+    }
+}
+
 data class GeoGasStation(
     val id: String,
     val appUrls: List<String>
