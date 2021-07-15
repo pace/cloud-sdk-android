@@ -76,7 +76,7 @@ object GetSourceAPI {
                     )
                 )
                 .build()
-                .create(GetSourceService::class.java)    
+                .create(GetSourceService::class.java)
 
         return service.getSource(sourceId)
     }

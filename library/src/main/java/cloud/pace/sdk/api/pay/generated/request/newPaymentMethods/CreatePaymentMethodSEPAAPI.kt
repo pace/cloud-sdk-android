@@ -85,7 +85,7 @@ The payment method ID is optional when posting data.
                     )
                 )
                 .build()
-                .create(CreatePaymentMethodSEPAService::class.java)    
+                .create(CreatePaymentMethodSEPAService::class.java)
 
         return service.createPaymentMethodSEPA(body)
     }

@@ -81,7 +81,7 @@ Only use after approaching, otherwise returns `403 Forbidden`.
                     )
                 )
                 .build()
-                .create(GetPumpService::class.java)    
+                .create(GetPumpService::class.java)
 
         return service.getPump(gasStationId, pumpId)
     }

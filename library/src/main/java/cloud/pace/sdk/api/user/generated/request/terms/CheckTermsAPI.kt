@@ -101,7 +101,7 @@ In order to identify the user any oauth2 token must be passed.
                     )
                 )
                 .build()
-                .create(CheckTermsService::class.java)    
+                .create(CheckTermsService::class.java)
 
         return service.checkTerms(filterserviceName, redirectUri)
     }

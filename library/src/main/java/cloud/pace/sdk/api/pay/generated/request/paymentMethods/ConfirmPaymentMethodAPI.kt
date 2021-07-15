@@ -76,7 +76,7 @@ object ConfirmPaymentMethodAPI {
                     )
                 )
                 .build()
-                .create(ConfirmPaymentMethodService::class.java)    
+                .create(ConfirmPaymentMethodService::class.java)
 
         return service.confirmPaymentMethod(token)
     }

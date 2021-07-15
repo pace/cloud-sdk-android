@@ -76,7 +76,7 @@ object CreateOTPAPI {
                     )
                 )
                 .build()
-                .create(CreateOTPService::class.java)    
+                .create(CreateOTPService::class.java)
 
         return service.createOTP(body)
     }

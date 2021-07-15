@@ -78,7 +78,7 @@ object DeleteGasStationReferenceStatusAPI {
                     )
                 )
                 .build()
-                .create(DeleteGasStationReferenceStatusService::class.java)    
+                .create(DeleteGasStationReferenceStatusService::class.java)
 
         return service.deleteGasStationReferenceStatus(gasStationId, reference)
     }

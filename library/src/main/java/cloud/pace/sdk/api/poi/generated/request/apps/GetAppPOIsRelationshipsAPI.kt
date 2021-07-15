@@ -76,7 +76,7 @@ object GetAppPOIsRelationshipsAPI {
                     )
                 )
                 .build()
-                .create(GetAppPOIsRelationshipsService::class.java)    
+                .create(GetAppPOIsRelationshipsService::class.java)
 
         return service.getAppPOIsRelationships(appID)
     }

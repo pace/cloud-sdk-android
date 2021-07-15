@@ -85,7 +85,7 @@ object PutGasStationReferenceStatusAPI {
                     )
                 )
                 .build()
-                .create(PutGasStationReferenceStatusService::class.java)    
+                .create(PutGasStationReferenceStatusService::class.java)
 
         return service.putGasStationReferenceStatus(gasStationId, reference, body)
     }

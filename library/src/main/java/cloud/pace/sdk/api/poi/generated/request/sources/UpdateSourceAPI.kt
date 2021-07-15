@@ -83,7 +83,7 @@ object UpdateSourceAPI {
                     )
                 )
                 .build()
-                .create(UpdateSourceService::class.java)    
+                .create(UpdateSourceService::class.java)
 
         return service.updateSource(sourceId, body)
     }

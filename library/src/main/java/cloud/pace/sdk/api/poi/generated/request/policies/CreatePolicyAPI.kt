@@ -81,7 +81,7 @@ object CreatePolicyAPI {
                     )
                 )
                 .build()
-                .create(CreatePolicyService::class.java)    
+                .create(CreatePolicyService::class.java)
 
         return service.createPolicy(body)
     }

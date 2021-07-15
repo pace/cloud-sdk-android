@@ -76,7 +76,7 @@ object VerifyOTPAPI {
                     )
                 )
                 .build()
-                .create(VerifyOTPService::class.java)    
+                .create(VerifyOTPService::class.java)
 
         return service.verifyOTP(body)
     }

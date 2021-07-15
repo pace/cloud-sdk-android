@@ -77,7 +77,7 @@ object LatestTermsAPI {
                     )
                 )
                 .build()
-                .create(LatestTermsService::class.java)    
+                .create(LatestTermsService::class.java)
 
         return service.latestTerms(filterserviceName)
     }

@@ -75,7 +75,7 @@ object CheckUserPhoneAPI {
                     )
                 )
                 .build()
-                .create(CheckUserPhoneService::class.java)    
+                .create(CheckUserPhoneService::class.java)
 
         return service.checkUserPhone()
     }

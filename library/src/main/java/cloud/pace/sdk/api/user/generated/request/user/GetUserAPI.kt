@@ -74,7 +74,7 @@ object GetUserAPI {
                     )
                 )
                 .build()
-                .create(GetUserService::class.java)    
+                .create(GetUserService::class.java)
 
         return service.getUser(userId)
     }

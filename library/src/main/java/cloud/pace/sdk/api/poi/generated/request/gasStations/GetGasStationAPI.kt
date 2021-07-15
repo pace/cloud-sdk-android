@@ -82,7 +82,7 @@ object GetGasStationAPI {
                     )
                 )
                 .build()
-                .create(GetGasStationService::class.java)    
+                .create(GetGasStationService::class.java)
 
         return service.getGasStation(id, compileopeningHours)
     }

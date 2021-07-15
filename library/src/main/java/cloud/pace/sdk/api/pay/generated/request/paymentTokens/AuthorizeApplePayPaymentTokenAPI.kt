@@ -89,7 +89,7 @@ PaymentSession that can be used to obtain the applePay payload.
                     )
                 )
                 .build()
-                .create(AuthorizeApplePayPaymentTokenService::class.java)    
+                .create(AuthorizeApplePayPaymentTokenService::class.java)
 
         return service.authorizeApplePayPaymentToken(body)
     }

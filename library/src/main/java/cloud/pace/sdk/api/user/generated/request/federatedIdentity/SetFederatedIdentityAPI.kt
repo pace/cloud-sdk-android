@@ -76,7 +76,7 @@ object SetFederatedIdentityAPI {
                     )
                 )
                 .build()
-                .create(SetFederatedIdentityService::class.java)    
+                .create(SetFederatedIdentityService::class.java)
 
         return service.setFederatedIdentity(identityProvider)
     }

@@ -85,7 +85,7 @@ The payment method ID is optional when posting data.
                     )
                 )
                 .build()
-                .create(CreatePaymentMethodDKVService::class.java)    
+                .create(CreatePaymentMethodDKVService::class.java)
 
         return service.createPaymentMethodDKV(body)
     }

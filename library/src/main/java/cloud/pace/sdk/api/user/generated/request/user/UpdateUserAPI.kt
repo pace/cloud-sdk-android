@@ -78,7 +78,7 @@ user record will be returned.
                     )
                 )
                 .build()
-                .create(UpdateUserService::class.java)    
+                .create(UpdateUserService::class.java)
 
         return service.updateUser(userId)
     }

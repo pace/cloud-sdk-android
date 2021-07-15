@@ -79,7 +79,7 @@ object DeduplicatePoiAPI {
                     )
                 )
                 .build()
-                .create(DeduplicatePoiService::class.java)    
+                .create(DeduplicatePoiService::class.java)
 
         return service.deduplicatePoi(body)
     }

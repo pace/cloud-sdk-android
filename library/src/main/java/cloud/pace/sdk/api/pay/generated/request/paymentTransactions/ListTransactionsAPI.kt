@@ -157,7 +157,7 @@ object ListTransactionsAPI {
                     )
                 )
                 .build()
-                .create(ListTransactionsService::class.java)    
+                .create(ListTransactionsService::class.java)
 
         return service.listTransactions(pagenumber, pagesize, sort, filterid, filtercreatedAt?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filterupdatedAt?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filterpaymentMethodId, filterpaymentMethodKind, filterpurposePRN, filterproviderPRN, filterfuelProductName, filterfuelType)
     }

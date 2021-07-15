@@ -84,7 +84,7 @@ object GetPoliciesAPI {
                     )
                 )
                 .build()
-                .create(GetPoliciesService::class.java)    
+                .create(GetPoliciesService::class.java)
 
         return service.getPolicies(pagenumber, pagesize, filterpoiType, filtercountryId, filteruserId)
     }

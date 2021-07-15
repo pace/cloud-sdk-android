@@ -87,7 +87,7 @@ This endpoint is pre-requisite for calling `/payment-method-kinds/applepay/autho
                     )
                 )
                 .build()
-                .create(RequestApplePaySessionService::class.java)    
+                .create(RequestApplePaySessionService::class.java)
 
         return service.requestApplePaySession(body)
     }

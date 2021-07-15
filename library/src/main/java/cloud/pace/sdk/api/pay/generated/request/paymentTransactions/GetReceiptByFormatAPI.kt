@@ -89,7 +89,7 @@ object GetReceiptByFormatAPI {
                     )
                 )
                 .build()
-                .create(GetReceiptByFormatService::class.java)    
+                .create(GetReceiptByFormatService::class.java)
 
         return service.getReceiptByFormat(transactionID, fileFormat)
     }

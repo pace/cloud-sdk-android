@@ -85,7 +85,7 @@ The payment method ID is optional when posting data.
                     )
                 )
                 .build()
-                .create(CreatePaymentMethodHoyerService::class.java)    
+                .create(CreatePaymentMethodHoyerService::class.java)
 
         return service.createPaymentMethodHoyer(body)
     }

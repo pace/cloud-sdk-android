@@ -89,7 +89,7 @@ If the list is empty, you can ask the user to add a payment method to use PACE f
                     )
                 )
                 .build()
-                .create(GetPaymentMethodsIncludingCreditCheckService::class.java)    
+                .create(GetPaymentMethodsIncludingCreditCheckService::class.java)
 
         return service.getPaymentMethodsIncludingCreditCheck(filterstatus, filterpurpose)
     }

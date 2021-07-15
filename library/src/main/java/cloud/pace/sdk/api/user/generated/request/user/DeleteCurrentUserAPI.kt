@@ -77,7 +77,7 @@ An account OTP is required to perform the action.
                     )
                 )
                 .build()
-                .create(DeleteCurrentUserService::class.java)    
+                .create(DeleteCurrentUserService::class.java)
 
         return service.deleteCurrentUser(body)
     }

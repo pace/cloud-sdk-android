@@ -77,7 +77,7 @@ object UpdateAppPOIsRelationshipsAPI {
                     )
                 )
                 .build()
-                .create(UpdateAppPOIsRelationshipsService::class.java)    
+                .create(UpdateAppPOIsRelationshipsService::class.java)
 
         return service.updateAppPOIsRelationships(appID, body)
     }

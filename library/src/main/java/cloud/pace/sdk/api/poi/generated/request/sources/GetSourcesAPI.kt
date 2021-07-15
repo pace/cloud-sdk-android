@@ -82,7 +82,7 @@ object GetSourcesAPI {
                     )
                 )
                 .build()
-                .create(GetSourcesService::class.java)    
+                .create(GetSourcesService::class.java)
 
         return service.getSources(pagenumber, pagesize, filterpoiType, filtername)
     }

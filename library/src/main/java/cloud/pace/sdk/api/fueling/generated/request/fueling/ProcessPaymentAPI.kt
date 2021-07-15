@@ -88,7 +88,7 @@ You can optionally provide:
                     )
                 )
                 .build()
-                .create(ProcessPaymentService::class.java)    
+                .create(ProcessPaymentService::class.java)
 
         return service.processPayment(gasStationId, body)
     }

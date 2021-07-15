@@ -77,7 +77,7 @@ object GetReceiptAPI {
                     )
                 )
                 .build()
-                .create(GetReceiptService::class.java)    
+                .create(GetReceiptService::class.java)
 
         return service.getReceipt(transactionID)
     }

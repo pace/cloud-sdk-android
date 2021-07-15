@@ -75,7 +75,7 @@ object CheckUserPinOrPasswordAPI {
                     )
                 )
                 .build()
-                .create(CheckUserPinOrPasswordService::class.java)    
+                .create(CheckUserPinOrPasswordService::class.java)
 
         return service.checkUserPinOrPassword()
     }

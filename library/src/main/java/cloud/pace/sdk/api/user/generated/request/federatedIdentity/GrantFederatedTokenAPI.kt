@@ -76,7 +76,7 @@ object GrantFederatedTokenAPI {
                     )
                 )
                 .build()
-                .create(GrantFederatedTokenService::class.java)    
+                .create(GrantFederatedTokenService::class.java)
 
         return service.grantFederatedToken(identityProvider)
     }

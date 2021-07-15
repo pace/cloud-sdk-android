@@ -76,7 +76,7 @@ object GetDuplicatesKMLAPI {
                     )
                 )
                 .build()
-                .create(GetDuplicatesKMLService::class.java)    
+                .create(GetDuplicatesKMLService::class.java)
 
         return service.getDuplicatesKML(countryCode)
     }

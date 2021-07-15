@@ -85,7 +85,7 @@ object PatchPaymentMethodAPI {
                     )
                 )
                 .build()
-                .create(PatchPaymentMethodService::class.java)    
+                .create(PatchPaymentMethodService::class.java)
 
         return service.patchPaymentMethod(paymentMethodId, body)
     }

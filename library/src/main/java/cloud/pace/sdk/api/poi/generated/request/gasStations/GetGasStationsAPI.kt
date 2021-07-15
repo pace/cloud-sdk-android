@@ -120,7 +120,7 @@ To search inside a bounding box provide the following query parameter:
                     )
                 )
                 .build()
-                .create(GetGasStationsService::class.java)    
+                .create(GetGasStationsService::class.java)
 
         return service.getGasStations(pagenumber, pagesize, filterpoiType, filterappType, filterlatitude, filterlongitude, filterradius, filterboundingBox, compileopeningHours, filtersource)
     }

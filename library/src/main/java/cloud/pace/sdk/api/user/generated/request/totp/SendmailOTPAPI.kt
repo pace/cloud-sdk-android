@@ -75,7 +75,7 @@ object SendmailOTPAPI {
                     )
                 )
                 .build()
-                .create(SendmailOTPService::class.java)    
+                .create(SendmailOTPService::class.java)
 
         return service.sendmailOTP()
     }

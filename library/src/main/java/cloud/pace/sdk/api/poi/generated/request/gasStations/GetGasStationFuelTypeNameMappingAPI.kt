@@ -79,7 +79,7 @@ object GetGasStationFuelTypeNameMappingAPI {
                     )
                 )
                 .build()
-                .create(GetGasStationFuelTypeNameMappingService::class.java)    
+                .create(GetGasStationFuelTypeNameMappingService::class.java)
 
         return service.getGasStationFuelTypeNameMapping(id, filterproductName)
     }

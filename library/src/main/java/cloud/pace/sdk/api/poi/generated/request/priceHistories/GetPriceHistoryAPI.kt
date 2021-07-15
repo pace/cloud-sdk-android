@@ -85,7 +85,7 @@ object GetPriceHistoryAPI {
                     )
                 )
                 .build()
-                .create(GetPriceHistoryService::class.java)    
+                .create(GetPriceHistoryService::class.java)
 
         return service.getPriceHistory(id, fuelType, filterfrom?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filterto?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filtergranularity)
     }

@@ -76,7 +76,7 @@ object GetPaymentMethodKindsAPI {
                     )
                 )
                 .build()
-                .create(GetPaymentMethodKindsService::class.java)    
+                .create(GetPaymentMethodKindsService::class.java)
 
         return service.getPaymentMethodKinds(acceptLanguage)
     }

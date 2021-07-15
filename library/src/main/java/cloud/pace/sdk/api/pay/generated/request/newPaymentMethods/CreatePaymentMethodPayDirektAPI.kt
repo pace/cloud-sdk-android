@@ -87,7 +87,7 @@ Registering PayDirekt as payment method is a 2-step process, thus the payment me
                     )
                 )
                 .build()
-                .create(CreatePaymentMethodPayDirektService::class.java)    
+                .create(CreatePaymentMethodPayDirektService::class.java)
 
         return service.createPaymentMethodPayDirekt(body)
     }

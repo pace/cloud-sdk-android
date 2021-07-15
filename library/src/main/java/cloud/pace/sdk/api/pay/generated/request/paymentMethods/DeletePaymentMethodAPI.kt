@@ -75,7 +75,7 @@ object DeletePaymentMethodAPI {
                     )
                 )
                 .build()
-                .create(DeletePaymentMethodService::class.java)    
+                .create(DeletePaymentMethodService::class.java)
 
         return service.deletePaymentMethod(paymentMethodId)
     }

@@ -78,7 +78,7 @@ In case the session is created an OTP for the user is created and send via email
                     )
                 )
                 .build()
-                .create(UpdateSessionService::class.java)    
+                .create(UpdateSessionService::class.java)
 
         return service.updateSession(sessionId, body)
     }

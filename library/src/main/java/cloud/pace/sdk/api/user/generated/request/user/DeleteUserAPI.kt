@@ -75,7 +75,7 @@ object DeleteUserAPI {
                     )
                 )
                 .build()
-                .create(DeleteUserService::class.java)    
+                .create(DeleteUserService::class.java)
 
         return service.deleteUser(userId)
     }

@@ -75,7 +75,7 @@ object NotificationForPaymentMethodAPI {
                     )
                 )
                 .build()
-                .create(NotificationForPaymentMethodService::class.java)    
+                .create(NotificationForPaymentMethodService::class.java)
 
         return service.notificationForPaymentMethod(type)
     }

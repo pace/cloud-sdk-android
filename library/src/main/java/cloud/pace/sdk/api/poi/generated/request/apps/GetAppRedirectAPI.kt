@@ -75,7 +75,7 @@ object GetAppRedirectAPI {
                     )
                 )
                 .build()
-                .create(GetAppRedirectService::class.java)    
+                .create(GetAppRedirectService::class.java)
 
         return service.getAppRedirect(appID)
     }

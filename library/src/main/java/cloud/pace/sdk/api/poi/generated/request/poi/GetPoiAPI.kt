@@ -77,7 +77,7 @@ object GetPoiAPI {
                     )
                 )
                 .build()
-                .create(GetPoiService::class.java)    
+                .create(GetPoiService::class.java)
 
         return service.getPoi(poiId)
     }
