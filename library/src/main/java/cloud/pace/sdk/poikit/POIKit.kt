@@ -69,8 +69,12 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
         return VisibleRegionNotificationToken(visibleRegion, padding, database.gasStationDao(), completion)
     }
 
-    fun observe(vararg ids: String, completion: (Completion<List<PointOfInterest>>) -> Unit): IDsNotificationToken {
-        return IDsNotificationToken(ids.toList(), database.gasStationDao(), completion)
+    fun observe(ids: List<String>, completion: (Completion<List<PointOfInterest>>) -> Unit): IDsNotificationToken {
+        return IDsNotificationToken(ids, database.gasStationDao(), completion)
+    }
+
+    fun observe(id: String, completion: (Completion<GasStation>) -> Unit): IDNotificationToken {
+        return IDNotificationToken(id, database.gasStationDao(), completion)
     }
 
     fun observe(locations: Map<String, LocationPoint>, completion: (Completion<List<PointOfInterest>>) -> Unit): LocationsNotificationToken {

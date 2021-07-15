@@ -20,6 +20,10 @@ x.y.z Release notes (yyyy-MM-dd)
 * Fix bug that could occur when the user tried to log in but was still logged in with another account
 * Add function to Appkit to request Connected Fueling gas stations by location and radius
 
+### Internal
+
+* Use gas station endpoint as fallback for POI position if none was found in the database when observing a single POI by ID
+
 
 8.2.0 Release notes (2021-07-12)
 =============================================================
