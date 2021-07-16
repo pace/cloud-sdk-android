@@ -157,7 +157,7 @@ object ListTransactionsCSVAPI {
                     )
                 )
                 .build()
-                .create(ListTransactionsCSVService::class.java)    
+                .create(ListTransactionsCSVService::class.java)
 
         return service.listTransactionsCSV(pagenumber, pagesize, sort, filterid, filtercreatedAt?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filterupdatedAt?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filterpaymentMethodId, filterpaymentMethodKind, filterpurposePRN, filterproviderPRN, filterfuelProductName, filterfuelType)
     }

@@ -110,7 +110,7 @@ object StoreSubscriptionAPI {
                     )
                 )
                 .build()
-                .create(StoreSubscriptionService::class.java)    
+                .create(StoreSubscriptionService::class.java)
 
         return service.storeSubscription(body)
     }

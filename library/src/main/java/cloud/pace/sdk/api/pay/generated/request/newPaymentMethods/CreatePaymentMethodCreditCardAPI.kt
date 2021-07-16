@@ -85,7 +85,7 @@ The payment method ID is optional when posting data.
                     )
                 )
                 .build()
-                .create(CreatePaymentMethodCreditCardService::class.java)    
+                .create(CreatePaymentMethodCreditCardService::class.java)
 
         return service.createPaymentMethodCreditCard(body)
     }

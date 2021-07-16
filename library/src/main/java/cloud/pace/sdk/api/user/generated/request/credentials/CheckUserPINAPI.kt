@@ -77,7 +77,7 @@ object CheckUserPINAPI {
                     )
                 )
                 .build()
-                .create(CheckUserPINService::class.java)    
+                .create(CheckUserPINService::class.java)
 
         return service.checkUserPIN(timeout)
     }

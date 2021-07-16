@@ -76,7 +76,7 @@ object GetPolicyAPI {
                     )
                 )
                 .build()
-                .create(GetPolicyService::class.java)    
+                .create(GetPolicyService::class.java)
 
         return service.getPolicy(policyId)
     }

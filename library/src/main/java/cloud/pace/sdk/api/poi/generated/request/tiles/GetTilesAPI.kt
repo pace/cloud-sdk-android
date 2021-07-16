@@ -102,7 +102,7 @@ message Coordinate {
                     )
                 )
                 .build()
-                .create(GetTilesService::class.java)    
+                .create(GetTilesService::class.java)
 
         return service.getTiles(body)
     }

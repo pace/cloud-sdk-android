@@ -74,7 +74,7 @@ object GetStatsAPI {
                     )
                 )
                 .build()
-                .create(GetStatsService::class.java)    
+                .create(GetStatsService::class.java)
 
         return service.getStats()
     }

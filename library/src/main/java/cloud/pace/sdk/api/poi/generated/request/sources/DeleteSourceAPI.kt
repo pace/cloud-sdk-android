@@ -76,7 +76,7 @@ object DeleteSourceAPI {
                     )
                 )
                 .build()
-                .create(DeleteSourceService::class.java)    
+                .create(DeleteSourceService::class.java)
 
         return service.deleteSource(sourceId)
     }

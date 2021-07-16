@@ -83,7 +83,7 @@ object ChangePoiAPI {
                     )
                 )
                 .build()
-                .create(ChangePoiService::class.java)    
+                .create(ChangePoiService::class.java)
 
         return service.changePoi(poiId, body)
     }

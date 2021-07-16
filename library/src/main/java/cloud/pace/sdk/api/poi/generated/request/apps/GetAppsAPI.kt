@@ -104,7 +104,7 @@ object GetAppsAPI {
                     )
                 )
                 .build()
-                .create(GetAppsService::class.java)    
+                .create(GetAppsService::class.java)
 
         return service.getApps(pagenumber, pagesize, filterappType, filtercache, filtersince?.toIso8601()?.dropLast(9)?.let { it +'Z'} )
     }

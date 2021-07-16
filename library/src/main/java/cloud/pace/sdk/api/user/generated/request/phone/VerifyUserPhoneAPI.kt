@@ -76,7 +76,7 @@ object VerifyUserPhoneAPI {
                     )
                 )
                 .build()
-                .create(VerifyUserPhoneService::class.java)    
+                .create(VerifyUserPhoneService::class.java)
 
         return service.verifyUserPhone(body)
     }

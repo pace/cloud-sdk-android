@@ -83,7 +83,7 @@ object AuthorizePaymentTokenAPI {
                     )
                 )
                 .build()
-                .create(AuthorizePaymentTokenService::class.java)    
+                .create(AuthorizePaymentTokenService::class.java)
 
         return service.authorizePaymentToken(paymentMethodId, body)
     }

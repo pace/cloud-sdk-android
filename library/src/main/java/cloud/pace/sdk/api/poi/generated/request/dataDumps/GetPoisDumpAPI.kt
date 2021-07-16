@@ -85,7 +85,7 @@ object GetPoisDumpAPI {
                     )
                 )
                 .build()
-                .create(GetPoisDumpService::class.java)    
+                .create(GetPoisDumpService::class.java)
 
         return service.getPoisDump(accept)
     }

@@ -81,7 +81,7 @@ object CreateAppAPI {
                     )
                 )
                 .build()
-                .create(CreateAppService::class.java)    
+                .create(CreateAppService::class.java)
 
         return service.createApp(body)
     }

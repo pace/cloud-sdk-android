@@ -75,7 +75,7 @@ object GetPaymentTokenAPI {
                     )
                 )
                 .build()
-                .create(GetPaymentTokenService::class.java)    
+                .create(GetPaymentTokenService::class.java)
 
         return service.getPaymentToken(paymentTokenId)
     }

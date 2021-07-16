@@ -79,7 +79,7 @@ object MovePoiAtPositionAPI {
                     )
                 )
                 .build()
-                .create(MovePoiAtPositionService::class.java)    
+                .create(MovePoiAtPositionService::class.java)
 
         return service.movePoiAtPosition(body)
     }

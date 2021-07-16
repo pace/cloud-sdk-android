@@ -78,7 +78,7 @@ In case the query returns a `404` (`Not Found`) the app was deleted and should b
                     )
                 )
                 .build()
-                .create(GetAppService::class.java)    
+                .create(GetAppService::class.java)
 
         return service.getApp(appID)
     }

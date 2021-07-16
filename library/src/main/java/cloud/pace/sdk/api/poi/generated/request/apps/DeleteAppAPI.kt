@@ -76,7 +76,7 @@ object DeleteAppAPI {
                     )
                 )
                 .build()
-                .create(DeleteAppService::class.java)    
+                .create(DeleteAppService::class.java)
 
         return service.deleteApp(appID)
     }

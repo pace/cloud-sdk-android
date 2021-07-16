@@ -85,7 +85,7 @@ The list will contain the pre-authorized amount (incl. currency), the purpose PR
                     )
                 )
                 .build()
-                .create(GetPaymentMethodsIncludingPaymentTokenService::class.java)    
+                .create(GetPaymentMethodsIncludingPaymentTokenService::class.java)
 
         return service.getPaymentMethodsIncludingPaymentToken(include, filterpurpose)
     }

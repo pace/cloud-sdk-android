@@ -83,7 +83,7 @@ object CreateTOTPAPI {
                     )
                 )
                 .build()
-                .create(CreateTOTPService::class.java)    
+                .create(CreateTOTPService::class.java)
 
         return service.createTOTP(body)
     }

@@ -91,7 +91,7 @@ The following rules apply to verify the PIN:
                     )
                 )
                 .build()
-                .create(UpdateUserPINService::class.java)    
+                .create(UpdateUserPINService::class.java)
 
         return service.updateUserPIN(body)
     }

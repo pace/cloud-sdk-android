@@ -77,7 +77,7 @@ object CheckUserPasswordAPI {
                     )
                 )
                 .build()
-                .create(CheckUserPasswordService::class.java)    
+                .create(CheckUserPasswordService::class.java)
 
         return service.checkUserPassword(timeout)
     }

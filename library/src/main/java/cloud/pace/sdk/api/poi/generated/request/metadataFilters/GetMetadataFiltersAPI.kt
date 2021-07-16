@@ -83,7 +83,7 @@ For the latitude and longitude values used in the request, returns the available
                     )
                 )
                 .build()
-                .create(GetMetadataFiltersService::class.java)    
+                .create(GetMetadataFiltersService::class.java)
 
         return service.getMetadataFilters(latitude, longitude)
     }

@@ -80,7 +80,7 @@ object CancelPreAuthPaymentAPI {
                     )
                 )
                 .build()
-                .create(CancelPreAuthPaymentService::class.java)    
+                .create(CancelPreAuthPaymentService::class.java)
 
         return service.cancelPreAuthPayment(transactionId)
     }

@@ -77,7 +77,7 @@ object GetTransactionAPI {
                     )
                 )
                 .build()
-                .create(GetTransactionService::class.java)    
+                .create(GetTransactionService::class.java)
 
         return service.getTransaction(transactionId)
     }

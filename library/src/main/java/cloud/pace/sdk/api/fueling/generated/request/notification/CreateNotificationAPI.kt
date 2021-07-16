@@ -80,7 +80,7 @@ object CreateNotificationAPI {
                     )
                 )
                 .build()
-                .create(CreateNotificationService::class.java)    
+                .create(CreateNotificationService::class.java)
 
         return service.createNotification(vendor)
     }

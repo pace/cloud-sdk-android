@@ -74,7 +74,7 @@ object DeleteSubscriptionAPI {
                     )
                 )
                 .build()
-                .create(DeleteSubscriptionService::class.java)    
+                .create(DeleteSubscriptionService::class.java)
 
         return service.deleteSubscription()
     }

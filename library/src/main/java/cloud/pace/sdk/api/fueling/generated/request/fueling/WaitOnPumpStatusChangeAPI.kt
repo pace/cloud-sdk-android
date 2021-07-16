@@ -116,7 +116,7 @@ Only use after approaching, otherwise returns `403 Forbidden`.
                     )
                 )
                 .build()
-                .create(WaitOnPumpStatusChangeService::class.java)    
+                .create(WaitOnPumpStatusChangeService::class.java)
 
         return service.waitOnPumpStatusChange(gasStationId, pumpId, update, lastStatus, timeout)
     }

@@ -79,7 +79,7 @@ object GetRegionalPricesAPI {
                     )
                 )
                 .build()
-                .create(GetRegionalPricesService::class.java)    
+                .create(GetRegionalPricesService::class.java)
 
         return service.getRegionalPrices(filterlatitude, filterlongitude)
     }

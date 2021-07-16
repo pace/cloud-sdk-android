@@ -87,7 +87,7 @@ If you provide a valid Billing Agreement ID, the payment method is created direc
                     )
                 )
                 .build()
-                .create(CreatePaymentMethodPayPalService::class.java)    
+                .create(CreatePaymentMethodPayPalService::class.java)
 
         return service.createPaymentMethodPayPal(body)
     }

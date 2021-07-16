@@ -94,7 +94,7 @@ Please note that calling this API is very cheap and can be done regularly.
                     )
                 )
                 .build()
-                .create(CheckForPaceAppService::class.java)    
+                .create(CheckForPaceAppService::class.java)
 
         return service.checkForPaceApp(filterlatitude, filterlongitude, filterappType)
     }

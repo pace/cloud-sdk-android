@@ -82,7 +82,7 @@ object GetPaymentTokensAPI {
                     )
                 )
                 .build()
-                .create(GetPaymentTokensService::class.java)    
+                .create(GetPaymentTokensService::class.java)
 
         return service.getPaymentTokens(filtervalid)
     }

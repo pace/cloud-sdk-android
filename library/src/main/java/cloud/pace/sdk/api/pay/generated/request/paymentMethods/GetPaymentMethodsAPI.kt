@@ -73,7 +73,7 @@ object GetPaymentMethodsAPI {
                     )
                 )
                 .build()
-                .create(GetPaymentMethodsService::class.java)    
+                .create(GetPaymentMethodsService::class.java)
 
         return service.getPaymentMethods()
     }

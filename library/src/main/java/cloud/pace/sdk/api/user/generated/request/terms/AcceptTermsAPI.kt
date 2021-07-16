@@ -78,7 +78,7 @@ consent with the terms of service.
                     )
                 )
                 .build()
-                .create(AcceptTermsService::class.java)    
+                .create(AcceptTermsService::class.java)
 
         return service.acceptTerms(termsId)
     }

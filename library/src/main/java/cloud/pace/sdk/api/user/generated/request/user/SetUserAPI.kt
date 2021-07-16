@@ -76,7 +76,7 @@ object SetUserAPI {
                     )
                 )
                 .build()
-                .create(SetUserService::class.java)    
+                .create(SetUserService::class.java)
 
         return service.setUser(userId)
     }

@@ -82,7 +82,7 @@ object GetEventsAPI {
                     )
                 )
                 .build()
-                .create(GetEventsService::class.java)    
+                .create(GetEventsService::class.java)
 
         return service.getEvents(pagenumber, pagesize, filtersourceId, filteruserId)
     }

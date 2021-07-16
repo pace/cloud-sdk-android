@@ -83,7 +83,7 @@ object GetPoisAPI {
                     )
                 )
                 .build()
-                .create(GetPoisService::class.java)    
+                .create(GetPoisService::class.java)
 
         return service.getPois(pagenumber, pagesize, filterpoiType, filterappId)
     }

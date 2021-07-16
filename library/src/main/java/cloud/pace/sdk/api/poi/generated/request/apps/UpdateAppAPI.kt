@@ -83,7 +83,7 @@ object UpdateAppAPI {
                     )
                 )
                 .build()
-                .create(UpdateAppService::class.java)    
+                .create(UpdateAppService::class.java)
 
         return service.updateApp(appID, body)
     }

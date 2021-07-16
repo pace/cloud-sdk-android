@@ -87,7 +87,7 @@ If the process is not completed within 24h the process is canceled.
                     )
                 )
                 .build()
-                .create(UpdateUserPhoneService::class.java)    
+                .create(UpdateUserPhoneService::class.java)
 
         return service.updateUserPhone(body)
     }

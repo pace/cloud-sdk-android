@@ -79,7 +79,7 @@ object CancelPreAuthAPI {
                     )
                 )
                 .build()
-                .create(CancelPreAuthService::class.java)    
+                .create(CancelPreAuthService::class.java)
 
         return service.cancelPreAuth(gasStationId, transactionId)
     }

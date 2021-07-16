@@ -75,7 +75,7 @@ object CreateUserPasswordAPI {
                     )
                 )
                 .build()
-                .create(CreateUserPasswordService::class.java)    
+                .create(CreateUserPasswordService::class.java)
 
         return service.createUserPassword()
     }

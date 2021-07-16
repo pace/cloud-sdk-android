@@ -9,6 +9,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Breaking changes
 
 * Change default authentication mode to `AuthenticationMode.NATIVE`
+* Request with multiple accept headers correctly generated e.g. `GetTermsAPI`
 
 ### Enhancements
 

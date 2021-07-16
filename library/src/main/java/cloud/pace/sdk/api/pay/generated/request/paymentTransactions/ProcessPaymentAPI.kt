@@ -91,7 +91,7 @@ Only use after approaching (fueling api), otherwise returns `403 Forbidden`.
                     )
                 )
                 .build()
-                .create(ProcessPaymentService::class.java)    
+                .create(ProcessPaymentService::class.java)
 
         return service.processPayment(announce, body)
     }

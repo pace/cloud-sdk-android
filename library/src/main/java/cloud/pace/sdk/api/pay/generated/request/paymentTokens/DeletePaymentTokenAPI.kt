@@ -75,7 +75,7 @@ object DeletePaymentTokenAPI {
                     )
                 )
                 .build()
-                .create(DeletePaymentTokenService::class.java)    
+                .create(DeletePaymentTokenService::class.java)
 
         return service.deletePaymentToken(paymentTokenId)
     }

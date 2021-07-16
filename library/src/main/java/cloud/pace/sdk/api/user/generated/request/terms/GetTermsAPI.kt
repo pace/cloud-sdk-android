@@ -40,13 +40,19 @@ object GetTermsAPI {
         fun getTerms(
             @Path("termsId") termsId: String? = null,
             @Query("redirectUri") redirectUri: String? = null,
-            @Header("Accept-Language") acceptLanguage: String? = null
+            @Header("Accept-Language") acceptLanguage: String? = null, 
+            @Header("Accept") accept: String? = null
         ): Call<Terms>
     }
 
-    fun UserAPI.TermsAPI.getTerms(termsId: String? = null, redirectUri: String? = null, acceptLanguage: String? = null, readTimeout: Long? = null): Call<Terms> {
+    enum class GetTermsAcceptHeader(val value: String) {
+        APPLICATION_VND_API_JSON("application/vnd.api+json"),
+        TEXT_HTML("text/html")
+    }
+
+    fun UserAPI.TermsAPI.getTerms(termsId: String? = null, redirectUri: String? = null, acceptLanguage: String? = null, readTimeout: Long? = null, accept: GetTermsAcceptHeader? = null): Call<Terms> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", false))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor(null, "application/vnd.api+json", false))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {
@@ -78,8 +84,8 @@ object GetTermsAPI {
                     )
                 )
                 .build()
-                .create(GetTermsService::class.java)    
+                .create(GetTermsService::class.java)
 
-        return service.getTerms(termsId, redirectUri, acceptLanguage)
+        return service.getTerms(termsId, redirectUri, acceptLanguage, accept?.value)
     }
 }
