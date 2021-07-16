@@ -109,6 +109,18 @@ fun Location.toLocationPoint(): LocationPoint {
     return LocationPoint(this.latitude, this.longitude)
 }
 
+fun LocationPoint.toTileQueryRequest(zoomLevel: Int): TileQueryRequestOuterClass.TileQueryRequest {
+    val tileInfo = tileInfo(zoomLevel)
+    val tile = TileQueryRequestOuterClass.TileQueryRequest.IndividualTileQuery.newBuilder().also {
+        it.geo = TileQueryRequestOuterClass.TileQueryRequest.Coordinate.newBuilder().setX(tileInfo.x).setY(tileInfo.y).build()
+    }.build()
+
+    return TileQueryRequestOuterClass.TileQueryRequest.newBuilder()
+        .addTiles(tile)
+        .setZoom(zoomLevel)
+        .build()
+}
+
 fun Collection<LocationPoint>.toTileQueryRequest(zoomLevel: Int): TileQueryRequestOuterClass.TileQueryRequest {
     // Build request from bounding box
     val tiles = this

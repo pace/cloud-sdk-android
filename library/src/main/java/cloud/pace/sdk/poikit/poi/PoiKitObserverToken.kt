@@ -3,15 +3,16 @@ package cloud.pace.sdk.poikit.poi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.poi.POIAPI.gasStations
+import cloud.pace.sdk.api.poi.generated.request.gasStations.GetGasStationAPI.getGasStation
 import cloud.pace.sdk.poikit.database.GasStationDAO
 import cloud.pace.sdk.poikit.poi.download.TileDownloader
+import cloud.pace.sdk.poikit.utils.ApiException
 import cloud.pace.sdk.poikit.utils.POIKitConfig
 import cloud.pace.sdk.poikit.utils.addPadding
 import cloud.pace.sdk.poikit.utils.toTileQueryRequest
-import cloud.pace.sdk.utils.CloudSDKKoinComponent
-import cloud.pace.sdk.utils.Completion
-import cloud.pace.sdk.utils.Failure
-import cloud.pace.sdk.utils.Success
+import cloud.pace.sdk.utils.*
 import com.google.android.gms.maps.model.VisibleRegion
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
@@ -142,6 +143,75 @@ class IDsNotificationToken(
     override fun invalidate() {
         gasStations.removeObserver(gasStationsObserver)
         downloadTask?.cancel()
+    }
+}
+
+class IDNotificationToken(
+    private val id: String,
+    private val gasStationDao: GasStationDAO,
+    private val completion: (Completion<GasStation>) -> Unit
+) : PoiKitObserverToken() {
+
+    private val gasStation = gasStationDao.getByIdsLive(listOf(id))
+    private val gasStationObserver = Observer<List<GasStation>> { it.firstOrNull()?.let { station -> completion(Success(station)) } }
+    private var downloadTask: Call? = null
+
+    init {
+        gasStation.observeForever(gasStationObserver)
+    }
+
+    override fun refresh(zoomLevel: Int) {
+        loading.value = true
+
+        GlobalScope.launch {
+            val location = gasStationDao.getByIds(listOf(id)).mapNotNull { it.center }.firstOrNull()
+            if (location != null) {
+                download(location, zoomLevel)
+            } else {
+                API.gasStations.getGasStation(id, false).enqueue {
+                    onResponse = {
+                        val body = it.body()
+                        if (it.isSuccessful && body != null) {
+                            val latitude = body.latitude?.toDouble()
+                            val longitude = body.longitude?.toDouble()
+                            if (latitude != null && longitude != null) {
+                                download(LocationPoint(latitude, longitude), zoomLevel)
+                            } else {
+                                completion(Failure(Exception("Latitude or longitude is null")))
+                            }
+                        } else {
+                            completion(Failure(ApiException(it.code(), it.message())))
+                        }
+                    }
+
+                    onFailure = {
+                        completion(Failure(it ?: Exception("Unknown exception")))
+                    }
+                }
+            }
+        }
+
+        super.refresh(zoomLevel)
+    }
+
+    override fun invalidate() {
+        gasStation.removeObserver(gasStationObserver)
+        downloadTask?.cancel()
+    }
+
+    private fun download(location: LocationPoint, zoomLevel: Int) {
+        downloadTask = tileDownloader.load(location.toTileQueryRequest(zoomLevel)) {
+            it.onSuccess { stations ->
+                stations.forEach { station -> station.updatedAt = Date() }
+                gasStationDao.insertGasStations(stations)
+                MainScope().launch { loading.value = false }
+            }
+
+            it.onFailure { error ->
+                completion(Failure(error))
+                MainScope().launch { loading.value = false }
+            }
+        }
     }
 }
 
