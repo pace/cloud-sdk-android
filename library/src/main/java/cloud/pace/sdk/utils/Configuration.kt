@@ -11,7 +11,8 @@ data class Configuration @JvmOverloads constructor(
     var domainACL: List<String> = emptyList(),
     var locationAccuracy: Int? = null,
     var speedThresholdInKmPerHour: Int = 50,
-    var geoAppsScope: String = "pace"
+    var geoAppsScope: String = "pace",
+    var appsDistanceThresholdInMeters: Int = 150
 )
 
 enum class AuthenticationMode(val value: String) {

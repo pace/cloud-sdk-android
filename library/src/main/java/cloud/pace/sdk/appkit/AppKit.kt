@@ -123,12 +123,11 @@ object AppKit : CloudSDKKoinComponent {
      *
      * @param context Context which should be used to start the [AppActivity].
      * @param enableBackToFinish True if the [AppActivity] should be finished or false if the [cloud.pace.sdk.appkit.app.webview.AppWebView] should navigate back on back press.
-     * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
     @JvmOverloads
-    fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, url, enableBackToFinish, autoClose, callback)
+    fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
+        appManager.openAppActivity(context, url, enableBackToFinish, callback)
     }
 
     /**
@@ -136,12 +135,11 @@ object AppKit : CloudSDKKoinComponent {
      *
      * @param context Context which should be used to start the [AppActivity].
      * @param enableBackToFinish True if the [AppActivity] should be finished or false if the [cloud.pace.sdk.appkit.app.webview.AppWebView] should navigate back on back press.
-     * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
     @JvmOverloads
-    fun openAppActivity(context: Context, app: App, enableBackToFinish: Boolean = false, autoClose: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, app, enableBackToFinish, autoClose, callback)
+    fun openAppActivity(context: Context, app: App, enableBackToFinish: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
+        appManager.openAppActivity(context, app, enableBackToFinish, callback)
     }
 
     /**
@@ -149,12 +147,11 @@ object AppKit : CloudSDKKoinComponent {
      *
      * @param context Context which should be used to start the [AppActivity].
      * @param enableBackToFinish True if the [AppActivity] should be finished or false if the [cloud.pace.sdk.appkit.app.webview.AppWebView] should navigate back on back press.
-     * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
     @JvmOverloads
-    fun openPaceID(context: Context, enableBackToFinish: Boolean = true, autoClose: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, PACECloudSDK.configuration.environment.idUrl, enableBackToFinish, autoClose, callback)
+    fun openPaceID(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
+        appManager.openAppActivity(context, PACECloudSDK.configuration.environment.idUrl, enableBackToFinish, callback)
     }
 
     /**
@@ -162,12 +159,11 @@ object AppKit : CloudSDKKoinComponent {
      *
      * @param context Context which should be used to start the [AppActivity].
      * @param enableBackToFinish True if the [AppActivity] should be finished or false if the [cloud.pace.sdk.appkit.app.webview.AppWebView] should navigate back on back press.
-     * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
     @JvmOverloads
-    fun openPaymentApp(context: Context, enableBackToFinish: Boolean = true, autoClose: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, PACECloudSDK.configuration.environment.payUrl, enableBackToFinish, autoClose, callback)
+    fun openPaymentApp(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
+        appManager.openAppActivity(context, PACECloudSDK.configuration.environment.payUrl, enableBackToFinish, callback)
     }
 
     /**
@@ -175,12 +171,11 @@ object AppKit : CloudSDKKoinComponent {
      *
      * @param context Context which should be used to start the [AppActivity].
      * @param enableBackToFinish True if the [AppActivity] should be finished or false if the [cloud.pace.sdk.appkit.app.webview.AppWebView] should navigate back on back press.
-     * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
     @JvmOverloads
-    fun openTransactions(context: Context, enableBackToFinish: Boolean = true, autoClose: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, PACECloudSDK.configuration.environment.transactionUrl, enableBackToFinish, autoClose, callback)
+    fun openTransactions(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
+        appManager.openAppActivity(context, PACECloudSDK.configuration.environment.transactionUrl, enableBackToFinish, callback)
     }
 
     /**
@@ -189,18 +184,17 @@ object AppKit : CloudSDKKoinComponent {
      * @param context Context which should be used to start the [AppActivity].
      * @param id Needed to get Fueling App Url for specific gas station
      * @param enableBackToFinish True if the [AppActivity] should be finished or false if the [cloud.pace.sdk.appkit.app.webview.AppWebView] should navigate back on back press.
-     * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or the API does not return the app anymore, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
     @JvmOverloads
-    fun openFuelingApp(context: Context, id: String? = null, enableBackToFinish: Boolean = true, autoClose: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
+    fun openFuelingApp(context: Context, id: String? = null, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
         if (id == null) {
-            appManager.openAppActivity(context, PACECloudSDK.configuration.environment.fuelingUrl, enableBackToFinish, autoClose, callback)
+            appManager.openAppActivity(context, PACECloudSDK.configuration.environment.fuelingUrl, enableBackToFinish, callback)
             return
         }
 
         fetchAppsByUrl(PACECloudSDK.configuration.environment.fuelingUrl, id) {
-            (it as? Success)?.result?.firstOrNull()?.url?.let { url -> appManager.openAppActivity(context, url, enableBackToFinish, autoClose, callback) }
+            (it as? Success)?.result?.firstOrNull()?.url?.let { url -> appManager.openAppActivity(context, url, enableBackToFinish, callback) }
         }
     }
 
@@ -211,7 +205,6 @@ object AppKit : CloudSDKKoinComponent {
      * @param context Context which should be used to start the [AppActivity].
      * @param theme The [Theme] of the [AppDrawer].
      * @param bottomMargin The margin with which the [AppDrawer]s should be drawn to the bottom edge.
-     * @param autoClose True if the [AppActivity] should be closed automatically when new apps are opened or no apps come back from the API, false otherwise.
      * @param callback Via this callback the client app can subscribe to certain app events.
      */
     @JvmOverloads
@@ -221,15 +214,13 @@ object AppKit : CloudSDKKoinComponent {
         buttonContainer: ConstraintLayout,
         theme: Theme = Theme.LIGHT,
         bottomMargin: Float = 16f,
-        autoClose: Boolean = true,
         callback: AppCallbackImpl = defaultAppCallback
     ) {
-        appManager.openApps(context, apps, buttonContainer, theme, bottomMargin, autoClose, callback)
+        appManager.openApps(context, apps, buttonContainer, theme, bottomMargin, callback)
     }
 
     /**
      * Closes (removes) all [AppDrawer]s in the [buttonContainer] parent layout.
-     * Also closes (finishes) the [AppActivity] if it was started with autoClose = true.
      *
      * @see openAppActivity
      * @see openApps
@@ -239,7 +230,7 @@ object AppKit : CloudSDKKoinComponent {
     }
 
     /**
-     * Closes (finishes) the [AppActivity], even if it was started with autoClose = false.
+     * Closes (finishes) the [AppActivity].
      *
      * @see openAppActivity
      * @see openApps

@@ -1,6 +1,7 @@
 package cloud.pace.sdk.appkit.geo
 
 import android.location.Location
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.geo.*
 import cloud.pace.sdk.appkit.app.api.AppAPI
 import cloud.pace.sdk.poikit.POIKit
@@ -9,7 +10,6 @@ import cloud.pace.sdk.poikit.poi.toLocationPoint
 import cloud.pace.sdk.poikit.utils.distanceTo
 import cloud.pace.sdk.utils.*
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.PolyUtil
 import timber.log.Timber
 
 interface GeoAPIManager {
@@ -120,26 +120,29 @@ class GeoAPIManagerImpl(
     private fun getApps(latitude: Double, longitude: Double): List<GeoGasStation> {
         return appsCache?.features
             ?.filter {
-                val polygons = when (it.geometry) {
-                    is GeometryCollection -> it.geometry.geometries.filterIsInstance<Polygon>()
-                    is Polygon -> listOf(it.geometry)
-                    else -> emptyList()
-                }
-
-                polygons.map { polygon ->
-                    polygon.coordinates.map { ring ->
-                        ring.mapNotNull { coordinate ->
-                            val lat = coordinate.lastOrNull()
-                            val lng = coordinate.firstOrNull()
-                            if (lat != null && lng != null) {
-                                LatLng(lat, lng)
-                            } else {
-                                null
+                when (it.geometry) {
+                    is GeometryCollection -> {
+                        // Check if points are available
+                        it.geometry.geometries.filterIsInstance<Point>().flatMap { point ->
+                            point.toLatLngs()
+                        }.ifEmpty {
+                            // Use polygons as fallback (v1)
+                            it.geometry.geometries.filterIsInstance<Polygon>().flatMap { polygon ->
+                                polygon.toLatLngs()
                             }
                         }
                     }
-                }.flatten().any { ring ->
-                    PolyUtil.containsLocation(latitude, longitude, ring, false)
+                    is Point -> {
+                        // Check if points are available
+                        it.geometry.toLatLngs()
+                    }
+                    is Polygon -> {
+                        // Use polygons as fallback (v1)
+                        it.geometry.toLatLngs()
+                    }
+                }.any { coordinate ->
+                    // Filter based on distance to point or polygon
+                    coordinate.distanceTo(LatLng(latitude, longitude)) < PACECloudSDK.configuration.appsDistanceThresholdInMeters
                 }
             }
             ?.mapNotNull {

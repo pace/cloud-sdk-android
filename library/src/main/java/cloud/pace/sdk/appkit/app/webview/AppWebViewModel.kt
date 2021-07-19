@@ -135,7 +135,7 @@ class AppWebViewModelImpl(
     }
 
     override fun close() {
-        appModel.close(true)
+        appModel.close()
     }
 
     override fun onClose() {

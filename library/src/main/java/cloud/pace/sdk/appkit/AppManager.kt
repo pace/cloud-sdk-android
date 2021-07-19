@@ -116,7 +116,6 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
                 val invalidUrls = lastApps.minus(notDisabledUrls)
 
                 appEventManager.setInvalidApps(disabledUrls)
-                appModel.close(urls = disabledUrls)
 
                 if (notDisabledUrls.isEmpty() && lastApps.isNotEmpty()) {
                     val distance = lastLocation?.distanceTo(location)
@@ -132,7 +131,6 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
                 }
 
                 appEventManager.setInvalidApps(invalidUrls)
-                appModel.close(urls = invalidUrls)
 
                 lastApps = notDisabledUrls
                 lastLocation = location
@@ -213,27 +211,26 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
         }
     }
 
-    internal fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, autoClose: Boolean, callback: AppCallbackImpl) {
+    internal fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
         callback.onOpen(null)
-        startAppActivity(context, url, enableBackToFinish, autoClose, callback)
+        startAppActivity(context, url, enableBackToFinish, callback)
     }
 
-    internal fun openAppActivity(context: Context, app: App, enableBackToFinish: Boolean = false, autoClose: Boolean, callback: AppCallbackImpl) {
+    internal fun openAppActivity(context: Context, app: App, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
         callback.onOpen(app)
-        startAppActivity(context, app.url, enableBackToFinish, autoClose, callback)
+        startAppActivity(context, app.url, enableBackToFinish, callback)
     }
 
-    private fun startAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, autoClose: Boolean, callback: AppCallbackImpl) {
+    private fun startAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
         appModel.callback = callback
 
         val intent = Intent(context, AppActivity::class.java)
         intent.putExtra(AppActivity.BACK_TO_FINISH, enableBackToFinish)
         intent.putExtra(AppActivity.APP_URL, url)
-        intent.putExtra(AppActivity.AUTO_CLOSE, autoClose)
         context.startActivity(intent)
     }
 
-    internal fun openApps(context: Context, apps: List<App>, buttonContainer: ConstraintLayout, theme: Theme, bottomMargin: Float, autoClose: Boolean, callback: AppCallbackImpl) {
+    internal fun openApps(context: Context, apps: List<App>, buttonContainer: ConstraintLayout, theme: Theme, bottomMargin: Float, callback: AppCallbackImpl) {
         closeApps(buttonContainer)
 
         var topAppDrawerId: Int? = null
@@ -244,7 +241,7 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
             appDrawer.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
 
             appDrawer.setApp(app, theme == Theme.DARK) {
-                openAppActivity(context, app, autoClose = autoClose, callback = callback)
+                openAppActivity(context, app, callback = callback)
             }
             appDrawer.expand()
 
@@ -281,7 +278,7 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
         appModel.close()
     }
 
-    internal fun closeAppActivity() = appModel.close(true)
+    internal fun closeAppActivity() = appModel.close()
 
     internal fun setCarData(car: Car) = sharedPreferencesModel.setCar(car)
 

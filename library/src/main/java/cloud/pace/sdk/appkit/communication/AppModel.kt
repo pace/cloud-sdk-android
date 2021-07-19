@@ -14,7 +14,7 @@ import timber.log.Timber
 interface AppModel {
 
     var callback: AppCallbackImpl?
-    val close: LiveData<Pair<Boolean, List<String>?>>
+    val close: LiveData<Unit>
     val openUrlInNewTab: LiveData<String>
     val authorize: LiveData<Event<Result<Completion<String?>>>>
     val endSession: LiveData<Event<Result<LogoutResponse>>>
@@ -22,7 +22,7 @@ interface AppModel {
     fun reset()
     fun authorize(onResult: (Completion<String?>) -> Unit)
     fun endSession(onResult: (LogoutResponse) -> Unit)
-    fun close(force: Boolean = false, urls: List<String>? = null)
+    fun close()
     fun openUrlInNewTab(url: String)
     fun disable(host: String)
     fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (Completion<GetAccessTokenResponse>) -> Unit)
@@ -40,7 +40,7 @@ interface AppModel {
 class AppModelImpl : AppModel {
 
     override var callback: AppCallbackImpl? = null
-    override var close = MutableLiveData<Pair<Boolean, List<String>?>>()
+    override var close = MutableLiveData<Unit>()
     override var openUrlInNewTab = MutableLiveData<String>()
     override val authorize = MutableLiveData<Event<AppModel.Result<Completion<String?>>>>()
     override val endSession = MutableLiveData<Event<AppModel.Result<LogoutResponse>>>()
@@ -62,9 +62,9 @@ class AppModelImpl : AppModel {
         }
     }
 
-    override fun close(force: Boolean, urls: List<String>?) {
+    override fun close() {
         onMainThread {
-            close.value = force to urls
+            close.value = Unit
             callback?.onClose()
         }
     }

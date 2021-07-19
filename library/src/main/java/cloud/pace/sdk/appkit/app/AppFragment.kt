@@ -29,15 +29,11 @@ class AppFragment : Fragment(), CloudSDKKoinComponent {
             ?: activity?.intent?.data?.getQueryParameter(AppActivity.TO)
             ?: throw RuntimeException("Missing app URL")
 
-        val autoClose = activity?.intent?.extras?.getBoolean(AppActivity.AUTO_CLOSE) ?: true
-
         appWebView.loadApp(this, InterceptorUtils.getUrlWithQueryParams(url))
 
         viewModel.closeEvent.observe(viewLifecycleOwner) {
-            it.getContentIfNotHandled()?.let { (force, urls) ->
-                if (force || autoClose && (urls == null || urls.contains(url))) {
-                    activity?.finish()
-                }
+            it.getContentIfNotHandled()?.let {
+                activity?.finish()
             }
         }
 

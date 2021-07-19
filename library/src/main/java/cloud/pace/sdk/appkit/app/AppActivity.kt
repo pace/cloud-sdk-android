@@ -100,7 +100,6 @@ class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
     companion object {
         const val APP_URL = "APP_URL"
         const val BACK_TO_FINISH = "BACK_TO_FINISH"
-        const val AUTO_CLOSE = "AUTO_CLOSE"
         const val TO = "to"
     }
 }

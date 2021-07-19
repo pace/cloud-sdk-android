@@ -38,7 +38,7 @@ class GeoAPIManagerTest {
     )
 
     @Test
-    fun `app is available because location is inside of the polygon`() {
+    fun `app is available because location distance is smaller than 150 meters`() {
         val appApi = object : TestAppAPI() {
             override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
                 completion(Result.success(createGeoAPIResponse(listOf(polygon))))
@@ -57,7 +57,7 @@ class GeoAPIManagerTest {
     }
 
     @Test
-    fun `app is available because location is inside on the edge of the polygon`() {
+    fun `app is not available because location distance is greater than 150 meters`() {
         val appApi = object : TestAppAPI() {
             override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
                 completion(Result.success(createGeoAPIResponse(listOf(polygon))))
@@ -66,45 +66,7 @@ class GeoAPIManagerTest {
 
         val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
         val gasStationFuture = CompletableFutureCompat<List<GeoGasStation>>()
-        geoApiManager.apps(49.012679, 8.426794) {
-            it.onSuccess { gasStationFuture.complete(it) }
-            it.onFailure { throw it }
-        }
-
-        val gasStation = gasStationFuture.get(2, TimeUnit.SECONDS)
-        assertEquals(1, gasStation.size)
-    }
-
-    @Test
-    fun `app is not available because location is outside of the polygon`() {
-        val appApi = object : TestAppAPI() {
-            override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
-                completion(Result.success(createGeoAPIResponse(listOf(polygon))))
-            }
-        }
-
-        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
-        val gasStationFuture = CompletableFutureCompat<List<GeoGasStation>>()
-        geoApiManager.apps(49.011819, 8.426067) {
-            it.onSuccess { gasStationFuture.complete(it) }
-            it.onFailure { throw it }
-        }
-
-        val gasStation = gasStationFuture.get(2, TimeUnit.SECONDS)
-        assertEquals(0, gasStation.size)
-    }
-
-    @Test
-    fun `app is not available because location is outside on the edge of the polygon`() {
-        val appApi = object : TestAppAPI() {
-            override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
-                completion(Result.success(createGeoAPIResponse(listOf(polygon))))
-            }
-        }
-
-        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
-        val gasStationFuture = CompletableFutureCompat<List<GeoGasStation>>()
-        geoApiManager.apps(49.012716, 8.426764) {
+        geoApiManager.apps(49.0599842, 8.374426) {
             it.onSuccess { gasStationFuture.complete(it) }
             it.onFailure { throw it }
         }
@@ -123,7 +85,7 @@ class GeoAPIManagerTest {
 
         val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
         val gasStationFuture = CompletableFutureCompat<List<GeoGasStation>>()
-        geoApiManager.apps(49.012716, 8.426764) {
+        geoApiManager.apps(49.405779, 8.6485949) {
             it.onSuccess { gasStationFuture.complete(it) }
             it.onFailure { throw it }
         }
