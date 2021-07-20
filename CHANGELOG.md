@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+9.0.0 Release notes (2021-07-20)
+=============================================================
+
+
 ### Breaking changes
 
 * Change default authentication mode to `AuthenticationMode.NATIVE`
