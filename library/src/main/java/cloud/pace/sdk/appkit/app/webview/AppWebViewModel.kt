@@ -10,90 +10,43 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.R
 import cloud.pace.sdk.api.utils.InterceptorUtils
-import cloud.pace.sdk.appkit.communication.*
+import cloud.pace.sdk.appkit.communication.AppEventManager
+import cloud.pace.sdk.appkit.communication.AppModel
+import cloud.pace.sdk.appkit.communication.InvalidTokenReason
+import cloud.pace.sdk.appkit.communication.LogoutResponse
+import cloud.pace.sdk.appkit.communication.generated.Communication
+import cloud.pace.sdk.appkit.communication.generated.Metadata
+import cloud.pace.sdk.appkit.communication.generated.model.request.*
+import cloud.pace.sdk.appkit.communication.generated.model.response.*
 import cloud.pace.sdk.appkit.pay.PayAuthenticationManager
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getDisableTimePreferenceKey
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getSecureDataPreferenceKey
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.persistence.TotpSecret
 import cloud.pace.sdk.appkit.utils.EncryptionUtils
+import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.utils.*
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.*
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.withTimeout
 import timber.log.Timber
-import java.net.HttpURLConnection
 import java.util.*
 
-abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback {
+abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback, Communication {
 
     abstract val currentUrl: MutableLiveData<String?>
     abstract val loadUrl: LiveData<Event<String>>
     abstract val isInErrorState: LiveData<Event<Boolean>>
     abstract val showLoadingIndicator: LiveData<Event<Boolean>>
     abstract val biometricRequest: LiveData<Event<BiometricRequest>>
-    abstract val getAccessTokenResponse: LiveData<ResponseEvent<GetAccessTokenResponse>>
-    abstract val verifyLocationResponse: LiveData<ResponseEvent<VerifyLocationResponse>>
-    abstract val getLocationResponse: LiveData<ResponseEvent<GetLocationResponse>>
     abstract val goBack: LiveData<Event<Unit>>
-    abstract val isBiometricAvailable: LiveData<ResponseEvent<Boolean>>
-    abstract val statusCode: LiveData<ResponseEvent<StatusCodeResponse>>
-    abstract val totpResponse: LiveData<ResponseEvent<TOTPResponse>>
-    abstract val secureData: LiveData<ResponseEvent<Map<String, String>>>
-    abstract val appInterceptableLink: LiveData<ResponseEvent<AppInterceptableLinkResponse>>
-    abstract val valueResponse: LiveData<ResponseEvent<ValueResponse>>
 
     abstract fun init(url: String)
-    abstract fun close()
-    abstract fun handleGetAccessToken(message: String)
-    abstract fun handleLogout(message: String)
-    abstract fun handleImageData(message: String)
-    abstract fun handleVerifyLocation(message: String)
-    abstract fun handleGetLocation(message: String)
-    abstract fun handleBack(message: String)
-    abstract fun handleClose(message: String)
-    abstract fun handleGetBiometricStatus(message: String)
-    abstract fun handleSetTOTPSecret(message: String)
-    abstract fun handleGetTOTP(message: String)
-    abstract fun handleSetSecureData(message: String)
-    abstract fun handleGetSecureData(message: String)
-    abstract fun handleDisable(message: String)
-    abstract fun handleOpenURLInNewTab(message: String)
-    abstract fun handleGetAppInterceptableLink(message: String)
-    abstract fun handleSetUserProperty(message: String)
-    abstract fun handleLogEvent(message: String)
-    abstract fun handleGetConfig(message: String)
-    abstract fun handleGetTraceId(message: String)
+    abstract fun closeApp()
 
-    class MessageBundle<T>(val id: String?, val message: T)
-    class ResponseEvent<T>(id: String?, content: T) : Event<MessageBundle<T>>(MessageBundle(id, content))
-
-    class GetAccessTokenRequest(val reason: String, val oldToken: String?)
-    class VerifyLocationRequest(val lat: Double, val lon: Double, val threshold: Double)
     class BiometricRequest(@StringRes val title: Int, val onSuccess: () -> Unit, val onFailure: (errorCode: Int, errString: CharSequence) -> Unit)
-    class SetTOTPRequest(val secret: String, val period: Int, val digits: Int, val algorithm: String, val key: String)
-    class GetTOTPRequest(val serverTime: Int, val key: String)
-    class SetSecureDataRequest(val key: String, val value: String)
-    class KeyRequest(val key: String)
-    class DisableRequest(val until: Long)
-    class OpenURLInNewTabRequest(val url: String, val cancelUrl: String)
-    class SetUserPropertyRequest(val key: String, val value: String, val update: Boolean = false)
-    class LogEventRequest(val key: String, val parameters: Map<String, Any> = emptyMap())
-
-    class VerifyLocationResponse(val verified: Boolean?, val accuracy: Float?)
-    class GetLocationResponse(val lat: Double, val lon: Double, val accuracy: Float?)
-    class TOTPResponse(val totp: String, val biometryMethod: String)
-    class AppInterceptableLinkResponse(val link: String)
-    class ValueResponse(val value: String)
-
-    sealed class StatusCodeResponse(val statusCode: Int) {
-        class Success(statusCode: Int = HttpURLConnection.HTTP_OK) : StatusCodeResponse(statusCode)
-        class Failure(statusCode: Int, val message: String? = null) : StatusCodeResponse(statusCode)
-    }
 
     enum class BiometryMethod(val value: String) {
         FINGERPRINT("fingerprint"),
@@ -104,7 +57,6 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
 
 class AppWebViewModelImpl(
     private val context: Context,
-    private val dispatchers: DispatcherProvider,
     private val sharedPreferencesModel: SharedPreferencesModel,
     private val eventManager: AppEventManager,
     private val payAuthenticationManager: PayAuthenticationManager,
@@ -117,29 +69,18 @@ class AppWebViewModelImpl(
     override val isInErrorState = MutableLiveData<Event<Boolean>>()
     override val showLoadingIndicator = MutableLiveData<Event<Boolean>>()
     override val biometricRequest = MutableLiveData<Event<BiometricRequest>>()
-    override val getAccessTokenResponse = MutableLiveData<ResponseEvent<GetAccessTokenResponse>>()
-    override val verifyLocationResponse = MutableLiveData<ResponseEvent<VerifyLocationResponse>>()
-    override val getLocationResponse = MutableLiveData<ResponseEvent<GetLocationResponse>>()
     override val goBack = MutableLiveData<Event<Unit>>()
-    override val isBiometricAvailable = MutableLiveData<ResponseEvent<Boolean>>()
-    override val statusCode = MutableLiveData<ResponseEvent<StatusCodeResponse>>()
-    override val totpResponse = MutableLiveData<ResponseEvent<TOTPResponse>>()
-    override val secureData = MutableLiveData<ResponseEvent<Map<String, String>>>()
-    override val appInterceptableLink = MutableLiveData<ResponseEvent<AppInterceptableLinkResponse>>()
-    override val valueResponse = MutableLiveData<ResponseEvent<ValueResponse>>()
-
-    private val gson = Gson()
 
     override fun init(url: String) {
         this.loadUrl.value = Event(url)
     }
 
-    override fun close() {
+    override fun closeApp() {
         appModel.close()
     }
 
     override fun onClose() {
-        close()
+        closeApp()
     }
 
     override fun onSwitchErrorState(isError: Boolean, isHttpError: Boolean) {
@@ -154,56 +95,312 @@ class AppWebViewModelImpl(
         currentUrl.value = newUrl
     }
 
-    override fun handleGetAccessToken(message: String) {
-        val messageBundle = getMessageBundle<GetAccessTokenRequest>(message) ?: return
-        launch {
-            suspendCoroutineWithTimeout<GetAccessTokenResponse?>(message, MessageHandler.GET_ACCESS_TOKEN.timeoutMillis) { continuation ->
-                val reason = messageBundle.message.reason
-                val invalidTokenReason = InvalidTokenReason.values().associateBy(InvalidTokenReason::value)[reason] ?: InvalidTokenReason.OTHER
-                appModel.getAccessToken(invalidTokenReason, messageBundle.message.oldToken) {
+    override suspend fun introspect(timeout: Long): IntrospectResult {
+        return try {
+            withTimeout(timeout) {
+                IntrospectResult(IntrospectResult.Success(IntrospectResponse(Metadata.version, Metadata.operations)))
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for introspect")
+            IntrospectResult(IntrospectResult.Failure(IntrospectResult.Failure.StatusCode.RequestTimeout, IntrospectError(e.message)))
+        }
+    }
+
+    override suspend fun close(timeout: Long): CloseResult {
+        return try {
+            withTimeout(timeout) {
+                closeApp()
+                CloseResult(CloseResult.Success())
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for close")
+            CloseResult(CloseResult.Failure(CloseResult.Failure.StatusCode.RequestTimeout, CloseError(e.message)))
+        }
+    }
+
+    override suspend fun logout(timeout: Long): LogoutResult {
+        return try {
+            suspendCoroutineWithTimeout(timeout) { continuation ->
+                appModel.onLogout {
                     when (it) {
-                        is Success -> continuation.resumeIfActive(it.result)
-                        is Failure -> {
-                            statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, it.throwable.message)))
-                            continuation.resumeIfActive(null)
-                        }
+                        LogoutResponse.SUCCESSFUL -> continuation.resumeIfActive(LogoutResult(LogoutResult.Success()))
+                        LogoutResponse.UNAUTHORIZED -> continuation.resumeIfActive(
+                            LogoutResult(
+                                LogoutResult.Failure(
+                                    LogoutResult.Failure.StatusCode.NotFound,
+                                    LogoutError("User was not even logged in")
+                                )
+                            )
+                        )
+                        LogoutResponse.OTHER -> continuation.resumeIfActive(LogoutResult(LogoutResult.Failure(LogoutResult.Failure.StatusCode.InternalServerError, LogoutError())))
                     }
                 }
-            }?.let {
-                getAccessTokenResponse.postValue(ResponseEvent(messageBundle.id, it))
             }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for logout")
+            LogoutResult(LogoutResult.Failure(LogoutResult.Failure.StatusCode.RequestTimeout, LogoutError(e.message)))
         }
     }
 
-    override fun handleLogout(message: String) {
-        val messageBundle = getMessageBundle<String>(message) ?: return
-        launch {
-            suspendCoroutineWithTimeout<LogoutResponse>(message, MessageHandler.LOGOUT.timeoutMillis) { continuation ->
-                appModel.onLogout {
-                    continuation.resumeIfActive(it)
+    override suspend fun getBiometricStatus(timeout: Long): GetBiometricStatusResult {
+        return try {
+            withTimeout(timeout) {
+                GetBiometricStatusResult(GetBiometricStatusResult.Success(GetBiometricStatusResponse(payAuthenticationManager.isFingerprintAvailable())))
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for getBiometricStatus")
+            GetBiometricStatusResult(GetBiometricStatusResult.Failure(GetBiometricStatusResult.Failure.StatusCode.RequestTimeout, GetBiometricStatusError(e.message)))
+        }
+    }
+
+    override suspend fun setTOTP(timeout: Long, setTOTPRequest: SetTOTPRequest): SetTOTPResult {
+        return try {
+            val algorithm = EncryptionUtils.stringToAlgorithm(setTOTPRequest.algorithm)
+            if (algorithm != null) {
+                val host = getHost()
+                if (host != null) {
+                    try {
+                        val encryptedSecret = EncryptionUtils.encrypt(setTOTPRequest.secret)
+                        sharedPreferencesModel.setTotpSecret(host, setTOTPRequest.key, TotpSecret(encryptedSecret, setTOTPRequest.digits, setTOTPRequest.period, setTOTPRequest.algorithm))
+                        SetTOTPResult(SetTOTPResult.Success())
+                    } catch (e: Exception) {
+                        SetTOTPResult(SetTOTPResult.Failure(SetTOTPResult.Failure.StatusCode.InternalServerError, SetTOTPError("Could not encrypt the TOTP secret.")))
+                    }
+                } else {
+                    SetTOTPResult(SetTOTPResult.Failure(SetTOTPResult.Failure.StatusCode.InternalServerError, SetTOTPError("The host is null.")))
                 }
-            }?.let {
-                statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Success(it.statusCode)))
+            } else {
+                SetTOTPResult(SetTOTPResult.Failure(SetTOTPResult.Failure.StatusCode.InternalServerError, SetTOTPError("Invalid HMAC algorithm: ${setTOTPRequest.algorithm}")))
             }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for setTOTP")
+            SetTOTPResult(SetTOTPResult.Failure(SetTOTPResult.Failure.StatusCode.RequestTimeout, SetTOTPError(e.message)))
         }
     }
 
-    override fun handleImageData(message: String) {
-        val messageBundle = getMessageBundle<String>(message) ?: return
-        launch {
-            timeout(message, MessageHandler.IMAGE_DATA.timeoutMillis) {
-                val decodedString = Base64.decode(messageBundle.message, Base64.DEFAULT)
-                val bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
-                appModel.onImageDataReceived(bitmap)
-                statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Success(HttpURLConnection.HTTP_NO_CONTENT)))
+    override suspend fun getTOTP(timeout: Long, getTOTPRequest: GetTOTPRequest): GetTOTPResult {
+        return try {
+            suspendCoroutineWithTimeout(timeout) { continuation ->
+                if (payAuthenticationManager.isFingerprintAvailable()) {
+                    val host = getHost()
+                    if (host != null) {
+                        val totpSecret = sharedPreferencesModel.getTotpSecret(host, getTOTPRequest.key) ?: run {
+                            if (isDomainInACL(host)) {
+                                // Get master TOTP secret data
+                                sharedPreferencesModel.getTotpSecret()
+                            } else {
+                                null
+                            }
+                        }
+
+                        if (totpSecret != null) {
+                            biometricRequest.postValue(Event(BiometricRequest(
+                                R.string.biometric_totp_title,
+                                onSuccess = {
+                                    try {
+                                        val decryptedSecret = EncryptionUtils.decrypt(totpSecret.encryptedSecret)
+                                        val otp = EncryptionUtils.generateOTP(
+                                            decryptedSecret,
+                                            totpSecret.digits,
+                                            totpSecret.period,
+                                            totpSecret.algorithm,
+                                            Date((getTOTPRequest.serverTime * 1000.0).toLong())
+                                        )
+                                        continuation.resumeIfActive(GetTOTPResult(GetTOTPResult.Success(GetTOTPResponse(otp, BiometryMethod.OTHER.value))))
+                                    } catch (e: Exception) {
+                                        continuation.resumeIfActive(
+                                            GetTOTPResult(
+                                                GetTOTPResult.Failure(
+                                                    GetTOTPResult.Failure.StatusCode.InternalServerError,
+                                                    GetTOTPError("Could not decrypt the encrypted TOTP secret.")
+                                                )
+                                            )
+                                        )
+                                    }
+                                },
+                                onFailure = { errorCode, errString ->
+                                    continuation.resumeIfActive(
+                                        GetTOTPResult(
+                                            GetTOTPResult.Failure(
+                                                GetTOTPResult.Failure.StatusCode.Unauthorized,
+                                                GetTOTPError("Biometric authentication failed: errorCode was $errorCode, errString was $errString")
+                                            )
+                                        )
+                                    )
+                                }
+                            )))
+                        } else {
+                            continuation.resumeIfActive(
+                                GetTOTPResult(
+                                    GetTOTPResult.Failure(
+                                        GetTOTPResult.Failure.StatusCode.NotFound,
+                                        GetTOTPError("No biometric data found for host $host was found in the SharedPreferences.")
+                                    )
+                                )
+                            )
+                        }
+                    } else {
+                        continuation.resumeIfActive(GetTOTPResult(GetTOTPResult.Failure(GetTOTPResult.Failure.StatusCode.InternalServerError, GetTOTPError("The host is null.."))))
+                    }
+                } else {
+                    continuation.resumeIfActive(
+                        GetTOTPResult(
+                            GetTOTPResult.Failure(
+                                GetTOTPResult.Failure.StatusCode.MethodNotAllowed,
+                                GetTOTPError("No biometric authentication is available or none has been set.")
+                            )
+                        )
+                    )
+                }
             }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for getTOTP")
+            GetTOTPResult(GetTOTPResult.Failure(GetTOTPResult.Failure.StatusCode.RequestTimeout, GetTOTPError(e.message)))
         }
     }
 
-    override fun handleVerifyLocation(message: String) {
-        val messageBundle = getMessageBundle<VerifyLocationRequest>(message) ?: return
-        launch {
-            timeout(message, MessageHandler.VERIFY_LOCATION.timeoutMillis) {
+    override suspend fun setSecureData(timeout: Long, setSecureDataRequest: SetSecureDataRequest): SetSecureDataResult {
+        return try {
+            withTimeout(timeout) {
+                val host = getHost()
+                if (host != null) {
+                    val preferenceKey = getSecureDataPreferenceKey(host, setSecureDataRequest.key)
+                    val encryptedValue = EncryptionUtils.encrypt(setSecureDataRequest.value)
+                    sharedPreferencesModel.putString(preferenceKey, encryptedValue)
+                    SetSecureDataResult(SetSecureDataResult.Success())
+                } else {
+                    SetSecureDataResult(SetSecureDataResult.Failure(SetSecureDataResult.Failure.StatusCode.InternalServerError, SetSecureDataError("The host is null.")))
+                }
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for setSecureData")
+            SetSecureDataResult(SetSecureDataResult.Failure(SetSecureDataResult.Failure.StatusCode.InternalServerError, SetSecureDataError(e.message)))
+        }
+    }
+
+    override suspend fun getSecureData(timeout: Long, getSecureDataRequest: GetSecureDataRequest): GetSecureDataResult {
+        return try {
+            suspendCoroutineWithTimeout(timeout) { continuation ->
+                if (payAuthenticationManager.isFingerprintAvailable()) {
+                    val host = getHost()
+                    if (host != null) {
+                        val preferenceKey = getSecureDataPreferenceKey(host, getSecureDataRequest.key)
+                        val encryptedValue = sharedPreferencesModel.getString(preferenceKey)
+                        if (encryptedValue != null) {
+                            biometricRequest.postValue(Event(BiometricRequest(
+                                R.string.biometric_secure_data_title,
+                                onSuccess = {
+                                    try {
+                                        val value = EncryptionUtils.decrypt(encryptedValue)
+                                        continuation.resumeIfActive(GetSecureDataResult(GetSecureDataResult.Success(GetSecureDataResponse(value))))
+                                    } catch (e: Exception) {
+                                        continuation.resumeIfActive(
+                                            GetSecureDataResult(
+                                                GetSecureDataResult.Failure(
+                                                    GetSecureDataResult.Failure.StatusCode.InternalServerError,
+                                                    GetSecureDataError("Could not decrypt the encrypted secure data value.")
+                                                )
+                                            )
+                                        )
+                                    }
+                                },
+                                onFailure = { errorCode, errString ->
+                                    continuation.resumeIfActive(
+                                        GetSecureDataResult(
+                                            GetSecureDataResult.Failure(
+                                                GetSecureDataResult.Failure.StatusCode.Unauthorized,
+                                                GetSecureDataError("Biometric authentication failed: errorCode was $errorCode, errString was $errString")
+                                            )
+                                        )
+                                    )
+                                }
+                            )))
+                        } else {
+                            continuation.resumeIfActive(
+                                GetSecureDataResult(
+                                    GetSecureDataResult.Failure(
+                                        GetSecureDataResult.Failure.StatusCode.NotFound,
+                                        GetSecureDataError("No encrypted value with the key $preferenceKey was found in the SharedPreferences.")
+                                    )
+                                )
+                            )
+                        }
+                    } else {
+                        continuation.resumeIfActive(
+                            GetSecureDataResult(
+                                GetSecureDataResult.Failure(
+                                    GetSecureDataResult.Failure.StatusCode.InternalServerError,
+                                    GetSecureDataError("The host is null.")
+                                )
+                            )
+                        )
+                    }
+                } else {
+                    continuation.resumeIfActive(
+                        GetSecureDataResult(
+                            GetSecureDataResult.Failure(
+                                GetSecureDataResult.Failure.StatusCode.MethodNotAllowed,
+                                GetSecureDataError("No biometric authentication is available or none has been set.")
+                            )
+                        )
+                    )
+                }
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for getSecureData")
+            GetSecureDataResult(GetSecureDataResult.Failure(GetSecureDataResult.Failure.StatusCode.RequestTimeout, GetSecureDataError(e.message)))
+        }
+    }
+
+    override suspend fun disable(timeout: Long, disableRequest: DisableRequest): DisableResult {
+        return try {
+            withTimeout(timeout) {
+                val host = getHost()
+                if (host != null) {
+                    sharedPreferencesModel.putLong(getDisableTimePreferenceKey(host), disableRequest.until.toLong())
+                    eventManager.setDisabledHost(host)
+                    appModel.disable(host)
+                    DisableResult(DisableResult.Success())
+                } else {
+                    DisableResult(DisableResult.Failure(DisableResult.Failure.StatusCode.InternalServerError, DisableError("The host is null.")))
+                }
+            }.also { closeApp() }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for disable")
+            DisableResult(DisableResult.Failure(DisableResult.Failure.StatusCode.RequestTimeout, DisableError(e.message)))
+        }
+    }
+
+    override suspend fun openURLInNewTab(timeout: Long, openURLInNewTabRequest: OpenURLInNewTabRequest): OpenURLInNewTabResult {
+        return try {
+            withTimeout(timeout) {
+                val redirectScheme = getRedirectScheme()
+                onMainThread {
+                    loadUrl.value = Event(openURLInNewTabRequest.cancelUrl)
+                }
+
+                if (!redirectScheme.isNullOrEmpty()) {
+                    appModel.openUrlInNewTab(openURLInNewTabRequest.url)
+                    OpenURLInNewTabResult(OpenURLInNewTabResult.Success())
+                } else {
+                    appModel.onCustomSchemeError(context, "${redirectScheme}://redirect")
+                    OpenURLInNewTabResult(
+                        OpenURLInNewTabResult.Failure(
+                            OpenURLInNewTabResult.Failure.StatusCode.MethodNotAllowed,
+                            OpenURLInNewTabError("Redirect scheme for deep linking has not been specified.")
+                        )
+                    )
+                }
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for openURLInNewTab")
+            OpenURLInNewTabResult(OpenURLInNewTabResult.Failure(OpenURLInNewTabResult.Failure.StatusCode.RequestTimeout, OpenURLInNewTabError(e.message)))
+        }
+    }
+
+    override suspend fun verifyLocation(timeout: Long, verifyLocationRequest: VerifyLocationRequest): VerifyLocationResult {
+        return try {
+            withTimeout(timeout) {
                 val currentLocation = locationProvider.currentLocation(true)
                 val location = if (currentLocation is Success) {
                     val currentLocationResult = currentLocation.result
@@ -215,339 +412,238 @@ class AppWebViewModelImpl(
                     }
                 } else null
 
-                val targetLocation = Location("").apply { latitude = messageBundle.message.lat; longitude = messageBundle.message.lon }
-                val verified = location?.let { it.distanceTo(targetLocation) <= messageBundle.message.threshold }
-
-                verifyLocationResponse.postValue(ResponseEvent(messageBundle.id, VerifyLocationResponse(verified, location?.accuracy)))
+                val targetLocation = Location("").apply { latitude = verifyLocationRequest.lat; longitude = verifyLocationRequest.lon }
+                val verified = location?.let { it.distanceTo(targetLocation) <= verifyLocationRequest.threshold } ?: false
+                VerifyLocationResult(VerifyLocationResult.Success(VerifyLocationResponse(verified, location?.accuracy?.toDouble())))
             }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for verifyLocation")
+            VerifyLocationResult(VerifyLocationResult.Failure(VerifyLocationResult.Failure.StatusCode.RequestTimeout, VerifyLocationError(e.message)))
         }
     }
 
-    override fun handleGetLocation(message: String) {
-        val messageBundle = getMessageBundle<String>(message) ?: return
-        launch {
-            timeout(message, MessageHandler.GET_LOCATION.timeoutMillis) {
-                val result = when (val currentLocation = locationProvider.currentLocation(true)) {
+    override suspend fun getAccessToken(timeout: Long, getAccessTokenRequest: GetAccessTokenRequest): GetAccessTokenResult {
+        return try {
+            suspendCoroutineWithTimeout(timeout) { continuation ->
+                val reason = getAccessTokenRequest.reason
+                val invalidTokenReason = InvalidTokenReason.values().associateBy(InvalidTokenReason::value)[reason] ?: InvalidTokenReason.OTHER
+                appModel.getAccessToken(invalidTokenReason, getAccessTokenRequest.oldToken) {
+                    when (it) {
+                        is Success -> continuation.resumeIfActive(GetAccessTokenResult(GetAccessTokenResult.Success(GetAccessTokenResponse(it.result.accessToken, it.result.isInitialToken))))
+                        is Failure -> continuation.resumeIfActive(
+                            GetAccessTokenResult(
+                                GetAccessTokenResult.Failure(
+                                    GetAccessTokenResult.Failure.StatusCode.InternalServerError,
+                                    GetAccessTokenError(it.throwable.message)
+                                )
+                            )
+                        )
+                    }
+                }
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for getAccessToken")
+            GetAccessTokenResult(GetAccessTokenResult.Failure(GetAccessTokenResult.Failure.StatusCode.RequestTimeout, GetAccessTokenError(e.message)))
+        }
+    }
+
+    override suspend fun imageData(timeout: Long, imageDataRequest: ImageDataRequest): ImageDataResult {
+        return try {
+            withTimeout(timeout) {
+                val decodedString = Base64.decode(imageDataRequest.image, Base64.DEFAULT)
+                val bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+                appModel.onImageDataReceived(bitmap)
+                ImageDataResult(ImageDataResult.Success())
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for imageData")
+            ImageDataResult(ImageDataResult.Failure(ImageDataResult.Failure.StatusCode.RequestTimeout, ImageDataError(e.message)))
+        }
+    }
+
+    override suspend fun applePayAvailabilityCheck(timeout: Long, applePayAvailabilityCheckRequest: ApplePayAvailabilityCheckRequest): ApplePayAvailabilityCheckResult {
+        return ApplePayAvailabilityCheckResult(
+            ApplePayAvailabilityCheckResult.Failure(
+                ApplePayAvailabilityCheckResult.Failure.StatusCode.InternalServerError,
+                ApplePayAvailabilityCheckError("applePayAvailabilityCheck is not supported on Android")
+            )
+        )
+    }
+
+    override suspend fun applePayRequest(timeout: Long, applePayRequestRequest: ApplePayRequestRequest): ApplePayRequestResult {
+        return ApplePayRequestResult(
+            ApplePayRequestResult.Failure(
+                ApplePayRequestResult.Failure.StatusCode.InternalServerError,
+                ApplePayRequestError("ApplePayRequestResult is not supported on Android")
+            )
+        )
+    }
+
+    override suspend fun back(timeout: Long): BackResult {
+        return try {
+            withTimeout(timeout) {
+                onMainThread {
+                    goBack.value = Event(Unit)
+                }
+                BackResult(BackResult.Success())
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for back")
+            BackResult(BackResult.Failure(BackResult.Failure.StatusCode.RequestTimeout, BackError(e.message)))
+        }
+    }
+
+    override suspend fun appInterceptableLink(timeout: Long): AppInterceptableLinkResult {
+        return try {
+            withTimeout(timeout) {
+                val redirectScheme = getRedirectScheme()
+                if (!redirectScheme.isNullOrEmpty()) {
+                    AppInterceptableLinkResult(AppInterceptableLinkResult.Success(AppInterceptableLinkResponse(redirectScheme)))
+                } else {
+                    AppInterceptableLinkResult(
+                        AppInterceptableLinkResult.Failure(
+                            AppInterceptableLinkResult.Failure.StatusCode.NotFound,
+                            AppInterceptableLinkError("Redirect scheme for deep linking has not been specified.")
+                        )
+                    )
+                }
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for appInterceptableLink")
+            AppInterceptableLinkResult(AppInterceptableLinkResult.Failure(AppInterceptableLinkResult.Failure.StatusCode.RequestTimeout, AppInterceptableLinkError(e.message)))
+        }
+    }
+
+    override suspend fun setUserProperty(timeout: Long, setUserPropertyRequest: SetUserPropertyRequest): SetUserPropertyResult {
+        return try {
+            withTimeout(timeout) {
+                appModel.setUserProperty(setUserPropertyRequest.key, setUserPropertyRequest.value, setUserPropertyRequest.update ?: false)
+                SetUserPropertyResult(SetUserPropertyResult.Success())
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for setUserProperty")
+            SetUserPropertyResult(SetUserPropertyResult.Failure(SetUserPropertyResult.Failure.StatusCode.RequestTimeout, SetUserPropertyError(e.message)))
+        }
+    }
+
+    override suspend fun logEvent(timeout: Long, logEventRequest: LogEventRequest): LogEventResult {
+        return try {
+            withTimeout(timeout) {
+                appModel.logEvent(logEventRequest.key, logEventRequest.parameters ?: emptyMap())
+                LogEventResult(LogEventResult.Success())
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for logEvent")
+            LogEventResult(LogEventResult.Failure(LogEventResult.Failure.StatusCode.RequestTimeout, LogEventError(e.message)))
+        }
+    }
+
+    override suspend fun getConfig(timeout: Long, getConfigRequest: GetConfigRequest): GetConfigResult {
+        return try {
+            suspendCoroutineWithTimeout(timeout) { continuation ->
+                appModel.getConfig(getConfigRequest.key) { config ->
+                    if (config != null) {
+                        continuation.resumeIfActive(GetConfigResult(GetConfigResult.Success(GetConfigResponse(config))))
+                    } else {
+                        continuation.resumeIfActive(GetConfigResult(GetConfigResult.Failure(GetConfigResult.Failure.StatusCode.NotFound, GetConfigError("No config value found."))))
+                    }
+                }
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for getConfig")
+            GetConfigResult(GetConfigResult.Failure(GetConfigResult.Failure.StatusCode.RequestTimeout, GetConfigError(e.message)))
+        }
+    }
+
+    override suspend fun getTraceId(timeout: Long): GetTraceIdResult {
+        return try {
+            withTimeout(timeout) {
+                GetTraceIdResult(GetTraceIdResult.Success(GetTraceIdResponse(InterceptorUtils.getTraceId())))
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for getTraceId")
+            GetTraceIdResult(GetTraceIdResult.Failure(GetTraceIdResult.Failure.StatusCode.RequestTimeout, GetTraceIdError(e.message)))
+        }
+    }
+
+    override suspend fun getLocation(timeout: Long): GetLocationResult {
+        return try {
+            withTimeout(timeout) {
+                when (val currentLocation = locationProvider.currentLocation(true)) {
                     is Success -> {
-                        currentLocation.result ?: run {
+                        if (currentLocation.result != null) {
+                            GetLocationResult(
+                                GetLocationResult.Success(
+                                    GetLocationResponse(
+                                        currentLocation.result.latitude,
+                                        currentLocation.result.longitude,
+                                        currentLocation.result.accuracy.toDouble()
+                                    )
+                                )
+                            )
+                        } else {
                             when (val validLocation = locationProvider.firstValidLocation()) {
-                                is Success -> validLocation.result
+                                is Success -> GetLocationResult(
+                                    GetLocationResult.Success(
+                                        GetLocationResponse(
+                                            validLocation.result.latitude,
+                                            validLocation.result.longitude,
+                                            validLocation.result.accuracy.toDouble()
+                                        )
+                                    )
+                                )
                                 is Failure -> {
-                                    val code = when (validLocation.throwable) {
-                                        is PermissionDenied -> HttpURLConnection.HTTP_FORBIDDEN
-                                        is NoLocationFound -> HttpURLConnection.HTTP_NOT_FOUND
-                                        else -> HttpURLConnection.HTTP_INTERNAL_ERROR
+                                    when (validLocation.throwable) {
+                                        is PermissionDenied -> GetLocationResult(
+                                            GetLocationResult.Failure(
+                                                GetLocationResult.Failure.StatusCode.Forbidden,
+                                                GetLocationError(validLocation.throwable.message)
+                                            )
+                                        )
+                                        is NoLocationFound -> GetLocationResult(
+                                            GetLocationResult.Failure(
+                                                GetLocationResult.Failure.StatusCode.NotFound,
+                                                GetLocationError(validLocation.throwable.message)
+                                            )
+                                        )
+                                        else -> GetLocationResult(
+                                            GetLocationResult.Failure(
+                                                GetLocationResult.Failure.StatusCode.InternalServerError,
+                                                GetLocationError(validLocation.throwable.message)
+                                            )
+                                        )
                                     }
-                                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(code, validLocation.throwable.message)))
-                                    return@timeout
                                 }
                             }
                         }
                     }
                     is Failure -> {
-                        val code = when (currentLocation.throwable) {
-                            is PermissionDenied -> HttpURLConnection.HTTP_FORBIDDEN
-                            is NoLocationFound -> HttpURLConnection.HTTP_NOT_FOUND
-                            else -> HttpURLConnection.HTTP_INTERNAL_ERROR
+                        when (currentLocation.throwable) {
+                            is PermissionDenied -> GetLocationResult(GetLocationResult.Failure(GetLocationResult.Failure.StatusCode.Forbidden, GetLocationError(currentLocation.throwable.message)))
+                            is NoLocationFound -> GetLocationResult(GetLocationResult.Failure(GetLocationResult.Failure.StatusCode.NotFound, GetLocationError(currentLocation.throwable.message)))
+                            else -> GetLocationResult(GetLocationResult.Failure(GetLocationResult.Failure.StatusCode.InternalServerError, GetLocationError(currentLocation.throwable.message)))
                         }
-                        statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(code, currentLocation.throwable.message)))
-                        return@timeout
                     }
                 }
-
-                getLocationResponse.postValue(ResponseEvent(messageBundle.id, GetLocationResponse(result.latitude, result.longitude, result.accuracy)))
             }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for getLocation")
+            GetLocationResult(GetLocationResult.Failure(GetLocationResult.Failure.StatusCode.RequestTimeout, GetLocationError(e.message)))
         }
     }
 
-    override fun handleBack(message: String) {
-        val messageBundle = getMessageBundle<String>(message) ?: return
-        launch {
-            timeout(message, MessageHandler.BACK.timeoutMillis) {
-                onMainThread {
-                    goBack.value = Event(Unit)
-                }
-                statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Success(HttpURLConnection.HTTP_NO_CONTENT)))
-            }
-        }
+    override suspend fun appRedirect(timeout: Long, appRedirectRequest: AppRedirectRequest): AppRedirectResult {
+        return AppRedirectResult(AppRedirectResult.Failure(AppRedirectResult.Failure.StatusCode.InternalServerError, AppRedirectError("appRedirect handler not yet implemented on Android")))
     }
 
-    override fun handleClose(message: String) {
-        val messageBundle = getMessageBundle<String>(message) ?: return
-        launch {
-            timeout(message, MessageHandler.CLOSE.timeoutMillis) {
-                close()
-                statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Success(HttpURLConnection.HTTP_NO_CONTENT)))
+    override suspend fun isBiometricAuthEnabled(timeout: Long): IsBiometricAuthEnabledResult {
+        return try {
+            withTimeout(timeout) {
+                IsBiometricAuthEnabledResult(IsBiometricAuthEnabledResult.Success(IsBiometricAuthEnabledResponse(IDKit.isInitialized && IDKit.isBiometricAuthenticationEnabled())))
             }
-        }
-    }
-
-    override fun handleGetBiometricStatus(message: String) {
-        val messageBundle = getMessageBundle<String>(message) ?: return
-        launch {
-            timeout(message, MessageHandler.GET_BIOMETRIC_STATUS.timeoutMillis) {
-                isBiometricAvailable.postValue(ResponseEvent(messageBundle.id, payAuthenticationManager.isFingerprintAvailable()))
-            }
-        }
-    }
-
-    override fun handleSetTOTPSecret(message: String) {
-        val messageBundle = getMessageBundle<SetTOTPRequest>(message, HttpURLConnection.HTTP_INTERNAL_ERROR) ?: return
-        launch {
-            timeout(message, MessageHandler.SET_TOTP_SECRET.timeoutMillis) {
-                val request = messageBundle.message
-
-                EncryptionUtils.stringToAlgorithm(request.algorithm) ?: run {
-                    statusCode.postValue(
-                        ResponseEvent(
-                            messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "Invalid HMAC algorithm: ${messageBundle.message.algorithm}")
-                        )
-                    )
-                    return@timeout
-                }
-
-                val host = getHost() ?: run {
-                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "The host is null.")))
-                    return@timeout
-                }
-
-                try {
-                    val encryptedSecret = EncryptionUtils.encrypt(request.secret)
-                    sharedPreferencesModel.setTotpSecret(host, request.key, TotpSecret(encryptedSecret, request.digits, request.period, request.algorithm))
-                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Success()))
-                } catch (e: Exception) {
-                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "Could not encrypt the TOTP secret.")))
-                }
-            }
-        }
-    }
-
-    override fun handleGetTOTP(message: String) {
-        val messageBundle = getMessageBundle<GetTOTPRequest>(message, HttpURLConnection.HTTP_INTERNAL_ERROR) ?: return
-        launch {
-            suspendCoroutineWithTimeout<String?>(message, MessageHandler.GET_TOTP.timeoutMillis) { continuation ->
-                val id = messageBundle.id
-
-                if (!payAuthenticationManager.isFingerprintAvailable()) {
-                    statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_BAD_METHOD, "No biometric authentication is available or none has been set.")))
-                    continuation.resumeIfActive(null)
-                    return@suspendCoroutineWithTimeout
-                }
-
-                val host = getHost() ?: run {
-                    statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "The host is null.")))
-                    continuation.resumeIfActive(null)
-                    return@suspendCoroutineWithTimeout
-                }
-
-                val totpSecret = sharedPreferencesModel.getTotpSecret(host, messageBundle.message.key) ?: run {
-                    if (isDomainInACL(host)) {
-                        // Get master TOTP secret data
-                        sharedPreferencesModel.getTotpSecret() ?: run {
-                            statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_NOT_FOUND, "No biometric data found in the SharedPreferences.")))
-                            continuation.resumeIfActive(null)
-                            return@suspendCoroutineWithTimeout
-                        }
-                    } else {
-                        statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "The host $host is not in the access control list.")))
-                        continuation.resumeIfActive(null)
-                        return@suspendCoroutineWithTimeout
-                    }
-                }
-
-                biometricRequest.postValue(Event(BiometricRequest(
-                    R.string.biometric_totp_title,
-                    onSuccess = {
-                        try {
-                            val decryptedSecret = EncryptionUtils.decrypt(totpSecret.encryptedSecret)
-                            val otp = EncryptionUtils.generateOTP(decryptedSecret, totpSecret.digits, totpSecret.period, totpSecret.algorithm, Date(messageBundle.message.serverTime * 1000L))
-
-                            continuation.resumeIfActive(otp)
-                        } catch (e: Exception) {
-                            statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "Could not decrypt the encrypted TOTP secret.")))
-                            continuation.resumeIfActive(null)
-                        }
-                    },
-                    onFailure = { errorCode, errString ->
-                        statusCode.postValue(
-                            ResponseEvent(
-                                id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_UNAUTHORIZED, "Biometric authentication failed: errorCode was $errorCode, errString was $errString")
-                            )
-                        )
-                        continuation.resumeIfActive(null)
-                    }
-                )))
-            }?.let {
-                // the biometric lib currently doesn't tell which method was used; set "other" for consistency
-                totpResponse.postValue(ResponseEvent(messageBundle.id, TOTPResponse(it, BiometryMethod.OTHER.value)))
-            }
-        }
-    }
-
-    override fun handleSetSecureData(message: String) {
-        val messageBundle = getMessageBundle<SetSecureDataRequest>(message, HttpURLConnection.HTTP_INTERNAL_ERROR) ?: return
-        launch {
-            timeout(message, MessageHandler.SET_SECURE_DATA.timeoutMillis) {
-                val host = getHost() ?: run {
-                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "The host is null.")))
-                    return@timeout
-                }
-                val preferenceKey = getSecureDataPreferenceKey(host, messageBundle.message.key)
-                val encryptedValue = EncryptionUtils.encrypt(messageBundle.message.value)
-
-                sharedPreferencesModel.putString(preferenceKey, encryptedValue)
-                statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Success()))
-            }
-        }
-    }
-
-    override fun handleGetSecureData(message: String) {
-        val messageBundle = getMessageBundle<KeyRequest>(message, HttpURLConnection.HTTP_INTERNAL_ERROR) ?: return
-        launch {
-            suspendCoroutineWithTimeout<String?>(message, MessageHandler.GET_SECURE_DATA.timeoutMillis) { continuation ->
-                val id = messageBundle.id
-
-                if (!payAuthenticationManager.isFingerprintAvailable()) {
-                    statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_BAD_METHOD, "No biometric authentication is available or none has been set.")))
-                    continuation.resumeIfActive(null)
-                    return@suspendCoroutineWithTimeout
-                }
-
-                val host = getHost() ?: run {
-                    statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "The host is null.")))
-                    continuation.resumeIfActive(null)
-                    return@suspendCoroutineWithTimeout
-                }
-                val preferenceKey = getSecureDataPreferenceKey(host, messageBundle.message.key)
-                val encryptedValue = sharedPreferencesModel.getString(preferenceKey) ?: run {
-                    statusCode.postValue(
-                        ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_NOT_FOUND, "No encrypted value with the key $preferenceKey was found in the SharedPreferences."))
-                    )
-                    continuation.resumeIfActive(null)
-                    return@suspendCoroutineWithTimeout
-                }
-
-                biometricRequest.postValue(Event(BiometricRequest(
-                    R.string.biometric_secure_data_title,
-                    onSuccess = {
-                        try {
-                            val value = EncryptionUtils.decrypt(encryptedValue)
-                            continuation.resumeIfActive(value)
-                        } catch (e: Exception) {
-                            statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "Could not decrypt the encrypted secure data value.")))
-                            continuation.resumeIfActive(null)
-                        }
-                    },
-                    onFailure = { errorCode, errString ->
-                        statusCode.postValue(
-                            ResponseEvent(
-                                id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_UNAUTHORIZED, "Biometric authentication failed: errorCode was $errorCode, errString was $errString")
-                            )
-                        )
-                        continuation.resumeIfActive(null)
-                    }
-                )))
-            }?.let {
-                secureData.postValue(ResponseEvent(messageBundle.id, mapOf("value" to it)))
-            }
-        }
-    }
-
-    override fun handleDisable(message: String) {
-        val messageBundle = getMessageBundle<DisableRequest>(message, HttpURLConnection.HTTP_INTERNAL_ERROR) ?: return
-        launch {
-            timeout(message, MessageHandler.DISABLE.timeoutMillis) {
-                val host = getHost()
-                if (host != null) {
-                    sharedPreferencesModel.putLong(getDisableTimePreferenceKey(host), messageBundle.message.until)
-                    eventManager.setDisabledHost(host)
-                    appModel.disable(host)
-                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Success()))
-                } else {
-                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_INTERNAL_ERROR, "The host is null.")))
-                }
-                close()
-            }
-        }
-    }
-
-    override fun handleOpenURLInNewTab(message: String) {
-        val messageBundle = getMessageBundle<OpenURLInNewTabRequest>(message) ?: return
-        launch {
-            timeout(message, MessageHandler.OPEN_URL_IN_NEW_TAB.timeoutMillis) {
-                val redirectScheme = getRedirectScheme()
-                onMainThread {
-                    loadUrl.value = Event(messageBundle.message.cancelUrl)
-                }
-
-                if (!redirectScheme.isNullOrEmpty()) {
-                    appModel.openUrlInNewTab(messageBundle.message.url)
-                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Success(HttpURLConnection.HTTP_NO_CONTENT)))
-                } else {
-                    appModel.onCustomSchemeError(context, "${redirectScheme}://redirect")
-                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_NOT_FOUND, "Redirect scheme for deep linking has not been specified.")))
-                }
-            }
-        }
-    }
-
-    override fun handleGetAppInterceptableLink(message: String) {
-        val messageBundle = getMessageBundle<String>(message) ?: return
-        launch {
-            timeout(message, MessageHandler.GET_APP_INTERCEPTABLE_LINK.timeoutMillis) {
-                val redirectScheme = getRedirectScheme()
-                if (!redirectScheme.isNullOrEmpty()) {
-                    appInterceptableLink.postValue(ResponseEvent(messageBundle.id, AppInterceptableLinkResponse(redirectScheme)))
-                } else {
-                    statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_NOT_FOUND, "Redirect scheme for deep linking has not been specified.")))
-                }
-            }
-        }
-    }
-
-    override fun handleSetUserProperty(message: String) {
-        val messageBundle = getMessageBundle<SetUserPropertyRequest>(message) ?: return
-        launch {
-            timeout(message, MessageHandler.SET_USER_PROPERTY.timeoutMillis) {
-                appModel.setUserProperty(messageBundle.message.key, messageBundle.message.value, messageBundle.message.update)
-                statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Success(HttpURLConnection.HTTP_NO_CONTENT)))
-            }
-        }
-    }
-
-    override fun handleLogEvent(message: String) {
-        val messageBundle = getMessageBundle<LogEventRequest>(message) ?: return
-        launch {
-            timeout(message, MessageHandler.LOG_EVENT.timeoutMillis) {
-                appModel.logEvent(messageBundle.message.key, messageBundle.message.parameters)
-                statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Success(HttpURLConnection.HTTP_NO_CONTENT)))
-            }
-        }
-    }
-
-    override fun handleGetConfig(message: String) {
-        val messageBundle = getMessageBundle<KeyRequest>(message) ?: return
-        launch {
-            val config = suspendCoroutineWithTimeout<String?>(message, MessageHandler.GET_CONFIG.timeoutMillis) { continuation ->
-                appModel.getConfig(messageBundle.message.key) { config ->
-                    continuation.resumeIfActive(config)
-                }
-            }
-
-            if (config != null) {
-                valueResponse.postValue(ResponseEvent(messageBundle.id, ValueResponse(config)))
-            } else {
-                statusCode.postValue(ResponseEvent(messageBundle.id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_NOT_FOUND, "No config value found.")))
-            }
-        }
-    }
-
-    override fun handleGetTraceId(message: String) {
-        val messageBundle = getMessageBundle<String>(message) ?: return
-        launch {
-            timeout(message, MessageHandler.GET_TRACE_ID.timeoutMillis) {
-                valueResponse.postValue(ResponseEvent(messageBundle.id, ValueResponse(InterceptorUtils.getTraceId())))
-            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for isBiometricAuthEnabled")
+            IsBiometricAuthEnabledResult(IsBiometricAuthEnabledResult.Failure(IsBiometricAuthEnabledResult.Failure.StatusCode.RequestTimeout, IsBiometricAuthEnabledError(e.message)))
         }
     }
 
@@ -564,41 +660,4 @@ class AppWebViewModelImpl(
             domain.endsWith(aclHost)
         }
     }
-
-    private inline fun <reified T> Gson.fromJson(json: String): MessageBundle<T>? {
-        return try {
-            val type = TypeToken.getParameterized(MessageBundle::class.java, T::class.java).type
-            fromJson(json, type)
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    private fun launch(block: suspend CoroutineScope.() -> Unit) = viewModelScope.launch(context = dispatchers.default(), block = block)
-
-    private inline fun <reified T> getMessageBundle(message: String, errorCode: Int = HttpURLConnection.HTTP_BAD_REQUEST): MessageBundle<T>? {
-        val bundle = gson.fromJson<T>(message)
-        return if (bundle?.id != null && bundle.message != null) {
-            bundle
-        } else {
-            val id = gson.fromJson<MessageBundle<Any>>(message)?.id
-            statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(errorCode, "Could not deserialize the following JSON message: $message")))
-            null
-        }
-    }
-
-    private suspend fun <T> timeout(message: String, timeoutMillis: Long, block: suspend CoroutineScope.() -> T) =
-        try {
-            withTimeout(timeoutMillis, block)
-        } catch (e: TimeoutCancellationException) {
-            val id = gson.fromJson<MessageBundle<Any>>(message)?.id
-            Timber.w(e, "Timeout for request with ID $id")
-            statusCode.postValue(ResponseEvent(id, StatusCodeResponse.Failure(HttpURLConnection.HTTP_CLIENT_TIMEOUT, e.message)))
-            null
-        }
-
-    private suspend inline fun <T> suspendCoroutineWithTimeout(message: String, timeoutMillis: Long, crossinline block: (CancellableContinuation<T>) -> Unit): T? =
-        timeout(message, timeoutMillis) {
-            suspendCancellableCoroutine(block)
-        }
 }

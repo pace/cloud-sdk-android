@@ -25,6 +25,8 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Use gas station endpoint as fallback for POI position if none was found in the database when observing a single POI by ID
 * Return location based apps based on `appsDistanceThresholdInMeters` configuration and not if the location is in the polygon
+* Rework communication between apps and SDK
+* Add `isBiometricAuthEnabled` handler to PWA communication
 
 
 8.2.0 Release notes (2021-07-12)
