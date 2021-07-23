@@ -5,6 +5,7 @@ data class Configuration @JvmOverloads constructor(
     var clientAppVersion: String,
     var clientAppBuild: String,
     var apiKey: String,
+    var checkRedirectScheme: Boolean = true,
     var authenticationMode: AuthenticationMode = AuthenticationMode.NATIVE,
     var environment: Environment = Environment.PRODUCTION,
     var extensions: List<String> = emptyList(),
