@@ -108,7 +108,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         pwa_simulator_app.setOnClickListener {
-            AppKit.openAppActivity(this, "https://pwa-simulator.dev.k8s.pacelink.net/", enableBackToFinish = true)
+            AppKit.openAppActivity(this, "https://pwa-simulator.dev.k8s.pacelink.net/", true, defaultAppCallback)
         }
 
         is_poi_in_range.setOnClickListener {

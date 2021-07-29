@@ -633,7 +633,27 @@ class AppWebViewModelImpl(
     }
 
     override suspend fun appRedirect(timeout: Long, appRedirectRequest: AppRedirectRequest): AppRedirectResult {
-        return AppRedirectResult(AppRedirectResult.Failure(AppRedirectResult.Failure.StatusCode.InternalServerError, AppRedirectError("appRedirect handler not yet implemented on Android")))
+        return try {
+            suspendCoroutineWithTimeout(timeout) { continuation ->
+                appModel.isAppRedirectAllowed(appRedirectRequest.app) {
+                    if (it) {
+                        continuation.resumeIfActive(AppRedirectResult(AppRedirectResult.Success()))
+                    } else {
+                        continuation.resumeIfActive(
+                            AppRedirectResult(
+                                AppRedirectResult.Failure(
+                                    AppRedirectResult.Failure.StatusCode.MethodNotAllowed,
+                                    AppRedirectError("The redirect was disallowed")
+                                )
+                            )
+                        )
+                    }
+                }
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for appRedirect")
+            AppRedirectResult(AppRedirectResult.Failure(AppRedirectResult.Failure.StatusCode.RequestTimeout, AppRedirectError(e.message)))
+        }
     }
 
     override suspend fun isBiometricAuthEnabled(timeout: Long): IsBiometricAuthEnabledResult {
