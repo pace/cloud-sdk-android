@@ -10,6 +10,10 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Add `AppRedirect` handler to PWA communication to let the client app decide if a redirect from the current PWA to another specified PWA should be allowed
 
+### Fixes
+
+* Adjust handling of too large bounding boxes when requesting tiles
+
 
 9.0.0 Release notes (2021-07-20)
 =============================================================
