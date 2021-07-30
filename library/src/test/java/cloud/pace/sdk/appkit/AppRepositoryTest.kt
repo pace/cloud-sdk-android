@@ -7,20 +7,20 @@ import cloud.pace.sdk.api.geo.GeoGasStation
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppWithRefs
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppsWithRefs
 import cloud.pace.sdk.appkit.app.api.AppRepositoryImpl
-import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.utils.TestAppAPI
 import cloud.pace.sdk.appkit.utils.TestCacheModel
 import cloud.pace.sdk.appkit.utils.TestGeoAPIManager
 import cloud.pace.sdk.appkit.utils.TestUriUtils
-import cloud.pace.sdk.utils.CompletableFutureCompat
 import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.Environment
+import cloud.pace.sdk.utils.Failure
+import cloud.pace.sdk.utils.Success
 import junit.framework.Assert.*
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock
-import java.util.concurrent.TimeUnit
 
 class AppRepositoryTest {
 
@@ -86,16 +86,11 @@ class AppRepositoryTest {
     }
 
     @Test
-    fun `get local available apps`() {
-        val appsFuture = CompletableFutureCompat<List<App>>()
-        appRepository.getLocationBasedApps(mock(Context::class.java), locationWithApp.latitude, locationWithApp.longitude) {
-            it.onSuccess { appsFuture.complete(it) }
-            it.onFailure { throw it }
-        }
-
-        val apps = appsFuture.get(2, TimeUnit.SECONDS)
+    fun `get local available apps`() = runBlocking {
+        val apps = (appRepository.getLocationBasedApps(locationWithApp.latitude, locationWithApp.longitude) as Success).result
         assertEquals(1, apps.size)
-        val app = apps.get(0)
+
+        val app = apps[0]
         assertEquals(manifest.name, app.name)
         assertEquals(manifest.description, app.description)
         assertEquals(manifest.backgroundColor, app.iconBackgroundColor)
@@ -104,19 +99,13 @@ class AppRepositoryTest {
     }
 
     @Test
-    fun `no local apps available`() {
-        val appsFuture = CompletableFutureCompat<List<App>>()
-        appRepository.getLocationBasedApps(mock(Context::class.java), 40.0, 7.0) {
-            it.onSuccess { appsFuture.complete(it) }
-            it.onFailure { throw it }
-        }
-
-        val apps = appsFuture.get(2, TimeUnit.SECONDS)
-        assertEquals(0, apps.size)
+    fun `no local apps available`() = runBlocking {
+        val apps = appRepository.getLocationBasedApps(40.0, 7.0)
+        assertEquals(0, (apps as Success).result.size)
     }
 
     @Test
-    fun `do not return app when manifest is missing`() {
+    fun `do not return app when manifest is missing`() = runBlocking {
         val cacheModel = object : TestCacheModel() {
             override fun getManifest(context: Context, url: String, completion: (Result<AppManifest>) -> Unit) {
                 completion(Result.failure(Exception()))
@@ -124,18 +113,12 @@ class AppRepositoryTest {
         }
 
         val appRepository = AppRepositoryImpl(context, cacheModel, appApi, uriUtil, geoApiManager)
-        val appsFuture = CompletableFutureCompat<List<App>>()
-        appRepository.getLocationBasedApps(mock(Context::class.java), locationWithApp.latitude, locationWithApp.longitude) {
-            it.onSuccess { appsFuture.complete(it) }
-            it.onFailure { throw it }
-        }
-
-        val apps = appsFuture.get(2, TimeUnit.SECONDS)
-        assertEquals(0, apps.size)
+        val apps = appRepository.getLocationBasedApps(locationWithApp.latitude, locationWithApp.longitude)
+        assertEquals(0, (apps as Success).result.size)
     }
 
     @Test
-    fun `pass error when something failed`() {
+    fun `pass error when something failed`() = runBlocking {
         val geoApiManager = object : TestGeoAPIManager() {
             override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {
                 completion(Result.failure(RuntimeException()))
@@ -148,17 +131,12 @@ class AppRepositoryTest {
             }
         }
         val appRepository = AppRepositoryImpl(context, cache, appApi, uriUtil, geoApiManager)
-        val exceptionFuture = CompletableFutureCompat<Throwable?>()
-        appRepository.getLocationBasedApps(mock(Context::class.java), locationWithApp.latitude, locationWithApp.longitude) {
-            it.onSuccess { exceptionFuture.complete(null) }
-            it.onFailure { exceptionFuture.complete(it) }
-        }
-
-        assertNotNull(exceptionFuture.get(2, TimeUnit.SECONDS))
+        val exception = appRepository.getLocationBasedApps(locationWithApp.latitude, locationWithApp.longitude)
+        assertTrue((exception as Failure).throwable is RuntimeException)
     }
 
     @Test
-    fun `return two apps when one app references two pois`() {
+    fun `return two apps when one app references two pois`() = runBlocking {
         val id1 = "c34a78bc-de0a-4daa-9f5e-8cc7103cf55e"
         val id2 = "2069125c-b65b-4514-81f9-3d09779b175f"
         val locationBasedApp = LocationBasedAppWithRefs().apply {
@@ -183,16 +161,10 @@ class AppRepositoryTest {
             }
         }
         val appRepository = AppRepositoryImpl(context, cache, appApi, uriUtil, geoApiManager)
-        val appsFuture = CompletableFutureCompat<List<App>>()
-        appRepository.getLocationBasedApps(mock(Context::class.java), locationWithApp.latitude, locationWithApp.longitude) {
-            it.onSuccess { appsFuture.complete(it) }
-            it.onFailure { throw it }
-        }
-
-        val apps = appsFuture.get(2, TimeUnit.SECONDS)
+        val apps = (appRepository.getLocationBasedApps(locationWithApp.latitude, locationWithApp.longitude) as Success).result
         assertEquals(2, apps.size)
 
-        val app1 = apps.get(0)
+        val app1 = apps[0]
         assertEquals(manifest.name, app1.name)
         assertEquals(manifest.description, app1.description)
         assertEquals(manifest.backgroundColor, app1.iconBackgroundColor)
@@ -200,7 +172,7 @@ class AppRepositoryTest {
         assertEquals("$startUrl/?references=$id1", app1.url)
         assertNull(app1.logo)
 
-        val app2 = apps.get(1)
+        val app2 = apps[1]
         assertEquals(manifest.name, app2.name)
         assertEquals(manifest.description, app2.description)
         assertEquals(manifest.backgroundColor, app2.iconBackgroundColor)

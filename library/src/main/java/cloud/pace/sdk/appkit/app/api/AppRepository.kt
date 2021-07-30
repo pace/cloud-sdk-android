@@ -16,17 +16,15 @@ import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.utils.distanceTo
 import cloud.pace.sdk.utils.*
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.*
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 
 interface AppRepository {
 
-    fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit)
-    fun getAllApps(context: Context, completion: (Result<List<App>>) -> Unit)
-    fun getAppsByUrl(context: Context, url: String, references: List<String>, completion: (Result<List<App>>) -> Unit)
-    fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit)
+    suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>>
+    suspend fun getAllApps(): Completion<List<App>>
+    suspend fun getAppsByUrl(url: String, references: List<String>): Completion<List<App>>
+    suspend fun getUrlByAppId(appId: String): Completion<String?>
     fun getCofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit)
     fun getCofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit)
     suspend fun isPoiInRange(poiId: String, latitude: Double, longitude: Double): Boolean
@@ -40,65 +38,97 @@ class AppRepositoryImpl(
     private val geoApiManager: GeoAPIManager
 ) : AppRepository {
 
-    override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {
-        // Try to load the apps from the cache
-        geoApiManager.apps(latitude, longitude) { response ->
-            response.onSuccess {
-                val apps = it
-                    .flatMap { geoGasStation ->
-                        geoGasStation.appUrls.mapNotNull { url ->
-                            castLocationBasedApp(context, url, listOf(geoGasStation.id))
+    override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
+        return try {
+            val deferred = suspendCancellableCoroutine<List<Deferred<List<App>>>> { continuation ->
+                // Try to load the apps from the cache
+                geoApiManager.apps(latitude, longitude) { response ->
+                    response.onSuccess {
+                        val result = it.flatMap { geoGasStation ->
+                            geoGasStation.appUrls.map { url ->
+                                CoroutineScope(Dispatchers.IO).async {
+                                    castLocationBasedApp(url, listOf(geoGasStation.id))
+                                }
+                            }
                         }
-                    }.flatten()
 
-                completion(Result.success(apps))
-            }
-
-            response.onFailure {
-                // Fetch the apps from the API
-                appApi.getLocationBasedApps(latitude, longitude) { response ->
-                    response.onSuccess { apps ->
-                        completion(Result.success(apps.mapNotNull { castLocationBasedApp(context, it.pwaUrl, it.references) }.flatten()))
+                        continuation.resumeIfActive(result)
                     }
 
-                    response.onFailure { throwable ->
-                        completion(Result.failure(throwable))
+                    response.onFailure {
+                        // Fetch the apps from the API
+                        appApi.getLocationBasedApps(latitude, longitude) { response ->
+                            response.onSuccess { apps ->
+                                val result = apps.map {
+                                    CoroutineScope(Dispatchers.IO).async {
+                                        castLocationBasedApp(it.pwaUrl, it.references)
+                                    }
+                                }
+                                continuation.resumeIfActive(result)
+                            }
+
+                            response.onFailure { throwable ->
+                                continuation.resumeWithExceptionIfActive(throwable)
+                            }
+                        }
                     }
                 }
             }
+            Success(deferred.awaitAll().flatten())
+        } catch (e: Exception) {
+            Failure(e)
         }
     }
 
-    override fun getAllApps(context: Context, completion: (Result<List<App>>) -> Unit) {
-        appApi.getAllApps { response ->
-            response.onSuccess { apps ->
-                completion(Result.success(apps.mapNotNull { castLocationBasedApp(context, it.pwaUrl, null) }.flatten()))
-            }
+    override suspend fun getAllApps(): Completion<List<App>> {
+        return try {
+            val deferred = suspendCancellableCoroutine<List<Deferred<List<App>>>> { continuation ->
+                appApi.getAllApps { response ->
+                    response.onSuccess { apps ->
+                        val result = apps.map {
+                            CoroutineScope(Dispatchers.IO).async {
+                                castLocationBasedApp(it.pwaUrl, null)
+                            }
+                        }
+                        continuation.resumeIfActive(result)
+                    }
 
-            response.onFailure { throwable ->
-                completion(Result.failure(throwable))
+                    response.onFailure { throwable ->
+                        continuation.resumeWithExceptionIfActive(throwable)
+                    }
+                }
             }
+            Success(deferred.awaitAll().flatten())
+        } catch (e: Exception) {
+            Failure(e)
         }
     }
 
-    override fun getAppsByUrl(context: Context, url: String, references: List<String>, completion: (Result<List<App>>) -> Unit) {
-        val apps = castLocationBasedApp(context, url, references)
-        if (apps != null) {
-            completion(Result.success(apps))
+    override suspend fun getAppsByUrl(url: String, references: List<String>): Completion<List<App>> {
+        val apps = castLocationBasedApp(url, references)
+        return if (apps.isNotEmpty()) {
+            Success(apps)
         } else {
-            completion(Result.failure(Exception("Could not load Apps for URL $url")))
+            Failure(Exception("Could not load Apps for URL $url"))
         }
     }
 
-    override fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit) {
-        appApi.getAppByAppId(appId) { response ->
-            response.onSuccess { app ->
-                completion(Result.success(app.pwaUrl))
-            }
+    override suspend fun getUrlByAppId(appId: String): Completion<String?> {
+        return try {
+            val result = suspendCancellableCoroutine<String?> { continuation ->
+                appApi.getAppByAppId(appId) { response ->
+                    response.onSuccess { app ->
+                        continuation.resumeIfActive(app.pwaUrl)
+                    }
 
-            response.onFailure { throwable ->
-                completion(Result.failure(throwable))
+                    response.onFailure { throwable ->
+                        continuation.resumeWithExceptionIfActive(throwable)
+                    }
+                }
             }
+            Success(result)
+        } catch (e: Exception) {
+            Failure(e)
         }
     }
 
@@ -163,40 +193,13 @@ class AppRepositoryImpl(
         }
     }
 
-    private fun castLocationBasedApp(context: Context, appUrl: String?, references: List<String>?): List<App>? {
-        appUrl ?: return null
+    private suspend fun castLocationBasedApp(appUrl: String?, references: List<String>?): List<App> {
+        appUrl ?: return emptyList()
 
-        val manifestFuture = CompletableFutureCompat<AppManifest?>()
-        cache.getManifest(context, appUrl) { result ->
-            result.onSuccess { manifestFuture.complete(it) }
-            result.onFailure {
-                Timber.e(it, "Failed to download the manifest")
-                manifestFuture.complete(null)
-            }
-        }
-
-        val manifest = manifestFuture.get() ?: return null
-
+        val manifest = loadManifest(appUrl) ?: return emptyList()
         val icons = manifest.icons
         val iconUrl = if (icons.isNullOrEmpty()) null else getIconPath(appUrl, icons)
-
-        val logo: Bitmap? = if (iconUrl == null) {
-            null
-        } else {
-            val iconFuture = CompletableFutureCompat<Bitmap?>()
-            cache.getUri(context, iconUrl) { result ->
-                result.onSuccess { iconFuture.complete(BitmapFactory.decodeByteArray(it, 0, it.size)) }
-                result.onFailure {
-                    Timber.e(it, "Failed to download the icon")
-                    iconFuture.complete(null)
-                }
-            }
-            try {
-                iconFuture.get(2, TimeUnit.SECONDS)
-            } catch (e: TimeoutException) {
-                null
-            }
-        }
+        val logo = if (iconUrl == null) null else loadIcon(iconUrl)
 
         return uriUtil
             .getStartUrls(appUrl, appUrl, manifest.sdkStartUrl, references)
@@ -214,6 +217,34 @@ class AppRepositoryImpl(
                     poiId = it.key
                 )
             }
+    }
+
+    private suspend fun loadManifest(appUrl: String): AppManifest? {
+        return try {
+            suspendCancellableCoroutine { continuation ->
+                cache.getManifest(context, appUrl) { result ->
+                    result.onSuccess { continuation.resumeIfActive(it) }
+                    result.onFailure { continuation.resumeWithExceptionIfActive(it) }
+                }
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to download the manifest")
+            null
+        }
+    }
+
+    private suspend fun loadIcon(iconUrl: String): Bitmap? {
+        return try {
+            suspendCoroutineWithTimeout(2000) { continuation ->
+                cache.getUri(context, iconUrl) { result ->
+                    result.onSuccess { continuation.resumeIfActive(BitmapFactory.decodeByteArray(it, 0, it.size)) }
+                    result.onFailure { continuation.resumeWithExceptionIfActive(it) }
+                }
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to download the icon")
+            null
+        }
     }
 
     private fun getIconPath(url: String, icons: Array<AppManifest.AppIcons>): String? {

@@ -93,6 +93,6 @@ class CacheModelImpl : CacheModel {
         private const val ACCEPT_LANGUAGE_KEY = "Accept-Language"
         private const val USER_AGENT_KEY = "User-Agent"
         private const val MANIFEST_FILE_NAME = "manifest.json"
-        private const val CACHE_SIZE_BYTES = 1024 * 1024 * 2L
+        private const val CACHE_SIZE_BYTES = 1024 * 1024 * 50L // at most 50 MB
     }
 }
