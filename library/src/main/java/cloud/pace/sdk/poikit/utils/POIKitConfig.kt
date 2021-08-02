@@ -18,7 +18,7 @@ object POIKitConfig {
     /**
      * Zoom level of Open Street Map tiles.
      */
-    val ZOOMLEVEL = 15
+    val ZOOMLEVEL = 13
 
     /**
      * Earth radius in km.
