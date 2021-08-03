@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+9.1.0 Release notes (2021-08-03)
+=============================================================
+
+
 ### Enhancements
 
 * Add `AppRedirect` handler to PWA communication to let the client app decide if a redirect from the current PWA to another specified PWA should be allowed
