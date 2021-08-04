@@ -2,17 +2,23 @@ x.y.z Release notes (yyyy-MM-dd)
 =============================================================
 
 <!-- ### Breaking Changes - Include, if needed -->
+<!-- ### Enhancements - Include, if needed -->
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
+
+### Enhancements
+
+* Add logging for successful setup 'PACECloudSDK' and 'IDKit' and for missing mandatory values for setup
+
+### Fixes
+
+* Only show network error in WebView if it is a main frame error
 
 ### Internal
 
 * Migrate Gradle files from Groovy to Kotlin
 * Use Kotlin Coroutines instead of Future to fetch the PWA manifest and icons
 
-### Enhancements
-
-* Add logging for successful setup 'PACECloudSDK' and 'IDKit' and for missing mandatory values for setup
 
 9.1.0 Release notes (2021-08-03)
 =============================================================
@@ -24,6 +30,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Fixes
 
 * Adjust handling of too large bounding boxes when requesting tiles
+
 
 9.0.0 Release notes (2021-07-20)
 =============================================================

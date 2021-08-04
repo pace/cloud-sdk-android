@@ -2,7 +2,6 @@ package cloud.pace.sdk.appkit
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -13,15 +12,10 @@ import cloud.pace.sdk.utils.CompletableFutureCompat
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import java.util.concurrent.TimeUnit
 
-@RunWith(RobolectricTestRunner::class)
-@Config(sdk = [Build.VERSION_CODES.O_MR1])
 class AppWebViewClientTest {
 
     private val startUrl = "https://app.test"
@@ -174,6 +168,7 @@ class AppWebViewClientTest {
         val mockWebRequest = mock(WebResourceRequest::class.java)
         val mockUri = mock(Uri::class.java)
         `when`(mockWebRequest.url).thenReturn(mockUri)
+        `when`(mockWebRequest.isForMainFrame).thenReturn(true)
         `when`(mockUri.toString()).thenReturn(startUrl)
         if (isHttpError) {
             webViewClient.onReceivedHttpError(mock(WebView::class.java), mockWebRequest, mock(WebResourceResponse::class.java))

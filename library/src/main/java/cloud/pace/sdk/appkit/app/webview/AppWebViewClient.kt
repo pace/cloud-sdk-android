@@ -135,6 +135,7 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
         // No internet connection
         super.onReceivedError(view, request, error)
         val url = request?.url?.toString() ?: return
+        if (!request.isForMainFrame) return
         setError(url, false)
     }
 
@@ -142,6 +143,7 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
         // HTTP error
         super.onReceivedHttpError(view, request, errorResponse)
         val url = request?.url?.toString() ?: return
+        if (!request.isForMainFrame) return
         setError(url, true)
     }
 
