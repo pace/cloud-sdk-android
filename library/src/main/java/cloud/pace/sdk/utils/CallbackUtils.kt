@@ -6,12 +6,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
 
-fun <T> Call<T>.enqueue(callback: CallBackKt<T>.() -> Unit) {
-    val callBackKt = CallBackKt<T>()
-    callback.invoke(callBackKt)
-    this.enqueue(callBackKt)
-}
-
 class CallBackKt<T> : Callback<T> {
 
     var onResponse: ((Response<T>) -> Unit)? = null
@@ -27,5 +21,46 @@ class CallBackKt<T> : Callback<T> {
             Timber.e(ApiException(response.code(), response.message()), "Request unsuccessful: ${call.request().url()}")
         }
         onResponse?.invoke(response)
+    }
+}
+
+fun <T> Call<T>.enqueue(callback: CallBackKt<T>.() -> Unit) {
+    val callBackKt = CallBackKt<T>()
+    callback.invoke(callBackKt)
+    this.enqueue(callBackKt)
+}
+
+fun <T> Call<T>.handleCallback(completion: (Completion<T>) -> Unit) {
+    enqueue {
+        onResponse = {
+            val body = it.body()
+            if (it.isSuccessful && body != null) {
+                completion(Success(body))
+            } else {
+                completion(Failure(ApiException(it.code(), it.message())))
+            }
+        }
+
+        onFailure = {
+            completion(Failure(it ?: Exception("Unknown exception")))
+        }
+    }
+}
+
+@JvmName("handleCallbackResult")
+fun <T> Call<T>.handleCallback(completion: (Result<T>) -> Unit) {
+    enqueue {
+        onResponse = {
+            val body = it.body()
+            if (it.isSuccessful && body != null) {
+                completion(Result.success(body))
+            } else {
+                completion(Result.failure(ApiException(it.code(), it.message())))
+            }
+        }
+
+        onFailure = {
+            completion(Result.failure(it ?: Exception("Unknown exception")))
+        }
     }
 }

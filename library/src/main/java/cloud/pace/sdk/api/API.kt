@@ -22,7 +22,17 @@ object API {
         additionalHeaders = currentHeaders
     }
 
-    fun addAuthorizationHeader(accessToken: String) {
-        addHeader(AUTHORIZATION_HEADER, "Bearer $accessToken")
+    fun removeHeader(key: String) {
+        val currentHeaders = additionalHeaders.toMutableMap()
+        currentHeaders.remove(key)
+        additionalHeaders = currentHeaders
+    }
+
+    fun addAuthorizationHeader(accessToken: String?) {
+        if (accessToken == null) {
+            removeHeader(AUTHORIZATION_HEADER)
+        } else {
+            addHeader(AUTHORIZATION_HEADER, "Bearer $accessToken")
+        }
     }
 }
