@@ -1,9 +1,6 @@
 export NEW_VERSION=$1
 DATE=$(date +'%Y-%m-%d')
 
-# Bump version to $NEW_VERSION
-./gradlew bumpVersion
-
 # Update Changelog
 NEW_RELEASE_STRING="""x.y.z Release notes (yyyy-MM-dd)\n\
 =============================================================\n\

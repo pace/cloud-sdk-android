@@ -6,9 +6,13 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Internal
+
+* Migrate Gradle files from Groovy to Kotlin
+
+
 9.1.0 Release notes (2021-08-03)
 =============================================================
-
 
 ### Enhancements
 
