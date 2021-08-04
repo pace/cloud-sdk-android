@@ -150,8 +150,8 @@ class AppManagerTest : CloudSDKKoinComponent {
     @Test
     fun `no app due to network error`() {
         val appRepository = object : TestAppRepository() {
-            override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {
-                completion(Result.failure(Exception()))
+            override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
+                return Failure(Exception())
             }
         }
 
@@ -179,19 +179,13 @@ class AppManagerTest : CloudSDKKoinComponent {
 
     @Test
     fun `no app available`() {
-        val appRepository = object : TestAppRepository() {
-            override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {
-                completion(Result.success(emptyList()))
-            }
-        }
-
         val testModule = module {
             single<LocationProvider> {
                 TestLocationProvider(mockLocation)
             }
 
             single<AppRepository> {
-                appRepository
+                TestAppRepository()
             }
 
             single<SharedPreferencesModel> {
@@ -245,8 +239,8 @@ class AppManagerTest : CloudSDKKoinComponent {
         )
 
         val appRepository = object : TestAppRepository() {
-            override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {
-                completion(Result.success(listOf(app1, app2, app3)))
+            override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
+                return Success(listOf(app1, app2, app3))
             }
         }
 

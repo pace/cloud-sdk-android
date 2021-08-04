@@ -22,6 +22,10 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Adjust handling of too large bounding boxes when requesting tiles
 
+### Internal
+
+* Use Kotlin Coroutines instead of Future to fetch the PWA manifest and icons
+
 
 9.0.0 Release notes (2021-07-20)
 =============================================================

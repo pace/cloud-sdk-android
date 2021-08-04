@@ -47,29 +47,31 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
     private var lastApps = emptyList<String>()
     private var lastLocation: Location? = null
 
-    internal fun requestLocalApps(completion: (Completion<List<App>>) -> Unit) = CoroutineScope(dispatchers.default()).launch {
-        Timber.i("Check local available Apps")
+    internal fun requestLocalApps(completion: (Completion<List<App>>) -> Unit) {
+        CoroutineScope(dispatchers.default()).launch {
+            Timber.i("Check local available Apps")
 
-        if (checkRunning) {
-            Timber.w("App check already running")
-            withContext(dispatchers.main()) { completion(Failure(RunningCheck)) }
-        } else {
-            checkRunning = true
+            if (checkRunning) {
+                Timber.w("App check already running")
+                withContext(dispatchers.main()) { completion(Failure(RunningCheck)) }
+            } else {
+                checkRunning = true
 
-            when (val location = locationProvider.firstValidLocation()) {
-                is Success -> {
-                    if (isSpeedValid(location.result)) {
-                        getAppsByLocation(location.result, completion)
-                    } else {
-                        withContext(dispatchers.main()) { completion(Failure(InvalidSpeed)) }
+                when (val location = locationProvider.firstValidLocation()) {
+                    is Success -> {
+                        if (isSpeedValid(location.result)) {
+                            getAppsByLocation(location.result, completion)
+                        } else {
+                            withContext(dispatchers.main()) { completion(Failure(InvalidSpeed)) }
+                        }
+                    }
+                    is Failure -> {
+                        withContext(dispatchers.main()) { completion(Failure(location.throwable)) }
                     }
                 }
-                is Failure -> {
-                    withContext(dispatchers.main()) { completion(Failure(location.throwable)) }
-                }
-            }
 
-            checkRunning = false
+                checkRunning = false
+            }
         }
     }
 
@@ -84,12 +86,13 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
         return isSpeedValid
     }
 
-    private fun getAppsByLocation(location: Location, completion: (Completion<List<App>>) -> Unit) {
-        appRepository.getLocationBasedApps(context, location.latitude, location.longitude) { result ->
-            result.onSuccess { apps ->
-                Timber.d("Received ${apps.size} Apps: ${apps.map { it.url }}")
+    private suspend fun getAppsByLocation(location: Location, completion: (Completion<List<App>>) -> Unit) {
+        when (val apps = appRepository.getLocationBasedApps(location.latitude, location.longitude)) {
+            is Success -> {
+                val result = apps.result
+                Timber.d("Received ${result.size} Apps: ${result.map { it.url }}")
 
-                val notDisabled = apps
+                val notDisabled = result
                     .filter {
                         try {
                             val host = URL(it.url).host
@@ -112,7 +115,7 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
                     }
 
                 val notDisabledUrls = notDisabled.map { it.url }
-                val disabledUrls = apps.map { it.url }.minus(notDisabledUrls)
+                val disabledUrls = result.map { it.url }.minus(notDisabledUrls)
                 val invalidUrls = lastApps.minus(notDisabledUrls)
 
                 appEventManager.setInvalidApps(disabledUrls)
@@ -121,13 +124,13 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
                     val distance = lastLocation?.distanceTo(location)
                     distance?.let {
                         if (it < LOCATION_DIFFERENCE_THRESHOLD) {
-                            return@getLocationBasedApps
+                            return
                         }
                     }
                 }
 
                 if (notDisabledUrls.isNotEmpty() && notDisabledUrls.equalsTo(lastApps)) {
-                    return@getLocationBasedApps
+                    return
                 }
 
                 appEventManager.setInvalidApps(invalidUrls)
@@ -135,10 +138,10 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
                 lastApps = notDisabledUrls
                 lastLocation = location
 
-                CoroutineScope(dispatchers.main()).launch { completion(Success(notDisabled)) }
+                withContext(dispatchers.main()) { completion(Success(notDisabled)) }
             }
-
-            result.onFailure { error ->
+            is Failure -> {
+                val error = apps.throwable
                 Timber.e(error, "Could not receive Apps")
 
                 if (error is IOException) {
@@ -153,30 +156,36 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
                     }
                 } else {
                     Timber.e(NetworkError)
-                    CoroutineScope(dispatchers.main()).launch { completion(Failure(NetworkError)) }
+                    withContext(dispatchers.main()) { completion(Failure(NetworkError)) }
                 }
             }
         }
     }
 
     internal fun requestApps(completion: (Completion<List<App>>) -> Unit) {
-        appRepository.getAllApps(context) { result ->
-            result.onSuccess { completion(Success(it)) }
-            result.onFailure { completion(Failure(it)) }
+        CoroutineScope(dispatchers.default()).launch {
+            val result = appRepository.getAllApps()
+            withContext(dispatchers.main()) {
+                completion(result)
+            }
         }
     }
 
     internal fun fetchAppsByUrl(url: String, references: List<String>, completion: (Completion<List<App>>) -> Unit) {
-        appRepository.getAppsByUrl(context, url, references) { result ->
-            result.onSuccess { completion(Success(it)) }
-            result.onFailure { completion(Failure(it)) }
+        CoroutineScope(dispatchers.default()).launch {
+            val result = appRepository.getAppsByUrl(url, references)
+            withContext(dispatchers.main()) {
+                completion(result)
+            }
         }
     }
 
     internal fun fetchUrlByAppId(appId: String, completion: (Completion<String?>) -> Unit) {
-        appRepository.getUrlByAppId(appId) { result ->
-            result.onSuccess { completion(Success(it)) }
-            result.onFailure { completion(Failure(it)) }
+        CoroutineScope(dispatchers.default()).launch {
+            val result = appRepository.getUrlByAppId(appId)
+            withContext(dispatchers.main()) {
+                completion(result)
+            }
         }
     }
 

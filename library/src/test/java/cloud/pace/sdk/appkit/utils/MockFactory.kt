@@ -62,10 +62,22 @@ open class TestLocationProvider(
 
 open class TestAppRepository(private val isPoiInRange: Boolean = false) : AppRepository {
 
-    override fun getAppsByUrl(context: Context, url: String, references: List<String>, completion: (Result<List<App>>) -> Unit) {}
-    override fun getLocationBasedApps(context: Context, latitude: Double, longitude: Double, completion: (Result<List<App>>) -> Unit) {}
-    override fun getAllApps(context: Context, completion: (Result<List<App>>) -> Unit) {}
-    override fun getUrlByAppId(appId: String, completion: (Result<String?>) -> Unit) {}
+    override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
+        return Success(emptyList())
+    }
+
+    override suspend fun getAllApps(): Completion<List<App>> {
+        return Success(emptyList())
+    }
+
+    override suspend fun getAppsByUrl(url: String, references: List<String>): Completion<List<App>> {
+        return Success(emptyList())
+    }
+
+    override suspend fun getUrlByAppId(appId: String): Completion<String?> {
+        return Success(null)
+    }
+
     override fun getCofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit) {}
     override fun getCofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit) {}
     override suspend fun isPoiInRange(poiId: String, latitude: Double, longitude: Double) = isPoiInRange
