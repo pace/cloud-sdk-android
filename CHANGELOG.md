@@ -13,6 +13,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Fixes
 
 * Only show network error in WebView if it is a main frame error
+* Fix bug that third party browser custom tabs were not closed after adding the payment method e.g. PayPal
 
 ### Internal
 

@@ -8,8 +8,7 @@
 
     <queries>
         <intent>
-            <action android:name=
-                "android.support.customtabs.action.CustomTabsService" />
+            <action android:name="android.support.customtabs.action.CustomTabsService" />
         </intent>
     </queries>
 
@@ -18,7 +17,11 @@
             android:name=".appkit.app.AppActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppKitTheme">
+            android:theme="@style/AppKitTheme" />
+
+        <activity
+            android:name=".appkit.app.RedirectUriReceiverActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -32,6 +35,7 @@
         </activity>
 
         <receiver android:name=".appkit.geofences.GeofenceBroadcastReceiver" />
+
         <meta-data
             android:name="pace_redirect_scheme"
             android:value="${pace_redirect_scheme}" />
