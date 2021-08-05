@@ -1,12 +1,14 @@
 package cloud.pace.sdk
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.util.Log
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.Environment
 import cloud.pace.sdk.utils.KoinConfig
+import cloud.pace.sdk.utils.SetupLogger
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -83,6 +85,17 @@ object PACECloudSDK {
         AppKit.updateUserAgent()
 
         Timber.i("Setup of the PACECloudSDK successfully")
+
+        val applicationInfo = context.packageManager?.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+        val redirectScheme = applicationInfo?.metaData?.get("pace_redirect_scheme")?.toString()
+
+        SetupLogger.apiKey = configuration.apiKey
+        SetupLogger.redirectScheme = redirectScheme
+        SetupLogger.environment = configuration.environment
+        SetupLogger.domainACL = configuration.domainACL
+        SetupLogger.checkRedirectScheme = configuration.checkRedirectScheme
+
+        SetupLogger.preCheckSetup()
     }
 
     /**

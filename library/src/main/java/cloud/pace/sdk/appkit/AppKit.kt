@@ -57,6 +57,7 @@ object AppKit : CloudSDKKoinComponent {
      * @param completion Returns a list of [App]s on success or a [Throwable] on failure.
      */
     fun requestLocalApps(completion: (Completion<List<App>>) -> Unit) {
+        SetupLogger.logSDKWarningIfNeeded()
         appManager.requestLocalApps(completion)
     }
 
@@ -66,6 +67,7 @@ object AppKit : CloudSDKKoinComponent {
      * @param completion Returns a list of [App]s on success or a [Throwable] on failure.
      */
     fun requestApps(completion: (Completion<List<App>>) -> Unit) {
+        SetupLogger.logSDKWarningIfNeeded()
         appManager.requestApps(completion)
     }
 
@@ -75,6 +77,7 @@ object AppKit : CloudSDKKoinComponent {
      * @param completion Returns a list of [App]s on success or a [Throwable] on failure.
      */
     fun fetchAppsByUrl(url: String, vararg references: String, completion: (Completion<List<App>>) -> Unit) {
+        SetupLogger.logSDKWarningIfNeeded()
         appManager.fetchAppsByUrl(url, references.toList(), completion)
     }
 
@@ -84,6 +87,7 @@ object AppKit : CloudSDKKoinComponent {
      * @param completion Returns the App's URL on success or a [Throwable] on failure.
      */
     fun fetchUrlByAppId(appId: String, completion: (Completion<String?>) -> Unit) {
+        SetupLogger.logSDKWarningIfNeeded()
         appManager.fetchUrlByAppId(appId, completion)
     }
 
@@ -93,6 +97,7 @@ object AppKit : CloudSDKKoinComponent {
      * @param completion Returns a list of [CofuGasStation]s on success or a [Throwable] on failure.
      */
     fun requestCofuGasStations(completion: (Completion<List<CofuGasStation>>) -> Unit) {
+        SetupLogger.logSDKWarningIfNeeded()
         appManager.requestCofuGasStations(completion)
     }
 
@@ -104,6 +109,7 @@ object AppKit : CloudSDKKoinComponent {
      * @param completion Returns a list of [GasStation]s where Connected Fueling is available on success or a [Throwable] on failure.
      */
     fun requestCofuGasStations(location: Location, radius: Int, completion: (Completion<List<GasStation>>) -> Unit) {
+        SetupLogger.logSDKWarningIfNeeded()
         appManager.requestCofuGasStations(location, radius, completion)
     }
 
@@ -115,6 +121,7 @@ object AppKit : CloudSDKKoinComponent {
      * @return True if POI with [poiId] is in range, false otherwise.
      */
     suspend fun isPoiInRange(poiId: String, location: Location? = null): Boolean {
+        SetupLogger.logSDKWarningIfNeeded()
         return appManager.isPoiInRange(poiId, location)
     }
 
@@ -127,6 +134,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
+        SetupLogger.logSDKWarningIfNeeded()
         appManager.openAppActivity(context, url, enableBackToFinish, callback)
     }
 
@@ -139,6 +147,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openAppActivity(context: Context, app: App, enableBackToFinish: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
+        SetupLogger.logSDKWarningIfNeeded()
         appManager.openAppActivity(context, app, enableBackToFinish, callback)
     }
 
@@ -151,6 +160,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openPaceID(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
+        SetupLogger.logSDKWarningIfNeeded()
         appManager.openAppActivity(context, PACECloudSDK.configuration.environment.idUrl, enableBackToFinish, callback)
     }
 
@@ -163,6 +173,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openPaymentApp(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
+        SetupLogger.logSDKWarningIfNeeded()
         appManager.openAppActivity(context, PACECloudSDK.configuration.environment.payUrl, enableBackToFinish, callback)
     }
 
@@ -175,6 +186,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openTransactions(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
+        SetupLogger.logSDKWarningIfNeeded()
         appManager.openAppActivity(context, PACECloudSDK.configuration.environment.transactionUrl, enableBackToFinish, callback)
     }
 
@@ -188,6 +200,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openFuelingApp(context: Context, id: String? = null, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
+        SetupLogger.logSDKWarningIfNeeded()
         if (id == null) {
             appManager.openAppActivity(context, PACECloudSDK.configuration.environment.fuelingUrl, enableBackToFinish, callback)
             return
@@ -216,6 +229,7 @@ object AppKit : CloudSDKKoinComponent {
         bottomMargin: Float = 16f,
         callback: AppCallbackImpl = defaultAppCallback
     ) {
+        SetupLogger.logSDKWarningIfNeeded()
         appManager.openApps(context, apps, buttonContainer, theme, bottomMargin, callback)
     }
 
@@ -226,6 +240,7 @@ object AppKit : CloudSDKKoinComponent {
      * @see openApps
      */
     fun closeApps(buttonContainer: ConstraintLayout) {
+        SetupLogger.logSDKWarningIfNeeded()
         appManager.closeApps(buttonContainer)
     }
 
@@ -236,6 +251,7 @@ object AppKit : CloudSDKKoinComponent {
      * @see openApps
      */
     fun closeAppActivity() {
+        SetupLogger.logSDKWarningIfNeeded()
         appManager.closeAppActivity()
     }
 
@@ -243,6 +259,7 @@ object AppKit : CloudSDKKoinComponent {
      * Sets [car] related data which could be needed by an App.
      */
     fun setCarData(car: Car) {
+        SetupLogger.logSDKWarningIfNeeded()
         appManager.setCarData(car)
     }
 }
