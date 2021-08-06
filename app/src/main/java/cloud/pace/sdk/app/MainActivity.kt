@@ -154,13 +154,13 @@ class MainActivity : AppCompatActivity() {
 
         user_info.setOnClickListener {
             if (IDKit.isAuthorizationValid()) {
-                IDKit.refreshToken {
-                    showUserEmail(it)
+                IDKit.refreshToken { completion ->
+                    showUserEmail(completion)
                 }
             } else {
                 lifecycleScope.launch {
-                    IDKit.authorize(this@MainActivity) {
-                        showUserEmail(it)
+                    IDKit.authorize(this@MainActivity) { completion ->
+                        showUserEmail(completion)
                     }
                 }
             }

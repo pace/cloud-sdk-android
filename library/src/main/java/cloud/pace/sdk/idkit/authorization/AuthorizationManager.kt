@@ -167,6 +167,7 @@ internal class AuthorizationManager(
             }
             response != null -> {
                 IDKit.disableBiometricAuthentication()
+                API.addAuthorizationHeader(null)
 
                 val serviceConfiguration = session.authorizationServiceConfiguration
                 if (serviceConfiguration != null) {

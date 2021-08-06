@@ -7,16 +7,22 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.pay.PayAPI.paymentMethods
+import cloud.pace.sdk.api.pay.PayAPI.paymentTransactions
+import cloud.pace.sdk.api.pay.generated.model.PaymentMethods
+import cloud.pace.sdk.api.pay.generated.model.Transactions
+import cloud.pace.sdk.api.pay.generated.request.paymentMethods.GetPaymentMethodsIncludingCreditCheckAPI
+import cloud.pace.sdk.api.pay.generated.request.paymentMethods.GetPaymentMethodsIncludingCreditCheckAPI.getPaymentMethodsIncludingCreditCheck
+import cloud.pace.sdk.api.pay.generated.request.paymentTransactions.ListTransactionsAPI
+import cloud.pace.sdk.api.pay.generated.request.paymentTransactions.ListTransactionsAPI.listTransactions
 import cloud.pace.sdk.api.user.generated.model.PinOrPassword
 import cloud.pace.sdk.idkit.authorization.AuthorizationManager
 import cloud.pace.sdk.idkit.credentials.CredentialsManager
 import cloud.pace.sdk.idkit.model.OIDConfiguration
 import cloud.pace.sdk.idkit.model.ServiceConfiguration
 import cloud.pace.sdk.idkit.userinfo.UserInfoResponse
-import cloud.pace.sdk.utils.Completion
-import cloud.pace.sdk.utils.IDKitKoinComponent
-import cloud.pace.sdk.utils.KoinConfig
-import cloud.pace.sdk.utils.SetupLogger
+import cloud.pace.sdk.utils.*
 import org.koin.core.inject
 
 object IDKit : IDKitKoinComponent {
@@ -433,6 +439,20 @@ object IDKit : IDKitKoinComponent {
     }
 
     /**
+     * Checks if the [pin] is valid.
+     * The following rules apply to verify the PIN:
+     * - Must be 4 digits long
+     * - Must use 3 different digits
+     * - Must not be a numerical series (e.g. 1234, 4321, ...)
+     *
+     * @return True if the PIN is valid, false otherwise
+     */
+    fun isPINValid(pin: String): Boolean {
+        SetupLogger.logSDKWarningIfNeeded()
+        return credentialsManager.isPINValid(pin)
+    }
+
+    /**
      * Sends a mail to the user that provides an OTP.
      *
      * @param completion The block to be called when the request is completed including either the information if the mail has been sent `successfully` or a [Throwable].
@@ -440,5 +460,25 @@ object IDKit : IDKitKoinComponent {
     fun sendMailOTP(completion: (Completion<Boolean>) -> Unit) {
         SetupLogger.logSDKWarningIfNeeded()
         credentialsManager.sendMailOTP(completion)
+    }
+
+    /**
+     * Fetches a list of valid payment methods for the current user.
+     *
+     * @param completion The block to be called when the request is completed including either the payment methods or a [Throwable].
+     */
+    fun getValidPaymentMethods(completion: (Completion<PaymentMethods>) -> Unit) {
+        SetupLogger.logSDKWarningIfNeeded()
+        API.paymentMethods.getPaymentMethodsIncludingCreditCheck(GetPaymentMethodsIncludingCreditCheckAPI.Filterstatus.VALID).handleCallback(completion)
+    }
+
+    /**
+     * Fetches a list of transactions for the current user sorted in descending order by creation date.
+     *
+     * @param completion The block to be called when the request is completed including either the transactions or a [Throwable].
+     */
+    fun getTransactions(completion: (Completion<Transactions>) -> Unit) {
+        SetupLogger.logSDKWarningIfNeeded()
+        API.paymentTransactions.listTransactions(sort = ListTransactionsAPI.Sort.CREATEDATDESCENDING).handleCallback(completion)
     }
 }

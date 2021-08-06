@@ -1,11 +1,8 @@
 package cloud.pace.sdk.idkit.userinfo
 
 import cloud.pace.sdk.api.utils.InterceptorUtils
-import cloud.pace.sdk.poikit.utils.ApiException
 import cloud.pace.sdk.utils.Completion
-import cloud.pace.sdk.utils.Failure
-import cloud.pace.sdk.utils.Success
-import cloud.pace.sdk.utils.enqueue
+import cloud.pace.sdk.utils.handleCallback
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
@@ -23,20 +20,7 @@ class UserInfoApiClient(userInfoEndpoint: String, accessToken: String) {
     private val service = create(userInfoEndpoint, accessToken)
 
     fun getUserInfo(completion: (Completion<UserInfoResponse>) -> Unit) {
-        service.getUserInfo().enqueue {
-            onResponse = {
-                val body = it.body()
-                if (it.isSuccessful && body != null) {
-                    completion(Success(body))
-                } else {
-                    completion(Failure(ApiException(it.code(), it.message())))
-                }
-            }
-
-            onFailure = {
-                completion(Failure(it ?: Exception("Unknown exception")))
-            }
-        }
+        service.getUserInfo().handleCallback(completion)
     }
 
     companion object {

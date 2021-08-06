@@ -251,6 +251,15 @@ internal class CredentialsManager(
         }
     }
 
+    internal fun isPINValid(pin: String): Boolean {
+        val charChain = "0123456789012"
+        val isCorrectLength = pin.length == 4
+        val isDistinct = pin.toCharArray().distinct().count() >= 3
+        val isNoChain = !charChain.contains(pin) && !charChain.reversed().contains(pin)
+
+        return isCorrectLength && isDistinct && isNoChain
+    }
+
     internal fun sendMailOTP(completion: (Completion<Boolean>) -> Unit) {
         if (setAuthorizationHeader()) {
             API.totp.sendmailOTP().makeBooleanRequest(completion)

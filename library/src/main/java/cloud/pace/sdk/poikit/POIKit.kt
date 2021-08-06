@@ -27,7 +27,6 @@ import cloud.pace.sdk.poikit.routing.Route
 import cloud.pace.sdk.poikit.search.AddressSearchClient
 import cloud.pace.sdk.poikit.search.AddressSearchRequest
 import cloud.pace.sdk.poikit.search.PhotonResult
-import cloud.pace.sdk.poikit.utils.ApiException
 import cloud.pace.sdk.poikit.utils.GasStationCodes
 import cloud.pace.sdk.poikit.utils.GasStationMovedResponse
 import cloud.pace.sdk.poikit.utils.POIKitConfig
@@ -123,59 +122,20 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
         }
     }
 
-    fun getRegionalPrice(latitude: Double, longitude: Double, completion: (Completion<RegionalPrices?>) -> Unit) {
-        API.prices.getRegionalPrices(latitude.toFloat(), longitude.toFloat()).enqueue {
-            onResponse = {
-                val body = it.body()
-                if (it.isSuccessful && body != null) {
-                    completion(Success(body))
-                } else {
-                    completion(Failure(ApiException(it.code(), it.message())))
-                }
-            }
-
-            onFailure = {
-                completion(Failure(it ?: Exception("Unknown exception")))
-            }
-        }
+    fun getRegionalPrice(latitude: Double, longitude: Double, completion: (Completion<RegionalPrices>) -> Unit) {
+        API.prices.getRegionalPrices(latitude.toFloat(), longitude.toFloat()).handleCallback(completion)
     }
 
     fun searchAddress(request: AddressSearchRequest): Observable<PhotonResult> {
         return addressSearchApi.searchAddress(request)
     }
 
-    fun getDynamicFilters(latitude: Double, longitude: Double, completion: (Completion<Categories?>) -> Unit) {
-        API.metadataFilters.getMetadataFilters(latitude.toFloat(), longitude.toFloat()).enqueue {
-            onResponse = {
-                val body = it.body()
-                if (it.isSuccessful && body != null) {
-                    completion(Success(body))
-                } else {
-                    completion(Failure(ApiException(it.code(), it.message())))
-                }
-            }
-
-            onFailure = {
-                completion(Failure(it ?: Exception("Unknown exception")))
-            }
-        }
+    fun getDynamicFilters(latitude: Double, longitude: Double, completion: (Completion<Categories>) -> Unit) {
+        API.metadataFilters.getMetadataFilters(latitude.toFloat(), longitude.toFloat()).handleCallback(completion)
     }
 
-    fun getPriceHistory(id: String, fuelType: Fuel, from: Date, to: Date, completion: (Completion<PriceHistory?>) -> Unit) {
-        API.priceHistories.getPriceHistory(id, fuelType, from, to).enqueue {
-            onResponse = {
-                val body = it.body()
-                if (it.isSuccessful && body != null) {
-                    completion(Success(body))
-                } else {
-                    completion(Failure(ApiException(it.code(), it.message())))
-                }
-            }
-
-            onFailure = {
-                completion(Failure(it ?: Exception("Unknown exception")))
-            }
-        }
+    fun getPriceHistory(id: String, fuelType: Fuel, from: Date, to: Date, completion: (Completion<PriceHistory>) -> Unit) {
+        API.priceHistories.getPriceHistory(id, fuelType, from, to).handleCallback(completion)
     }
 
     fun getGasStation(id: String, compileOpeningHours: Boolean, forMovedGasStation: Boolean, completion: (Completion<GasStationMovedResponse>) -> Unit) {

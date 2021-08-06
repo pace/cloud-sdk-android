@@ -3,9 +3,8 @@ package cloud.pace.sdk.api.geo
 import android.content.Context
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.utils.InterceptorUtils
-import cloud.pace.sdk.poikit.utils.ApiException
 import cloud.pace.sdk.utils.Environment
-import cloud.pace.sdk.utils.enqueue
+import cloud.pace.sdk.utils.handleCallback
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -29,20 +28,7 @@ class GeoAPIClient(environment: Environment, private val context: Context) {
     private val service = create(environment.apiUrl)
 
     fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
-        service.getGeoApiApps(PACECloudSDK.configuration.geoAppsScope).enqueue {
-            onResponse = {
-                val body = it.body()
-                if (it.isSuccessful && body != null) {
-                    completion(Result.success(body))
-                } else {
-                    completion(Result.failure(ApiException(it.code(), it.message())))
-                }
-            }
-
-            onFailure = {
-                completion(Result.failure(it ?: Exception("Unknown exception")))
-            }
-        }
+        service.getGeoApiApps(PACECloudSDK.configuration.geoAppsScope).handleCallback(completion)
     }
 
     private fun create(baseUrl: String, readTimeout: Long? = null): GeoAPI {
