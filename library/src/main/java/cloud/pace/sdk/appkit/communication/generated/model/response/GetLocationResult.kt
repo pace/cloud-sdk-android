@@ -13,7 +13,8 @@ import kotlin.String
 public data class GetLocationResponse(
   public val lat: Double,
   public val lon: Double,
-  public val accuracy: Double?
+  public val accuracy: Double?,
+  public val bearing: Double?
 ) : ResponseBody()
 
 public data class GetLocationError(
