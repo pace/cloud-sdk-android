@@ -572,26 +572,32 @@ class AppWebViewModelImpl(
                 when (val currentLocation = locationProvider.currentLocation(true)) {
                     is Success -> {
                         if (currentLocation.result != null) {
+                            val bearing = currentLocation.result.bearing.toDouble()
                             GetLocationResult(
                                 GetLocationResult.Success(
                                     GetLocationResponse(
                                         currentLocation.result.latitude,
                                         currentLocation.result.longitude,
-                                        currentLocation.result.accuracy.toDouble()
+                                        currentLocation.result.accuracy.toDouble(),
+                                        if (bearing > 0) bearing else -1.0
                                     )
                                 )
                             )
                         } else {
                             when (val validLocation = locationProvider.firstValidLocation()) {
-                                is Success -> GetLocationResult(
-                                    GetLocationResult.Success(
-                                        GetLocationResponse(
-                                            validLocation.result.latitude,
-                                            validLocation.result.longitude,
-                                            validLocation.result.accuracy.toDouble()
+                                is Success -> {
+                                    val bearing = validLocation.result.bearing.toDouble()
+                                    GetLocationResult(
+                                        GetLocationResult.Success(
+                                            GetLocationResponse(
+                                                validLocation.result.latitude,
+                                                validLocation.result.longitude,
+                                                validLocation.result.accuracy.toDouble(),
+                                                if (bearing > 0) bearing else -1.0
+                                            )
                                         )
                                     )
-                                )
+                                }
                                 is Failure -> {
                                     when (validLocation.throwable) {
                                         is PermissionDenied -> GetLocationResult(
