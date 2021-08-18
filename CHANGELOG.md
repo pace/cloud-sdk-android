@@ -6,6 +6,9 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+9.2.0 Release notes (2021-08-18)
+=============================================================
+
 ### Enhancements
 
 * Add logging for successful setup 'PACECloudSDK' and 'IDKit' and for missing mandatory values for setup
@@ -20,6 +23,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Migrate Gradle files from Groovy to Kotlin
 * Use Kotlin Coroutines instead of Future to fetch the PWA manifest and icons
+* Add `bearing` parameter to `GetLocation` PWA call
 
 
 9.1.0 Release notes (2021-08-03)
