@@ -4,6 +4,7 @@
 <h1 align="center">
     Connected Fueling Android App
 </h1>
+</div>
 
 ## General
 Connected Fueling is an android project serving as an example of [PACE Cloud SDK](https://github.com/pace/cloud-sdk-android) integration.
