@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Main Theme Colors -->
+    <color name="colorPrimary">#00CCF0</color>
+    <color name="colorSecondary">@color/colorPrimary</color>
+    <color name="colorAccent">@color/colorPrimary</color>
+    <color name="colorAccentTransparent">#e1fcff</color>
+    <color name="colorAccentSelected">#1E1E1E</color>
+    <color name="textColorDefault">@color/black</color>
+    <color name="textColorDefaultTransparent">#33000000</color>
+
+    <!-- Onboarding -->
+    <color name="onboardingBackground">#fbfeff</color>
+    <color name="onboardingIconBackground">#d6d6d6</color>
+    <color name="onboardingIconTint">#FFFFFF</color>
+    <color name="bottomSheetBackground">@color/onboardingBackground</color>
+    <!-- indicator showing the current page in onboarding -->
+    <color name="viewpagerActiveColor">#191919</color>
+    <color name="viewpagerInactiveColor">#BDC2D0</color>
+
+    <!-- Main Screen -->
+    <color name="drawerBackground">@color/bottomSheetBackground</color>
+    <color name="drawerDividerColor">#e5e5e5</color>
+    <color name="smallButtonBackground">#E5E5E5</color>
+
+
+    <color name="snackWarningBackground">#eecccc</color>
+    <color name="snackDefaultBackground">@color/black</color>
+    <color name="snackErrorBackground">#f11100</color>
+
+    <color name="snackWarningTextColor">#323232</color>
+    <color name="snackErrorTextColor">#ffffff</color>
+    <color name="snackDefaultTextColor">#ffffff</color>
+    <color name="snackActionTextColor">#ffff00</color>
+
+
+</resources>

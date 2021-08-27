@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="car.pace.cofu.ui.onboarding.OnboardingViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:background="@color/onboardingBackground">
+
+        <car.pace.cofu.util.views.DisableSwipeViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/vpi"
+            bind:pagerItems="@{viewModel.pagerItems}"
+            bind:selectedPage="@={viewModel.selectedPage}"
+            tools:listitem="@layout/item_onboarding" />
+
+        <car.pace.cofu.util.views.BarViewPagerIndicator
+            android:id="@+id/vpi"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/view_pager_indicator_height"
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="@dimen/view_pager_indicator_margin"
+            android:layout_marginBottom="@dimen/view_padding"
+            app:activeColor="@color/viewpagerActiveColor"
+            app:barMargin="@dimen/viewPagerItemMargin"
+            app:inactiveColor="@color/viewpagerInactiveColor"
+            app:viewPager="@id/viewPager" />
+
+        <ImageView
+            android:onClick="@{()->viewModel.previous()}"
+            app:visible="@{viewModel.showBackButton}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/base_padding"
+            android:layout_marginTop="@dimen/base_padding"
+            android:contentDescription="@string/onboarding_back"
+            android:foreground="@drawable/round_ripple"
+            android:padding="@dimen/half_padding"
+            android:src="@drawable/ic_back" />
+
+        <ProgressBar
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp"
+            android:indeterminate="true"
+            bind:visibleIfGreaterThan0="@{viewModel.loading}" />
+
+    </RelativeLayout>
+
+</layout>

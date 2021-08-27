@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="car.pace.cofu.ui.home.dialog.BaseDialogViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/view_padding">
+
+        <TextView
+            style="@style/Text.Onboarding.Title"
+            android:text="@{viewModel.title}"
+            tools:text="@string/location_dialog_permission_title" />
+
+        <TextView
+            style="@style/Text.Onboarding"
+            android:labelFor="@id/editText"
+            android:text="@{viewModel.description}"
+            tools:text="@string/location_dialog_permission_text" />
+
+        <Button
+            style="@style/Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="@dimen/half_padding"
+            android:onClick="@{()->viewModel.onButtonClick()}"
+            android:text="@{viewModel.buttonText}"
+            tools:text="@string/location_dialog_permission_button" />
+
+    </LinearLayout>
+
+
+</layout>

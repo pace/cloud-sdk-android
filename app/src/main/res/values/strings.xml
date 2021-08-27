@@ -1,0 +1,95 @@
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="en-GB">
+    <string name="app_name">PACE Connected Fueling</string>
+    <string name="view_title">PACE Connected Fueling</string>
+    <!-- for localised assets, create different directories within the assets folder. Make sure to include all files in all language folders-->
+    <string name="assets_directory_name">en</string>
+
+    <string name="menu_item_impressum">Legal Notice</string>
+    <string name="menu_item_privacy">Privacy Statement</string>
+    <string name="menu_item_licenses">OpenSource Licences</string>
+    <string name="menu_item_fuel_type">Change fuel type</string>
+    <string name="menu_item_payment">Edit payment methods</string>
+    <string name="menu_item_history">Show payment history</string>
+    <string name="menu_item_logout">Logout</string>
+
+    <string name="onboarding_network_error">Connecting to the internet failed. Try again later.</string>
+    <string name="onboarding_unknown_error">An unknown error occurred. Try again later.</string>
+    <string name="onboarding_continue">Next</string>
+    <string name="onboarding_retry">Try again</string>
+    <string name="onboarding_invalid_session">Your session is expired.</string>
+    <string name="onboarding_retry_login">Retry login</string>
+    <string name="onboarding_step_permission_title">Gas stations near you</string>
+    <string name="onboarding_step_permission">To show you the closest gas stations, we need to access your location.</string>
+    <string name="onboarding_step_permission_cta">Allow location access</string>
+    <string name="onboarding_grant_permission">Allow location access</string>
+    <string name="onboarding_step_pace_id_title">Add profile</string>
+    <string name="onboarding_step_pace_id">For the simple payment using this app you have to register or login with your existing PACE-ID.</string>
+    <string name="onboarding_log_in">Login or register</string>
+    <string name="onboarding_log_in_unsuccessful">Login failed. Without an account, paying your fuel with your smartphone is not possible.</string>
+    <string name="onboarding_step_authorisation_title">Secure and fast payment</string>
+    <string name="onboarding_authorisation_biometry">Biometry</string>
+    <string name="onboarding_authorisation_existing_pin">Choose PIN</string>
+    <string name="onboarding_authorisation_new_pin">Choose PIN</string>
+    <string name="onboarding_authorisation_request_fingerprint">Confirm your fingerprint</string>
+    <string name="onboarding_fingerprint_error">Error recognising fingerprint:</string>
+    <string name="onboarding_fingerprint_none_saved_title">Currently there are no saved fingerprints!</string>
+    <string name="onboarding_fingerprint_save">Add now</string>
+    <string name="onboarding_enter_otp">Enter confirmation code</string>
+    <string name="onboarding_enter_otp_description">Please authorize the change with the confirmation code from your email inbox.</string>
+    <string name="onboarding_error_authorisation">Your input could not be verified. Try again.</string>
+    <string name="onboarding_choose_pin">Choose PIN</string>
+    <string name="onboarding_choose_pin_description">Choose a 4-digit PIN that can be used to authorise payments.</string>
+    <string name="onboarding_confirm_pin">Confirm PIN</string>
+    <string name="onboarding_confirm_pin_description">"Please re-enter the PIN for confirmation. "</string>
+    <string name="onboarding_error_pin_invalid_length">The PIN needs to be a 4-digit number.</string>
+    <string name="onboarding_error_pin_too_few_digits">The PIN needs to contain at least three distinct digits.</string>
+    <string name="onboarding_error_pin_series">The PIN can\'t be a series of ascending or descending numbers.</string>
+    <string name="onboarding_error_pin_mismatch">The PINs don\'t match. Try again.</string>
+    <string name="onboarding_error_pin_not_secure">The PIN is too simple (0000 or 1234 are not allowed). Choose a different PIN.</string>
+    <string name="onboarding_back">Back</string>
+    <string name="onboarding_step_payment_method_title">Payment method</string>
+    <string name="onboarding_step_payment_method">Select a payment method to start your first refueling.</string>
+    <string name="onboarding_select_payment_method">Add payment method</string>
+    <string name="onboarding_step_fuel_type_title">Fuel type</string>
+    <string name="onboarding_step_fuel_type">And finally: What fuel prices should we show you?</string>
+
+    <string name="fuel_type_diesel">Diesel</string>
+    <string name="fuel_type_super">Super</string>
+    <string name="fuel_type_e10">Super E10</string>
+    <string name="fuel_type_super_plus">Super Plus</string>
+
+    <string name="home_looking_for_location_title">Looking for location…</string>
+    <string name="home_looking_for_location_text">We are currently locating you. This might take a moment.</string>
+    <string name="home_loading_stations_title">Searching gas stations...</string>
+    <string name="home_loading_stations_text">We are searching for the nearest gas stations in your area. This may take a moment.</string>
+    <string name="home_fuel_up_here">Fuel Here</string>
+    <string name="home_navigate_there">Navigate to</string>
+    <string name="home_next_petrol_station">Nearest gas station</string>
+    <string name="home_more_petrol_stations">Other gas stations</string>
+    <string name="home_price_not_available">n. a.</string>
+    <string name="home_price_not_available_description">For this gas station and your fuel type there are currently no prices available.</string>
+    <string name="home_error_loading_title">Loading failed</string>
+    <string name="home_error_loading_text">Gas stations could not be loaded. Check your connection!</string>
+    <string name="home_no_stations_title">No gas stations nearby</string>
+    <string name="home_no_stations_text">No gas stations where found nearby your location.</string>
+
+    <string name="location_dialog_permission_title">Location permission not granted</string>
+    <string name="location_dialog_permission_text">To show you the nearest gas station, we need access to your current location.</string>
+    <string name="location_dialog_permission_button">Allow location access</string>
+    <string name="location_dialog_permission_denied_title">Location permission not granted</string>
+    <string name="location_dialog_permission_denied_text">To show you the nearest gas station, we need access to your current location.</string>
+    <string name="location_dialog_permission_denied_button">Open settings</string>
+    <string name="location_dialog_disabled_title">Location services disabled</string>
+    <string name="location_dialog_disabled_text">To show you petrol stations near you, location services must be enabled</string>
+    <string name="location_dialog_disabled_button">Open settings</string>
+
+    <string name="fuel_type_selection">What fuel prices should we show you?</string>
+    <string name="confirm_logout_title">Do you really want to logout?</string>
+    <string name="confirm_logout_description">Your data will still be saved in your PACE-ID account.</string>
+    <string name="confirm_logout">Logout</string>
+    <string name="confirm_logout_cancel">Cancel</string>
+    <string name="onboarding_step_authorisation">Biometric scanners are the fastest and most secure way to confirm your payment transactions.</string>
+    <string name="logout_complete_snackbar"></string>
+    <string name="share_title">Share</string>
+
+</resources>

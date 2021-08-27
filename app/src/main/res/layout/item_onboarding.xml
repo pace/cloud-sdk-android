@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="car.pace.cofu.ui.onboarding.OnboardingItemViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/view_padding"
+        tools:background="@color/onboardingBackground">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/buttonLayout"
+            android:layout_alignParentTop="true"
+            android:fillViewport="true"
+            android:overScrollMode="ifContentScrolls">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/padding_large"
+                    android:background="@drawable/onboarding_icon_background"
+                    android:padding="@dimen/onboardingIconPadding"
+                    bind:visibleIfGreaterThan0="@{viewModel.imageRes}">
+
+                    <ImageView
+                        android:layout_width="@dimen/onboardingIconSize"
+                        android:layout_height="@dimen/onboardingIconSize"
+                        android:layout_gravity="center_horizontal"
+                        android:contentDescription="@null"
+                        app:tint="@color/onboardingIconTint"
+                        bind:imageRes="@{viewModel.imageRes}"
+                        tools:src="@drawable/ic_location" />
+
+                </FrameLayout>
+
+                <TextView
+                    style="@style/Text.Onboarding.Title"
+                    android:text="@{viewModel.titleRes}"
+                    tools:text="@string/onboarding_step_permission_title" />
+
+                <TextView
+                    style="@style/Text.Onboarding"
+                    android:text="@{viewModel.textRes}"
+                    tools:text="@string/onboarding_step_permission" />
+            </LinearLayout>
+
+        </ScrollView>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/buttonLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/onboardingRecyclerMargin"
+            android:orientation="vertical"
+            android:overScrollMode="never"
+            bind:items="@{viewModel.buttons}"
+            tools:itemCount="2"
+            tools:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/item_onboarding_button">
+
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+    </RelativeLayout>
+</layout>

@@ -1,0 +1,200 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <!-- Inherit from a `DayNight` theme to support dark mode, make sure to adjust all colours then -->
+    <style name="Theme.PaceCofuApp" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/colorPrimary</item>
+        <item name="colorSecondaryVariant">@color/black</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:statusBarColor">?attr/colorSecondary</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+        <item name="dialogTheme">@style/DialogTheme</item>
+        <item name="alertDialogTheme">@style/DialogTheme</item>
+    </style>
+
+    <style name="Theme.Licenses" parent="Theme.PaceCofuApp">
+        <item name="windowActionBar">true</item>
+        <item name="windowNoTitle">false</item>
+    </style>
+
+    <style name="FullScreenDialog" parent="Theme.PaceCofuApp">
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+    </style>
+
+    <style name="DialogTheme" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/bg_rounded</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="android:windowMinWidthMinor">88%</item>
+        <item name="android:textColor">@color/textColorDefault</item>
+        <item name="android:textColorPrimary">@color/textColorDefault</item>
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/black</item>
+        <item name="colorSecondaryVariant">@color/black</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppBottomSheetDialogTheme" parent="Theme.MaterialComponents.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/black</item>
+        <item name="colorSecondaryVariant">@color/black</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bg_upper_rounded</item>
+    </style>
+
+    <!-- want to use a custom font? Just add it in this style, all other text styles inherit from it -->
+    <style name="Text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/fontSizeDefault</item>
+        <item name="android:textColor">@color/textColorDefault</item>
+        <item name="android:fontFamily">@font/montserrat_medium</item>
+    </style>
+
+    <style name="Text.Title">
+        <item name="android:fontFamily">@font/montserrat_semibold</item>
+        <item name="android:textSize">@dimen/fontSizeTitle</item>
+    </style>
+
+    <style name="Text.Error">
+        <item name="android:textColor">@color/biometric_error_color</item>
+    </style>
+
+    <style name="Text.Onboarding">
+        <item name="android:textSize">@dimen/fontSizeBigger</item>
+        <item name="android:paddingStart">@dimen/view_padding</item>
+        <item name="android:paddingEnd">@dimen/view_padding</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginBottom">@dimen/base_padding</item>
+    </style>
+
+    <style name="Text.Onboarding.Title">
+        <item name="android:textSize">@dimen/fontSizeTitle</item>
+        <item name="android:fontFamily">@font/montserrat_semibold</item>
+    </style>
+
+    <style name="Toolbar">
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="titleTextColor">?attr/colorOnPrimary</item>
+    </style>
+
+    <style name="Button" parent="Text">
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:layout_width">@dimen/button_width</item>
+        <item name="android:minHeight">@dimen/button_min_height</item>
+    </style>
+
+    <style name="Button.CTA">
+        <item name="android:minHeight">@dimen/button_cta_height</item>
+        <item name="android:paddingStart">@dimen/button_primary_padding</item>
+        <item name="android:paddingEnd">@dimen/button_primary_padding</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
+        <item name="backgroundTint">?attr/colorAccent</item>
+        <item name="cornerRadius">@dimen/button_small_corner_radius</item>
+        <item name="android:fontFamily">@font/montserrat_semibold</item>
+        <item name="android:outlineSpotShadowColor" tools:ignore="NewApi">#40005a6a</item>
+        <item name="android:outlineAmbientShadowColor" tools:ignore="NewApi">#40005a6a</item>
+    </style>
+
+    <style name="Button.CTASecondary">
+        <item name="android:minHeight">@dimen/button_cta_height</item>
+        <item name="android:paddingStart">@dimen/button_primary_padding</item>
+        <item name="android:paddingEnd">@dimen/button_primary_padding</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="iconTint">?attr/colorPrimary</item>
+        <item name="strokeColor">?attr/colorPrimary</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="rippleColor">?attr/colorPrimary</item>
+        <item name="cornerRadius">@dimen/button_small_corner_radius</item>
+        <item name="android:outlineSpotShadowColor" tools:ignore="NewApi">#40005a6a</item>
+        <item name="android:outlineAmbientShadowColor" tools:ignore="NewApi">#40005a6a</item>
+    </style>
+
+
+    <style name="Button.Primary">
+        <item name="android:paddingStart">@dimen/button_primary_padding</item>
+        <item name="android:paddingEnd">@dimen/button_primary_padding</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
+        <item name="backgroundTint">?attr/colorAccent</item>
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+        <item name="android:fontFamily">@font/montserrat_semibold</item>
+        <item name="android:outlineSpotShadowColor" tools:ignore="NewApi">#40005a6a</item>
+        <item name="android:outlineAmbientShadowColor" tools:ignore="NewApi">#40005a6a</item>
+    </style>
+
+    <style name="Button.Secondary">
+        <item name="android:paddingStart">@dimen/button_primary_padding</item>
+        <item name="android:paddingEnd">@dimen/button_primary_padding</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="backgroundTint">@color/white</item>
+        <item name="iconTint">?attr/colorPrimary</item>
+        <item name="strokeColor">?attr/colorPrimary</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="rippleColor">?attr/colorPrimary</item>
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+        <item name="android:outlineSpotShadowColor" tools:ignore="NewApi">#40005a6a</item>
+        <item name="android:outlineAmbientShadowColor" tools:ignore="NewApi">#40005a6a</item>
+    </style>
+
+    <style name="Button.Small">
+        <item name="backgroundTint">@color/smallButtonBackground</item>
+        <item name="cornerRadius">@dimen/button_small_corner_radius</item>
+        <item name="android:minHeight">@dimen/button_small_min_height</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:outlineSpotShadowColor" tools:ignore="NewApi">#FFFFFF</item>
+        <item name="android:outlineAmbientShadowColor" tools:ignore="NewApi">#FFFFFF</item>
+    </style>
+
+    <style name="Button.Primary.Image">
+        <item name="android:layout_width">@dimen/imageButtonWidth</item>
+        <item name="android:layout_height">@dimen/imageButtonHeight</item>
+        <item name="android:paddingStart">@dimen/imageButtonIconMarginLeft</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="iconTint">?attr/colorOnPrimary</item>
+        <item name="iconGravity">start</item>
+        <item name="iconPadding">@dimen/imageButtonIconMarginRight</item>
+        <item name="iconSize">@dimen/imageButtonIconSize</item>
+    </style>
+
+    <style name="Button.Text">
+        <item name="textAllCaps">false</item>
+        <item name="android:background">@drawable/text_button_ripple</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:minHeight">@dimen/button_min_height_without_padding</item>
+    </style>
+
+</resources>

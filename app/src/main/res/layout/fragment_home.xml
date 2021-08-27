@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="car.pace.cofu.core.navigation.ToolbarAction" />
+
+        <import type="car.pace.cofu.util.BindingsKt" />
+
+        <variable
+            name="viewModel"
+            type="car.pace.cofu.ui.home.HomeViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/Toolbar"
+            bind:navigationAction="@{ToolbarAction.MENU}"
+            tools:navigationIcon="@drawable/ic_menu_filled"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/toolbar"
+            android:layout_alignTop="@+id/toolbar"
+            android:layout_alignEnd="@+id/toolbar"
+            android:layout_alignBottom="@+id/toolbar">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:contentDescription="@string/app_name"
+                android:paddingTop="@dimen/medium_padding"
+                android:paddingBottom="@dimen/medium_padding"
+                android:src="@drawable/ic_logo_connected_fueling_big" />
+
+        </RelativeLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/toolbar"
+            bind:isRefreshing="@{viewModel.swipeRefreshLayoutRefreshing}"
+            bind:onRefreshListener="@{()->viewModel.reload()}">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:paddingVertical="@dimen/half_padding"
+                bind:itemAnimation="@{BindingsKt.ITEM_ANIMATION_LANDING}"
+                bind:items="@{viewModel.items}"
+                tools:itemCount="3"
+                tools:layoutManager="LinearLayoutManager"
+                tools:listitem="@layout/item_petrol_station" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="@dimen/padding_large"
+            android:layout_marginEnd="@dimen/padding_large"
+            android:orientation="vertical"
+
+            bind:visible="@{viewModel.showInfo}">
+
+            <ImageView
+                android:layout_width="@dimen/loading_image_width"
+                android:layout_height="@dimen/loading_image_width"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/padding_large"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_logo_connected_fueling"
+                bind:visible="@{!viewModel.infoImageNoResults}" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/padding_large"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_no_results"
+                bind:visible="@{viewModel.infoImageNoResults}"
+                tools:visibility="gone" />
+
+            <TextView
+                style="@style/Text.Title"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/base_padding"
+                android:gravity="center"
+                android:text="@{viewModel.infoTitle}"
+                android:textSize="@dimen/fontSizeTitle"
+                tools:text="@string/home_loading_stations_title" />
+
+            <TextView
+                style="@style/Text"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@{viewModel.infoText}"
+                android:textSize="@dimen/fontSizeBigger"
+                tools:text="@string/home_loading_stations_text" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</layout>

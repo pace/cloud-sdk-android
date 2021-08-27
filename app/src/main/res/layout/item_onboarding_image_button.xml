@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="car.pace.cofu.ui.onboarding.OnboardingImageButtonViewModel" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+            style="@style/Button.Primary.Image"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/half_padding"
+            android:layout_marginBottom="@dimen/half_padding"
+            android:onClick="@{()->viewModel.onClick()}"
+            android:text="@{viewModel.textRes}"
+            bind:icon="@{viewModel.imageRes}"
+            tools:icon="@drawable/ic_location"
+            tools:text="@string/onboarding_authorisation_biometry" />
+
+    </FrameLayout>
+</layout>

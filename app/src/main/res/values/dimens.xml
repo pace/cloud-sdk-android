@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- GENERAL -->
+    <!-- default padding at the screen edges (overwritten in sw360dp/dimens.xml) -->
+    <dimen name="view_padding">16dp</dimen>
+    <!-- default padding between items on a screen -->
+    <dimen name="base_padding">16dp</dimen>
+    <dimen name="padding_large">32dp</dimen>
+    <!-- default padding between items with a close connection -->
+    <dimen name="big_padding">16dp</dimen>
+    <dimen name="medium_padding">12dp</dimen>
+    <dimen name="half_padding">8dp</dimen>
+    <dimen name="small_padding">4dp</dimen>
+    <dimen name="tiny_padding">2dp</dimen>
+    <!-- size of icons in the navigation drawer -->
+    <dimen name="drawerIconSize">8dp</dimen>
+    <dimen name="nav_button_size">24dp</dimen>
+    <!-- Corner Radius of the primary button -->
+    <dimen name="button_corner_radius">4dp</dimen>
+    <dimen name="button_small_corner_radius">8dp</dimen>
+    <dimen name="button_width">240dp</dimen>
+    <dimen name="button_primary_padding">8dp</dimen>
+    <dimen name="button_cta_height">56dp</dimen>
+    <dimen name="button_min_height">62dp</dimen>
+    <dimen name="button_min_height_without_padding">44dp</dimen>
+    <dimen name="button_small_min_height">20dp</dimen>
+    <dimen name="snacker_corner_radius">8dp</dimen>
+    <dimen name="navigate_margin">26dp</dimen>
+    <dimen name="navigate_margin_offset">20dp</dimen>
+
+    <!-- font sizes -->
+    <dimen name="fontSizeMin">10sp</dimen>
+    <dimen name="fontSizeDefault">14sp</dimen>
+    <dimen name="fontSizeBigger">16sp</dimen>
+    <dimen name="fontSizeTitle">18sp</dimen>
+    <dimen name="fontSizeTitleBig">22sp</dimen>
+
+    <!-- corner radius of the left and right edge of a bottom sheet dialog -->
+    <dimen name="bottomSheetCornerRadius">12dp</dimen>
+
+    <dimen name="menu_divider_distance">30dp</dimen>
+    <dimen name="menu_divider_distance_offset">36dp</dimen>
+
+    <!-- ONBOARDING -->
+    <dimen name="viewPagerItemMargin">10dp</dimen>
+    <dimen name="onboardingIconPadding">40dp</dimen>
+    <dimen name="onboardingIconSize">80dp</dimen>
+    <dimen name="onboardingRecyclerMargin">@dimen/half_padding</dimen>
+    <dimen name="imageButtonIconSize">40dp</dimen>
+    <dimen name="imageButtonHeight">105dp</dimen>
+    <dimen name="imageButtonWidth">200dp</dimen>
+    <dimen name="imageButtonIconMarginLeft">30dp</dimen>
+    <dimen name="imageButtonIconMarginRight">24dp</dimen>
+    <dimen name="view_pager_indicator_height">20dp</dimen>
+    <dimen name="view_pager_indicator_margin">60dp</dimen>
+
+    <!-- HOME page -->
+    <dimen name="loading_image_width">120dp</dimen>
+    <dimen name="sidebar_item_padding_horizontal">12dp</dimen>
+    <dimen name="empty_screen_image_width">80dp</dimen>
+    <dimen name="gas_station_image_margin">@dimen/half_padding</dimen>
+</resources>

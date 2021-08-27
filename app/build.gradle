@@ -1,0 +1,111 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs.kotlin'
+    id 'dagger.hilt.android.plugin'
+    id 'com.google.android.gms.oss-licenses-plugin'
+}
+
+def versionProperties = new Properties()
+project.file("./version.properties").withReader("UTF-8") { reader ->
+    versionProperties.load(reader)
+}
+
+def secretsProperties = new Properties()
+project.file("../secrets.properties").withReader("UTF-8") { reader ->
+    secretsProperties.load(reader)
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    signingConfigs {
+        config {
+            storeFile file(secretsProperties.getProperty("signingKeyPath"))
+            storePassword secretsProperties.getProperty("signingKeyPassword")
+            keyAlias secretsProperties.getProperty("signingKeyAlias")
+            keyPassword secretsProperties.getProperty("signingKeyAliasPassword")
+        }
+    }
+
+    defaultConfig {
+        applicationId "car.pace.cofu"
+        minSdkVersion 23
+        targetSdkVersion 30
+
+        def version = versionProperties.getProperty("versionName")
+        // versionCode is set via CI using -PversionCode=12345
+        // "1" is used as a fallback for local development builds.
+        versionCode project.hasProperty("versionCode") ? project.property("versionCode").toInteger() : 1
+        versionName version
+
+        buildConfigField "String", "CLOUD_API_KEY", "\"" + secretsProperties.getProperty("paceCloudApiKey") + "\""
+        buildConfigField "String", "PACE_CLIENT_ID", "\"" + secretsProperties.getProperty("paceCloudClientId") + "\""
+        buildConfigField "String", "PACE_REDIRECT_URL", "\"" + secretsProperties.getProperty("paceCloudRedirectUrl") + "\""
+        buildConfigField "String", "PACE_APP_NAME", "\"" + secretsProperties.getProperty("paceCloudAppName") + "\""
+        buildConfigField "String", "DOMAIN_ACL", "\"" + secretsProperties.getProperty("paceCloudDomainACL") + "\""
+        buildConfigField "String", "GEO_APPS_SCOPE", "\"" + secretsProperties.getProperty("paceCloudGeoAppsScope") + "\""
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [
+                'appAuthRedirectScheme': secretsProperties.getProperty("paceCloudRedirectScheme"), // e.g. reverse domain name notation: cloud.pace.app
+                'pace_redirect_scheme': secretsProperties.getProperty("paceCloudUniqueId") // e.g. pace.ad50262a-9c88-4a5f-bc55-00dc31b81e5a
+        ]
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        dataBinding = true
+    }
+
+    lintOptions {
+        disable 'LogNotTimber', 'StringFormatInTimber', 'ThrowableNotAtBeginning', 'BinaryOperationInTimber', 'TimberArgCount', 'TimberArgTypes', 'TimberTagLength'
+    }
+}
+
+dependencies {
+    // Pace Cloud SDK
+    implementation "cloud.pace:sdk:9.0.0"
+    
+    // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    // Google support and design libraries
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation "androidx.navigation:navigation-fragment-ktx:2.3.5"
+    implementation "androidx.navigation:navigation-ui-ktx:2.3.5"
+    implementation "com.google.android.gms:play-services-oss-licenses:17.0.0"
+
+    // Fancy recyclerview animation
+    implementation 'jp.wasabeef:recyclerview-animators:4.0.2'
+
+    // hilt dependency injection
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    kapt "androidx.hilt:hilt-compiler:1.0.0"
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+}

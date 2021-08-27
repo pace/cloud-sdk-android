@@ -1,0 +1,95 @@
+<resources>
+    <string name="app_name">PACE Connected Fueling</string>
+    <string name="view_title">PACE Connected Fueling</string>
+    <!-- for localised assets, create different directories within the assets folder. Make sure to include all files in all language folders-->
+    <string name="assets_directory_name">de</string>
+
+    <string name="menu_item_impressum">Impressum</string>
+    <string name="menu_item_privacy">Datenschutzerklärung</string>
+    <string name="menu_item_licenses">OpenSource-Lizenzen</string>
+    <string name="menu_item_fuel_type">Kraftstofftyp ändern</string>
+    <string name="menu_item_payment">Zahlungsmethoden bearbeiten</string>
+    <string name="menu_item_history">Zahlungshistorie anzeigen</string>
+    <string name="menu_item_logout">Abmelden</string>
+
+    <string name="onboarding_network_error">Verbindung zum Internet konnte nicht hergestellt werden. Versuche es später erneut.</string>
+    <string name="onboarding_unknown_error">Ein unbekannter Fehler ist aufgetreten. Versuche es später erneut.</string>
+    <string name="onboarding_continue">Weiter</string>
+    <string name="onboarding_retry">Erneut versuchen</string>
+    <string name="onboarding_invalid_session">Deine Anmeldung scheint abgelaufen zu sein</string>
+    <string name="onboarding_retry_login">Erneut anmelden</string>
+    <string name="onboarding_step_permission_title">Tankstellen in deiner Nähe</string>
+    <string name="onboarding_step_permission">Um die nächstgelegene Tankstelle zu sehen, benötigen wir Zugriff auf deinen genauen Standort.</string>
+    <string name="onboarding_step_permission_cta">Standort freigeben</string>
+    <string name="onboarding_grant_permission">Standort freigeben</string>
+    <string name="onboarding_step_pace_id_title">Profil hinterlegen</string>
+    <string name="onboarding_step_pace_id">Für die einfache Zahlung mit der App musst du dich registrieren oder mit deiner vorhandenen PACE-ID anmelden.</string>
+    <string name="onboarding_log_in">Anmelden oder Registrieren</string>
+    <string name="onboarding_log_in_unsuccessful">Anmeldung nicht erfolgreich. Ohne Account ist eine Smartphone-Zahlung an der Tankstelle nicht möglich.</string>
+    <string name="onboarding_step_authorisation_title">Sicher und schnell bezahlen</string>
+    <string name="onboarding_step_authorisation">Biometrische Scanner sind die schnellste und sicherste Art deine Zahlungsvorgänge zu bestätigen.</string>
+    <string name="onboarding_authorisation_biometry">Biometrie verwenden</string>
+    <string name="onboarding_authorisation_existing_pin">PIN wählen</string>
+    <string name="onboarding_authorisation_new_pin">PIN wählen</string>
+    <string name="onboarding_authorisation_request_fingerprint">Bestätige deinen Fingerabdruck</string>
+    <string name="onboarding_fingerprint_error">Fehler beim Erkennen des Fingerabdrucks:</string>
+    <string name="onboarding_fingerprint_none_saved_title">Aktuell sind keine Fingerabdrücke gespeichert!</string>
+    <string name="onboarding_fingerprint_save">Jetzt erfassen</string>
+    <string name="onboarding_enter_otp">Bestätigungscode eingeben</string>
+    <string name="onboarding_enter_otp_description">Bitte autorisiere die Änderung mit dem Bestätigungscode aus deinem E-Mail Postfach.</string>
+    <string name="onboarding_error_authorisation">Deine Eingabe konnte nicht verifiziert werden. Versuche es erneut.</string>
+    <string name="onboarding_choose_pin">PIN wählen</string>
+    <string name="onboarding_choose_pin_description">Wähle eine vier-stellige PIN, die zur Bestätigung von Zahlungen verwendet werden soll.</string>
+    <string name="onboarding_confirm_pin">PIN bestätigen</string>
+    <string name="onboarding_confirm_pin_description">Bitte gebe zur Bestätigung die PIN erneut ein.</string>
+    <string name="onboarding_error_pin_invalid_length">Die PIN muss vierstellig sein.</string>
+    <string name="onboarding_error_pin_too_few_digits">Die PIN muss mindestens drei unterschiedliche Ziffern enthalten.</string>
+    <string name="onboarding_error_pin_series">Die PIN darf keine Serie auf- oder absteigender Ziffern sein.</string>
+    <string name="onboarding_error_pin_mismatch">Die PINs stimmen nicht überein. Versuche es erneut.</string>
+    <string name="onboarding_error_pin_not_secure">Die PIN ist zu einfach (0000 oder 1234 sind nicht erlaubt). Wähle eine andere PIN</string>
+    <string name="onboarding_back">Zurück</string>
+    <string name="onboarding_step_payment_method_title">Zahlungsmethode</string>
+    <string name="onboarding_step_payment_method">Hinterlege eine Zahlungsmethode, damit du mit deinem ersten Tankvorgang starten kannst.</string>
+    <string name="onboarding_select_payment_method">Zahlungsmethode einrichten</string>
+    <string name="onboarding_step_fuel_type_title">Kraftstofftyp</string>
+    <string name="onboarding_step_fuel_type">Und zum Schluss: Welche Kraftstoffpreise sollen wir dir anzeigen?</string>
+
+    <string name="fuel_type_diesel">Diesel</string>
+    <string name="fuel_type_super">Super</string>
+    <string name="fuel_type_e10">Super E10</string>
+    <string name="fuel_type_super_plus">Super Plus</string>
+
+    <string name="home_looking_for_location_title">Suche nach Standort…</string>
+    <string name="home_looking_for_location_text">Wir ermitteln gerade deinen Standort. Dies kann einen Moment dauern.</string>
+    <string name="home_loading_stations_title">Suche Tankstellen…</string>
+    <string name="home_loading_stations_text">Wir suchen die nächstgelegenen Tankstellen in deiner Nähe. Dies kann einen Moment dauern.</string>
+    <string name="home_fuel_up_here">Hier tanken</string>
+    <string name="home_navigate_there">Route starten</string>
+    <string name="home_next_petrol_station">Nächstgelegene Tankstelle</string>
+    <string name="home_more_petrol_stations">Weitere Tankstellen</string>
+    <string name="home_price_not_available">n. v.</string>
+    <string name="home_price_not_available_description">Für diese Tankstelle und deinen Kraftstofftyp sind zurzeit keine Preise verfügbar.</string>
+    <string name="home_error_loading_title">Laden fehlgeschlagen</string>
+    <string name="home_error_loading_text">Tankstellen konnten nicht geladen werden. Überprüfe deine Verbindung!</string>
+    <string name="home_no_stations_title">Keine Tankstellen in deiner Nähe</string>
+    <string name="home_no_stations_text">Es wurden keine Tankstellen in deiner Nähe gefunden.</string>
+
+    <string name="location_dialog_permission_title">Standort nicht freigegeben</string>
+    <string name="location_dialog_permission_text">Um dir die nächstgelegene Tankstelle anzuzeigen, brauchen wir Zugriff auf deinen aktuellen Standort.</string>
+    <string name="location_dialog_permission_button">Standort freigeben</string>
+    <string name="location_dialog_permission_denied_title">Standort nicht freigegeben</string>
+    <string name="location_dialog_permission_denied_text">Um dir die nächstgelegene Tankstelle anzuzeigen, brauchen wir Zugriff auf deinen aktuellen Standort.</string>
+    <string name="location_dialog_permission_denied_button">Einstellungen öffnen</string>
+    <string name="location_dialog_disabled_title">Standort nicht aktiviert</string>
+    <string name="location_dialog_disabled_text">Um dir die nächstgelegene Tankstelle anzuzeigen, brauchen wir Zugriff auf deinen aktuellen Standort.</string>
+    <string name="location_dialog_disabled_button">Einstellungen öffnen</string>
+
+    <string name="fuel_type_selection">Welche Kraftstoffpreise sollen wir dir anzeigen?</string>
+    <string name="confirm_logout_title">Willst du dich wirklich abmelden?</string>
+    <string name="confirm_logout_description">Deine Daten sind weiterhin in deinem PACE-ID Account gespeichert.</string>
+    <string name="confirm_logout">Abmelden</string>
+    <string name="confirm_logout_cancel">Abbrechen</string>
+    <string name="logout_complete_snackbar"></string>
+    <string name="share_title">Teilen</string>
+
+</resources>

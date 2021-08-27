@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="onboardingIconPadding">60dp</dimen>
+    <dimen name="onboardingIconSize">100dp</dimen>
+
+    <dimen name="button_primary_padding">12dp</dimen>
+    <dimen name="view_padding">26dp</dimen>
+    <dimen name="onboardingRecyclerMargin">@dimen/base_padding</dimen>
+    <dimen name="gas_station_image_margin">@dimen/base_padding</dimen>
+    <dimen name="sidebar_item_padding_horizontal">16dp</dimen>
+</resources>
