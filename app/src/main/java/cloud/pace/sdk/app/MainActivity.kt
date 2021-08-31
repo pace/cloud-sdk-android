@@ -20,6 +20,7 @@ import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.geo.ConnectedFuelingStatus
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
+import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.OIDConfiguration
 import cloud.pace.sdk.poikit.POIKit
@@ -30,6 +31,8 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private var lastLocation: Location? = null
+    private var currentApps: List<App> = emptyList()
+
     private val defaultAppCallback = object : AppCallbackImpl() {
         override fun onLogin(context: Context, result: Completion<String?>) {
             when (result) {
@@ -216,7 +219,12 @@ class MainActivity : AppCompatActivity() {
             if (lastLocation == null || lastLocation.distanceTo(it) > APP_DISTANCE_THRESHOLD) {
                 AppKit.requestLocalApps { completion ->
                     if (completion is Success) {
-                        AppKit.openApps(this, completion.result, root_layout, bottomMargin = 100f, callback = defaultAppCallback)
+                        val apps = completion.result
+                        // Only refresh App Drawers if old and new app lists are not equal
+                        if (currentApps.size != apps.size || !currentApps.containsAll(apps)) {
+                            currentApps = apps
+                            AppKit.openApps(this, completion.result, root_layout, bottomMargin = 100f, callback = defaultAppCallback)
+                        }
                     }
                 }
 

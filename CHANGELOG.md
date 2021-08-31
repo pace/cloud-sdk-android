@@ -10,6 +10,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Add logging for successful setup 'PACECloudSDK' and 'IDKit' and for missing mandatory values for setup
 * Open the share sheet by default when the PWA sends image data, e.g. when clicking on a receipt. This behavior can be overridden in `AppCallback.onImageDataReceived(bitmap)`
+* The location's speed will only affect when app drawers are shown, but not when they are being removed again
 
 ### Fixes
 
@@ -17,6 +18,7 @@ x.y.z Release notes (yyyy-MM-dd)
 * Fix bug that third party browser custom tabs were not closed after adding the payment method e.g. PayPal
 * Add methods to `IDKit` that returns the user's payment methods, transactions and checks the PIN requirements
 * Remove `LocationAvailability` check since it causes issues on some devices
+* Ensure that AppKit's requestLocalApps will always call the completion callback
 
 ### Internal
 

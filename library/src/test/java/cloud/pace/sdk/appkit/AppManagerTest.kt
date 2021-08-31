@@ -20,6 +20,8 @@ import cloud.pace.sdk.appkit.persistence.CacheModel
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.utils.*
 import cloud.pace.sdk.utils.*
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -89,9 +91,39 @@ class AppManagerTest : CloudSDKKoinComponent {
     fun `no app due to invalid speed`() {
         `when`(mockLocation.speed).then { 20f }
 
+        val app1 = App(
+            url = "http://test1",
+            name = "App #1",
+            shortName = "Connected Fueling",
+            description = "Subtitle app #1",
+            logo = null
+        )
+
+        val appRepository = object : TestAppRepository() {
+            override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
+                return Success(listOf(app1))
+            }
+        }
+
         val testModule = module {
             single<LocationProvider> {
                 TestLocationProvider(mockLocation)
+            }
+
+            single<AppRepository> {
+                appRepository
+            }
+
+            single<SharedPreferencesModel> {
+                TestSharedPreferencesModel()
+            }
+
+            single<AppEventManager> {
+                TestAppEventManager()
+            }
+
+            single<AppModel> {
+                AppModelImpl(mockContext)
             }
         }
 
@@ -210,6 +242,79 @@ class AppManagerTest : CloudSDKKoinComponent {
             }
         }
         assertEquals(0, future.get().size)
+    }
+
+    @Test
+    fun `old app not being removed although speed is invalid`() {
+        val location = mockk<Location>()
+
+        val app1 = App(
+            url = "http://test1",
+            name = "App #1",
+            shortName = "Connected Fueling",
+            description = "Subtitle app #1",
+            logo = null
+        )
+
+        val appRepository = object : TestAppRepository() {
+            override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
+                return Success(listOf(app1))
+            }
+        }
+
+        every { location.latitude } returns 49.012722
+        every { location.longitude } returns 8.427326
+        every { location.speed } returns 3f
+
+        val testModule = module {
+            single<LocationProvider> {
+                TestLocationProvider(location)
+            }
+
+            single<AppRepository> {
+                appRepository
+            }
+
+            single<SharedPreferencesModel> {
+                TestSharedPreferencesModel()
+            }
+
+            single<AppEventManager> {
+                TestAppEventManager()
+            }
+
+            single<AppModel> {
+                AppModelImpl(mockContext)
+            }
+        }
+
+        setupKoinForTests(testModule)
+
+        val appFuture = CompletableFuture<List<App>>()
+
+        appManager.requestLocalApps {
+            if (it is Success) {
+                appFuture.complete(it.result)
+            }
+        }
+
+        val response1 = appFuture.get()[0]
+        assertEquals(app1.name, response1.name)
+        assertEquals(app1.description, response1.description)
+
+        every { location.speed } returns 20f
+
+        val oldAppFuture = CompletableFuture<List<App>>()
+
+        appManager.requestLocalApps {
+            if (it is Success) {
+                oldAppFuture.complete(it.result)
+            }
+        }
+
+        val oldApp = oldAppFuture.get()[0]
+        assertEquals(app1.name, oldApp.name)
+        assertEquals(app1.description, oldApp.description)
     }
 
     @Test
