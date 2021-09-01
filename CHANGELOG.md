@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+9.2.0 Release notes (2021-09-01)
+=============================================================
+
+
 ### Enhancements
 
 * Add logging for successful setup 'PACECloudSDK' and 'IDKit' and for missing mandatory values for setup
