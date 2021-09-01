@@ -55,13 +55,6 @@ class LocationProviderImpl(
     }
     private val locationCallback by lazy {
         object : LocationCallback() {
-            override fun onLocationAvailability(locationAvailability: LocationAvailability?) {
-                if (locationAvailability?.isLocationAvailable == false) {
-                    Timber.w("No location available with Fused Location Provider API")
-                    poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
-                }
-            }
-
             override fun onLocationResult(locationResult: LocationResult?) {
                 val lastLocation = locationResult?.lastLocation ?: return
                 location.postValue(lastLocation)
@@ -137,14 +130,6 @@ class LocationProviderImpl(
                                 // Use Fused Location Provider API
                                 val client = systemManager.getFusedLocationProviderClient()
                                 val callback = object : LocationCallback() {
-                                    override fun onLocationAvailability(locationAvailability: LocationAvailability?) {
-                                        if (locationAvailability?.isLocationAvailable == false) {
-                                            Timber.w("No location available with Fused Location Provider API")
-                                            poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
-                                            continuation.resumeWithExceptionIfActive(NoLocationFound)
-                                        }
-                                    }
-
                                     override fun onLocationResult(locationResult: LocationResult?) {
                                         getLocationIfValid(locationResult?.lastLocation, null, startTime)?.let {
                                             client.removeLocationUpdates(this)
