@@ -45,7 +45,6 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
 
     private var checkRunning = false
     private var lastApps = emptyList<String>()
-    private var lastLocation: Location? = null
 
     internal fun requestLocalApps(completion: (Completion<List<App>>) -> Unit) {
         CoroutineScope(dispatchers.default()).launch {
@@ -59,11 +58,7 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
 
                 when (val location = locationProvider.firstValidLocation()) {
                     is Success -> {
-                        if (isSpeedValid(location.result)) {
-                            getAppsByLocation(location.result, completion)
-                        } else {
-                            withContext(dispatchers.main()) { completion(Failure(InvalidSpeed)) }
-                        }
+                        getAppsByLocation(location.result, completion)
                     }
                     is Failure -> {
                         withContext(dispatchers.main()) { completion(Failure(location.throwable)) }
@@ -92,51 +87,57 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
                 val result = apps.result
                 Timber.d("Received ${result.size} Apps: ${result.map { it.url }}")
 
-                val notDisabled = result
-                    .filter {
-                        try {
-                            val host = URL(it.url).host
-                            val timestamp = sharedPreferencesModel.getLong(getDisableTimePreferenceKey(host))
-                            when {
-                                timestamp == null -> true
-                                Date(timestamp).after(Date()) -> {
-                                    Timber.d("Don't show app $host, because disable timer has not been reached (timestamp = $timestamp)")
-                                    false
-                                }
-                                else -> {
-                                    Timber.d("Disable timer for app $host has been reached")
-                                    sharedPreferencesModel.remove(getDisableTimePreferenceKey(host))
-                                    true
-                                }
-                            }
-                        } catch (e: MalformedURLException) {
-                            false
-                        }
-                    }
-
+                val notDisabled = filterNotDisabledApps(result)
                 val notDisabledUrls = notDisabled.map { it.url }
                 val disabledUrls = result.map { it.url }.minus(notDisabledUrls)
                 val invalidUrls = lastApps.minus(notDisabledUrls)
 
                 appEventManager.setInvalidApps(disabledUrls)
 
-                if (notDisabledUrls.isEmpty() && lastApps.isNotEmpty()) {
-                    val distance = lastLocation?.distanceTo(location)
-                    distance?.let {
-                        if (it < LOCATION_DIFFERENCE_THRESHOLD) {
-                            return
+                if (notDisabledUrls.isNotEmpty()) {
+                    /*
+                    We're still in the range of the currently open app,
+                    therefore we don't have to do anything here.
+                     */
+                    if (notDisabledUrls.equalsTo(lastApps)) {
+                        withContext(dispatchers.main()) { completion(Success(notDisabled)) }
+                        return
+                    }
+
+                    /*
+                    In cases where there are new apps, including the old one, which
+                    happens in intersections between two stations, and the speed
+                    is above the set threshold, we will ignore the new app
+                    and keep showing the old one.
+                     */
+                    if (lastApps.isNotEmpty() && notDisabledUrls.containsAll(lastApps) && !isSpeedValid(location)) {
+                        withContext(dispatchers.main()) { completion(Success(notDisabled.filter { lastApps.contains(it.url) })) }
+                        return
+                    }
+
+                    /*
+                    In case there are apps, but the location speed is
+                    above the given threshold, we will also ignore.
+
+                    In case old apps were set, we will remove them.
+
+                    In both cases an `InvalidSpeed` failure will be passed
+                    to the completion callback.
+                     */
+                    if (!isSpeedValid(location)) {
+                        if (lastApps.isNotEmpty()) {
+                            appEventManager.setInvalidApps(lastApps)
+                            lastApps = emptyList()
                         }
+
+                        withContext(dispatchers.main()) { completion(Failure(InvalidSpeed)) }
+
+                        return
                     }
                 }
 
-                if (notDisabledUrls.isNotEmpty() && notDisabledUrls.equalsTo(lastApps)) {
-                    return
-                }
-
                 appEventManager.setInvalidApps(invalidUrls)
-
                 lastApps = notDisabledUrls
-                lastLocation = location
 
                 withContext(dispatchers.main()) { completion(Success(notDisabled)) }
             }
@@ -158,6 +159,29 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
                     Timber.e(NetworkError)
                     withContext(dispatchers.main()) { completion(Failure(NetworkError)) }
                 }
+            }
+        }
+    }
+
+    private fun filterNotDisabledApps(apps: List<App>): List<App> {
+        return apps.filter {
+            try {
+                val host = URL(it.url).host
+                val timestamp = sharedPreferencesModel.getLong(getDisableTimePreferenceKey(host))
+                when {
+                    timestamp == null -> true
+                    Date(timestamp).after(Date()) -> {
+                        Timber.d("Don't show app $host, because disable timer has not been reached (timestamp = $timestamp)")
+                        false
+                    }
+                    else -> {
+                        Timber.d("Disable timer for app $host has been reached")
+                        sharedPreferencesModel.remove(getDisableTimePreferenceKey(host))
+                        true
+                    }
+                }
+            } catch (e: MalformedURLException) {
+                false
             }
         }
     }
@@ -293,6 +317,5 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
 
     companion object {
         private const val SPEED_ACCURACY_THRESHOLD = 3 // in m/s ~= 10km/h
-        private const val LOCATION_DIFFERENCE_THRESHOLD = 150f
     }
 }
