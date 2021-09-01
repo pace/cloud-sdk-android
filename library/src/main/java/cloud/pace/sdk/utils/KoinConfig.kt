@@ -88,7 +88,7 @@ object KoinConfig {
                 single<AppAPI> { AppAPIImpl(get()) }
                 single { GeofenceCallback() }
                 single { LocationServices.getGeofencingClient(get<Context>()) }
-                single<AppModel> { AppModelImpl() }
+                single<AppModel> { AppModelImpl(get()) }
                 single { AppManager(DefaultDispatcherProvider()) }
                 single<GeoAPIManager>(createdAtStart = true) { GeoAPIManagerImpl(get(), get(), get()) }
                 viewModel<AppFragmentViewModel> { AppFragmentViewModelImpl(get(), get()) }

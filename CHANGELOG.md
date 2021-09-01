@@ -6,12 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
-9.2.0 Release notes (2021-08-18)
-=============================================================
-
 ### Enhancements
 
 * Add logging for successful setup 'PACECloudSDK' and 'IDKit' and for missing mandatory values for setup
+* Open the share sheet by default when the PWA sends image data, e.g. when clicking on a receipt. This behavior can be overridden in `AppCallback.onImageDataReceived(bitmap)`
 
 ### Fixes
 

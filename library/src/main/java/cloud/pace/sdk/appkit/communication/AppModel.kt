@@ -1,7 +1,11 @@
 package cloud.pace.sdk.appkit.communication
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cloud.pace.sdk.appkit.utils.TokenValidator
@@ -10,6 +14,10 @@ import cloud.pace.sdk.idkit.model.InternalError
 import cloud.pace.sdk.utils.*
 import net.openid.appauth.AuthorizationException
 import timber.log.Timber
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
 
 interface AppModel {
 
@@ -26,6 +34,7 @@ interface AppModel {
     fun openUrlInNewTab(url: String)
     fun disable(host: String)
     fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (Completion<GetAccessTokenResponse>) -> Unit)
+    fun showShareSheet(bitmap: Bitmap)
     fun onLogin(context: Context, result: Completion<String?>)
     fun onLogout(onResult: (LogoutResponse) -> Unit)
     fun onCustomSchemeError(context: Context?, scheme: String)
@@ -38,7 +47,7 @@ interface AppModel {
     class Result<T>(val onResult: (T) -> Unit)
 }
 
-class AppModelImpl : AppModel {
+class AppModelImpl(private val context: Context) : AppModel {
 
     override var callback: AppCallbackImpl? = null
     override var close = MutableLiveData<Unit>()
@@ -125,6 +134,40 @@ class AppModelImpl : AppModel {
         }
     }
 
+    override fun showShareSheet(bitmap: Bitmap) {
+        try {
+            // Save bitmap to cache directory
+            val cachePath = File(context.cacheDir, IMAGES_DIRECTORY_NAME)
+            cachePath.mkdirs()
+
+            val receipt = File(cachePath, RECEIPT_FILENAME)
+            val stream = FileOutputStream(receipt) // overwrites this image every time
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            stream.flush()
+            stream.close()
+
+            // Open share sheet
+            val contentUri = FileProvider.getUriForFile(context, "${context.packageName}.pace_cloud_sdk_file_provider", receipt)
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                putExtra(Intent.EXTRA_STREAM, contentUri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                type = context.contentResolver.getType(contentUri)
+            }
+
+            startActivity(context, Intent.createChooser(shareIntent, null), null)
+        } catch (e: FileNotFoundException) {
+            Timber.e(e, "Could not create FileOutputStream to write the receipt file")
+        } catch (e: IOException) {
+            Timber.e(e, "Could not create or save the receipt bitmap")
+        } catch (e: IllegalArgumentException) {
+            Timber.e(e, "The receipt file is outside the paths supported by the FileProvider")
+        } catch (e: ActivityNotFoundException) {
+            Timber.e(e, "No Activity found to execute the share intent")
+        } catch (e: Exception) {
+            Timber.e(e, "Could not create, save or share the receipt bitmap")
+        }
+    }
+
     private fun sendOnSessionRenewalFailed(throwable: Throwable?, onResult: (Completion<GetAccessTokenResponse>) -> Unit) {
         onMainThread {
             callback?.onSessionRenewalFailed(throwable) {
@@ -179,5 +222,10 @@ class AppModelImpl : AppModel {
         onMainThread {
             callback?.isAppRedirectAllowed(app, isAllowed)
         }
+    }
+
+    companion object {
+        private const val IMAGES_DIRECTORY_NAME = "images"
+        private const val RECEIPT_FILENAME = "receipt.png"
     }
 }

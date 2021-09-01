@@ -197,7 +197,7 @@ class AppManagerTest : CloudSDKKoinComponent {
             }
 
             single<AppModel> {
-                AppModelImpl()
+                AppModelImpl(mockContext)
             }
         }
 
@@ -262,7 +262,7 @@ class AppManagerTest : CloudSDKKoinComponent {
             }
 
             single<AppModel> {
-                AppModelImpl()
+                AppModelImpl(mockContext)
             }
         }
 

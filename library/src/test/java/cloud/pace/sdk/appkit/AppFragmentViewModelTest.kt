@@ -1,5 +1,6 @@
 package cloud.pace.sdk.appkit
 
+import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import cloud.pace.sdk.appkit.app.AppFragmentViewModel
 import cloud.pace.sdk.appkit.app.AppFragmentViewModelImpl
@@ -20,6 +21,7 @@ import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.inject
+import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
@@ -31,8 +33,9 @@ class AppFragmentViewModelTest : KoinTest {
     @get:Rule
     val rule = InstantTaskExecutorRule()
 
+    private val mockContext = mock(Context::class.java)
     private val eventManager = AppEventManagerImpl()
-    private val appModel = AppModelImpl()
+    private val appModel = AppModelImpl(mockContext)
     private val viewModel: AppFragmentViewModel by inject()
 
     private val testModule = module {
