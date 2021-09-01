@@ -16,6 +16,7 @@ x.y.z Release notes (yyyy-MM-dd)
 * Only show network error in WebView if it is a main frame error
 * Fix bug that third party browser custom tabs were not closed after adding the payment method e.g. PayPal
 * Add methods to `IDKit` that returns the user's payment methods, transactions and checks the PIN requirements
+* Remove `LocationAvailability` check since it causes issues on some devices
 
 ### Internal
 
