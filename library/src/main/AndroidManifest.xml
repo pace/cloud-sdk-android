@@ -39,6 +39,19 @@
         <meta-data
             android:name="pace_redirect_scheme"
             android:value="${pace_redirect_scheme}" />
+
+        <provider
+            android:name=".appkit.utils.PACECloudSDKFileProvider"
+            android:authorities="${applicationId}.pace_cloud_sdk_file_provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+
+        </provider>
+
     </application>
 
 </manifest>

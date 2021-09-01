@@ -85,6 +85,7 @@ interface AppCallback {
 
     /**
      * Is called when the app sends an image.
+     * If it is not overwritten, it opens the image in the system share sheet.
      *
      * @param bitmap The image as bitmap.
      */
@@ -149,7 +150,10 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
     }
 
     override fun onCustomSchemeError(context: Context?, scheme: String) {}
-    override fun onImageDataReceived(bitmap: Bitmap) {}
+    override fun onImageDataReceived(bitmap: Bitmap) {
+        appModel.showShareSheet(bitmap)
+    }
+
     override fun setUserProperty(key: String, value: String, update: Boolean) {}
     override fun logEvent(key: String, parameters: Map<String, Any>) {}
     override fun getConfig(key: String, config: (String?) -> Unit) {
