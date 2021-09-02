@@ -154,7 +154,10 @@ class AppModelImpl(private val context: Context) : AppModel {
                 type = context.contentResolver.getType(contentUri)
             }
 
-            startActivity(context, Intent.createChooser(shareIntent, null), null)
+            val chooserIntent = Intent.createChooser(shareIntent, null)
+            chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+            startActivity(context, chooserIntent, null)
         } catch (e: FileNotFoundException) {
             Timber.e(e, "Could not create FileOutputStream to write the receipt file")
         } catch (e: IOException) {
