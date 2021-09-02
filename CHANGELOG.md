@@ -6,9 +6,13 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Fixes
+
+* Added `FLAG_ACTIVITY_NEW_TASK` flag to fix a bug where the receipt share sheet was not opened when the PACE Cloud SDK was initialized with an application context
+
+
 9.2.0 Release notes (2021-09-01)
 =============================================================
-
 
 ### Enhancements
 
