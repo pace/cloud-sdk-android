@@ -17,7 +17,7 @@ enum class Environment(
         "https://maps.pacelink.net/osrm5/route/v1/",
         "https://pay.dev.pace.cloud",
         "https://pay.dev.pace.cloud/transactions",
-        "https://fueling.dev.pace.cloud"
+        "https://dev.fuel.site"
     ),
     STAGING(
         "https://id.stage.pace.cloud",
@@ -26,7 +26,7 @@ enum class Environment(
         "https://maps.pacelink.net/osrm5/route/v1/",
         "https://pay.stage.pace.cloud",
         "https://pay.stage.pace.cloud/transactions",
-        "https://fueling.stage.pace.cloud"
+        "https://stage.fuel.site"
     ),
     PRODUCTION(
         "https://id.pace.cloud",
@@ -44,6 +44,6 @@ enum class Environment(
         "https://maps.pacelink.net/osrm5/route/v1/",
         "https://pay.sandbox.pace.cloud",
         "https://pay.sandbox.pace.cloud/transactions",
-        "https://fueling.sandbox.pace.cloud"
+        "https://sandbox.fuel.site"
     )
 }

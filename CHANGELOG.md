@@ -3,7 +3,10 @@ x.y.z Release notes (yyyy-MM-dd)
 
 <!-- ### Breaking Changes - Include, if needed -->
 <!-- ### Enhancements - Include, if needed -->
-<!-- ### Fixes - Include, if needed -->
+### Fixes
+
+* Fix Fueling PWA URLs for non-prod environment
+
 <!-- ### Internal - Include, if needed -->
 
 9.2.1 Release notes (2021-09-02)
