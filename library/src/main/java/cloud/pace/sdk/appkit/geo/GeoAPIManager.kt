@@ -105,7 +105,7 @@ class GeoAPIManagerImpl(
 
                 POIKit.requestGasStations(locations) { gasStations ->
                     when (gasStations) {
-                        is Success -> completion(Result.success(gasStations.result.filter { it.isConnectedFuelingAvailable == true }))
+                        is Success -> completion(Result.success(gasStations.result.filter { gasStation -> cofuGasStations.any { it.id == gasStation.id } }))
                         is Failure -> completion(Result.failure(gasStations.throwable))
                     }
                 }

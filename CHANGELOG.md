@@ -2,7 +2,11 @@ x.y.z Release notes (yyyy-MM-dd)
 =============================================================
 
 <!-- ### Breaking Changes - Include, if needed -->
-<!-- ### Enhancements - Include, if needed -->
+
+### Enhancements
+
+* Change `requestCofuGasStations()` to return all cofu stations (online and offline)
+
 ### Fixes
 
 * Fix Fueling PWA URLs for non-prod environment
