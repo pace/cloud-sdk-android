@@ -14,7 +14,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val environment = Environment.SANDBOX
+        val environment = Environment.PRODUCTION
 
         PACECloudSDK.setup(
             this, Configuration(
