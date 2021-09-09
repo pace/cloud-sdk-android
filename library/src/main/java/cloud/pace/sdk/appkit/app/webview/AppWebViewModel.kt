@@ -37,7 +37,7 @@ import java.util.*
 abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback, Communication {
 
     abstract val currentUrl: MutableLiveData<String?>
-    abstract val loadUrl: LiveData<Event<String>>
+    abstract val init: LiveData<Event<String>>
     abstract val isInErrorState: LiveData<Event<Boolean>>
     abstract val showLoadingIndicator: LiveData<Event<Boolean>>
     abstract val biometricRequest: LiveData<Event<BiometricRequest>>
@@ -65,14 +65,14 @@ class AppWebViewModelImpl(
 ) : AppWebViewModel() {
 
     override val currentUrl = MutableLiveData<String?>()
-    override val loadUrl = MutableLiveData<Event<String>>()
+    override val init = MutableLiveData<Event<String>>()
     override val isInErrorState = MutableLiveData<Event<Boolean>>()
     override val showLoadingIndicator = MutableLiveData<Event<Boolean>>()
     override val biometricRequest = MutableLiveData<Event<BiometricRequest>>()
     override val goBack = MutableLiveData<Event<Unit>>()
 
     override fun init(url: String) {
-        this.loadUrl.value = Event(url)
+        this.init.value = Event(url)
     }
 
     override fun closeApp() {
@@ -375,12 +375,8 @@ class AppWebViewModelImpl(
         return try {
             withTimeout(timeout) {
                 val redirectScheme = getRedirectScheme()
-                onMainThread {
-                    loadUrl.value = Event(openURLInNewTabRequest.cancelUrl)
-                }
-
                 if (!redirectScheme.isNullOrEmpty()) {
-                    appModel.openUrlInNewTab(openURLInNewTabRequest.url)
+                    appModel.openUrlInNewTab(openURLInNewTabRequest)
                     OpenURLInNewTabResult(OpenURLInNewTabResult.Success())
                 } else {
                     appModel.onCustomSchemeError(context, "${redirectScheme}://redirect")

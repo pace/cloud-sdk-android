@@ -1,6 +1,5 @@
 package cloud.pace.sdk.appkit.app
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -63,13 +62,6 @@ class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
                 }
             }
         }
-
-        handleIntent(intent)
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        handleIntent(intent)
     }
 
     override fun onBackPressed() {
@@ -85,21 +77,8 @@ class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
         super.onDestroy()
     }
 
-    private fun handleIntent(intent: Intent?) {
-        intent ?: return
-
-        val appLinkAction = intent.action
-        val appLinkData = intent.data
-        if (Intent.ACTION_VIEW == appLinkAction) {
-            appLinkData?.getQueryParameter(TO)?.let { finalRedirect ->
-                eventManager.onReceivedRedirect(finalRedirect)
-            }
-        }
-    }
-
     companion object {
         const val APP_URL = "APP_URL"
         const val BACK_TO_FINISH = "BACK_TO_FINISH"
-        const val TO = "to"
     }
 }

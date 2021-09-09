@@ -13,6 +13,7 @@
     </queries>
 
     <application>
+
         <activity
             android:name=".appkit.app.AppActivity"
             android:launchMode="singleTop"
@@ -20,7 +21,12 @@
             android:theme="@style/AppKitTheme" />
 
         <activity
-            android:name=".appkit.app.RedirectUriReceiverActivity"
+            android:name=".appkit.app.customtab.CustomTabManagementActivity"
+            android:exported="false"
+            android:launchMode="singleTask" />
+
+        <activity
+            android:name=".appkit.app.customtab.RedirectUriReceiverActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

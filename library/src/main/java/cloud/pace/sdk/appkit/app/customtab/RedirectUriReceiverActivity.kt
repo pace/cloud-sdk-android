@@ -1,4 +1,4 @@
-package cloud.pace.sdk.appkit.app
+package cloud.pace.sdk.appkit.app.customtab
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,7 +10,7 @@ class RedirectUriReceiverActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Handling the redirect in this way ensures that we can remove the browser custom tab from the back stack
-        val newIntent = Intent(this, AppActivity::class.java)
+        val newIntent = Intent(this, CustomTabManagementActivity::class.java)
         newIntent.data = intent.data
         newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         startActivity(newIntent)

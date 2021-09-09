@@ -31,14 +31,14 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         loadingIndicator?.visibility = View.VISIBLE
     }
 
-    private val openUrlObserver = Observer<Event<String>> {
-        val newUrl = it.getContentIfNotHandled() ?: return@Observer
+    private val initObserver = Observer<Event<String>> {
+        val url = it.getContentIfNotHandled() ?: return@Observer
 
-        val appWebViewClient = AppWebViewClient(newUrl, webViewModel, context)
+        val appWebViewClient = AppWebViewClient(url, webViewModel, context)
         webView.webViewClient = appWebViewClient
         webView.webChromeClient = appWebViewClient.chromeClient
 
-        webView?.loadUrl(newUrl)
+        loadUrl(url)
     }
 
     private val isInErrorStateObserver = Observer<Event<Boolean>> {
@@ -107,13 +107,25 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
     }
 
     /**
-     * Sets the app with fragment as parent
+     * Initializes [AppWebView] with [AppWebViewClient] and loads the [url] in the WebView with the passed [fragment][parent] as parent.
      */
-    fun loadApp(parent: Fragment, url: String) {
+    fun init(parent: Fragment, url: String) {
         setWebContentsDebuggingEnabled(true)
 
         fragment = parent
         webViewModel.init(url)
+    }
+
+    /**
+     * Loads the [url] in the WebView.
+     * Also finishes the [cloud.pace.sdk.appkit.app.AppActivity] if the url is [AppWebViewClient.CLOSE_URI].
+     */
+    fun loadUrl(url: String) {
+        if (url == AppWebViewClient.CLOSE_URI) {
+            webViewModel.closeApp()
+        } else {
+            webView?.loadUrl(url)
+        }
     }
 
     fun onBackPressed() {
@@ -132,7 +144,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
             ?: throw RuntimeException("lifecycle owner not found ")
 
         // TODO: should this be moved to "onResume" and "onPause" and replaced with "observeForever"?
-        webViewModel.loadUrl.observe(lifecycleOwner, openUrlObserver)
+        webViewModel.init.observe(lifecycleOwner, initObserver)
         webViewModel.isInErrorState.observe(lifecycleOwner, isInErrorStateObserver)
         webViewModel.showLoadingIndicator.observe(lifecycleOwner, showLoadingIndicatorObserver)
         webViewModel.biometricRequest.observe(lifecycleOwner, biometricRequestObserver)
