@@ -32,6 +32,13 @@ object IDKit : IDKitKoinComponent {
     private val credentialsManager: CredentialsManager by inject()
 
     /**
+     * Checks whether [PACECloudSDK] has been set up correctly before [IDKit] is used, otherwise log SDK warnings.
+     */
+    init {
+        SetupLogger.logSDKWarningIfNeeded()
+    }
+
+    /**
      * Sets up [IDKit] with the passed [configuration].
      *
      * @param context The context.
@@ -40,7 +47,6 @@ object IDKit : IDKitKoinComponent {
      */
     @JvmOverloads
     fun setup(context: Context, configuration: OIDConfiguration, additionalCaching: Boolean = true) {
-        SetupLogger.logSDKWarningIfNeeded()
         KoinConfig.setupIDKit(context)
         authorizationManager.setup(configuration, additionalCaching)
         isInitialized = true
@@ -60,7 +66,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the discovery is complete either including the [ServiceConfiguration] or a [Throwable].
      */
     fun discoverConfiguration(issuerUri: String, completion: (Completion<ServiceConfiguration>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         authorizationManager.discoverConfiguration(issuerUri, completion)
     }
 
@@ -72,7 +77,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the request is completed including either a valid `accessToken` or [Throwable].
      */
     suspend fun authorize(activity: AppCompatActivity, completion: (Completion<String?>) -> Unit = {}) {
-        SetupLogger.logSDKWarningIfNeeded()
         authorizationManager.authorize(activity, completion)
     }
 
@@ -84,7 +88,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the request is completed including either a valid `accessToken` or [Throwable].
      */
     suspend fun authorize(fragment: Fragment, completion: (Completion<String?>) -> Unit = {}) {
-        SetupLogger.logSDKWarningIfNeeded()
         authorizationManager.authorize(fragment, completion)
     }
 
@@ -96,7 +99,6 @@ object IDKit : IDKitKoinComponent {
      * Note: Call [handleAuthorizationResponse] in [completedActivity] or [canceledActivity] when the intent is returned from Chrome Custom Tab.
      */
     fun authorize(completedActivity: Class<*>, canceledActivity: Class<*>) {
-        SetupLogger.logSDKWarningIfNeeded()
         authorizationManager.authorize(completedActivity, canceledActivity)
     }
 
@@ -108,7 +110,6 @@ object IDKit : IDKitKoinComponent {
      * [android.app.Activity.startActivityForResult] was used when the authorization result is returned from Chrome Custom Tab.
      */
     fun authorize(): Intent {
-        SetupLogger.logSDKWarningIfNeeded()
         return authorizationManager.authorize()
     }
 
@@ -119,7 +120,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the request is completed including either a valid `accessToken` or [Throwable].
      */
     fun handleAuthorizationResponse(intent: Intent, completion: (Completion<String?>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         authorizationManager.handleAuthorizationResponse(intent, completion)
     }
 
@@ -131,7 +131,6 @@ object IDKit : IDKitKoinComponent {
      */
     @JvmOverloads
     fun refreshToken(force: Boolean = false, completion: (Completion<String?>) -> Unit = {}) {
-        SetupLogger.logSDKWarningIfNeeded()
         authorizationManager.refreshToken(force, completion)
     }
 
@@ -143,7 +142,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the session has been reset or a [Throwable] when an exception occurred.
      */
     suspend fun endSession(activity: AppCompatActivity, completion: (Completion<Unit>) -> Unit = {}) {
-        SetupLogger.logSDKWarningIfNeeded()
         authorizationManager.endSession(activity, completion)
     }
 
@@ -155,7 +153,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the session has been reset or a [Throwable] when an exception occurred.
      */
     suspend fun endSession(fragment: Fragment, completion: (Completion<Unit>) -> Unit = {}) {
-        SetupLogger.logSDKWarningIfNeeded()
         authorizationManager.endSession(fragment, completion)
     }
 
@@ -169,7 +166,6 @@ object IDKit : IDKitKoinComponent {
      * @return True if an end session request could be performed, false otherwise (due to an invalid session).
      */
     fun endSession(completedActivity: Class<*>, canceledActivity: Class<*>): Boolean {
-        SetupLogger.logSDKWarningIfNeeded()
         return authorizationManager.endSession(completedActivity, canceledActivity)
     }
 
@@ -183,7 +179,6 @@ object IDKit : IDKitKoinComponent {
      * @return The end session request [Intent] or null, if none could be created due to an invalid session.
      */
     fun endSession(): Intent? {
-        SetupLogger.logSDKWarningIfNeeded()
         return authorizationManager.endSession()
     }
 
@@ -194,7 +189,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the session has been reset or a [Throwable] when an exception occurred.
      */
     fun handleEndSessionResponse(intent: Intent, completion: (Completion<Unit>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         authorizationManager.handleEndSessionResponse(intent, completion)
     }
 
@@ -204,7 +198,6 @@ object IDKit : IDKitKoinComponent {
      * @return The current state of the authorization.
      */
     fun isAuthorizationValid(): Boolean {
-        SetupLogger.logSDKWarningIfNeeded()
         return authorizationManager.isAuthorizationValid()
     }
 
@@ -214,7 +207,6 @@ object IDKit : IDKitKoinComponent {
      * @return True if the [intent] has an authorization response extra, false otherwise.
      */
     fun containsAuthorizationResponse(intent: Intent): Boolean {
-        SetupLogger.logSDKWarningIfNeeded()
         return authorizationManager.containsAuthorizationResponse(intent)
     }
 
@@ -224,7 +216,6 @@ object IDKit : IDKitKoinComponent {
      * @return True if the [intent] has an end session response extra, false otherwise.
      */
     fun containsEndSessionResponse(intent: Intent): Boolean {
-        SetupLogger.logSDKWarningIfNeeded()
         return authorizationManager.containsEndSessionResponse(intent)
     }
 
@@ -234,7 +225,6 @@ object IDKit : IDKitKoinComponent {
      * @return True if the [intent] has an exception extra, false otherwise.
      */
     fun containsException(intent: Intent): Boolean {
-        SetupLogger.logSDKWarningIfNeeded()
         return authorizationManager.containsException(intent)
     }
 
@@ -242,7 +232,6 @@ object IDKit : IDKitKoinComponent {
      * Returns the cached accessToken of the current session or null if the session is not initialized or has no accessToken.
      */
     fun cachedToken(): String? {
-        SetupLogger.logSDKWarningIfNeeded()
         return authorizationManager.cachedToken()
     }
 
@@ -253,7 +242,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the request is completed including either a valid `userInfo` or a [Throwable].
      */
     fun userInfo(accessToken: String, completion: (Completion<UserInfoResponse>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         authorizationManager.userInfo(accessToken, completion)
     }
 
@@ -263,7 +251,6 @@ object IDKit : IDKitKoinComponent {
      * @return The information if biometric authentication is enabled.
      */
     fun isBiometricAuthenticationEnabled(): Boolean {
-        SetupLogger.logSDKWarningIfNeeded()
         SetupLogger.logBiometryWarningIfNeeded()
         return credentialsManager.isBiometricAuthenticationEnabled()
     }
@@ -275,7 +262,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the request is completed including either the information if biometric authentication has been enabled `successfully` or a [Throwable].
      */
     fun enableBiometricAuthenticationWithPIN(pin: String, completion: (Completion<Boolean>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         SetupLogger.logBiometryWarningIfNeeded()
         credentialsManager.enableBiometricAuthentication(pin = pin, completion = completion)
     }
@@ -287,7 +273,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the request is completed including either the information if biometric authentication has been enabled `successfully` or a [Throwable].
      */
     fun enableBiometricAuthenticationWithPassword(password: String, completion: (Completion<Boolean>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         SetupLogger.logBiometryWarningIfNeeded()
         credentialsManager.enableBiometricAuthentication(password = password, completion = completion)
     }
@@ -301,7 +286,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the request is completed including either the information if biometric authentication has been enabled `successfully` or a [Throwable].
      */
     fun enableBiometricAuthenticationWithOTP(otp: String, completion: (Completion<Boolean>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         SetupLogger.logBiometryWarningIfNeeded()
         credentialsManager.enableBiometricAuthentication(otp = otp, completion = completion)
     }
@@ -314,7 +298,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the request is completed including either the information if biometric authentication has been enabled `successfully` or a [Throwable].
      */
     fun enableBiometricAuthentication(completion: (Completion<Boolean>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         SetupLogger.logBiometryWarningIfNeeded()
         credentialsManager.enableBiometricAuthentication(completion = completion)
     }
@@ -323,7 +306,6 @@ object IDKit : IDKitKoinComponent {
      * Disables biometric authentication for the current user.
      */
     fun disableBiometricAuthentication() {
-        SetupLogger.logSDKWarningIfNeeded()
         SetupLogger.logBiometryWarningIfNeeded()
         credentialsManager.disableBiometricAuthentication()
     }
@@ -334,7 +316,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the request is completed including either the `pinStatus` or a [Throwable].
      */
     fun isPINSet(completion: (Completion<Boolean>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         credentialsManager.isPINSet(completion)
     }
 
@@ -344,7 +325,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the request is completed including either the `passwordStatus` or a [Throwable].
      */
     fun isPasswordSet(completion: (Completion<Boolean>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         credentialsManager.isPasswordSet(completion)
     }
 
@@ -354,7 +334,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the request is completed including either the [PinOrPassword] status or a [Throwable].
      */
     fun isPINOrPasswordSet(completion: (Completion<PinOrPassword>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         credentialsManager.isPINOrPasswordSet(completion)
     }
 
@@ -380,7 +359,6 @@ object IDKit : IDKitKoinComponent {
         pin: String,
         completion: (Completion<Boolean>) -> Unit
     ) {
-        SetupLogger.logSDKWarningIfNeeded()
         SetupLogger.logBiometryWarningIfNeeded()
         credentialsManager.setPINWithBiometry(fragment, title, subtitle, cancelText, isDeviceCredentialsAllowed, pin, completion)
     }
@@ -407,7 +385,6 @@ object IDKit : IDKitKoinComponent {
         pin: String,
         completion: (Completion<Boolean>) -> Unit
     ) {
-        SetupLogger.logSDKWarningIfNeeded()
         SetupLogger.logBiometryWarningIfNeeded()
         credentialsManager.setPINWithBiometry(activity, title, subtitle, cancelText, isDeviceCredentialsAllowed, pin, completion)
     }
@@ -420,7 +397,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the request is completed including either the information if the PIN has been set / updated `successfully` or a [Throwable].
      */
     fun setPINWithPassword(pin: String, password: String, completion: (Completion<Boolean>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         credentialsManager.setPINWithPassword(pin, password, completion)
     }
 
@@ -434,7 +410,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the request is completed including either the information if the PIN has been set / updated `successfully` or a [Throwable].
      */
     fun setPINWithOTP(pin: String, otp: String, completion: (Completion<Boolean>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         credentialsManager.setPINWithOTP(pin, otp, completion)
     }
 
@@ -448,7 +423,6 @@ object IDKit : IDKitKoinComponent {
      * @return True if the PIN is valid, false otherwise
      */
     fun isPINValid(pin: String): Boolean {
-        SetupLogger.logSDKWarningIfNeeded()
         return credentialsManager.isPINValid(pin)
     }
 
@@ -458,7 +432,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the request is completed including either the information if the mail has been sent `successfully` or a [Throwable].
      */
     fun sendMailOTP(completion: (Completion<Boolean>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         credentialsManager.sendMailOTP(completion)
     }
 
@@ -468,7 +441,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the request is completed including either the payment methods or a [Throwable].
      */
     fun getValidPaymentMethods(completion: (Completion<PaymentMethods>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         API.paymentMethods.getPaymentMethodsIncludingCreditCheck(GetPaymentMethodsIncludingCreditCheckAPI.Filterstatus.VALID).handleCallback(completion)
     }
 
@@ -478,7 +450,6 @@ object IDKit : IDKitKoinComponent {
      * @param completion The block to be called when the request is completed including either the transactions or a [Throwable].
      */
     fun getTransactions(completion: (Completion<Transactions>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         API.paymentTransactions.listTransactions(sort = ListTransactionsAPI.Sort.CREATEDATDESCENDING).handleCallback(completion)
     }
 }
