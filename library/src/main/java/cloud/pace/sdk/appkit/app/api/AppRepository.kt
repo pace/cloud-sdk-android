@@ -6,16 +6,13 @@ import android.graphics.BitmapFactory
 import android.location.Location
 import cloud.pace.sdk.R
 import cloud.pace.sdk.api.geo.CofuGasStation
-import cloud.pace.sdk.api.geo.GeometryCollection
-import cloud.pace.sdk.api.geo.Polygon
+import cloud.pace.sdk.api.geo.isInRange
 import cloud.pace.sdk.appkit.geo.GeoAPIManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.persistence.CacheModel
 import cloud.pace.sdk.poikit.poi.GasStation
-import cloud.pace.sdk.poikit.utils.distanceTo
 import cloud.pace.sdk.utils.*
-import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.*
 import timber.log.Timber
 
@@ -146,30 +143,9 @@ class AppRepositoryImpl(
                 // Try to load the apps from the cache
                 geoApiManager.features(poiId, latitude, longitude) { response ->
                     response.onSuccess { geoAPIFeatures ->
-                        val isPoiInRange = geoAPIFeatures.firstOrNull { it.id == poiId }?.let {
-                            val currentLocation = LatLng(latitude, longitude)
-                            val polygons = when (it.geometry) {
-                                is GeometryCollection -> it.geometry.geometries.filterIsInstance<Polygon>()
-                                is Polygon -> listOf(it.geometry)
-                                else -> emptyList()
-                            }
-
-                            polygons.map { polygon ->
-                                polygon.coordinates.flatMap { ring ->
-                                    ring.mapNotNull { coordinate ->
-                                        val lat = coordinate.lastOrNull()
-                                        val lng = coordinate.firstOrNull()
-                                        if (lat != null && lng != null) {
-                                            LatLng(lat, lng)
-                                        } else {
-                                            null
-                                        }
-                                    }
-                                }
-                            }.flatten().any { coordinate ->
-                                currentLocation.distanceTo(coordinate) <= IS_POI_IN_RANGE_DISTANCE_THRESHOLD
-                            }
-                        } ?: false
+                        val isPoiInRange = geoAPIFeatures
+                            .firstOrNull { it.id == poiId }
+                            ?.isInRange(latitude, longitude, IS_POI_IN_RANGE_DISTANCE_THRESHOLD) ?: false
 
                         continuation.resumeIfActive(isPoiInRange)
                     }
