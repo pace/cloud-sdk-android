@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+9.3.1 Release notes (2021-09-10)
+=============================================================
+
+
 ### Fixes
 
 * Refactor `openUrlInNewTab` flow to fix loading of `cancelUrl` when creating a payment method which opens in custom tab

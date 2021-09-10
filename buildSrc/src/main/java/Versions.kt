@@ -1,7 +1,7 @@
 object Versions {
 
     const val DEFAULT_VERSION_CODE_LIBRARY = 1
-    const val DEFAULT_VERSION_NAME_LIBRARY = "9.2.1"
+    const val DEFAULT_VERSION_NAME_LIBRARY = "9.3.1"
 
     const val COMPILE_SDK = 30
     const val TARGET_SDK = 30
