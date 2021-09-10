@@ -8,6 +8,7 @@ import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppEventManagerImpl
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.communication.AppModelImpl
+import cloud.pace.sdk.appkit.communication.generated.model.request.OpenURLInNewTabRequest
 import cloud.pace.sdk.appkit.utils.CoroutineTestRule
 import junit.framework.Assert.assertEquals
 import org.junit.After
@@ -68,15 +69,9 @@ class AppFragmentViewModelTest : KoinTest {
     @Test
     fun `open url in new tab`() {
         val url = "https://app.net"
-        appModel.openUrlInNewTab(url)
-        assertEquals(url, viewModel.openUrlInNewTab.value?.peekContent())
-    }
-
-    @Test
-    fun `redirect app`() {
-        val url = "https://app.net"
-        eventManager.onReceivedRedirect(url)
-        assertEquals(url, viewModel.redirectEvent.value?.peekContent())
+        val openURLInNewTabRequest = OpenURLInNewTabRequest(url, "cancelUrl")
+        appModel.openUrlInNewTab(openURLInNewTabRequest)
+        assertEquals(openURLInNewTabRequest, viewModel.openUrlInNewTab.value?.peekContent())
     }
 
     @After

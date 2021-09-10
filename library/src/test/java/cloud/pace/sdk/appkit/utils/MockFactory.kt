@@ -135,7 +135,6 @@ open class TestAppEventManager : AppEventManager {
 
     override val invalidApps = MutableLiveData<List<String>>()
     override val disabledHost = MutableLiveData<String>()
-    override val redirectUrl = MutableLiveData<Event<String>>()
 
     override fun setInvalidApps(list: List<String>) {
         invalidApps.value = list
@@ -143,10 +142,6 @@ open class TestAppEventManager : AppEventManager {
 
     override fun setDisabledHost(host: String) {
         disabledHost.value = host
-    }
-
-    override fun onReceivedRedirect(url: String) {
-        redirectUrl.value = Event(url)
     }
 }
 

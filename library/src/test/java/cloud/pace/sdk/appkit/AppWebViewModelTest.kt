@@ -78,7 +78,7 @@ class AppWebViewModelTest {
 
     @Test
     fun `open app with passed URL`() {
-        assertEquals(startUrl, viewModel.loadUrl.value?.getContentIfNotHandled())
+        assertEquals(startUrl, viewModel.init.value?.getContentIfNotHandled())
     }
 
     @Test
@@ -292,15 +292,6 @@ class AppWebViewModelTest {
         assertEquals(payHost, disabled)
         assertEquals(204, result.status)
         assertNull(result.body)
-    }
-
-    @Test
-    fun `cancel url of open in new tab is set`() = runBlocking {
-        val redirectUri = "https://app.pay.redirect.net"
-        val cancelUrl = "https://cancel.url.net"
-
-        viewModel.openURLInNewTab(5000, OpenURLInNewTabRequest(redirectUri, cancelUrl))
-        assertEquals(cancelUrl, viewModel.loadUrl.value?.getContentIfNotHandled())
     }
 
     @Test

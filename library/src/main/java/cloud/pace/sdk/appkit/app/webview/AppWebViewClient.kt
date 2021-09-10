@@ -85,6 +85,10 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
 
     override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
         url?.let { callback.onUrlChanged(it) }
+
+        if (url == CLOSE_URI) {
+            callback.onClose()
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.N)

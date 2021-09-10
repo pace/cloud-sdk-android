@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import cloud.pace.sdk.appkit.communication.generated.model.request.OpenURLInNewTabRequest
 import cloud.pace.sdk.appkit.utils.TokenValidator
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.InternalError
@@ -23,7 +24,7 @@ interface AppModel {
 
     var callback: AppCallbackImpl?
     val close: LiveData<Unit>
-    val openUrlInNewTab: LiveData<String>
+    val openUrlInNewTab: LiveData<OpenURLInNewTabRequest>
     val authorize: LiveData<Event<Result<Completion<String?>>>>
     val endSession: LiveData<Event<Result<LogoutResponse>>>
 
@@ -31,7 +32,7 @@ interface AppModel {
     fun authorize(onResult: (Completion<String?>) -> Unit)
     fun endSession(onResult: (LogoutResponse) -> Unit)
     fun close()
-    fun openUrlInNewTab(url: String)
+    fun openUrlInNewTab(openURLInNewTabRequest: OpenURLInNewTabRequest)
     fun disable(host: String)
     fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (Completion<GetAccessTokenResponse>) -> Unit)
     fun showShareSheet(bitmap: Bitmap)
@@ -51,7 +52,7 @@ class AppModelImpl(private val context: Context) : AppModel {
 
     override var callback: AppCallbackImpl? = null
     override var close = MutableLiveData<Unit>()
-    override var openUrlInNewTab = MutableLiveData<String>()
+    override var openUrlInNewTab = MutableLiveData<OpenURLInNewTabRequest>()
     override val authorize = MutableLiveData<Event<AppModel.Result<Completion<String?>>>>()
     override val endSession = MutableLiveData<Event<AppModel.Result<LogoutResponse>>>()
 
@@ -79,10 +80,10 @@ class AppModelImpl(private val context: Context) : AppModel {
         }
     }
 
-    override fun openUrlInNewTab(url: String) {
+    override fun openUrlInNewTab(openURLInNewTabRequest: OpenURLInNewTabRequest) {
         onMainThread {
-            openUrlInNewTab.value = url
-            callback?.onOpenInNewTab(url)
+            openUrlInNewTab.value = openURLInNewTabRequest
+            callback?.onOpenInNewTab(openURLInNewTabRequest.url)
         }
     }
 
