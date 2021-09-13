@@ -6,9 +6,13 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Internal
+
+* Also use the center point (if available) of the CoFu station in the `isPoiInRange` check instead of only the coordinates of the polygons as already done in the local apps check
+
+
 9.3.1 Release notes (2021-09-10)
 =============================================================
-
 
 ### Fixes
 

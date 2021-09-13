@@ -120,30 +120,7 @@ class GeoAPIManagerImpl(
     private fun getApps(latitude: Double, longitude: Double): List<GeoGasStation> {
         return appsCache?.features
             ?.filter {
-                when (it.geometry) {
-                    is GeometryCollection -> {
-                        // Check if points are available
-                        it.geometry.geometries.filterIsInstance<Point>().flatMap { point ->
-                            point.toLatLngs()
-                        }.ifEmpty {
-                            // Use polygons as fallback (v1)
-                            it.geometry.geometries.filterIsInstance<Polygon>().flatMap { polygon ->
-                                polygon.toLatLngs()
-                            }
-                        }
-                    }
-                    is Point -> {
-                        // Check if points are available
-                        it.geometry.toLatLngs()
-                    }
-                    is Polygon -> {
-                        // Use polygons as fallback (v1)
-                        it.geometry.toLatLngs()
-                    }
-                }.any { coordinate ->
-                    // Filter based on distance to point or polygon
-                    coordinate.distanceTo(LatLng(latitude, longitude)) < PACECloudSDK.configuration.appsDistanceThresholdInMeters
-                }
+                it.isInRange(latitude, longitude, PACECloudSDK.configuration.appsDistanceThresholdInMeters)
             }
             ?.mapNotNull {
                 (it.properties["apps"] as? List<*>)

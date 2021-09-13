@@ -1,5 +1,6 @@
 package cloud.pace.sdk.api.geo
 
+import cloud.pace.sdk.poikit.utils.distanceTo
 import com.google.android.gms.maps.model.LatLng
 
 const val POLYGON_NAME = "Polygon"
@@ -22,6 +23,49 @@ sealed class Geometry(val type: String)
 data class Polygon(val coordinates: List<List<List<Double>>>) : Geometry(POLYGON_NAME)
 data class Point(val coordinates: List<Double>) : Geometry(POINT_NAME)
 data class GeometryCollection(val geometries: List<Geometry>) : Geometry(GEOMETRY_COLLECTION_NAME)
+
+data class GeoGasStation(
+    val id: String,
+    val appUrls: List<String>
+)
+
+data class CofuGasStation(
+    var id: String,
+    var coordinate: LatLng,
+    var connectedFuelingStatus: ConnectedFuelingStatus
+)
+
+enum class ConnectedFuelingStatus(val value: String) {
+    ONLINE("online"),
+    OFFLINE("offline")
+}
+
+fun GeoAPIFeature.isInRange(latitude: Double, longitude: Double, distanceThresholdInMeters: Int): Boolean {
+    return when (geometry) {
+        is GeometryCollection -> {
+            // Check if points are available
+            geometry.geometries.filterIsInstance<Point>().flatMap { point ->
+                point.toLatLngs()
+            }.ifEmpty {
+                // Use polygons as fallback (v1)
+                geometry.geometries.filterIsInstance<Polygon>().flatMap { polygon ->
+                    polygon.toLatLngs()
+                }
+            }
+        }
+        is Point -> {
+            // Check if points are available
+            geometry.toLatLngs()
+        }
+        is Polygon -> {
+            // Use polygons as fallback (v1)
+            geometry.toLatLngs()
+        }
+    }.any { coordinate ->
+        // Filter based on distance to point or polygon
+        coordinate.distanceTo(LatLng(latitude, longitude)) < distanceThresholdInMeters
+    }
+}
 
 fun Point.toLatLngs(): List<LatLng> {
     val lat = coordinates.lastOrNull()
@@ -46,20 +90,4 @@ fun Polygon.toLatLngs(): List<LatLng> {
             }
         }
     }
-}
-
-data class GeoGasStation(
-    val id: String,
-    val appUrls: List<String>
-)
-
-data class CofuGasStation(
-    var id: String,
-    var coordinate: LatLng,
-    var connectedFuelingStatus: ConnectedFuelingStatus
-)
-
-enum class ConnectedFuelingStatus(val value: String) {
-    ONLINE("online"),
-    OFFLINE("offline")
 }
