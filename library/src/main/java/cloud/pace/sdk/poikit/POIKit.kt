@@ -1,5 +1,6 @@
 package cloud.pace.sdk.poikit
 
+import android.location.Location
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -18,6 +19,8 @@ import cloud.pace.sdk.api.poi.generated.request.metadataFilters.GetMetadataFilte
 import cloud.pace.sdk.api.poi.generated.request.priceHistories.GetPriceHistoryAPI.getPriceHistory
 import cloud.pace.sdk.api.poi.generated.request.prices.GetRegionalPricesAPI.getRegionalPrices
 import cloud.pace.sdk.poikit.database.POIKitDatabase
+import cloud.pace.sdk.poikit.geo.CofuGasStation
+import cloud.pace.sdk.poikit.geo.GeoAPIManager
 import cloud.pace.sdk.poikit.poi.*
 import cloud.pace.sdk.poikit.poi.download.TileDownloader
 import cloud.pace.sdk.poikit.routing.NavigationApiClient
@@ -43,6 +46,7 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
     private val addressSearchApi: AddressSearchClient by inject()
     private val locationProvider: LocationProvider by inject()
     private val tileDownloader: TileDownloader by inject()
+    private val geoApiManager: GeoAPIManager by inject()
 
     fun startLocationListener(): LocationProvider {
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
@@ -206,5 +210,45 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
         onBackgroundThread {
             database.gasStationDao().insertGasStations(gasStations.toList())
         }
+    }
+
+    /**
+     * Returns a list of all Connected Fueling gas stations.
+     *
+     * @param completion Returns a list of [CofuGasStation]s on success or a [Throwable] on failure.
+     */
+    fun requestCofuGasStations(completion: (Completion<List<CofuGasStation>>) -> Unit) {
+        SetupLogger.logSDKWarningIfNeeded()
+        geoApiManager.cofuGasStations { result ->
+            result.onSuccess { completion(Success(it)) }
+            result.onFailure { completion(Failure(it)) }
+        }
+    }
+
+    /**
+     * Returns a list of Connected Fueling gas stations within the [radius] of the specified [location].
+     *
+     * @param location The center of the search radius.
+     * @param radius The search radius in meters.
+     * @param completion Returns a list of [GasStation]s where Connected Fueling is available on success or a [Throwable] on failure.
+     */
+    fun requestCofuGasStations(location: Location, radius: Int, completion: (Completion<List<GasStation>>) -> Unit) {
+        SetupLogger.logSDKWarningIfNeeded()
+        geoApiManager.cofuGasStations(location, radius) { result ->
+            result.onSuccess { completion(Success(it)) }
+            result.onFailure { completion(Failure(it)) }
+        }
+    }
+
+    /**
+     * Checks if there is at least one app for the given [poiId] at the current location.
+     *
+     * @param location Can be specified optionally if the current location should not be determined.
+     *
+     * @return True if POI with [poiId] is in range, false otherwise.
+     */
+    suspend fun isPoiInRange(poiId: String, location: Location? = null): Boolean {
+        SetupLogger.logSDKWarningIfNeeded()
+        return geoApiManager.isPoiInRange(poiId, location)
     }
 }

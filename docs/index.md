@@ -11,6 +11,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
     * [Migration](#migration)
         + [2.x.x -> 3.x.x](#from-2xx-to-3xx)
         + [7.x.x -> 8.x.x](#from-7xx-to-8xx)
+        + [9.x.x -> 10.x.x](#from-9xx-to-10xx)
     * [IDKit](#idkit)
         + [Setup](#setup-1)
         + [Discover configuration](#discover-configuration)
@@ -31,7 +32,6 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
             + [Biometric authentication](#biometric-authentication)
         + [Request local apps](#request-local-apps)
         + [Fetch apps by URL](#fetch-apps-by-url)
-        + [Is POI in range?](#is-poi-in-range)
         + [AppActivity](#appactivity)
         + [AppWebView](#appwebview)
         + [AppDrawer](#appdrawer)
@@ -45,6 +45,9 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [Miscellaneous](#miscellaneous)
             + [Preset Urls](#preset-urls)
             + [Logging](#logging)
+    * [POIKit](#poikit)
+        + [Request CoFu gas stations](#request-cofu-gas-stations)
+        + [Is POI in range?](#is-poi-in-range)
 
 ## Source code
 The complete source code of the SDK can be found on [GitHub](https://github.com/pace/cloud-sdk-android).
@@ -158,6 +161,12 @@ We've added two new `AppCallback`s: `getAccessToken` and `logout`. The `getAcces
 The `logout` callback is used to handle the logout natively. Please refer to [Native login, token renewal and logout](#native-login-token-renewal-and-logout) for more information.
 
 Also from now on this callback will only be sent if `IDKit` is not used/set up. If you're using `IDKit` the SDK will now first try to renew the session automatically. If the renewal fails there is a new `fun onSessionRenewalFailed(throwable: Throwable?, onResult: (String?) -> Unit)` AppCallback that you may implement to specify your own behavior to retrieve a new access token. To implement this method pass an `AppCallbackImpl` instance to `AppKit.openApps(...)` or `AppKit.openAppActivity(...)` and override `onSessionRenewalFailed`. If either this method is not implemented or you didn't pass an `AppCallbackImpl` instance at all the SDK will automatically perform an authorization hence showing a sign in mask for the user.
+
+### From 9.x.x to 10.x.x
+We've moved everything that belongs to the GeoAPI from `AppKit`/`API` to `POIKit`:
+* The `AppKit.isPoiInRange(...)` call is now part of `POIKit`, available under `POIKit.isPoiInRange(...)`
+* The two `AppKit.requestCofuGasStations(...)` calls are now part of `POIKit`, available under `POIKit.requestCofuGasStations(...)`
+* In case of unresolved references: All classes inside package `cloud.pace.sdk.api.geo` and `cloud.pace.sdk.appkit.geo` were moved to package `cloud.pace.sdk.poikit.geo`
 
 ## IDKit
 **IDKit** manages the OpenID (OID) authorization and the general session flow with its token handling via **PACE ID**.
@@ -578,25 +587,6 @@ AppKit.INSTANCE.fetchAppsByUrl(url, new String[]{"c977190d-049b-4023-bcbd-1dab88
 });
 ```
 
-### Is POI in range?
-To check if there is an app for the given POI ID at the current location, call `AppKit.isPoiInRange(...)`.
-
-##### Kotlin example
-```kotlin
-AppKit.isPoiInRange(poiId) {
-    // True or false
-}
-```
-
-##### Java example
-```java
-AppKit.isPoiInRange(poiId, result -> {
-    // True or false
-
-    return null;
-});
-```
-
 ### AppActivity
 The *AppKit* contains a default `Activity` which can be used to display an app. To open an app in the `AppActivity` you have to call `AppKit.openAppActivity(...)`. The `AppActivity` will be closed when the user clicks the close button in the app. You may also use a `presetUrl` (see [Preset Urls](#preset-urls)).
 
@@ -847,6 +837,49 @@ PACECloudSDK.isLoggingEnabled = true // Defaults to `false`
 PACECloudSDK.setLoggingListener {
     // it = log message
 }
+```
+
+## POIKit
+With the POIKit singleton, you can request gas stations for specified locations or IDs. In addition, only Connected Fueling (CoFu) gas stations can be requested or you can check if there is a Connected Fueling app in range of a gas station (POI).
+
+### Request CoFu gas stations
+
+To request a list of Connected Fueling (CoFu) gas stations for a location withing a given radius, call `POIKit.requestCofuGasStations(location, radiusInMeters, completion)`
+
+##### Kotlin example
+```kotlin
+POIKit.requestCofuGasStations(location, 150) {
+    // List of CoFu gas stations (online and offline)
+    // Filter for GasStation.isConnectedFuelingAvailable if you only want online stations
+}
+```
+
+##### Java example
+```java
+POIKit.INSTANCE.requestCofuGasStations(location, 150, list -> {
+    // List of CoFu gas stations (online and offline)
+    // Filter for GasStation.isConnectedFuelingAvailable if you only want online stations
+    return null;
+});
+```
+
+### Is POI in range?
+To check if there is a Connected Fueling (CoFu) app for the given POI ID at the current location, call `POIKit.isPoiInRange(...)`.
+
+##### Kotlin example
+```kotlin
+POIKit.isPoiInRange(poiId) {
+    // True or false
+}
+```
+
+##### Java example
+```java
+POIKit.INSTANCE.isPoiInRange(poiId, result -> {
+    // True or false
+
+    return null;
+});
 ```
 
 ## SDK API Docs

@@ -3,7 +3,6 @@ package cloud.pace.sdk.appkit
 import android.content.Context
 import android.location.Location
 import cloud.pace.sdk.PACECloudSDK
-import cloud.pace.sdk.api.geo.GeoGasStation
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppWithRefs
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppsWithRefs
 import cloud.pace.sdk.appkit.app.api.AppRepositoryImpl
@@ -12,6 +11,7 @@ import cloud.pace.sdk.appkit.utils.TestAppAPI
 import cloud.pace.sdk.appkit.utils.TestCacheModel
 import cloud.pace.sdk.appkit.utils.TestGeoAPIManager
 import cloud.pace.sdk.appkit.utils.TestUriUtils
+import cloud.pace.sdk.poikit.geo.GeoGasStation
 import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.Environment
 import cloud.pace.sdk.utils.Failure

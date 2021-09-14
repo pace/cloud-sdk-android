@@ -1,16 +1,15 @@
 package cloud.pace.sdk.appkit
 
-import cloud.pace.sdk.api.geo.GeoAPIFeature
-import cloud.pace.sdk.api.geo.GeoAPIResponse
-import cloud.pace.sdk.api.geo.GeoGasStation
-import cloud.pace.sdk.api.geo.Polygon
-import cloud.pace.sdk.appkit.geo.GeoAPIManagerImpl
+import android.location.Location
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.utils.TestAppAPI
-import cloud.pace.sdk.utils.CompletableFutureCompat
-import cloud.pace.sdk.utils.LocationProvider
-import cloud.pace.sdk.utils.SystemManager
-import junit.framework.Assert.assertEquals
+import cloud.pace.sdk.poikit.geo.*
+import cloud.pace.sdk.utils.*
+import junit.framework.Assert.*
+import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -36,6 +35,11 @@ class GeoAPIManagerTest {
         listOf(8.427691064968382, 49.013005967255644),
         listOf(8.427429, 49.01304015764206)
     )
+
+    @Before
+    fun init() {
+        PACECloudSDK.configuration = Configuration("", "", "", "", environment = Environment.DEVELOPMENT)
+    }
 
     @Test
     fun `app is available because location distance is smaller than 150 meters`() {
@@ -155,6 +159,43 @@ class GeoAPIManagerTest {
         }
 
         assertEquals(exception, exceptionFuture.get(2, TimeUnit.SECONDS))
+    }
+
+    @Test
+    fun `poi id is in range`() = runBlocking {
+        val id = "e3211b77-03f0-4d49-83aa-4adaa46d95ae"
+        val location = mock(Location::class.java)
+        `when`(location.latitude).then { 49.012722 }
+        `when`(location.longitude).then { 8.427326 }
+
+        val appApi = object : TestAppAPI() {
+            override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
+                completion(Result.success(createGeoAPIResponse(listOf(polygon), id)))
+            }
+        }
+
+        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
+
+        assertTrue(geoApiManager.isPoiInRange(id, location))
+    }
+
+    @Test
+    fun `poi id is not in range`() = runBlocking {
+        val id1 = "e3211b77-03f0-4d49-83aa-4adaa46d95ae"
+        val id2 = "992b77b6-5982-4848-88fe-ae2633308279"
+        val location = mock(Location::class.java)
+        `when`(location.latitude).then { 49.012722 }
+        `when`(location.longitude).then { 8.427326 }
+
+        val appApi = object : TestAppAPI() {
+            override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
+                completion(Result.success(createGeoAPIResponse(listOf(polygon), id2)))
+            }
+        }
+
+        val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
+
+        assertFalse(geoApiManager.isPoiInRange(id1, location))
     }
 
     private fun get2000PolygonsResponse(): GeoAPIResponse {

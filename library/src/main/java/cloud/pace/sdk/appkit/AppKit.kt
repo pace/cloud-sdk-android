@@ -1,17 +1,14 @@
 package cloud.pace.sdk.appkit
 
 import android.content.Context
-import android.location.Location
 import androidx.constraintlayout.widget.ConstraintLayout
 import cloud.pace.sdk.BuildConfig
 import cloud.pace.sdk.PACECloudSDK
-import cloud.pace.sdk.api.geo.CofuGasStation
 import cloud.pace.sdk.appkit.app.AppActivity
 import cloud.pace.sdk.appkit.app.drawer.AppDrawer
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.Car
-import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.utils.*
 import org.koin.core.inject
 
@@ -89,40 +86,6 @@ object AppKit : CloudSDKKoinComponent {
     fun fetchUrlByAppId(appId: String, completion: (Completion<String?>) -> Unit) {
         SetupLogger.logSDKWarningIfNeeded()
         appManager.fetchUrlByAppId(appId, completion)
-    }
-
-    /**
-     * Returns a list of all Connected Fueling gas stations.
-     *
-     * @param completion Returns a list of [CofuGasStation]s on success or a [Throwable] on failure.
-     */
-    fun requestCofuGasStations(completion: (Completion<List<CofuGasStation>>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
-        appManager.requestCofuGasStations(completion)
-    }
-
-    /**
-     * Returns a list of Connected Fueling gas stations within the [radius] of the specified [location].
-     *
-     * @param location The center of the search radius.
-     * @param radius The search radius in meters.
-     * @param completion Returns a list of [GasStation]s where Connected Fueling is available on success or a [Throwable] on failure.
-     */
-    fun requestCofuGasStations(location: Location, radius: Int, completion: (Completion<List<GasStation>>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
-        appManager.requestCofuGasStations(location, radius, completion)
-    }
-
-    /**
-     * Checks if there is at least one app for the given [poiId] at the current location.
-     *
-     * @param location Can be specified optionally if the current location should not be determined.
-     *
-     * @return True if POI with [poiId] is in range, false otherwise.
-     */
-    suspend fun isPoiInRange(poiId: String, location: Location? = null): Boolean {
-        SetupLogger.logSDKWarningIfNeeded()
-        return appManager.isPoiInRange(poiId, location)
     }
 
     /**

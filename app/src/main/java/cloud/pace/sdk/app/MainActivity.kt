@@ -17,13 +17,13 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import cloud.pace.sdk.PACECloudSDK
-import cloud.pace.sdk.api.geo.ConnectedFuelingStatus
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.OIDConfiguration
 import cloud.pace.sdk.poikit.POIKit
+import cloud.pace.sdk.poikit.geo.ConnectedFuelingStatus
 import cloud.pace.sdk.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.launch
@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 val start = System.currentTimeMillis()
                 lifecycleScope.launch {
-                    val isPoiInRange = AppKit.isPoiInRange(poiId)
+                    val isPoiInRange = POIKit.isPoiInRange(poiId)
                     val elapsedTime = System.currentTimeMillis() - start
                     Toast.makeText(this@MainActivity, "Is POI in range result is $isPoiInRange and took $elapsedTime ms", Toast.LENGTH_LONG).show()
                 }
@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "The radius is not a valid representation of a number", Toast.LENGTH_SHORT).show()
                 } else {
                     request_cofu_gas_stations.isEnabled = false
-                    AppKit.requestCofuGasStations(location, radius) {
+                    POIKit.requestCofuGasStations(location, radius) {
                         request_cofu_gas_stations.isEnabled = true
                         when (it) {
                             is Success -> {
@@ -206,7 +206,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        AppKit.requestCofuGasStations { completion ->
+        POIKit.requestCofuGasStations { completion ->
             (completion as? Success)?.result?.count { it.connectedFuelingStatus == ConnectedFuelingStatus.ONLINE }?.let {
                 Toast.makeText(this, "$it CoFu gas stations online", Toast.LENGTH_LONG).show()
             }

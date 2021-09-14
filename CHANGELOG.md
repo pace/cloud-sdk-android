@@ -6,6 +6,14 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Breaking changes
+
+* Move everything that belongs to the GeoAPI from `AppKit`/`API` to `POIKit`: `AppKit.requestCofuGasStations(...)` moved to `POIKit.requestCofuGasStations(...)` and `AppKit.isPoiInRange(...)` moved to `POIKit.isPoiInRange(...)`
+
+### Fixes
+
+* Fix bug where CoFu stations outside the radius were returned from `requestCofuGasStations` call
+
 ### Internal
 
 * Also use the center point (if available) of the CoFu station in the `isPoiInRange` check instead of only the coordinates of the polygons as already done in the local apps check

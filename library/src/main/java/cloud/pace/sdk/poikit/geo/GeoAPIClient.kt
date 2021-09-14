@@ -1,4 +1,4 @@
-package cloud.pace.sdk.api.geo
+package cloud.pace.sdk.poikit.geo
 
 import android.content.Context
 import cloud.pace.sdk.PACECloudSDK
