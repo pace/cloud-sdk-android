@@ -44,6 +44,7 @@ interface AppModel {
     fun logEvent(key: String, parameters: Map<String, Any>)
     fun getConfig(key: String, config: (String?) -> Unit)
     fun isAppRedirectAllowed(app: String, isAllowed: (Boolean) -> Unit)
+    fun isSignedIn(isSignedIn: (Boolean) -> Unit)
 
     class Result<T>(val onResult: (T) -> Unit)
 }
@@ -225,6 +226,12 @@ class AppModelImpl(private val context: Context) : AppModel {
     override fun isAppRedirectAllowed(app: String, isAllowed: (Boolean) -> Unit) {
         onMainThread {
             callback?.isAppRedirectAllowed(app, isAllowed)
+        }
+    }
+
+    override fun isSignedIn(isSignedIn: (Boolean) -> Unit) {
+        onMainThread {
+            callback?.isSignedIn(isSignedIn)
         }
     }
 
