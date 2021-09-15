@@ -1,4 +1,4 @@
-package cloud.pace.sdk.api.geo
+package cloud.pace.sdk.poikit.geo
 
 import cloud.pace.sdk.poikit.utils.distanceTo
 import com.google.android.gms.maps.model.LatLng

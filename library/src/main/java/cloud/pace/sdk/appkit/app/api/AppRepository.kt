@@ -5,12 +5,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Location
 import cloud.pace.sdk.R
-import cloud.pace.sdk.api.geo.CofuGasStation
-import cloud.pace.sdk.api.geo.isInRange
-import cloud.pace.sdk.appkit.geo.GeoAPIManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.persistence.CacheModel
+import cloud.pace.sdk.poikit.geo.CofuGasStation
+import cloud.pace.sdk.poikit.geo.GeoAPIManager
+import cloud.pace.sdk.poikit.geo.isInRange
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.utils.*
 import kotlinx.coroutines.*
@@ -22,9 +22,6 @@ interface AppRepository {
     suspend fun getAllApps(): Completion<List<App>>
     suspend fun getAppsByUrl(url: String, references: List<String>): Completion<List<App>>
     suspend fun getUrlByAppId(appId: String): Completion<String?>
-    fun getCofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit)
-    fun getCofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit)
-    suspend fun isPoiInRange(poiId: String, latitude: Double, longitude: Double): Boolean
 }
 
 class AppRepositoryImpl(
@@ -126,46 +123,6 @@ class AppRepositoryImpl(
             Success(result)
         } catch (e: Exception) {
             Failure(e)
-        }
-    }
-
-    override fun getCofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit) {
-        geoApiManager.cofuGasStations(completion)
-    }
-
-    override fun getCofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit) {
-        geoApiManager.cofuGasStations(location, radius, completion)
-    }
-
-    override suspend fun isPoiInRange(poiId: String, latitude: Double, longitude: Double): Boolean {
-        return try {
-            suspendCancellableCoroutine { continuation ->
-                // Try to load the apps from the cache
-                geoApiManager.features(poiId, latitude, longitude) { response ->
-                    response.onSuccess { geoAPIFeatures ->
-                        val isPoiInRange = geoAPIFeatures
-                            .firstOrNull { it.id == poiId }
-                            ?.isInRange(latitude, longitude, IS_POI_IN_RANGE_DISTANCE_THRESHOLD) ?: false
-
-                        continuation.resumeIfActive(isPoiInRange)
-                    }
-
-                    response.onFailure {
-                        // Fetch the apps from the API
-                        appApi.getLocationBasedApps(latitude, longitude) { response ->
-                            response.onSuccess { apps ->
-                                continuation.resumeIfActive(apps.any { it.references?.any { reference -> reference.resourceUuid == poiId } ?: false })
-                            }
-
-                            response.onFailure {
-                                continuation.resumeIfActive(false)
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            false
         }
     }
 

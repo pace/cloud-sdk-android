@@ -1,8 +1,7 @@
-package cloud.pace.sdk.appkit.geo
+package cloud.pace.sdk.poikit.geo
 
 import android.location.Location
 import cloud.pace.sdk.PACECloudSDK
-import cloud.pace.sdk.api.geo.*
 import cloud.pace.sdk.appkit.app.api.AppAPI
 import cloud.pace.sdk.poikit.POIKit
 import cloud.pace.sdk.poikit.poi.GasStation
@@ -10,6 +9,7 @@ import cloud.pace.sdk.poikit.poi.toLocationPoint
 import cloud.pace.sdk.poikit.utils.distanceTo
 import cloud.pace.sdk.utils.*
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 
 interface GeoAPIManager {
@@ -18,10 +18,11 @@ interface GeoAPIManager {
     fun features(poiId: String, latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit)
     fun cofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit)
     fun cofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit)
+    suspend fun isPoiInRange(poiId: String, location: Location? = null): Boolean
 }
 
 class GeoAPIManagerImpl(
-    private val appAPI: AppAPI,
+    private val appApi: AppAPI,
     private val systemManager: SystemManager,
     private val locationProvider: LocationProvider
 ) : GeoAPIManager {
@@ -98,14 +99,12 @@ class GeoAPIManagerImpl(
         cofuGasStations { result ->
             val targetLocation = LatLng(location.latitude, location.longitude)
             result.onSuccess { cofuGasStations ->
-                val locations = cofuGasStations
-                    .filter { station -> station.coordinate.distanceTo(targetLocation) < radius }
-                    .map { station -> station.id to station.coordinate.toLocationPoint() }
-                    .toMap()
+                val cofuGasStationsInRange = cofuGasStations.filter { station -> station.coordinate.distanceTo(targetLocation) < radius }
+                val locations = cofuGasStationsInRange.map { station -> station.id to station.coordinate.toLocationPoint() }.toMap()
 
                 POIKit.requestGasStations(locations) { gasStations ->
                     when (gasStations) {
-                        is Success -> completion(Result.success(gasStations.result.filter { gasStation -> cofuGasStations.any { it.id == gasStation.id } }))
+                        is Success -> completion(Result.success(gasStations.result.filter { gasStation -> cofuGasStationsInRange.any { it.id == gasStation.id } }))
                         is Failure -> completion(Result.failure(gasStations.throwable))
                     }
                 }
@@ -114,6 +113,23 @@ class GeoAPIManagerImpl(
             result.onFailure {
                 completion(Result.failure(it))
             }
+        }
+    }
+
+    override suspend fun isPoiInRange(poiId: String, location: Location?): Boolean {
+        val userLocation = location ?: when (val currentLocation = locationProvider.currentLocation(true)) {
+            is Success -> {
+                currentLocation.result ?: when (val validLocation = locationProvider.firstValidLocation()) {
+                    is Success -> validLocation.result
+                    is Failure -> null
+                }
+            }
+            is Failure -> null
+        }
+        return if (userLocation != null) {
+            isPoiInRange(poiId, userLocation.latitude, userLocation.longitude)
+        } else {
+            false
         }
     }
 
@@ -133,7 +149,7 @@ class GeoAPIManagerImpl(
     }
 
     private fun loadAppsCache(latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {
-        appAPI.getGeoApiApps { result ->
+        appApi.getGeoApiApps { result ->
             result.onSuccess { response ->
                 val center = LatLng(latitude, longitude)
                 val time = systemManager.getCurrentTimeMillis()
@@ -160,7 +176,7 @@ class GeoAPIManagerImpl(
     }
 
     private fun loadCofuGasStationsCache(completion: (Result<List<CofuGasStation>>) -> Unit) {
-        appAPI.getGeoApiApps { result ->
+        appApi.getGeoApiApps { result ->
             result.onSuccess { response ->
                 val time = systemManager.getCurrentTimeMillis()
                 val cofuGasStations = response.features.map {
@@ -192,6 +208,38 @@ class GeoAPIManagerImpl(
         }
     }
 
+    private suspend fun isPoiInRange(poiId: String, latitude: Double, longitude: Double): Boolean {
+        return try {
+            suspendCancellableCoroutine { continuation ->
+                // Try to load the apps from the cache
+                features(poiId, latitude, longitude) { response ->
+                    response.onSuccess { geoAPIFeatures ->
+                        val isPoiInRange = geoAPIFeatures
+                            .firstOrNull { it.id == poiId }
+                            ?.isInRange(latitude, longitude, IS_POI_IN_RANGE_DISTANCE_THRESHOLD) ?: false
+
+                        continuation.resumeIfActive(isPoiInRange)
+                    }
+
+                    response.onFailure {
+                        // Fetch the apps from the API
+                        appApi.getLocationBasedApps(latitude, longitude) { response ->
+                            response.onSuccess { apps ->
+                                continuation.resumeIfActive(apps.any { it.references?.any { reference -> reference.resourceUuid == poiId } ?: false })
+                            }
+
+                            response.onFailure {
+                                continuation.resumeIfActive(false)
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     private fun isAppsCacheValid(latitude: Double, longitude: Double): Boolean {
         val cache = appsCache
         return cache != null && isInRadius(latitude, longitude, cache.center) && systemManager.getCurrentTimeMillis() - cache.time <= CACHE_MAX_AGE
@@ -212,5 +260,6 @@ class GeoAPIManagerImpl(
     companion object {
         private const val CACHE_MAX_AGE = 60 * 60 * 1000 // 60 min
         private const val CACHE_RADIUS = 30 * 1000 // 30 km
+        private const val IS_POI_IN_RANGE_DISTANCE_THRESHOLD = 500 // meters
     }
 }

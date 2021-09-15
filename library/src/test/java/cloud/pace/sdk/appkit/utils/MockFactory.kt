@@ -6,10 +6,6 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Handler
 import androidx.lifecycle.MutableLiveData
-import cloud.pace.sdk.api.geo.CofuGasStation
-import cloud.pace.sdk.api.geo.GeoAPIFeature
-import cloud.pace.sdk.api.geo.GeoAPIResponse
-import cloud.pace.sdk.api.geo.GeoGasStation
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApps
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppsWithRefs
@@ -18,13 +14,13 @@ import cloud.pace.sdk.appkit.app.api.AppRepository
 import cloud.pace.sdk.appkit.app.api.UriManager
 import cloud.pace.sdk.appkit.app.webview.AppWebViewClient
 import cloud.pace.sdk.appkit.communication.AppEventManager
-import cloud.pace.sdk.appkit.geo.GeoAPIManager
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.model.Car
 import cloud.pace.sdk.appkit.persistence.CacheModel
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.persistence.TotpSecret
+import cloud.pace.sdk.poikit.geo.*
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.utils.*
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -60,7 +56,7 @@ open class TestLocationProvider(
     }
 }
 
-open class TestAppRepository(private val isPoiInRange: Boolean = false) : AppRepository {
+open class TestAppRepository : AppRepository {
 
     override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
         return Success(emptyList())
@@ -77,10 +73,6 @@ open class TestAppRepository(private val isPoiInRange: Boolean = false) : AppRep
     override suspend fun getUrlByAppId(appId: String): Completion<String?> {
         return Success(null)
     }
-
-    override fun getCofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit) {}
-    override fun getCofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit) {}
-    override suspend fun isPoiInRange(poiId: String, latitude: Double, longitude: Double) = isPoiInRange
 }
 
 open class TestSharedPreferencesModel : SharedPreferencesModel {
@@ -206,10 +198,11 @@ open class TestCacheModel : CacheModel {
     override fun getManifest(context: Context, url: String, completion: (Result<AppManifest>) -> Unit) {}
 }
 
-open class TestGeoAPIManager : GeoAPIManager {
+open class TestGeoAPIManager(private val isPoiInRange: Boolean = false) : GeoAPIManager {
 
     override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {}
     override fun features(poiId: String, latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {}
     override fun cofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit) {}
     override fun cofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit) {}
+    override suspend fun isPoiInRange(poiId: String, location: Location?) = isPoiInRange
 }

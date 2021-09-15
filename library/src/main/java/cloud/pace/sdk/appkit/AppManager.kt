@@ -9,7 +9,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.children
 import cloud.pace.sdk.PACECloudSDK
-import cloud.pace.sdk.api.geo.CofuGasStation
 import cloud.pace.sdk.appkit.app.AppActivity
 import cloud.pace.sdk.appkit.app.api.AppRepository
 import cloud.pace.sdk.appkit.app.drawer.AppDrawer
@@ -21,7 +20,6 @@ import cloud.pace.sdk.appkit.model.Car
 import cloud.pace.sdk.appkit.network.NetworkChangeListener
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getDisableTimePreferenceKey
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
-import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -35,7 +33,6 @@ import java.util.*
 
 internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSDKKoinComponent {
 
-    private val context: Context by inject()
     private val locationProvider: LocationProvider by inject()
     private val appRepository: AppRepository by inject()
     private val networkChangeListener: NetworkChangeListener by inject()
@@ -210,37 +207,6 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
             withContext(dispatchers.main()) {
                 completion(result)
             }
-        }
-    }
-
-    internal fun requestCofuGasStations(completion: (Completion<List<CofuGasStation>>) -> Unit) {
-        appRepository.getCofuGasStations { result ->
-            result.onSuccess { completion(Success(it)) }
-            result.onFailure { completion(Failure(it)) }
-        }
-    }
-
-    internal fun requestCofuGasStations(location: Location, radius: Int, completion: (Completion<List<GasStation>>) -> Unit) {
-        appRepository.getCofuGasStations(location, radius) { result ->
-            result.onSuccess { completion(Success(it)) }
-            result.onFailure { completion(Failure(it)) }
-        }
-    }
-
-    internal suspend fun isPoiInRange(poiId: String, location: Location? = null): Boolean {
-        val userLocation = location ?: when (val currentLocation = locationProvider.currentLocation(true)) {
-            is Success -> {
-                currentLocation.result ?: when (val validLocation = locationProvider.firstValidLocation()) {
-                    is Success -> validLocation.result
-                    is Failure -> null
-                }
-            }
-            is Failure -> null
-        }
-        return if (userLocation != null) {
-            appRepository.isPoiInRange(poiId, userLocation.latitude, userLocation.longitude)
-        } else {
-            false
         }
     }
 
