@@ -45,8 +45,11 @@ abstract class POIKitDatabase : RoomDatabase() {
                     lat /= geometry.size
                     lon /= geometry.size
 
-                    val id = cursor.getString(cursor.getColumnIndex("id"))
-                    database.execSQL("UPDATE GasStation SET latitude = $lat, longitude = $lon WHERE id = '$id'")
+                    val idIndex = cursor.getColumnIndex("id")
+                    if (idIndex >= 0) {
+                        val id = cursor.getString(idIndex)
+                        database.execSQL("UPDATE GasStation SET latitude = $lat, longitude = $lon WHERE id = '$id'")
+                    }
                 }
             }
         }
