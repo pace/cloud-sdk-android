@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+
+10.0.0 Release notes (2021-09-16)
+=============================================================
+
 ### Breaking changes
 
 * Move everything that belongs to the GeoAPI from `AppKit`/`API` to `POIKit`: `AppKit.requestCofuGasStations(...)` moved to `POIKit.requestCofuGasStations(...)` and `AppKit.isPoiInRange(...)` moved to `POIKit.isPoiInRange(...)`
