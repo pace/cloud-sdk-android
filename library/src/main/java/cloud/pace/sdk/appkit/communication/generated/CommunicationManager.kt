@@ -111,7 +111,7 @@ public data class CommunicationManager(
             withContext(Dispatchers.Main) {
               respond(Response(
                  request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
-                 Message("Could not deserialize the following JSON message: $message")
+                 Message("Could not deserialize the JSON request message")
               ))
             }
           } else {
@@ -132,7 +132,7 @@ public data class CommunicationManager(
             withContext(Dispatchers.Main) {
               respond(Response(
                  request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
-                 Message("Could not deserialize the following JSON message: $message")
+                 Message("Could not deserialize the JSON request message")
               ))
             }
           } else {
@@ -153,7 +153,7 @@ public data class CommunicationManager(
             withContext(Dispatchers.Main) {
               respond(Response(
                  request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
-                 Message("Could not deserialize the following JSON message: $message")
+                 Message("Could not deserialize the JSON request message")
               ))
             }
           } else {
@@ -174,7 +174,7 @@ public data class CommunicationManager(
             withContext(Dispatchers.Main) {
               respond(Response(
                  request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
-                 Message("Could not deserialize the following JSON message: $message")
+                 Message("Could not deserialize the JSON request message")
               ))
             }
           } else {
@@ -195,7 +195,7 @@ public data class CommunicationManager(
             withContext(Dispatchers.Main) {
               respond(Response(
                  request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
-                 Message("Could not deserialize the following JSON message: $message")
+                 Message("Could not deserialize the JSON request message")
               ))
             }
           } else {
@@ -216,7 +216,7 @@ public data class CommunicationManager(
             withContext(Dispatchers.Main) {
               respond(Response(
                  request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
-                 Message("Could not deserialize the following JSON message: $message")
+                 Message("Could not deserialize the JSON request message")
               ))
             }
           } else {
@@ -237,7 +237,7 @@ public data class CommunicationManager(
             withContext(Dispatchers.Main) {
               respond(Response(
                  request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
-                 Message("Could not deserialize the following JSON message: $message")
+                 Message("Could not deserialize the JSON request message")
               ))
             }
           } else {
@@ -258,7 +258,7 @@ public data class CommunicationManager(
             withContext(Dispatchers.Main) {
               respond(Response(
                  request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
-                 Message("Could not deserialize the following JSON message: $message")
+                 Message("Could not deserialize the JSON request message")
               ))
             }
           } else {
@@ -279,7 +279,7 @@ public data class CommunicationManager(
             withContext(Dispatchers.Main) {
               respond(Response(
                  request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
-                 Message("Could not deserialize the following JSON message: $message")
+                 Message("Could not deserialize the JSON request message")
               ))
             }
           } else {
@@ -301,7 +301,7 @@ public data class CommunicationManager(
             withContext(Dispatchers.Main) {
               respond(Response(
                  request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
-                 Message("Could not deserialize the following JSON message: $message")
+                 Message("Could not deserialize the JSON request message")
               ))
             }
           } else {
@@ -322,7 +322,7 @@ public data class CommunicationManager(
             withContext(Dispatchers.Main) {
               respond(Response(
                  request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
-                 Message("Could not deserialize the following JSON message: $message")
+                 Message("Could not deserialize the JSON request message")
               ))
             }
           } else {
@@ -363,7 +363,7 @@ public data class CommunicationManager(
             withContext(Dispatchers.Main) {
               respond(Response(
                  request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
-                 Message("Could not deserialize the following JSON message: $message")
+                 Message("Could not deserialize the JSON request message")
               ))
             }
           } else {
@@ -384,7 +384,7 @@ public data class CommunicationManager(
             withContext(Dispatchers.Main) {
               respond(Response(
                  request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
-                 Message("Could not deserialize the following JSON message: $message")
+                 Message("Could not deserialize the JSON request message")
               ))
             }
           } else {
@@ -405,7 +405,7 @@ public data class CommunicationManager(
             withContext(Dispatchers.Main) {
               respond(Response(
                  request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
-                 Message("Could not deserialize the following JSON message: $message")
+                 Message("Could not deserialize the JSON request message")
               ))
             }
           } else {
@@ -446,7 +446,7 @@ public data class CommunicationManager(
             withContext(Dispatchers.Main) {
               respond(Response(
                  request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
-                 Message("Could not deserialize the following JSON message: $message")
+                 Message("Could not deserialize the JSON request message")
               ))
             }
           } else {
@@ -467,10 +467,20 @@ public data class CommunicationManager(
           }
         }
       }
+      "/isSignedIn" -> {
+        CoroutineScope(Dispatchers.Default).launch {
+          val timeout = TimeUnit.SECONDS.toMillis((request.header?.get("Keep-Alive") as?
+              Double)?.toLong() ?: 5)
+          val result = listener.isSignedIn(timeout)
+          withContext(Dispatchers.Main) {
+            respond(Response(request.id, result.status, request.header, result.body))
+          }
+        }
+      }
       else -> {
         CoroutineScope(Dispatchers.Main).launch {
-          respond(Response(request?.id, HttpURLConnection.HTTP_INTERNAL_ERROR, request?.header,
-              Message("Could not route the following message to the correct handler: $message")))
+          respond(Response(request?.id, HttpURLConnection.HTTP_BAD_METHOD, request?.header,
+              Message("Could not route the following request to the correct handler: $request")))
         }
       }
     }

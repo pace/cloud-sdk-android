@@ -38,6 +38,7 @@ import cloud.pace.sdk.appkit.communication.generated.model.response.GetTraceIdRe
 import cloud.pace.sdk.appkit.communication.generated.model.response.ImageDataResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.IntrospectResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.IsBiometricAuthEnabledResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.IsSignedInResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.LogEventResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.LogoutResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.OpenURLInNewTabResult
@@ -260,4 +261,11 @@ public interface Communication {
    * @param timeout The timeout of isBiometricAuthEnabled in milliseconds
    */
   public suspend fun isBiometricAuthEnabled(timeout: Long): IsBiometricAuthEnabledResult
+
+  /**
+   * Checks if user is signed in.
+   *
+   * @param timeout The timeout of isSignedIn in milliseconds
+   */
+  public suspend fun isSignedIn(timeout: Long): IsSignedInResult
 }

@@ -669,6 +669,19 @@ class AppWebViewModelImpl(
         }
     }
 
+    override suspend fun isSignedIn(timeout: Long): IsSignedInResult {
+        return try {
+            suspendCoroutineWithTimeout(timeout) { continuation ->
+                appModel.isSignedIn {
+                    continuation.resumeIfActive(IsSignedInResult(IsSignedInResult.Success(IsSignedInResponse(it))))
+                }
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for isSignedIn")
+            IsSignedInResult(IsSignedInResult.Failure(IsSignedInResult.Failure.StatusCode.RequestTimeout, IsSignedInError(e.message)))
+        }
+    }
+
     private fun getRedirectScheme(): String? {
         val applicationInfo = context.packageManager?.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
         return applicationInfo?.metaData?.get("pace_redirect_scheme")?.toString()

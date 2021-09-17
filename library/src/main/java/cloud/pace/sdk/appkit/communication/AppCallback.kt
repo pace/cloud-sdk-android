@@ -125,6 +125,13 @@ interface AppCallback {
      * @param isAllowed Call this function to specify whether to redirect or not (defaults to `true`)
      */
     fun isAppRedirectAllowed(app: String, isAllowed: (Boolean) -> Unit)
+
+    /**
+     * Is called when the app wants to know if the user is potentially signed in without triggering an actual sign in action.
+     *
+     * @param isSignedIn Call this function to specify whether the user is signed in or not
+     */
+    fun isSignedIn(isSignedIn: (Boolean) -> Unit)
 }
 
 abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
@@ -162,5 +169,9 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
 
     override fun isAppRedirectAllowed(app: String, isAllowed: (Boolean) -> Unit) {
         isAllowed(true)
+    }
+
+    override fun isSignedIn(isSignedIn: (Boolean) -> Unit) {
+        isSignedIn(IDKit.isInitialized && IDKit.isAuthorizationValid())
     }
 }

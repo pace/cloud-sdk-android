@@ -21,10 +21,10 @@ public object Metadata {
   /**
    * A list of all supported operations.
    */
-  public val operations: List<String> = listOf("introspect", "close", "logout",
-      "getBiometricStatus", "setTOTP", "getTOTP", "setSecureData", "getSecureData", "disable",
-      "openURLInNewTab", "verifyLocation", "getAccessToken", "imageData",
-      "applePayAvailabilityCheck", "applePayRequest", "back", "appInterceptableLink",
-      "setUserProperty", "logEvent", "getConfig", "getTraceId", "getLocation", "appRedirect",
-      "isBiometricAuthEnabled")
+  public val operations: List<String> = listOf("/introspect", "/close", "/logout",
+      "/getBiometricStatus", "/setTOTP", "/getTOTP", "/setSecureData", "/getSecureData", "/disable",
+      "/openURLInNewTab", "/verifyLocation", "/getAccessToken", "/imageData",
+      "/applePayAvailabilityCheck", "/applePayRequest", "/back", "/appInterceptableLink",
+      "/setUserProperty", "/logEvent", "/getConfig", "/getTraceId", "/getLocation", "/appRedirect",
+      "/isBiometricAuthEnabled", "/isSignedIn")
 }
