@@ -73,7 +73,6 @@ object PACECloudSDK {
      */
     fun setup(context: Context, configuration: Configuration) {
         this.configuration = configuration
-        addQueryParam("utm_source", configuration.clientAppName)
 
         // Do not log to logcat on production
         if (configuration.environment != Environment.PRODUCTION) {
@@ -115,15 +114,6 @@ object PACECloudSDK {
             configuration.extensions = extensions
             AppKit.updateUserAgent()
         }
-    }
-
-    /**
-     * Adds param to additionalQueryParams. If additionalQueryParams already contains specified [key], the old value will be replaced.
-     */
-    fun addQueryParam(key: String, value: String) {
-        val currentParams = additionalQueryParams.toMutableMap()
-        currentParams[key] = value
-        additionalQueryParams = currentParams
     }
 
     internal fun setLocationAccuracy(locationAccuracy: Int?) {

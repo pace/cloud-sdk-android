@@ -39,6 +39,10 @@ object InterceptorUtils {
             httpUrl.addQueryParameter(param.key, param.value)
         }
 
+        if (!PACECloudSDK.additionalQueryParams.containsKey("utm_source")) {
+            httpUrl.addQueryParameter("utm_source", PACECloudSDK.configuration.clientAppName)
+        }
+
         val builder = it.request().newBuilder().url(httpUrl.build())
 
         API.additionalHeaders.forEach { header ->
