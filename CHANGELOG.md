@@ -15,6 +15,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Fixes
 
 * Regenerate communication code to fix problem with unparsable error response
+* Fix overwriting of custom set `utm_params`
 
 
 10.0.0 Release notes (2021-09-16)
