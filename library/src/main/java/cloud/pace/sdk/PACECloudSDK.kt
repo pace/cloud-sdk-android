@@ -16,6 +16,7 @@ import java.util.*
 object PACECloudSDK {
 
     internal lateinit var configuration: Configuration
+    var isSetup: Boolean = false
     var additionalQueryParams: Map<String, String> = mapOf()
         set(value) {
             val newQueryParams = mutableMapOf<String, String>()
@@ -85,6 +86,7 @@ object PACECloudSDK {
         AppKit.updateUserAgent()
 
         Timber.i("Setup of the PACECloudSDK successfully")
+        isSetup = true
 
         val applicationInfo = context.packageManager?.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
         val redirectScheme = applicationInfo?.metaData?.get("pace_redirect_scheme")?.toString()

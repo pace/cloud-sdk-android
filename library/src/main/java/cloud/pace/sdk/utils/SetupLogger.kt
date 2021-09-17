@@ -1,5 +1,6 @@
 package cloud.pace.sdk.utils
 
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.idkit.model.OIDConfiguration
 import timber.log.Timber
 
@@ -52,6 +53,9 @@ object SetupLogger {
     }
 
     fun logSDKWarningIfNeeded() {
+        if (!PACECloudSDK.isSetup) {
+            Timber.e("PACECloudSDK.setup() has not been called. Please do so before using any functions of its Kit's")
+        }
         if (missingValues.isNotEmpty()) {
             Timber.w("You haven't set any PACECloudSDK values for: ${missingValues.joinToString(", ")}")
         }

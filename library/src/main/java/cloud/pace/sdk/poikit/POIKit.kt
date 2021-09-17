@@ -48,6 +48,13 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
     private val tileDownloader: TileDownloader by inject()
     private val geoApiManager: GeoAPIManager by inject()
 
+    /**
+     * Checks whether [PACECloudSDK] has been set up correctly before [POIKit] is used, otherwise log SDK warnings.
+     */
+    init {
+        SetupLogger.logSDKWarningIfNeeded()
+    }
+
     fun startLocationListener(): LocationProvider {
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         return locationProvider.also { it.requestLocationUpdates() }
@@ -218,7 +225,6 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
      * @param completion Returns a list of [CofuGasStation]s on success or a [Throwable] on failure.
      */
     fun requestCofuGasStations(completion: (Completion<List<CofuGasStation>>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         geoApiManager.cofuGasStations { result ->
             result.onSuccess { completion(Success(it)) }
             result.onFailure { completion(Failure(it)) }
@@ -233,7 +239,6 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
      * @param completion Returns a list of [GasStation]s where Connected Fueling is available on success or a [Throwable] on failure.
      */
     fun requestCofuGasStations(location: Location, radius: Int, completion: (Completion<List<GasStation>>) -> Unit) {
-        SetupLogger.logSDKWarningIfNeeded()
         geoApiManager.cofuGasStations(location, radius) { result ->
             result.onSuccess { completion(Success(it)) }
             result.onFailure { completion(Failure(it)) }
@@ -248,7 +253,6 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
      * @return True if POI with [poiId] is in range, false otherwise.
      */
     suspend fun isPoiInRange(poiId: String, location: Location? = null): Boolean {
-        SetupLogger.logSDKWarningIfNeeded()
         return geoApiManager.isPoiInRange(poiId, location)
     }
 }
