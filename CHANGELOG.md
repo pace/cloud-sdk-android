@@ -4,18 +4,22 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Breaking Changes - Include, if needed -->
 <!-- ### Enhancements - Include, if needed -->
 <!-- ### Fixes - Include, if needed -->
-
-### Internal
-* Add setup flag to check whether `PACECloudSDK` has been set up correctly before using it's `Kit`s
+<!-- ### Internal - Include, if needed -->
 
 ### Enhancements
 
 * Implement the `isSignedIn` PWA communication handler which returns `true` by default if the authorization is valid in `IDKit`. This behavior can be overridden in `AppCallback.isSignedIn(isSignedIn)`.
+* Add `AppKit.openDashboard(...)` to open the Connected Fueling dashboard app
 
 ### Fixes
 
 * Regenerate communication code to fix problem with unparsable error response
 * Fix overwriting of custom set `utm_params`
+* Fix bug where `AppActivity` was finished when it was started and `AppKit.openApps(...)` was called at the same time
+
+### Internal
+
+* Add setup flag to check whether `PACECloudSDK` has been set up correctly before using it's `Kit`s
 
 
 10.0.0 Release notes (2021-09-16)

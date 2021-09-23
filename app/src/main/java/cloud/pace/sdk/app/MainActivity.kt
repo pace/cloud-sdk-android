@@ -106,6 +106,10 @@ class MainActivity : AppCompatActivity() {
             AppKit.openTransactions(this, callback = defaultAppCallback)
         }
 
+        dashboard_app.setOnClickListener {
+            AppKit.openDashboard(this, callback = defaultAppCallback)
+        }
+
         pace_id_app.setOnClickListener {
             AppKit.openPaceID(this, callback = defaultAppCallback)
         }

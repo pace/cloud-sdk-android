@@ -7,7 +7,8 @@ enum class Environment(
     val routingBaseUrl: String,
     val payUrl: String,
     val transactionUrl: String,
-    val fuelingUrl: String
+    val fuelingUrl: String,
+    val dashboardUrl: String
 ) {
 
     DEVELOPMENT(
@@ -17,7 +18,8 @@ enum class Environment(
         "https://maps.pacelink.net/osrm5/route/v1/",
         "https://pay.dev.pace.cloud",
         "https://pay.dev.pace.cloud/transactions",
-        "https://dev.fuel.site"
+        "https://dev.fuel.site",
+        "https://my.dev.fuel.site"
     ),
     STAGING(
         "https://id.stage.pace.cloud",
@@ -26,7 +28,8 @@ enum class Environment(
         "https://maps.pacelink.net/osrm5/route/v1/",
         "https://pay.stage.pace.cloud",
         "https://pay.stage.pace.cloud/transactions",
-        "https://stage.fuel.site"
+        "https://stage.fuel.site",
+        "https://my.stage.fuel.site"
     ),
     PRODUCTION(
         "https://id.pace.cloud",
@@ -35,7 +38,8 @@ enum class Environment(
         "https://maps.pacelink.net/osrm5/route/v1/",
         "https://pay.pace.cloud",
         "https://pay.pace.cloud/transactions",
-        "https://fuel.site"
+        "https://fuel.site",
+        "https://my.fuel.site"
     ),
     SANDBOX(
         "https://id.sandbox.pace.cloud",
@@ -44,6 +48,7 @@ enum class Environment(
         "https://maps.pacelink.net/osrm5/route/v1/",
         "https://pay.sandbox.pace.cloud",
         "https://pay.sandbox.pace.cloud/transactions",
-        "https://sandbox.fuel.site"
+        "https://sandbox.fuel.site",
+        "https://my.sandbox.fuel.site"
     )
 }
