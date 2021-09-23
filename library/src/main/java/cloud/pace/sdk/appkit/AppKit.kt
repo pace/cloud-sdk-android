@@ -172,6 +172,18 @@ object AppKit : CloudSDKKoinComponent {
     }
 
     /**
+     * Starts an [AppActivity] and loads the Connected Fueling dashboard in the [cloud.pace.sdk.appkit.app.webview.AppWebView].
+     *
+     * @param context Context which should be used to start the [AppActivity].
+     * @param enableBackToFinish True if the [AppActivity] should be finished or false if the [cloud.pace.sdk.appkit.app.webview.AppWebView] should navigate back on back press.
+     * @param callback Via this callback the client app can subscribe to certain app events.
+     */
+    @JvmOverloads
+    fun openDashboard(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
+        appManager.openAppActivity(context, PACECloudSDK.configuration.environment.dashboardUrl, enableBackToFinish, callback)
+    }
+
+    /**
      * Adds an [AppDrawer] to the parent view [buttonContainer] for each app in [apps] list.
      * Clicking on the [AppDrawer] opens the [AppActivity] and shows the App.
      *

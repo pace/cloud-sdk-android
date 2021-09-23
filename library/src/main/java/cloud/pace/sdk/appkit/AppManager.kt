@@ -273,8 +273,6 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
                 buttonContainer.removeView(it)
             }
         }
-
-        appModel.close()
     }
 
     internal fun closeAppActivity() = appModel.close()
