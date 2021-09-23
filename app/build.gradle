@@ -77,6 +77,12 @@ android {
     lintOptions {
         disable 'LogNotTimber', 'StringFormatInTimber', 'ThrowableNotAtBeginning', 'BinaryOperationInTimber', 'TimberArgCount', 'TimberArgTypes', 'TimberTagLength'
     }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            output.outputFileName = "${secretsProperties.getProperty("paceCloudAppName")}-${variant.buildType.name}-v${new Date().format('yyyyMMddHHmm')}.apk"
+        }
+    }
 }
 
 dependencies {

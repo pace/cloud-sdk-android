@@ -1,0 +1,13 @@
+default_platform(:android)
+
+platform :android do
+  desc 'Runs all the tests'
+  lane :test do
+    gradle(task: 'test')
+  end
+
+  desc 'Publish bundle to Google Play Store'
+  lane :publish do |options|
+    supply(track: 'alpha', aab: options[:aab_path], json_key: options[:json_key])
+  end
+end

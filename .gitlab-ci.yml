@@ -1,0 +1,89 @@
+stages:
+  - environment
+  - test
+  - build
+  - publish
+
+before_script:
+  - bundle install || true
+  - export TAG_COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
+  - export BUILD_NUMBER=$(TZ=Etc/Utc printf '%(%Y%m%d%H)T\n' ${TAG_COMMIT_TIME})
+  - 'echo Build number: $BUILD_NUMBER'
+  - export VERSION_NAME=$(TZ=Etc/Utc printf '%(%y.%V.%u)T\n' ${TAG_COMMIT_TIME})
+  - 'echo Version name: $VERSION_NAME'
+  - base64 -d <<< $RELEASE_KEYSTORE > release-store.jks
+  - echo $SECRETS | sed -E -e 's/[[:blank:]]+/\n/g' > secrets.properties
+  - echo $GOOGLE_PLAY_API > store.json
+
+after_script:
+  - rm release-store.jks || true
+  - rm secrets.properties || true
+  - rm store.json || true
+
+.dockerImage:
+  image: $CI_REGISTRY_IMAGE:latest
+
+.updateContainerJob:
+  image: docker:stable
+  stage: environment
+  before_script: []
+  after_script: []
+  services:
+    - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - docker build --cache-from $CI_REGISTRY_IMAGE:latest -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:latest
+
+updateContainer:
+  extends: .updateContainerJob
+  only:
+    changes:
+      - Dockerfile
+
+ensureContainer:
+  extends: .updateContainerJob
+  allow_failure: true
+  before_script:
+    - "mkdir -p ~/.docker && echo '{\"experimental\": \"enabled\"}' > ~/.docker/config.json"
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    # Skip update container `script` if the container already exists
+    # via https://gitlab.com/gitlab-org/gitlab-ce/issues/26866#note_97609397 -> https://stackoverflow.com/a/52077071/796832
+    - docker manifest inspect $CI_REGISTRY_IMAGE:latest > /dev/null && exit || true
+
+test:
+  extends: .dockerImage
+  stage: test
+  only:
+    - merge_requests
+  script:
+    - ls -ltra
+    - cat release-store.jks
+    - cat secrets.properties
+    - ./gradlew test
+
+build_app:
+  extends: .dockerImage
+  stage: build
+  only:
+    - tags
+  script:
+    - >-
+      ./gradlew clean bundleRelease -PbuildNumber=$BUILD_NUMBER
+      -PversionName=$VERSION_NAME
+  artifacts:
+    name: "$(git show -s --format=%ct $CI_COMMIT_SHA)"
+    expire_in: 3 days
+    paths:
+      - app/build/outputs/bundle/release
+
+publish_app:
+  extends: .dockerImage
+  stage: publish
+  only:
+    - tags
+  script:
+    - bundle exec fastlane publish aab_path:$AAB_PATH json_key:store.json
+  variables:
+    AAB_PATH: 'app/build/outputs/bundle/release/app-release.aab'
