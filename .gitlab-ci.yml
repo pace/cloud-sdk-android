@@ -69,9 +69,8 @@ build_app:
   only:
     - tags
   script:
-    - >-
-      ./gradlew clean bundleRelease -PbuildNumber=$BUILD_NUMBER
-      -PversionName=$VERSION_NAME
+    - echo versionName=$VERSION_NAME > app/version.properties
+    - ./gradlew clean bundleRelease -PversionCode=$BUILD_NUMBER
   artifacts:
     name: "$(git show -s --format=%ct $CI_COMMIT_SHA)"
     expire_in: 3 days
