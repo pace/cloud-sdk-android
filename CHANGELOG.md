@@ -10,6 +10,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Implement the `isSignedIn` PWA communication handler which returns `true` by default if the authorization is valid in `IDKit`. This behavior can be overridden in `AppCallback.isSignedIn(isSignedIn)`.
 * Add `AppKit.openDashboard(...)` to open the Connected Fueling dashboard app
+* Implement new price history endpoints in `POIKit` to fetch fuel price history by country or gas station
 
 ### Fixes
 

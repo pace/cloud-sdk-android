@@ -31,6 +31,7 @@ import cloud.pace.sdk.poikit.geo.GeoAPIClient
 import cloud.pace.sdk.poikit.geo.GeoAPIManager
 import cloud.pace.sdk.poikit.geo.GeoAPIManagerImpl
 import cloud.pace.sdk.poikit.poi.download.TileDownloader
+import cloud.pace.sdk.poikit.pricehistory.PriceHistoryClient
 import cloud.pace.sdk.poikit.routing.NavigationApiClient
 import cloud.pace.sdk.poikit.search.AddressSearchClient
 import com.google.android.gms.location.LocationServices
@@ -76,6 +77,7 @@ object KoinConfig {
                 single { NavigationApiClient(environment, apiKey) }
                 single { AddressSearchClient(environment, apiKey) }
                 single { GeoAPIClient(environment, get()) }
+                single { PriceHistoryClient(environment) }
                 single<SystemManager> { SystemManagerImpl(get()) }
                 factory<LocationProvider> { LocationProviderImpl(get(), get()) }
                 single<SharedPreferencesModel> { SharedPreferencesImpl(PreferenceManager.getDefaultSharedPreferences(get())) }

@@ -8,21 +8,20 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.poi.POIAPI.gasStations
 import cloud.pace.sdk.api.poi.POIAPI.metadataFilters
-import cloud.pace.sdk.api.poi.POIAPI.priceHistories
 import cloud.pace.sdk.api.poi.POIAPI.prices
 import cloud.pace.sdk.api.poi.generated.model.Categories
-import cloud.pace.sdk.api.poi.generated.model.Fuel
-import cloud.pace.sdk.api.poi.generated.model.PriceHistory
 import cloud.pace.sdk.api.poi.generated.model.RegionalPrices
 import cloud.pace.sdk.api.poi.generated.request.gasStations.GetGasStationAPI.getGasStation
 import cloud.pace.sdk.api.poi.generated.request.metadataFilters.GetMetadataFiltersAPI.getMetadataFilters
-import cloud.pace.sdk.api.poi.generated.request.priceHistories.GetPriceHistoryAPI.getPriceHistory
 import cloud.pace.sdk.api.poi.generated.request.prices.GetRegionalPricesAPI.getRegionalPrices
 import cloud.pace.sdk.poikit.database.POIKitDatabase
 import cloud.pace.sdk.poikit.geo.CofuGasStation
 import cloud.pace.sdk.poikit.geo.GeoAPIManager
 import cloud.pace.sdk.poikit.poi.*
 import cloud.pace.sdk.poikit.poi.download.TileDownloader
+import cloud.pace.sdk.poikit.pricehistory.PriceHistory
+import cloud.pace.sdk.poikit.pricehistory.PriceHistoryClient
+import cloud.pace.sdk.poikit.pricehistory.PriceHistoryFuelType
 import cloud.pace.sdk.poikit.routing.NavigationApiClient
 import cloud.pace.sdk.poikit.routing.NavigationMode
 import cloud.pace.sdk.poikit.routing.NavigationRequest
@@ -44,6 +43,7 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
     private val database: POIKitDatabase by inject()
     private val navigationApi: NavigationApiClient by inject()
     private val addressSearchApi: AddressSearchClient by inject()
+    private val priceHistoryApi: PriceHistoryClient by inject()
     private val locationProvider: LocationProvider by inject()
     private val tileDownloader: TileDownloader by inject()
     private val geoApiManager: GeoAPIManager by inject()
@@ -145,8 +145,62 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
         API.metadataFilters.getMetadataFilters(latitude.toFloat(), longitude.toFloat()).handleCallback(completion)
     }
 
-    fun getPriceHistory(id: String, fuelType: Fuel, from: Date, to: Date, completion: (Completion<PriceHistory>) -> Unit) {
-        API.priceHistories.getPriceHistory(id, fuelType, from, to).handleCallback(completion)
+    /**
+     * Returns the price history for the specified [country][countryCode].
+     *
+     * @param countryCode Country code in ISO 3166-1 alpha-2 format.
+     * @param since Must be less than now and not more than 1 year ago.
+     * @param granularity Number&Unit (m,d,w,M,y); Example: 15m.
+     * @param forecast Determines if the response includes a price forecast.
+     * @param completion Returns a list of [PriceHistory] objects on success or a [Throwable] on failure.
+     */
+    @JvmOverloads
+    fun getPriceHistoryByCountry(countryCode: String, since: Date, granularity: String, forecast: Boolean = false, completion: (Completion<List<PriceHistory>>) -> Unit) {
+        priceHistoryApi.getPricesByCountry(countryCode, since, granularity, forecast, completion)
+    }
+
+    /**
+     * Returns the price history for the specified [country][countryCode] and [fuel type][fuelType].
+     *
+     * @param countryCode Country code in ISO 3166-1 alpha-2 format.
+     * @param fuelType Fuel type for cars, based on the EU fuel marking.
+     * @param since Must be less than now and not more than 1 year ago.
+     * @param granularity Number&Unit (m,d,w,M,y); Example: 15m.
+     * @param forecast Determines if the response includes a price forecast.
+     * @param completion Returns a list of [PriceHistoryFuelType] objects on success or a [Throwable] on failure.
+     */
+    @JvmOverloads
+    fun getPriceHistoryByCountry(countryCode: String, fuelType: String, since: Date, granularity: String, forecast: Boolean = false, completion: (Completion<List<PriceHistoryFuelType>>) -> Unit) {
+        priceHistoryApi.getPricesByCountry(countryCode, fuelType, since, granularity, forecast, completion)
+    }
+
+    /**
+     * Returns the price history for the specified [gas station][stationId].
+     *
+     * @param stationId The gas station ID.
+     * @param since Must be less than now and not more than 1 year ago.
+     * @param granularity Number&Unit (m,d,w,M,y); Example: 15m.
+     * @param forecast Determines if the response includes a price forecast.
+     * @param completion Returns a list of [PriceHistory] objects on success or a [Throwable] on failure.
+     */
+    @JvmOverloads
+    fun getPriceHistoryByStation(stationId: String, since: Date, granularity: String, forecast: Boolean = false, completion: (Completion<List<PriceHistory>>) -> Unit) {
+        priceHistoryApi.getPricesByStation(stationId, since, granularity, forecast, completion)
+    }
+
+    /**
+     * Returns the price history for the specified [gas station][stationId] and [fuel type][fuelType].
+     *
+     * @param stationId The gas station ID.
+     * @param fuelType Fuel type for cars, based on the EU fuel marking.
+     * @param since Must be less than now and not more than 1 year ago.
+     * @param granularity Number&Unit (m,d,w,M,y); Example: 15m.
+     * @param forecast Determines if the response includes a price forecast.
+     * @param completion Returns a list of [PriceHistoryFuelType] objects on success or a [Throwable] on failure.
+     */
+    @JvmOverloads
+    fun getPriceHistoryByStation(stationId: String, fuelType: String, since: Date, granularity: String, forecast: Boolean = false, completion: (Completion<List<PriceHistoryFuelType>>) -> Unit) {
+        priceHistoryApi.getPricesByStation(stationId, fuelType, since, granularity, forecast, completion)
     }
 
     fun getGasStation(id: String, compileOpeningHours: Boolean, forMovedGasStation: Boolean, completion: (Completion<GasStationMovedResponse>) -> Unit) {
