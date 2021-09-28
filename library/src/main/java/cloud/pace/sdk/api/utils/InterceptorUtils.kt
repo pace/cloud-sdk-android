@@ -59,6 +59,7 @@ object InterceptorUtils {
 
         builder.header(API_KEY_HEADER, API.apiKey)
         builder.header(UBER_TRACE_ID_HEADER, getUberTraceId())
+        builder.header(USER_AGENT_HEADER, getUserAgent())
 
         it.proceed(builder.build())
     }
