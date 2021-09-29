@@ -8,13 +8,13 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
+import android.os.Bundle
 import android.os.Looper
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.distinctUntilChanged
 import cloud.pace.sdk.PACECloudSDK
-import com.google.android.gms.location.LocationAvailability
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -155,6 +155,18 @@ class LocationProviderImpl(
                                             continuation.resumeIfActive(it)
                                         }
                                     }
+
+                                    override fun onProviderDisabled(provider: String) {
+                                        continuation.resumeWithExceptionIfActive(NoLocationFound)
+                                    }
+
+                                    override fun onProviderEnabled(provider: String) {
+                                        continuation.resumeWithExceptionIfActive(NoLocationFound)
+                                    }
+
+                                    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+                                        continuation.resumeWithExceptionIfActive(NoLocationFound)
+                                    }
                                 }
                                 locationManager?.requestLocationUpdates(provider, LOCATION_REQUEST_INTERVAL, LOCATION_REQUEST_SMALLEST_DISPLACEMENT, listener, Looper.getMainLooper())
                                 continuation.invokeOnCancellation {
@@ -233,6 +245,18 @@ class LocationProviderImpl(
                                         override fun onLocationChanged(location: Location) {
                                             locationManager?.removeUpdates(this)
                                             continuation.resumeIfActive(if (validate) getLocationIfValid(location, LOW_ACCURACY, startTime) else location)
+                                        }
+
+                                        override fun onProviderDisabled(provider: String) {
+                                            continuation.resumeWithExceptionIfActive(NoLocationFound)
+                                        }
+
+                                        override fun onProviderEnabled(provider: String) {
+                                            continuation.resumeWithExceptionIfActive(NoLocationFound)
+                                        }
+
+                                        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+                                            continuation.resumeWithExceptionIfActive(NoLocationFound)
                                         }
                                     }
                                     locationManager?.requestSingleUpdate(provider, listener, Looper.getMainLooper())
