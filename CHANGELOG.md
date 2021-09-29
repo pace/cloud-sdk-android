@@ -6,6 +6,9 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+10.1.0 Release notes (2021-09-29)
+=============================================================
+
 ### Enhancements
 
 * Implement the `isSignedIn` PWA communication handler which returns `true` by default if the authorization is valid in `IDKit`. This behavior can be overridden in `AppCallback.isSignedIn(isSignedIn)`.
