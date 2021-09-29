@@ -17,6 +17,7 @@ x.y.z Release notes (yyyy-MM-dd)
 * Regenerate communication code to fix problem with unparsable error response
 * Fix overwriting of custom set `utm_params`
 * Fix bug where `AppActivity` was finished when it was started and `AppKit.openApps(...)` was called at the same time
+* Overwrite  `LocationListener` callback functions to avoid problems/crashes for devices with Android version smaller than 11
 
 ### Internal
 
