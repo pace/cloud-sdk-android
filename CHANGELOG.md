@@ -6,6 +6,11 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Fixes
+
+* Override all callbacks for all `LocationListener` instances and adjust callback implementations
+
+
 10.1.0 Release notes (2021-09-29)
 =============================================================
 

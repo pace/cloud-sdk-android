@@ -18,6 +18,7 @@ import cloud.pace.sdk.PACECloudSDK
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 
@@ -62,8 +63,22 @@ class LocationProviderImpl(
         }
     }
     private val locationListener by lazy {
-        LocationListener {
-            location.postValue(it)
+        object : LocationListener {
+            override fun onLocationChanged(newLocation: Location) {
+                location.postValue(newLocation)
+            }
+
+            override fun onProviderEnabled(provider: String) {
+                handleLocationStateChange(provider, true)
+            }
+
+            override fun onProviderDisabled(provider: String) {
+                resumeWithNoLocationFound()
+            }
+
+            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+                handleLocationStateChange(provider, provider != null && locationManager?.isProviderEnabled(provider) == true)
+            }
         }
     }
     private val poiKitLocationState = MutableLiveData<LocationState>()
@@ -87,12 +102,10 @@ class LocationProviderImpl(
                     locationManager?.requestLocationUpdates(provider, LOCATION_REQUEST_INTERVAL, LOCATION_REQUEST_SMALLEST_DISPLACEMENT, locationListener, Looper.getMainLooper())
                 }
             } catch (e: SecurityException) {
-                Timber.w(PermissionDenied)
-                poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
+                resumeWithPermissionDenied()
             }
         } else {
-            Timber.w(PermissionDenied)
-            poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
+            resumeWithPermissionDenied()
         }
     }
 
@@ -156,38 +169,31 @@ class LocationProviderImpl(
                                         }
                                     }
 
-                                    override fun onProviderDisabled(provider: String) {
-                                        continuation.resumeWithExceptionIfActive(NoLocationFound)
+                                    override fun onProviderEnabled(provider: String) {
+                                        handleLocationStateChange(provider, true, this, continuation)
                                     }
 
-                                    override fun onProviderEnabled(provider: String) {
-                                        continuation.resumeWithExceptionIfActive(NoLocationFound)
+                                    override fun onProviderDisabled(provider: String) {
+                                        resumeWithNoLocationFound(this, continuation)
                                     }
 
                                     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-                                        continuation.resumeWithExceptionIfActive(NoLocationFound)
+                                        handleLocationStateChange(provider, provider != null && locationManager?.isProviderEnabled(provider) == true, this, continuation)
                                     }
                                 }
+
                                 locationManager?.requestLocationUpdates(provider, LOCATION_REQUEST_INTERVAL, LOCATION_REQUEST_SMALLEST_DISPLACEMENT, listener, Looper.getMainLooper())
                                 continuation.invokeOnCancellation {
                                     locationManager?.removeUpdates(listener)
                                 }
                             }
-                            else -> {
-                                Timber.w(NoLocationFound)
-                                poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
-                                continuation.resumeWithExceptionIfActive(NoLocationFound)
-                            }
+                            else -> resumeWithNoLocationFound(continuation = continuation)
                         }
                     } catch (e: SecurityException) {
-                        Timber.w(PermissionDenied)
-                        poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
-                        continuation.resumeWithExceptionIfActive(PermissionDenied)
+                        resumeWithPermissionDenied(continuation)
                     }
                 } else {
-                    Timber.w(PermissionDenied)
-                    poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
-                    continuation.resumeWithExceptionIfActive(PermissionDenied)
+                    resumeWithPermissionDenied(continuation)
                 }
             }
         } catch (e: Exception) {
@@ -236,8 +242,7 @@ class LocationProviderImpl(
                                             continuation.resumeIfActive(if (validate) getLocationIfValid(it, LOW_ACCURACY, startTime) else it)
                                         } else {
                                             Timber.w("No current location available with LocationManager")
-                                            poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
-                                            continuation.resumeWithExceptionIfActive(NoLocationFound)
+                                            resumeWithNoLocationFound(continuation = continuation)
                                         }
                                     }
                                 } else {
@@ -247,39 +252,32 @@ class LocationProviderImpl(
                                             continuation.resumeIfActive(if (validate) getLocationIfValid(location, LOW_ACCURACY, startTime) else location)
                                         }
 
-                                        override fun onProviderDisabled(provider: String) {
-                                            continuation.resumeWithExceptionIfActive(NoLocationFound)
+                                        override fun onProviderEnabled(provider: String) {
+                                            handleLocationStateChange(provider, true, this, continuation)
                                         }
 
-                                        override fun onProviderEnabled(provider: String) {
-                                            continuation.resumeWithExceptionIfActive(NoLocationFound)
+                                        override fun onProviderDisabled(provider: String) {
+                                            resumeWithNoLocationFound(this, continuation)
                                         }
 
                                         override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-                                            continuation.resumeWithExceptionIfActive(NoLocationFound)
+                                            handleLocationStateChange(provider, provider != null && locationManager?.isProviderEnabled(provider) == true, this, continuation)
                                         }
                                     }
+
                                     locationManager?.requestSingleUpdate(provider, listener, Looper.getMainLooper())
                                     continuation.invokeOnCancellation {
                                         locationManager?.removeUpdates(listener)
                                     }
                                 }
                             }
-                            else -> {
-                                Timber.w(NoLocationFound)
-                                poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
-                                continuation.resumeWithExceptionIfActive(NoLocationFound)
-                            }
+                            else -> resumeWithNoLocationFound(continuation = continuation)
                         }
                     } catch (e: SecurityException) {
-                        Timber.w(PermissionDenied)
-                        poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
-                        continuation.resumeWithExceptionIfActive(PermissionDenied)
+                        resumeWithPermissionDenied(continuation)
                     }
                 } else {
-                    Timber.w(PermissionDenied)
-                    poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
-                    continuation.resumeWithExceptionIfActive(PermissionDenied)
+                    resumeWithPermissionDenied(continuation)
                 }
             }
         } catch (e: Exception) {
@@ -327,25 +325,16 @@ class LocationProviderImpl(
                                     continuation.resumeIfActive(if (validate) getLocationIfValid(location, LOW_ACCURACY, startTime) else location)
                                 } else {
                                     Timber.w("No last known location available with LocationManager")
-                                    poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
-                                    continuation.resumeWithExceptionIfActive(NoLocationFound)
+                                    resumeWithNoLocationFound(continuation = continuation)
                                 }
                             }
-                            else -> {
-                                Timber.w(NoLocationFound)
-                                poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
-                                continuation.resumeWithExceptionIfActive(NoLocationFound)
-                            }
+                            else -> resumeWithNoLocationFound(continuation = continuation)
                         }
                     } catch (e: SecurityException) {
-                        Timber.w(PermissionDenied)
-                        poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
-                        continuation.resumeWithExceptionIfActive(PermissionDenied)
+                        resumeWithPermissionDenied(continuation)
                     }
                 } else {
-                    Timber.w(PermissionDenied)
-                    poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
-                    continuation.resumeWithExceptionIfActive(PermissionDenied)
+                    resumeWithPermissionDenied(continuation)
                 }
             }
         } catch (e: Exception) {
@@ -371,6 +360,31 @@ class LocationProviderImpl(
                 null
             }
         }
+    }
+
+    private fun handleLocationStateChange(provider: String?, isProviderEnabled: Boolean, locationListener: LocationListener? = null, continuation: CancellableContinuation<Location>? = null) {
+        if (provider != null && isProviderEnabled) {
+            when (provider) {
+                LocationManager.GPS_PROVIDER -> poiKitLocationState.postValue(LocationState.LOCATION_HIGH_ACCURACY) // Wait for onLocationChanged
+                LocationManager.NETWORK_PROVIDER -> poiKitLocationState.postValue(LocationState.LOCATION_LOW_ACCURACY) // Wait for onLocationChanged
+                else -> resumeWithNoLocationFound(locationListener, continuation)
+            }
+        } else {
+            resumeWithNoLocationFound(locationListener, continuation)
+        }
+    }
+
+    private fun resumeWithNoLocationFound(locationListener: LocationListener? = null, continuation: CancellableContinuation<Location>? = null) {
+        Timber.w(NoLocationFound)
+        poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
+        if (locationListener != null) locationManager?.removeUpdates(locationListener)
+        continuation?.resumeWithExceptionIfActive(NoLocationFound)
+    }
+
+    private fun resumeWithPermissionDenied(continuation: CancellableContinuation<Location>? = null) {
+        Timber.w(PermissionDenied)
+        poiKitLocationState.postValue(LocationState.PERMISSION_DENIED)
+        continuation?.resumeWithExceptionIfActive(PermissionDenied)
     }
 
     private fun getLocationIfValid(location: Location?, minAccuracy: Int?, startTime: Long): Location? {
