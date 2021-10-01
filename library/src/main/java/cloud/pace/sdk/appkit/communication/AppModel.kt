@@ -45,6 +45,7 @@ interface AppModel {
     fun getConfig(key: String, config: (String?) -> Unit)
     fun isAppRedirectAllowed(app: String, isAllowed: (Boolean) -> Unit)
     fun isSignedIn(isSignedIn: (Boolean) -> Unit)
+    fun isRemoteConfigAvailable(isAvailable: (Boolean) -> Unit)
 
     class Result<T>(val onResult: (T) -> Unit)
 }
@@ -232,6 +233,12 @@ class AppModelImpl(private val context: Context) : AppModel {
     override fun isSignedIn(isSignedIn: (Boolean) -> Unit) {
         onMainThread {
             callback?.isSignedIn(isSignedIn)
+        }
+    }
+
+    override fun isRemoteConfigAvailable(isAvailable: (Boolean) -> Unit) {
+        onMainThread {
+            callback?.isRemoteConfigAvailable(isAvailable)
         }
     }
 

@@ -682,6 +682,19 @@ class AppWebViewModelImpl(
         }
     }
 
+    override suspend fun isRemoteConfigAvailable(timeout: Long): IsRemoteConfigAvailableResult {
+        return try {
+            suspendCoroutineWithTimeout(timeout) { continuation ->
+                appModel.isRemoteConfigAvailable {
+                    continuation.resumeIfActive(IsRemoteConfigAvailableResult(IsRemoteConfigAvailableResult.Success(IsRemoteConfigAvailableResponse(it))))
+                }
+            }
+        } catch (e: TimeoutCancellationException) {
+            Timber.w(e, "Timeout for isRemoteConfigAvailable")
+            IsRemoteConfigAvailableResult(IsRemoteConfigAvailableResult.Failure(IsRemoteConfigAvailableResult.Failure.StatusCode.RequestTimeout, IsRemoteConfigAvailableError(e.message)))
+        }
+    }
+
     private fun getRedirectScheme(): String? {
         val applicationInfo = context.packageManager?.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
         return applicationInfo?.metaData?.get("pace_redirect_scheme")?.toString()

@@ -38,6 +38,7 @@ import cloud.pace.sdk.appkit.communication.generated.model.response.GetTraceIdRe
 import cloud.pace.sdk.appkit.communication.generated.model.response.ImageDataResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.IntrospectResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.IsBiometricAuthEnabledResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.IsRemoteConfigAvailableResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.IsSignedInResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.LogEventResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.LogoutResult
@@ -268,4 +269,11 @@ public interface Communication {
    * @param timeout The timeout of isSignedIn in milliseconds
    */
   public suspend fun isSignedIn(timeout: Long): IsSignedInResult
+
+  /**
+   * Checks if remote config is available.
+   *
+   * @param timeout The timeout of isRemoteConfigAvailable in milliseconds
+   */
+  public suspend fun isRemoteConfigAvailable(timeout: Long): IsRemoteConfigAvailableResult
 }
