@@ -132,6 +132,13 @@ interface AppCallback {
      * @param isSignedIn Call this function to specify whether the user is signed in or not
      */
     fun isSignedIn(isSignedIn: (Boolean) -> Unit)
+
+    /**
+     * Is called when the app wants to know if the remote config feature is generally available.
+     *
+     * @param isAvailable Call this function to specify whether the remote config feature is available or not
+     */
+    fun isRemoteConfigAvailable(isAvailable: (Boolean) -> Unit)
 }
 
 abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
@@ -173,5 +180,9 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
 
     override fun isSignedIn(isSignedIn: (Boolean) -> Unit) {
         isSignedIn(IDKit.isInitialized && IDKit.isAuthorizationValid())
+    }
+
+    override fun isRemoteConfigAvailable(isAvailable: (Boolean) -> Unit) {
+        isAvailable(false)
     }
 }

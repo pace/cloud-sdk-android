@@ -477,6 +477,16 @@ public data class CommunicationManager(
           }
         }
       }
+      "/isRemoteConfigAvailable" -> {
+        CoroutineScope(Dispatchers.Default).launch {
+          val timeout = TimeUnit.SECONDS.toMillis((request.header?.get("Keep-Alive") as?
+              Double)?.toLong() ?: 5)
+          val result = listener.isRemoteConfigAvailable(timeout)
+          withContext(Dispatchers.Main) {
+            respond(Response(request.id, result.status, request.header, result.body))
+          }
+        }
+      }
       else -> {
         CoroutineScope(Dispatchers.Main).launch {
           respond(Response(request?.id, HttpURLConnection.HTTP_BAD_METHOD, request?.header,
