@@ -37,6 +37,7 @@ class UserInfoApiClient(userInfoEndpoint: String, accessToken: String) {
                                     .header(InterceptorUtils.CONTENT_TYPE_HEADER, "application/json")
                                     .header(InterceptorUtils.AUTHORIZATION_HEADER, "Bearer $accessToken")
                                     .header(InterceptorUtils.UBER_TRACE_ID_HEADER, InterceptorUtils.getUberTraceId())
+                                    .header(InterceptorUtils.USER_AGENT_HEADER, InterceptorUtils.getUserAgent())
                                     .build()
                             )
                         }

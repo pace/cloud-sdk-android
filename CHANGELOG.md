@@ -10,6 +10,10 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Implement `isRemoteConfigAvailable` PWA communication handler to check if the remote config feature is generally available and returns `false` by default. This behavior can be overridden in `AppCallback.isRemoteConfigAvailable(isAvailable)`.
 
+### Internal
+
+* Add custom user agent in interceptor
+
 
 10.1.1 Release notes (2021-09-30)
 =============================================================
@@ -38,7 +42,6 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Internal
 
 * Add setup flag to check whether `PACECloudSDK` has been set up correctly before using it's `Kit`s
-
 
 10.0.0 Release notes (2021-09-16)
 =============================================================
