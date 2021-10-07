@@ -16,9 +16,11 @@ A simple way to assure that the *terms of service* are accepted, before the user
  */
 object UserAPI {
 
-    const val VERSION = "2020-4"
+    const val VERSION = "2021-2"
     internal val baseUrl = "${API.baseUrl}/user/$VERSION/"
 
+    class AuditLogAPI
+    class CallbacksAPI
     class CredentialsAPI
     class FederatedIdentityAPI
     class OAuth2API
@@ -29,6 +31,8 @@ object UserAPI {
     class TermsAPI
     class UserAPI
 
+    val API.auditLog: AuditLogAPI by lazy { AuditLogAPI() }
+    val API.callbacks: CallbacksAPI by lazy { CallbacksAPI() }
     val API.credentials: CredentialsAPI by lazy { CredentialsAPI() }
     val API.federatedIdentity: FederatedIdentityAPI by lazy { FederatedIdentityAPI() }
     val API.oAuth2: OAuth2API by lazy { OAuth2API() }

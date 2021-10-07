@@ -21,11 +21,17 @@ class ApproachingResponse : Resource() {
     private var gasStation: HasOne<GasStation> = HasOne()
     fun getGasStation() = gasStation.get(document)
 
+    private var gasStationNote: HasMany<GasStationNote> = HasMany()
+    fun getGasStationNote() = gasStationNote.get(document)
+
     private var paymentMethods: HasMany<PaymentMethod> = HasMany()
     fun getPaymentMethods() = paymentMethods.get(document)
 
     private var supportedPaymentMethodKinds: HasMany<PaymentMethodKind> = HasMany()
     fun getSupportedPaymentMethodKinds() = supportedPaymentMethodKinds.get(document)
+
+    private var transactions: HasMany<Transaction> = HasMany()
+    fun getTransactions() = transactions.get(document)
 
     private var unsupportedPaymentMethods: HasMany<PaymentMethod> = HasMany()
     fun getUnsupportedPaymentMethods() = unsupportedPaymentMethods.get(document)

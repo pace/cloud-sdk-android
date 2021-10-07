@@ -16,6 +16,6 @@ import moe.banana.jsonapi2.Resource
 import java.util.*
 
 @JsonApi(type = "paymentMethodRelationship")
-class PaymentMethodRelationship : Resource() {
+class PaymentMethodRelationship: Resource() {
 
 }

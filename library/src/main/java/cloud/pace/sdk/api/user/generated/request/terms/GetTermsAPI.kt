@@ -40,7 +40,7 @@ object GetTermsAPI {
         fun getTerms(
             @Path("termsId") termsId: String? = null,
             @Query("redirectUri") redirectUri: String? = null,
-            @Header("Accept-Language") acceptLanguage: String? = null, 
+            @Header("Accept-Language") acceptLanguage: String? = null,
             @Header("Accept") accept: String? = null
         ): Call<Terms>
     }

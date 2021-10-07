@@ -34,16 +34,31 @@ object GetTransactionAPI {
 
     interface GetTransactionService {
         /* Get a transaction */
-        /* In case the transaction is not yet completed the call may be delayed 20s until a response can be given. If the client got this URL as a response to the Pre Auth process the call is save to retry. In case the transaction was canceled by the client an answer will still be delayed but always returns `404`, therefore the client has to remember, that the transaction was canceled.
+        /* Endpoint for fetching information about a single transaction. Only completed transactions can be returned.
+If `update=longPolling` is set, the following applies:
+In case the transaction is not yet completed the call may be delayed 20s until a response can be given. If the client got this URL as a response to the Pre Auth process the call is save to retry. In case the transaction was canceled by the client an answer will still be delayed but always returns `404`, therefore the client has to remember, that the transaction was canceled.
  */
         @GET("transactions/{transactionId}")
         fun getTransaction(
             /* transaction ID. */
-            @Path("transactionId") transactionId: String
+            @Path("transactionId") transactionId: String,
+            /* Specify this parameter if you want to enable long-polling on this endpoint. Long-polling means that the endpoint will wait a fixed set of seconds (20s)
+before returning the result.
+ */
+            @Query("update") update: Update? = null
         ): Call<Transaction>
     }
 
-    fun PayAPI.PaymentTransactionsAPI.getTransaction(transactionId: String, readTimeout: Long? = null): Call<Transaction> {
+    /* Specify this parameter if you want to enable long-polling on this endpoint. Long-polling means that the endpoint will wait a fixed set of seconds (20s)
+    before returning the result.
+     */
+    enum class Update(val value: String) {
+        @SerializedName("longPolling")
+        @Json(name = "longPolling")
+        LONGPOLLING("longPolling")
+    }
+
+    fun PayAPI.PaymentTransactionsAPI.getTransaction(transactionId: String, update: Update? = null, readTimeout: Long? = null): Call<Transaction> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())
@@ -79,6 +94,6 @@ object GetTransactionAPI {
                 .build()
                 .create(GetTransactionService::class.java)
 
-        return service.getTransaction(transactionId)
+        return service.getTransaction(transactionId, update)
     }
 }

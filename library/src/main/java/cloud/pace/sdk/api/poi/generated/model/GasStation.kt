@@ -26,6 +26,7 @@ class GasStation : Resource() {
     var latitude: Float? = null
     var longitude: Float? = null
     var loyaltyPrograms: List<String>? = null
+    var onlinePayment: OnlinePayment? = null
     var openingHours: CommonOpeningHours? = null
     var paymentMethods: List<String>? = null
     var postalServices: List<String>? = null
@@ -66,6 +67,12 @@ class GasStation : Resource() {
             @Json(name = "o")
             O("o")
         }
+    }
+
+    class OnlinePayment {
+
+        var online: Boolean? = null
+        var paymentMethods: List<String>? = null
     }
 
     private var fuelPrices: HasMany<FuelPrice> = HasMany()

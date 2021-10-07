@@ -37,10 +37,12 @@ object GetStatsAPI {
         /* Provides overall statistics */
         @GET("stats")
         fun getStats(
+            /* Comma separated strings that represent the fields to be returned in the response alongside the default response */
+            @Query("fields") fields: String? = null
         ): Call<Stats>
     }
 
-    fun POIAPI.StatsAPI.getStats(readTimeout: Long? = null): Call<Stats> {
+    fun POIAPI.StatsAPI.getStats(fields: String? = null, readTimeout: Long? = null): Call<Stats> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", false))
                         .authenticator(InterceptorUtils.getAuthenticator())
@@ -76,6 +78,6 @@ object GetStatsAPI {
                 .build()
                 .create(GetStatsService::class.java)
 
-        return service.getStats()
+        return service.getStats(fields)
     }
 }

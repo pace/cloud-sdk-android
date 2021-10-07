@@ -46,6 +46,7 @@ class Pump : Resource() {
 * `outOfOrder` the pump has a technical problem, this can only be resolved by the gas station staff on site, possible transitions *free*, *locked*. Note: The customer has to pay in the shop
  */
     var status: Status? = null
+    var transaction: Transaction? = null
     /* Provided if the user pre-authorized the pump */
     var transactionId: String? = null
 

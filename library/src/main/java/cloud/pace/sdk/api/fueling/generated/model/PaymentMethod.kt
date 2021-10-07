@@ -23,10 +23,43 @@ class PaymentMethod : Resource() {
     var identificationString: String? = null
     /* one of sepa, creditcard, paypal, paydirekt, dkv, applepay, ... */
     var kind: String? = null
+    var mandatoryAuthorisationAttributes: List<MandatoryAuthorisationAttributes>? = null
+    /* The desired status for a payment method is `verified`, this means the method is ready to use.
+A payment method that has the status `created` has yet to be verified. This is the case for payment methods,
+which have an asynchronous verification process, e.g., paydirekt (waiting for an email).
+ */
+    var status: Status? = null
     /* indicates if the payment method kind requires two factors later on */
     var twoFactor: Boolean? = null
     /* PACE resource name(s) to payment method vendor */
     var vendorPRN: String? = null
+
+    /* The desired status for a payment method is `verified`, this means the method is ready to use.
+    A payment method that has the status `created` has yet to be verified. This is the case for payment methods,
+    which have an asynchronous verification process, e.g., paydirekt (waiting for an email).
+     */
+    enum class Status(val value: String) {
+        @SerializedName("created")
+        @Json(name = "created")
+        CREATED("created"),
+        @SerializedName("verified")
+        @Json(name = "verified")
+        VERIFIED("verified"),
+        @SerializedName("pending")
+        @Json(name = "pending")
+        PENDING("pending"),
+        @SerializedName("unacceptable")
+        @Json(name = "unacceptable")
+        UNACCEPTABLE("unacceptable")
+    }
+
+    /* Mandatory transaction attribute validator */
+    class MandatoryAuthorisationAttributes {
+
+        var maxLength: Int? = null
+        var name: String? = null
+        var regex: String? = null
+    }
 
 
     class Meta {

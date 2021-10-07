@@ -23,6 +23,9 @@ class PaymentTokenCreate : Resource() {
     var amount: Double? = null
     /* PACE resource name(s) of one or multiple resources, for which the payment should be authorized. */
     lateinit var purposePRNs: List<String>
+    /* Set this flag to `true` if you accept the authorized amount to be lower than the requested amount. */
+    var allowPartialAmount: Boolean? = null
+    var discountTokens: List<String>? = null
     /* The code and method for two factor authentication, if required by the payment method */
     var twoFactor: TwoFactor? = null
 

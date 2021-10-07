@@ -33,6 +33,7 @@ This field is optional and if not present should be assumed to indicate `implici
     var twoFactor: Boolean? = null
     /* PACE resource name(s) to payment method vendors */
     var vendorPRNs: List<String>? = null
+    var vendors: List<Vendors>? = null
 
     /* data privacy information */
     class DataPrivacy {
@@ -54,6 +55,26 @@ This field is optional and if not present should be assumed to indicate `implici
 
             /* Terms formatted as markdown. Does not contain external resources like images. */
             var markdown: String? = null
+        }
+    }
+
+    class Vendors {
+
+        var logo: Logo? = null
+        var name: String? = null
+        var paymentMethodKindId: String? = null
+        var slug: String? = null
+
+        class Logo {
+
+            var href: String? = null
+            /* variants of the vendor's logo */
+            var variants: List<Variants>? = null
+
+            class Variants {
+
+                var href: String? = null
+            }
         }
     }
 

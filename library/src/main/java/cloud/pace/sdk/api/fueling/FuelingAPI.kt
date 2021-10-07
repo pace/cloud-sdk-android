@@ -12,7 +12,7 @@ import cloud.pace.sdk.api.API
 /** Fueling API */
 object FuelingAPI {
 
-    const val VERSION = "2020-4"
+    const val VERSION = "2021-2"
     internal val baseUrl = "${API.baseUrl}/fueling/$VERSION/"
 
     class FuelingAPI

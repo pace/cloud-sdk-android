@@ -41,7 +41,14 @@ object GetReceiptByFormatAPI {
             /* ID of the payment transaction */
             @Path("transactionID") transactionID: String,
             /* Format of the expected file */
-            @Path("fileFormat") fileFormat: FileFormat? = null
+            @Path("fileFormat") fileFormat: FileFormat? = null,
+            /* (Optional) Specify the language you want the returned receipt to be localized in.
+Returns the receipt in the default language that is available if the specified language is not available.
+Language does not have to be valid language. For example, `language=local` means that the receipt should be displayed
+in the language that is determined to be spoken in the area that the point of intereset at which the receipt has been generated at.
+*Prefer using the `Accept-Language` header if you use this endpoint on an end-user device.*
+ */
+            @Query("language") language: String? = null
         ): Call<Void>
     }
 
@@ -55,7 +62,7 @@ object GetReceiptByFormatAPI {
         PDF("pdf")
     }
 
-    fun PayAPI.PaymentTransactionsAPI.getReceiptByFormat(transactionID: String, fileFormat: FileFormat? = null, readTimeout: Long? = null): Call<Void> {
+    fun PayAPI.PaymentTransactionsAPI.getReceiptByFormat(transactionID: String, fileFormat: FileFormat? = null, language: String? = null, readTimeout: Long? = null): Call<Void> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())
@@ -91,6 +98,6 @@ object GetReceiptByFormatAPI {
                 .build()
                 .create(GetReceiptByFormatService::class.java)
 
-        return service.getReceiptByFormat(transactionID, fileFormat)
+        return service.getReceiptByFormat(transactionID, fileFormat, language)
     }
 }

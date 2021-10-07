@@ -34,7 +34,7 @@ object CreateTOTPAPI {
 
     interface CreateTOTPService {
         /* Create device TOTP */
-        /* A device TOTP token is created within 5 minutes of registration without PIN, password or an user OTP or  it is created using either PIN, password or an user OTP. In case the PIN, password or OTP is invalid `403` is returned. If multiple values are provided first the OTP is checked, then the password, then the PIN. In case the one of the provided values is correct, a TOTP will be created.
+        /* A device TOTP token is created within 5 minutes of registration without PIN, password or an user OTP or it is created using either PIN, password or an user OTP. In case the PIN, password or OTP is invalid `403` is returned. If multiple values are provided first the OTP is checked, then the password, then the PIN. In case the one of the provided values is correct, a TOTP will be created.
  */
         @POST("user/devices/totp")
         fun createTOTP(
@@ -42,7 +42,7 @@ object CreateTOTPAPI {
         ): Call<DeviceTOTP>
     }
 
-    /* A device TOTP token is created within 5 minutes of registration without PIN, password or an user OTP or  it is created using either PIN, password or an user OTP. In case the PIN, password or OTP is invalid `403` is returned. If multiple values are provided first the OTP is checked, then the password, then the PIN. In case the one of the provided values is correct, a TOTP will be created.
+    /* A device TOTP token is created within 5 minutes of registration without PIN, password or an user OTP or it is created using either PIN, password or an user OTP. In case the PIN, password or OTP is invalid `403` is returned. If multiple values are provided first the OTP is checked, then the password, then the PIN. In case the one of the provided values is correct, a TOTP will be created.
      */
     class Body {
 

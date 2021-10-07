@@ -43,10 +43,11 @@ object ApproachingAtTheForecourtAPI {
 * Return a list of pumps available at the gas station together with the
   current status (free, inUse, readyToPay, outOfOrder). No pumps might
   be returned if the list of payment methods is empty.
-* Create payment tokens for the paymentMethods of the user that are also
-  supported at the gas station and pre-authorize the calculated maximum
-  amount of money (background task).
 The approaching is a necessary first api call for connected fueling. Without a valid approaching the [get pump](#operation/GetPump) and [wait for status change](#operation/WaitOnPumpStatusChange) calls may be answered with a `403 Forbidden` status code. An approaching is valid for one fueling only and can't be reused. If a long (not further disclosed time) has passed, the approaching is also invalidated. So if the client is receiving a `403 Forbidden` on the above mentioned calls, a new approaching has to be issued, this can be done transparent to the user.
+Other than authorization, the most common error states encountered should be:
+  * 404, if the gas station does not exist or ConnectedFueling is not available at this station
+  * 502, if there was a communication failure with a third party (e.g. the gas station in question fails to respond). Retry is possible
+  * 503, if ConnectedFueling is available, but the site is offline
  */
         @POST("gas-stations/{gasStationId}/approaching")
         fun approachingAtTheForecourt(
@@ -76,10 +77,12 @@ The approaching is a necessary first api call for connected fueling. Without a v
                         Moshi.Builder()
                             .add(ResourceAdapterFactory.builder()
                                 .add(GasStation::class.java)
+                                .add(GasStationNote::class.java)
                                 .add(FuelPrice::class.java)
                                 .add(Pump::class.java)
                                 .add(PaymentMethod::class.java)
                                 .add(PaymentMethodKind::class.java)
+                                .add(Transaction::class.java)
                                 .build()
                             )
                             .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())

@@ -12,7 +12,7 @@ import cloud.pace.sdk.api.API
 /** POI API */
 object POIAPI {
 
-    const val VERSION = "2020-4"
+    const val VERSION = "2021-2"
     internal val baseUrl = "${API.baseUrl}/poi/$VERSION/"
 
     class AdminAPI
