@@ -21,7 +21,7 @@ class Fuel {
     var amount: Double? = null
     /* Price per unit (with three decimal places) */
     var pricePerUnit: Double? = null
-    /* Product Name of the currect fuel.productName */
+    /* Product Name of the current fuel.productName */
     var productName: String? = null
     /* Number of the pump used for fueling, i.e., the actual number that is being displayed to the customer */
     var pumpNumber: Int? = null

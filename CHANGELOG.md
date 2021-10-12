@@ -13,6 +13,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Internal
 
 * Add custom user agent in interceptor
+* Regenerate Api for 2021-2
 
 
 10.1.1 Release notes (2021-09-30)

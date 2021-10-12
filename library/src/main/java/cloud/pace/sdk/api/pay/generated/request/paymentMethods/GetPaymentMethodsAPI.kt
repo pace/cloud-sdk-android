@@ -57,6 +57,9 @@ object GetPaymentMethodsAPI {
                     JsonApiConverterFactory.create(
                         Moshi.Builder()
                             .add(ResourceAdapterFactory.builder()
+                                .add(PaymentMethodKind::class.java)
+                                .add(PaymentMethodVendor::class.java)
+                                .add(PaymentToken::class.java)
                                 .build()
                             )
                             .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())

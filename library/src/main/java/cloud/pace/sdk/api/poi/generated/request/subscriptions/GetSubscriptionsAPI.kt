@@ -47,7 +47,7 @@ object GetSubscriptionsAPI {
      */
     class Body {
 
-        var data: List<SubscriptionBody>? = null
+        var data: List<Subscription>? = null
     }
 
     fun POIAPI.SubscriptionsAPI.getSubscriptions(body: Body, readTimeout: Long? = null): Call<Subscription> {

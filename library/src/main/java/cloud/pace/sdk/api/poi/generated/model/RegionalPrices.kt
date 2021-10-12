@@ -15,5 +15,4 @@ import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 import java.util.*
 
-/* Regional prices */
 typealias RegionalPrices = List<RegionalPrice>

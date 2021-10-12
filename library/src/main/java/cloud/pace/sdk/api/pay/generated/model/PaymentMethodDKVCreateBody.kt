@@ -34,6 +34,12 @@ class PaymentMethodDKVCreateBody {
         /* Identifier or PAN (Primary Account Number) representing the DKV Card. The identifier is payment provider specific and provided by the payment provider.
      */
         var pan: String? = null
+        /* The date the card is expiring */
+        var expiry: Date? = null
+        /* Indicates whether this payment method should be managed by the creating client, i.e., no other client can modify or delete this method. */
+        var managed: Boolean? = null
+        /* Track 2 data of payment card. */
+        var track2: String? = null
 
         enum class Kind(val value: String) {
             @SerializedName("dkv")

@@ -26,6 +26,8 @@ class Transaction : Resource() {
     var createdAt: Date? = null
     /* Currency as specified in ISO-4217. */
     var currency: String? = null
+    /* Amount that was discounted. Only if any discounts were applied earlier. */
+    var discountAmount: Double? = null
     var fuel: Fuel? = null
     /* PACE resource name */
     var issuerPRN: String? = null

@@ -38,11 +38,13 @@ object GetPaymentMethodKindsAPI {
         @GET("payment-method-kinds")
         fun getPaymentMethodKinds(
             /* Language preference of localized response properties. The full standard of RFC 7231 (https://tools.ietf.org/html/rfc7231#section-5.3.5) is supported. */
-            @Header("Accept-Language") acceptLanguage: String? = null
+            @Header("Accept-Language") acceptLanguage: String? = null,
+            /* Flag to allow more data to the payment method kinds. */
+            @Query("additionalData") additionalData: Boolean? = null
         ): Call<PaymentMethodKinds>
     }
 
-    fun PayAPI.PaymentMethodKindsAPI.getPaymentMethodKinds(acceptLanguage: String? = null, readTimeout: Long? = null): Call<PaymentMethodKinds> {
+    fun PayAPI.PaymentMethodKindsAPI.getPaymentMethodKinds(acceptLanguage: String? = null, additionalData: Boolean? = null, readTimeout: Long? = null): Call<PaymentMethodKinds> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", false))
                         .authenticator(InterceptorUtils.getAuthenticator())
@@ -78,6 +80,6 @@ object GetPaymentMethodKindsAPI {
                 .build()
                 .create(GetPaymentMethodKindsService::class.java)
 
-        return service.getPaymentMethodKinds(acceptLanguage)
+        return service.getPaymentMethodKinds(acceptLanguage, additionalData)
     }
 }

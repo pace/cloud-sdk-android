@@ -39,11 +39,18 @@ object GetReceiptAPI {
         @GET("receipts/{transactionID}")
         fun getReceipt(
             /* ID of the payment transaction */
-            @Path("transactionID") transactionID: String
+            @Path("transactionID") transactionID: String,
+            /* (Optional) Specify the language you want the returned receipt to be localized in.
+Returns the receipt in the default language that is available if the specified language is not available.
+Language does not have to be valid language. For example, `language=local` means that the receipt should be displayed
+in the language that is determined to be spoken in the area that the point of intereset at which the receipt has been generated at.
+*Prefer using the `Accept-Language` header if you use this endpoint on an end-user device.*
+ */
+            @Query("language") language: String? = null
         ): Call<Void>
     }
 
-    fun PayAPI.PaymentTransactionsAPI.getReceipt(transactionID: String, readTimeout: Long? = null): Call<Void> {
+    fun PayAPI.PaymentTransactionsAPI.getReceipt(transactionID: String, language: String? = null, readTimeout: Long? = null): Call<Void> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())
@@ -79,6 +86,6 @@ object GetReceiptAPI {
                 .build()
                 .create(GetReceiptService::class.java)
 
-        return service.getReceipt(transactionID)
+        return service.getReceipt(transactionID, language)
     }
 }

@@ -31,9 +31,13 @@ class PaymentMethodHoyerCreateBody {
     class Attributes {
 
         lateinit var kind: Kind
-        /* Identifier or PAN (Primary Account Number) representing the Hoyer Card. The identifier is payment provider specific and provided by the payment provider.
+        /* Identifier representing the Hoyer Card number. The identifier is payment provider specific and provided by the payment provider.
      */
-        var pan: String? = null
+        var cardNumber: String? = null
+        /* Indicates whether this payment method should be managed by the creating client, i.e., no other client can modify or delete this method. */
+        var managed: Boolean? = null
+        /* Personal identification number is a security code for verifying the user's identity. */
+        var pin: String? = null
 
         enum class Kind(val value: String) {
             @SerializedName("hoyer")
