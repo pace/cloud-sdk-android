@@ -6,6 +6,9 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+10.2.0 Release notes (2021-10-13)
+=============================================================
+
 ### Enhancements
 
 * Implement `isRemoteConfigAvailable` PWA communication handler to check if the remote config feature is generally available and returns `false` by default. This behavior can be overridden in `AppCallback.isRemoteConfigAvailable(isAvailable)`.
