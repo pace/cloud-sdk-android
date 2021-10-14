@@ -6,14 +6,12 @@ import cloud.pace.sdk.BuildConfig
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.idkit.IDKit
-import cloud.pace.sdk.utils.DeviceUtils
-import cloud.pace.sdk.utils.Success
-import cloud.pace.sdk.utils.randomHexString
-import cloud.pace.sdk.utils.resumeIfActive
+import cloud.pace.sdk.utils.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Authenticator
 import okhttp3.Interceptor
+import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -25,6 +23,7 @@ object InterceptorUtils {
     const val API_KEY_HEADER = "API-Key"
     const val UBER_TRACE_ID_HEADER = "uber-trace-id"
     const val AUTHORIZATION_HEADER = "Authorization"
+    const val REQUEST_ID_HEADER = "request-id"
 
     private const val TRACING_SPAN_ID = "0053444B"
     private const val TRACING_PARENT_SPAN_ID = "0"
@@ -61,7 +60,11 @@ object InterceptorUtils {
         builder.header(UBER_TRACE_ID_HEADER, getUberTraceId())
         builder.header(USER_AGENT_HEADER, getUserAgent())
 
-        it.proceed(builder.build())
+        it.proceed(builder.build()).also { response ->
+            if (!response.isSuccessful) {
+                Timber.e("Request failed: code = ${response.code()} || message = ${response.message()} || request ID = ${response.requestId} || url: ${it.request().url()}")
+            }
+        }
     }
 
     fun getAuthenticator() = Authenticator { _, response ->

@@ -105,7 +105,7 @@ internal class CredentialsManager(
                         it.isSuccessful && body != null -> completion(Success(body))
                         it.code() >= HttpURLConnection.HTTP_INTERNAL_ERROR -> completion(Failure(InternalError))
                         it.code() == HttpURLConnection.HTTP_UNAUTHORIZED -> completion(Failure(InvalidSession))
-                        else -> completion(Failure(ApiException(it.code(), it.message())))
+                        else -> completion(Failure(ApiException(it.code(), it.message(), it.requestId)))
                     }
                 }
 
@@ -201,7 +201,7 @@ internal class CredentialsManager(
                         }
                         it.code() >= HttpURLConnection.HTTP_INTERNAL_ERROR -> completion(Failure(InternalError))
                         it.code() == HttpURLConnection.HTTP_UNAUTHORIZED -> completion(Failure(InvalidSession))
-                        else -> completion(Failure(ApiException(it.code(), it.message())))
+                        else -> completion(Failure(ApiException(it.code(), it.message(), it.requestId)))
                     }
                 }
 
@@ -238,7 +238,7 @@ internal class CredentialsManager(
                         }
                         it.code() >= HttpURLConnection.HTTP_INTERNAL_ERROR -> completion(Failure(InternalError))
                         it.code() == HttpURLConnection.HTTP_UNAUTHORIZED -> completion(Failure(InvalidSession))
-                        else -> completion(Failure(ApiException(it.code(), it.message())))
+                        else -> completion(Failure(ApiException(it.code(), it.message(), it.requestId)))
                     }
                 }
 

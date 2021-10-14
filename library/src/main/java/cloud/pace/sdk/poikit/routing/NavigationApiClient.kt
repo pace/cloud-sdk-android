@@ -64,7 +64,7 @@ internal class NavigationApiClient(environment: Environment, apiKey: String) {
                 if (it.isSuccessful && body != null) {
                     completion(Success(body.routes?.get(0)))
                 } else {
-                    completion(Failure(ApiException(it.code(), it.message())))
+                    completion(Failure(ApiException(it.code(), it.message(), it.requestId)))
                 }
             }
 
