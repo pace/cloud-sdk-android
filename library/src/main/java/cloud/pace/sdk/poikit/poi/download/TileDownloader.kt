@@ -6,6 +6,7 @@ import cloud.pace.sdk.api.utils.InterceptorUtils
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.Geometry
 import cloud.pace.sdk.poikit.poi.LocationPoint
+import cloud.pace.sdk.poikit.utils.ApiException
 import cloud.pace.sdk.poikit.utils.GeoMathUtils
 import cloud.pace.sdk.poikit.utils.OSMKeys
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_GAS_STATION
@@ -13,6 +14,7 @@ import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_ID
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_TYPE
 import cloud.pace.sdk.poikit.utils.POIKitConfig
 import cloud.pace.sdk.utils.Environment
+import cloud.pace.sdk.utils.requestId
 import com.google.protobuf.InvalidProtocolBufferException
 import okhttp3.*
 import timber.log.Timber
@@ -51,17 +53,20 @@ class TileDownloader(environment: Environment) {
         val call = client.newCall(request)
         call.enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
+                Timber.e(e, "Request failed for URL: ${call.request().url()}")
                 handler(Result.failure(e))
             }
 
             override fun onResponse(call: Call, response: Response) {
                 if (!response.isSuccessful) {
+                    Timber.e(ApiException(response.code(), response.message(), response.requestId), "Request unsuccessful for URL: ${call.request().url()}")
                     handler(Result.failure(Exception("Request failed with code: ${response.code()}")))
                     return
                 }
 
                 val body = response.body()
                 if (body == null) {
+                    Timber.e(ApiException(response.code(), response.message(), response.requestId), "Missing response body for URL: ${call.request().url()}")
                     handler(Result.failure(Exception("Missing response body")))
                     return
                 }
@@ -77,7 +82,7 @@ class TileDownloader(environment: Environment) {
 
                     handler(Result.success(pois))
                 } catch (e: InvalidProtocolBufferException) {
-                    Timber.e(e, "Failed to parse protobuffer response")
+                    Timber.e(ApiException(response.code(), response.message(), response.requestId), "Failed to parse protobuffer response for URL: ${call.request().url()}")
                     handler(Result.failure(e))
                 }
             }

@@ -6,10 +6,13 @@ import cloud.pace.sdk.api.utils.InterceptorUtils
 import cloud.pace.sdk.api.utils.InterceptorUtils.UBER_TRACE_ID_HEADER
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.model.AppManifest
+import cloud.pace.sdk.poikit.utils.ApiException
+import cloud.pace.sdk.utils.requestId
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
+import timber.log.Timber
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.MalformedURLException
@@ -56,11 +59,13 @@ class CacheModelImpl : CacheModel {
                     if (data != null) {
                         completion(Result.success(data))
                     } else {
+                        Timber.e(ApiException(response.code(), response.message(), response.requestId), "Request returned with no content for URL: ${call.request().url()}")
                         completion(Result.failure(Exception("Request returned with no content")))
                     }
                 }
 
                 override fun onFailure(call: Call, e: IOException) {
+                    Timber.e(e, "Request failed for URL: ${call.request().url()}")
                     completion(Result.failure(e))
                 }
             })

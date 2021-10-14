@@ -12,6 +12,7 @@ import cloud.pace.sdk.poikit.geo.GeoAPIClient
 import cloud.pace.sdk.poikit.geo.GeoAPIResponse
 import cloud.pace.sdk.poikit.utils.ApiException
 import cloud.pace.sdk.utils.enqueue
+import cloud.pace.sdk.utils.requestId
 import retrofit2.Call
 
 interface AppAPI {
@@ -51,7 +52,7 @@ class AppAPIImpl(private val geoApiClient: GeoAPIClient) : AppAPI {
                     if (it.isSuccessful && body != null) {
                         completion(Result.success(body))
                     } else {
-                        completion(Result.failure(ApiException(it.code(), it.message())))
+                        completion(Result.failure(ApiException(it.code(), it.message(), it.requestId)))
                     }
                 }
 

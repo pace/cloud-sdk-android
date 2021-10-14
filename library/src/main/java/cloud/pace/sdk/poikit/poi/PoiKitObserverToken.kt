@@ -180,7 +180,7 @@ class IDNotificationToken(
                                 completion(Failure(Exception("Latitude or longitude is null")))
                             }
                         } else {
-                            completion(Failure(ApiException(it.code(), it.message())))
+                            completion(Failure(ApiException(it.code(), it.message(), it.requestId)))
                         }
                     }
 

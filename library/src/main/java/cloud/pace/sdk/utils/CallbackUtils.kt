@@ -1,5 +1,6 @@
 package cloud.pace.sdk.utils
 
+import cloud.pace.sdk.api.utils.InterceptorUtils.REQUEST_ID_HEADER
 import cloud.pace.sdk.poikit.utils.ApiException
 import retrofit2.Call
 import retrofit2.Callback
@@ -12,13 +13,13 @@ class CallBackKt<T> : Callback<T> {
     var onFailure: ((t: Throwable?) -> Unit)? = null
 
     override fun onFailure(call: Call<T>, t: Throwable) {
-        Timber.e(t, "Request failed: ${call.request().url()}")
+        Timber.e(t, "Request failed for URL: ${call.request().url()}")
         onFailure?.invoke(t)
     }
 
     override fun onResponse(call: Call<T>, response: Response<T>) {
         if (!response.isSuccessful) {
-            Timber.e(ApiException(response.code(), response.message()), "Request unsuccessful: ${call.request().url()}")
+            Timber.e(ApiException(response.code(), response.message(), response.requestId), "Request unsuccessful for URL: ${call.request().url()}")
         }
         onResponse?.invoke(response)
     }
@@ -37,7 +38,7 @@ fun <T> Call<T>.handleCallback(completion: (Completion<T>) -> Unit) {
             if (it.isSuccessful && body != null) {
                 completion(Success(body))
             } else {
-                completion(Failure(ApiException(it.code(), it.message())))
+                completion(Failure(ApiException(it.code(), it.message(), it.requestId)))
             }
         }
 
@@ -55,7 +56,7 @@ fun <T> Call<T>.handleCallback(completion: (Result<T>) -> Unit) {
             if (it.isSuccessful && body != null) {
                 completion(Result.success(body))
             } else {
-                completion(Result.failure(ApiException(it.code(), it.message())))
+                completion(Result.failure(ApiException(it.code(), it.message(), it.requestId)))
             }
         }
 
@@ -64,3 +65,7 @@ fun <T> Call<T>.handleCallback(completion: (Result<T>) -> Unit) {
         }
     }
 }
+
+val <T> Response<T>.requestId: String? get() = headers().get(REQUEST_ID_HEADER)
+
+val okhttp3.Response.requestId: String? get() = headers().get(REQUEST_ID_HEADER)

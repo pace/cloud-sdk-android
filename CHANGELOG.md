@@ -6,6 +6,11 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Internal
+
+* Add `request-id` from backend to log message if request fails
+
+
 10.2.0 Release notes (2021-10-13)
 =============================================================
 
