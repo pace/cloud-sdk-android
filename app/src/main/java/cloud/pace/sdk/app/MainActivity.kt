@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
                 apiKey = "YOUR_API_KEY",
                 environment = Environment.DEVELOPMENT,
                 domainACL = listOf("pace.cloud"),
-                geoAppsScope = "pace-drive-android"
+                geoAppsScope = "pace-drive-android-min"
             )
         )
 

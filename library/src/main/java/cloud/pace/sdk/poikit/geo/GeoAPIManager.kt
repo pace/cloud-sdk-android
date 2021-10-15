@@ -154,16 +154,8 @@ class GeoAPIManagerImpl(
                 val center = LatLng(latitude, longitude)
                 val time = systemManager.getCurrentTimeMillis()
                 val features = response.features.filter {
-                    val polygons = when (it.geometry) {
-                        is GeometryCollection -> it.geometry.geometries.filterIsInstance<Polygon>()
-                        is Polygon -> listOf(it.geometry)
-                        else -> emptyList()
-                    }
-
-                    polygons.map { polygon -> polygon.coordinates }.flatten().flatten().all { coordinate ->
-                        val lat = coordinate.lastOrNull()
-                        val lng = coordinate.firstOrNull()
-                        isInRadius(lat, lng, center)
+                    it.coordinates().all { coordinate ->
+                        isInRadius(coordinate.latitude, coordinate.longitude, center)
                     }
                 }
 

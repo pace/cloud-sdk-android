@@ -12,7 +12,7 @@ data class Configuration @JvmOverloads constructor(
     var domainACL: List<String> = emptyList(),
     var locationAccuracy: Int? = null,
     var speedThresholdInKmPerHour: Int = 50,
-    var geoAppsScope: String = "pace",
+    var geoAppsScope: String = "pace-min",
     var appsDistanceThresholdInMeters: Int = 150
 )
 

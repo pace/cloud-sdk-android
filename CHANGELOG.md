@@ -10,6 +10,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Add `request-id` from backend to log message if request fails
 * Remove default timeout in PWA communication API
+* Use minified GeoJSON to save bandwith and change Default of `geoAppsScope` to `pace-min`
 
 
 10.2.0 Release notes (2021-10-13)
