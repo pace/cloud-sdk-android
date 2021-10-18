@@ -9,6 +9,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Internal
 
 * Add `request-id` from backend to log message if request fails
+* Remove default timeout in PWA communication API
 
 
 10.2.0 Release notes (2021-10-13)

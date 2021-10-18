@@ -39,8 +39,8 @@ public class GetAccessTokenResult private constructor(
       public val code: Int
     ) {
       BadRequest(400),
-      NotFound(404),
       RequestTimeout(408),
+      ClientClosedRequest(499),
       InternalServerError(500),
       ;
     }
