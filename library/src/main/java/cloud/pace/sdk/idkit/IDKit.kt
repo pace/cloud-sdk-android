@@ -32,7 +32,7 @@ object IDKit : IDKitKoinComponent {
     private val credentialsManager: CredentialsManager by inject()
 
     /**
-     * Checks whether [PACECloudSDK] has been set up correctly before [IDKit] is used, otherwise log SDK warnings.
+     * Checks whether `PACECloudSDK` has been set up correctly before `IDKit` is used, otherwise log SDK warnings.
      */
     init {
         SetupLogger.logSDKWarningIfNeeded()
@@ -45,8 +45,7 @@ object IDKit : IDKitKoinComponent {
      * @param additionalCaching If set to `false` persistent session cookies will be shared only natively.
      * If set to `true` the session will additionally be persisted by [IDKit] to improve the change of not having to resign in again. Defaults to `true`.
      */
-    @JvmOverloads
-    fun setup(context: Context, configuration: OIDConfiguration, additionalCaching: Boolean = true) {
+    internal fun setup(context: Context, configuration: OIDConfiguration, additionalCaching: Boolean = true) {
         KoinConfig.setupIDKit(context)
         authorizationManager.setup(configuration, additionalCaching)
         isInitialized = true
@@ -57,6 +56,13 @@ object IDKit : IDKitKoinComponent {
         SetupLogger.appAuthRedirectScheme = appAuthRedirectScheme
         SetupLogger.oidConfiguration = configuration
         SetupLogger.preCheckIDKitSetup()
+    }
+
+    /**
+     * Replaces the additional parameters property of the [OIDConfiguration] with [this][params] values.
+     */
+    fun setAdditionalParameters(params: Map<String, String>?) {
+        authorizationManager.setAdditionalParameters(params)
     }
 
     /**

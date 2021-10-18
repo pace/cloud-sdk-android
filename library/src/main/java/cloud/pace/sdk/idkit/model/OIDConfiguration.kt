@@ -3,10 +3,10 @@ package cloud.pace.sdk.idkit.model
 import net.openid.appauth.ResponseTypeValues
 
 data class OIDConfiguration @JvmOverloads constructor(
-    val authorizationEndpoint: String,
-    val endSessionEndpoint: String,
-    val tokenEndpoint: String,
-    val userInfoEndpoint: String? = null,
+    val authorizationEndpoint: String = "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/auth",
+    val endSessionEndpoint: String = "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/logout",
+    val tokenEndpoint: String = "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/token",
+    val userInfoEndpoint: String? = "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/userinfo",
     val clientId: String,
     val clientSecret: String? = null,
     val scopes: List<String>? = null,
@@ -89,10 +89,6 @@ data class OIDConfiguration @JvmOverloads constructor(
             responseType: String = ResponseTypeValues.CODE,
             additionalParameters: Map<String, String>? = null
         ) = OIDConfiguration(
-            authorizationEndpoint = "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/auth",
-            endSessionEndpoint = "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/logout",
-            tokenEndpoint = "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/token",
-            userInfoEndpoint = "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/userinfo",
             clientId = clientId,
             clientSecret = clientSecret,
             scopes = scopes,
