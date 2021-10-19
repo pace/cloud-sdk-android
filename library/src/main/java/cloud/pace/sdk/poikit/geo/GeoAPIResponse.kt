@@ -40,7 +40,7 @@ enum class ConnectedFuelingStatus(val value: String) {
     OFFLINE("offline")
 }
 
-fun GeoAPIFeature.isInRange(latitude: Double, longitude: Double, distanceThresholdInMeters: Int): Boolean {
+fun GeoAPIFeature.coordinates(): List<LatLng> {
     return when (geometry) {
         is GeometryCollection -> {
             // Check if points are available
@@ -61,7 +61,11 @@ fun GeoAPIFeature.isInRange(latitude: Double, longitude: Double, distanceThresho
             // Use polygons as fallback (v1)
             geometry.toLatLngs()
         }
-    }.any { coordinate ->
+    }
+}
+
+fun GeoAPIFeature.isInRange(latitude: Double, longitude: Double, distanceThresholdInMeters: Int): Boolean {
+    return coordinates().any { coordinate ->
         // Filter based on distance to point or polygon
         coordinate.distanceTo(LatLng(latitude, longitude)) < distanceThresholdInMeters
     }

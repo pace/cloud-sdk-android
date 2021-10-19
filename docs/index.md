@@ -130,7 +130,7 @@ extensions: List<String> // Default: emptyList()
 domainACL: List<String> // Default: emptyList()
 locationAccuracy: Int? // Default: null
 speedThresholdInKmPerHour: Int // Default: 50
-geoAppsScope: String // Default: "pace"
+geoAppsScope: String // Default: "pace-min"
 ```
 
 PACE Cloud SDK uses [AppAuth for Android](https://github.com/openid/AppAuth-Android) for the native authentication in *IDKit*, which needs `appAuthRedirectScheme` manifest placeholder to be set. PACE Cloud SDK requires `pace_redirect_scheme` for [Deep Linking](#deep-linking) to be set. Both these manifest placeholder must be configured in your app's `build.gradle` file. In case you won't be using native login, you can set an empty string for `appAuthRedirectScheme`.
