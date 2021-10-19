@@ -4,7 +4,8 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Breaking Changes - Include, if needed -->
 <!-- ### Enhancements - Include, if needed -->
 <!-- ### Fixes - Include, if needed -->
-<!-- ### Internal - Include, if needed -->
+### Internal
+* Adjust TOTP secret handling
 
 10.2.2 Release notes (2021-10-20)
 =============================================================

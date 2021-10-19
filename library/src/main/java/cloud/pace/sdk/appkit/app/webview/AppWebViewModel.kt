@@ -164,7 +164,14 @@ class AppWebViewModelImpl(
                 if (host != null) {
                     try {
                         val encryptedSecret = EncryptionUtils.encrypt(setTOTPRequest.secret)
-                        sharedPreferencesModel.setTotpSecret(host, setTOTPRequest.key, TotpSecret(encryptedSecret, setTOTPRequest.digits, setTOTPRequest.period, setTOTPRequest.algorithm))
+                        val totpSecret = TotpSecret(encryptedSecret, setTOTPRequest.digits, setTOTPRequest.period, setTOTPRequest.algorithm)
+                        sharedPreferencesModel.setTotpSecret(host, setTOTPRequest.key, totpSecret)
+
+                        // Check if prefs not contains master TOTP secret data and set it, if true
+                        if (sharedPreferencesModel.getTotpSecret() == null) {
+                            sharedPreferencesModel.setTotpSecret(totpSecret = totpSecret)
+                        }
+
                         SetTOTPResult(SetTOTPResult.Success())
                     } catch (e: Exception) {
                         SetTOTPResult(SetTOTPResult.Failure(SetTOTPResult.Failure.StatusCode.InternalServerError, SetTOTPError("Could not encrypt the TOTP secret.")))
