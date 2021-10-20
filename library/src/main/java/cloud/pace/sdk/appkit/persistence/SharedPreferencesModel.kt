@@ -95,11 +95,11 @@ class SharedPreferencesImpl(private val sharedPreferences: SharedPreferences) : 
     }
 
     override fun removeTotpSecret(host: String?, key: String) {
+        val totpSecretPrefs = sharedPreferences.all.filter { it.key.endsWith("_$PAYMENT_AUTHORIZE") }
         sharedPreferences.edit {
-            remove(getTotpSecretPreferenceKey(SECRET, host, key))
-            remove(getTotpSecretPreferenceKey(DIGITS, host, key))
-            remove(getTotpSecretPreferenceKey(PERIOD, host, key))
-            remove(getTotpSecretPreferenceKey(ALGORITHM, host, key))
+            totpSecretPrefs.forEach {
+                remove(it.key)
+            }
         }
     }
 
