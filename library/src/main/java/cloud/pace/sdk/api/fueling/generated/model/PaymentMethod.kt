@@ -20,6 +20,8 @@ class PaymentMethod : Resource() {
 
     var meta: Meta? = null
 
+    /* Customer chosen alias for the payment method */
+    var alias: String? = null
     var identificationString: String? = null
     /* one of sepa, creditcard, paypal, paydirekt, dkv, applepay, ... */
     var kind: String? = null
