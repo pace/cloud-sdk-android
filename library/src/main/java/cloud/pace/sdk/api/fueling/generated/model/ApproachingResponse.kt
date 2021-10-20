@@ -21,7 +21,7 @@ class ApproachingResponse : Resource() {
     private var gasStation: HasOne<GasStation> = HasOne()
     fun getGasStation() = gasStation.get(document)
 
-    private var gasStationNote: HasMany<GasStationNote> = HasMany()
+    private var gasStationNote: HasOne<GasStationNote> = HasOne()
     fun getGasStationNote() = gasStationNote.get(document)
 
     private var paymentMethods: HasMany<PaymentMethod> = HasMany()

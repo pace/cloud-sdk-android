@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Fixes
+
+* Fix generated fueling api 2021-2
+
 10.2.1 Release notes (2021-10-20)
 =============================================================
 
