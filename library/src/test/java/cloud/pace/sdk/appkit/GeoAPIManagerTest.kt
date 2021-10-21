@@ -38,7 +38,7 @@ class GeoAPIManagerTest {
 
     @Before
     fun init() {
-        PACECloudSDK.configuration = Configuration("", "", "", "", environment = Environment.DEVELOPMENT)
+        PACECloudSDK.configuration = Configuration("", "", "", "", environment = Environment.DEVELOPMENT, oidConfiguration = null)
     }
 
     @Test

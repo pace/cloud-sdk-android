@@ -4,8 +4,16 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Breaking Changes - Include, if needed -->
 <!-- ### Enhancements - Include, if needed -->
 <!-- ### Fixes - Include, if needed -->
+<!-- ### Internal - Include, if needed -->
+
+### Breaking changes
+
+* Combine IDKit setup with PACECloudSDK setup. `IDKit.setup(...)` is no longer accessible. The `IDKit` is now initialized via `PACECloudSDK.setup(...)`. Therefore an optional `OIDConfiguration` parameter was added to the `Configuration` class of the `PACECloudSDK`, which must be initialized with at least the `clientId` and the `redirectUri`.
+
 ### Internal
+
 * Adjust TOTP secret handling
+
 
 10.2.2 Release notes (2021-10-20)
 =============================================================
@@ -22,7 +30,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Add `request-id` from backend to log message if request fails
 * Remove default timeout in PWA communication API
-* Use minified GeoJSON to save bandwith and change Default of `geoAppsScope` to `pace-min`
+* Use minified GeoJSON to save bandwidth and change default of `geoAppsScope` to `pace-min`
 * Regenerate fueling API 2021-2
 
 

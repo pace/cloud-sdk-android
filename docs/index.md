@@ -12,6 +12,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [2.x.x -> 3.x.x](#from-2xx-to-3xx)
         + [7.x.x -> 8.x.x](#from-7xx-to-8xx)
         + [9.x.x -> 10.x.x](#from-9xx-to-10xx)
+        + [10.x.x -> 11.x.x](#from-10xx-to-11xx)
     * [IDKit](#idkit)
         + [Setup](#setup-1)
         + [Discover configuration](#discover-configuration)
@@ -168,6 +169,14 @@ We've moved everything that belongs to the GeoAPI from `AppKit`/`API` to `POIKit
 * The two `AppKit.requestCofuGasStations(...)` calls are now part of `POIKit`, available under `POIKit.requestCofuGasStations(...)`
 * In case of unresolved references: All classes inside package `cloud.pace.sdk.api.geo` and `cloud.pace.sdk.appkit.geo` were moved to package `cloud.pace.sdk.poikit.geo`
 
+### From 10.x.x to 11.x.x
+The `IDKit` setup has been combined with the general `PACECloudSDK` setup:
+* `IDKit.setup(...)` is no longer accessible.
+* An optional `OIDConfiguration` has been added to the `Configuration` class of the `PACECloudSDK`.
+* If you do not pass an `OIDConfiguration`, the `IDKit` can not be used.
+* If used, the `OIDConfiguration` needs to be initialized with at least the `clientId` and the `redirectUri` of your identity provider. You can also use the factory methods of the `OIDConfiguration` if you want to use another environment than production which is now set by default with the primary constructor.
+* Please head over to [IDKit setup](#setup-1) to learn more about how to set up this functionality.
+
 ## IDKit
 **IDKit** manages the OpenID (OID) authorization and the general session flow with its token handling via **PACE ID**.
 
@@ -176,11 +185,20 @@ We've moved everything that belongs to the GeoAPI from `AppKit`/`API` to `POIKit
 
 The parameter `additionalCaching` defines if *IDKit* persists the session additionally to the native WebView/Browser caching.
 
-To initialize the *IDKit* you have to pass an `OIDConfiguration`. For this you can either use the preconfigured environments using the `OIDConfiguration.$environment` factory methods or you can also create an `OIDConfiguration` with your own identity provider endpoints.
+To initialize the *IDKit* you have to pass an `OIDConfiguration` to the `Configuration` of the `PACECloudSDK.setup(...)` method. For this you can either use the preconfigured environments using the `OIDConfiguration.$environment` factory methods or you can also create an `OIDConfiguration` with your own identity provider endpoints. The primary constructor of `OIDConfiguration` defaults to production.
 
-This example shows the initialization with the development environment. For production apps, use `OIDConfiguration.production(...)`.
+This example shows the initialization with the development environment. For production apps, use the primary constructor or `OIDConfiguration.production(...)`.
 ```kotlin
-IDKit.setup(context, OIDConfiguration.development(clientId = "cloud-sdk-example-app", redirectUri = "pace://cloud-sdk-example"))
+PACECloudSDK.setup(
+    context, Configuration(
+        clientAppName = "PACECloudSDKExample",
+        clientAppVersion = BuildConfig.VERSION_NAME,
+        clientAppBuild = BuildConfig.VERSION_CODE.toString(),
+        apiKey = "YOUR_API_KEY",
+        environment = Environment.DEVELOPMENT,
+        oidConfiguration = OIDConfiguration.development(clientId = "cloud-sdk-example-app", redirectUri = "pace://cloud-sdk-example")
+    )
+)
 ```
 
 Once the authorization flow is completed in the browser, the authorization service will redirect to a URI specified as part of the authorization request.

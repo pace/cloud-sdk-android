@@ -46,25 +46,6 @@ class AppManagerTest : CloudSDKKoinComponent {
     private lateinit var mockLocation: Location
 
     private val appManager = AppManager(coroutineTestRule.testDispatcherProvider)
-    private val polygon = listOf(
-        listOf(8.427429, 49.01304015764206),
-        listOf(8.427166935031618, 49.013005967255644),
-        listOf(8.426944768026093, 49.012908601401435),
-        listOf(8.426796322288334, 49.01276288345869),
-        listOf(8.426744196943954, 49.01259099797384),
-        listOf(8.426796326657078, 49.01241911308242),
-        listOf(8.42694477420443, 49.0122733965724),
-        listOf(8.427166939400362, 49.0121760321509),
-        listOf(8.427429, 49.012141842357934),
-        listOf(8.427691060599638, 49.0121760321509),
-        listOf(8.42791322579557, 49.0122733965724),
-        listOf(8.42806167334292, 49.01241911308242),
-        listOf(8.428113803056045, 49.01259099797384),
-        listOf(8.428061677711664, 49.01276288345869),
-        listOf(8.427913231973907, 49.012908601401435),
-        listOf(8.427691064968382, 49.013005967255644),
-        listOf(8.427429, 49.01304015764206)
-    )
 
     @Before
     fun init() {
@@ -72,7 +53,7 @@ class AppManagerTest : CloudSDKKoinComponent {
         `when`(mockLocation.longitude).then { 8.427326 }
         `when`(mockLocation.speed).then { 3f }
 
-        PACECloudSDK.configuration = Configuration("", "", "", "", environment = Environment.DEVELOPMENT)
+        PACECloudSDK.configuration = Configuration("", "", "", "", environment = Environment.DEVELOPMENT, oidConfiguration = null)
     }
 
     @After

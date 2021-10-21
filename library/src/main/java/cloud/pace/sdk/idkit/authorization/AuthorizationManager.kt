@@ -39,12 +39,21 @@ internal class AuthorizationManager(
 
         this.configuration = configuration
         this.additionalCaching = additionalCaching
-        authorizationRequest = createAuthorizationRequest()
+        createAuthorizationRequest(true)
 
         if (additionalCaching) {
             loadSession()?.let {
                 session = it
             }
+        }
+    }
+
+    internal fun setAdditionalParameters(params: Map<String, String>?) {
+        if (::configuration.isInitialized) {
+            configuration.additionalParameters = params
+            createAuthorizationRequest(false)
+        } else {
+            SetupLogger.logSDKWarningIfNeeded()
         }
     }
 
@@ -212,11 +221,13 @@ internal class AuthorizationManager(
         }
     }
 
-    private fun createAuthorizationRequest(): AuthorizationRequest {
+    private fun createAuthorizationRequest(createNewSession: Boolean) {
         val serviceConfiguration = getAuthorizationServiceConfiguration()
-        session = AuthState(serviceConfiguration)
+        if (createNewSession) {
+            session = AuthState(serviceConfiguration)
+        }
 
-        return AuthorizationRequest.Builder(serviceConfiguration, configuration.clientId, configuration.responseType, Uri.parse(configuration.redirectUri))
+        authorizationRequest = AuthorizationRequest.Builder(serviceConfiguration, configuration.clientId, configuration.responseType, Uri.parse(configuration.redirectUri))
             .setScopes(configuration.scopes?.plus("openid") ?: listOf("openid")) // Make sure that 'openid' is passed as scope so that the idToken for the end session request is returned
             .setAdditionalParameters(configuration.additionalParameters)
             .build()

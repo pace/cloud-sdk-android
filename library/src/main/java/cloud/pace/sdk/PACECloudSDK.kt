@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.util.Log
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.appkit.AppKit
+import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.Environment
 import cloud.pace.sdk.utils.KoinConfig
@@ -79,12 +80,12 @@ object PACECloudSDK {
             Timber.plant(Timber.DebugTree())
         }
 
+        configuration.oidConfiguration?.let { IDKit.setup(context, it) }
         API.setup(configuration.environment.apiUrl, configuration.apiKey)
         AppKit.locationAccuracy = configuration.locationAccuracy
         KoinConfig.setupCloudSDK(context, configuration.environment, configuration.apiKey)
         AppKit.updateUserAgent()
 
-        Timber.i("Setup of the PACECloudSDK successfully")
         isSetup = true
 
         val applicationInfo = context.packageManager?.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)

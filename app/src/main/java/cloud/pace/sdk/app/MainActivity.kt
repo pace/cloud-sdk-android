@@ -64,8 +64,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        IDKit.setup(this, OIDConfiguration.development(clientId = "cloud-sdk-example-app", redirectUri = "pace://cloud-sdk-example"))
-
         PACECloudSDK.setup(
             this, Configuration(
                 clientAppName = "PACECloudSDKExample",
@@ -74,7 +72,8 @@ class MainActivity : AppCompatActivity() {
                 apiKey = "YOUR_API_KEY",
                 environment = Environment.DEVELOPMENT,
                 domainACL = listOf("pace.cloud"),
-                geoAppsScope = "pace-drive-android-min"
+                geoAppsScope = "pace-drive-android-min",
+                oidConfiguration = OIDConfiguration.development(clientId = "cloud-sdk-example-app", redirectUri = "pace://cloud-sdk-example")
             )
         )
 

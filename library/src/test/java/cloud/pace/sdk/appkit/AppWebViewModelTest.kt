@@ -60,7 +60,7 @@ class AppWebViewModelTest {
 
     @Before
     fun init() {
-        PACECloudSDK.configuration = Configuration("", "", "", "", environment = Environment.DEVELOPMENT, domainACL = listOf(host))
+        PACECloudSDK.configuration = Configuration("", "", "", "", environment = Environment.DEVELOPMENT, domainACL = listOf(host), oidConfiguration = null)
 
         appModel.callback = appCallback
         disabled = ""
