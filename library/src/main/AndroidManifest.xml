@@ -46,6 +46,10 @@
             android:name="pace_redirect_scheme"
             android:value="${pace_redirect_scheme}" />
 
+        <meta-data
+            android:name="appAuthRedirectScheme"
+            android:value="${appAuthRedirectScheme}" />
+
         <provider
             android:name=".appkit.utils.PACECloudSDKFileProvider"
             android:authorities="${applicationId}.pace_cloud_sdk_file_provider"

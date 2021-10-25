@@ -14,6 +14,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Adjust TOTP secret handling
 * Send 499 status when user cancels login
+* Add `appAuthRedirectTheme` as `metaData` in Manifest
 
 
 10.2.2 Release notes (2021-10-20)
