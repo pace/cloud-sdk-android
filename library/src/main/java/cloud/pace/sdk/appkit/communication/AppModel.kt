@@ -122,9 +122,17 @@ class AppModelImpl(private val context: Context) : AppModel {
                     }
                 } else {
                     authorize { completion ->
-                        (completion as? Success)?.result?.let {
-                            onResult(Success(GetAccessTokenResponse(it, true)))
-                        } ?: onResult(Failure(InternalError))
+                        when (completion) {
+                            is Success -> {
+                                val accessToken = completion.result
+                                if (accessToken != null) {
+                                    onResult(Success(GetAccessTokenResponse(accessToken, true)))
+                                } else {
+                                    onResult(Failure(InternalError))
+                                }
+                            }
+                            is Failure -> onResult(Failure(completion.throwable))
+                        }
                     }
                 }
             }
