@@ -28,6 +28,7 @@ import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.persistence.TotpSecret
 import cloud.pace.sdk.appkit.utils.EncryptionUtils
 import cloud.pace.sdk.idkit.IDKit
+import cloud.pace.sdk.idkit.model.OperationCanceled
 import cloud.pace.sdk.utils.*
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.TimeoutCancellationException
@@ -433,7 +434,7 @@ class AppWebViewModelImpl(
                     is Failure -> continuation.resumeIfActive(
                         GetAccessTokenResult(
                             GetAccessTokenResult.Failure(
-                                GetAccessTokenResult.Failure.StatusCode.InternalServerError,
+                                if (it.throwable is OperationCanceled) GetAccessTokenResult.Failure.StatusCode.ClientClosedRequest else GetAccessTokenResult.Failure.StatusCode.InternalServerError,
                                 GetAccessTokenError(it.throwable.message)
                             )
                         )

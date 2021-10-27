@@ -13,6 +13,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Internal
 
 * Adjust TOTP secret handling
+* Send 499 status when user cancels login
 
 
 10.2.2 Release notes (2021-10-20)
