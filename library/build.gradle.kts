@@ -24,6 +24,7 @@ android {
         versionName = properties.getOrDefault("versionName", Versions.DEFAULT_VERSION_NAME_LIBRARY)!!.toString()
         testInstrumentationRunner = Libs.TEST_INSTRUMENTATION_RUNNER
         manifestPlaceholders["pace_redirect_scheme"] = "\${pace_redirect_scheme}"
+        manifestPlaceholders["appAuthRedirectScheme"] = "\${appAuthRedirectScheme}"
 
         kapt {
             arguments {
