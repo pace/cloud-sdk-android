@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.pay.PayAPI.paymentMethods
 import cloud.pace.sdk.api.pay.PayAPI.paymentTransactions
@@ -48,6 +49,7 @@ object IDKit : IDKitKoinComponent {
     internal fun setup(context: Context, configuration: OIDConfiguration, additionalCaching: Boolean = true) {
         KoinConfig.setupIDKit(context)
         authorizationManager.setup(configuration, additionalCaching)
+        authorizationManager.setAdditionalParameters(PACECloudSDK.additionalQueryParams)
         isInitialized = true
 
         val applicationInfo = context.packageManager?.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)

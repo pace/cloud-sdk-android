@@ -28,6 +28,8 @@ object PACECloudSDK {
                 if (!newQueryParams.containsKey(it) && oldValue != null)
                     newQueryParams[it] = oldValue
             }
+
+            IDKit.setAdditionalParameters(newQueryParams)
             field = newQueryParams
         }
 

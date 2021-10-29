@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.SESSION_CACHE
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
@@ -227,9 +228,18 @@ internal class AuthorizationManager(
             session = AuthState(serviceConfiguration)
         }
 
+        val additionalParameters = mutableMapOf<String, String>()
+        configuration.additionalParameters?.let {
+            additionalParameters.putAll(it)
+        }
+
+        if (!additionalParameters.containsKey("utm_source")) {
+            additionalParameters["utm_source"] = PACECloudSDK.configuration.clientAppName
+        }
+
         authorizationRequest = AuthorizationRequest.Builder(serviceConfiguration, configuration.clientId, configuration.responseType, Uri.parse(configuration.redirectUri))
             .setScopes(configuration.scopes?.plus("openid") ?: listOf("openid")) // Make sure that 'openid' is passed as scope so that the idToken for the end session request is returned
-            .setAdditionalParameters(configuration.additionalParameters)
+            .setAdditionalParameters(additionalParameters)
             .build()
     }
 
