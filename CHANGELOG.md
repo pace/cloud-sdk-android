@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+11.0.0 Release notes (2021-11-09)
+=============================================================
+
+
 ### Breaking changes
 
 * Combine IDKit setup with PACECloudSDK setup. `IDKit.setup(...)` is no longer accessible. The `IDKit` is now initialized via `PACECloudSDK.setup(...)`. Therefore an optional `OIDConfiguration` parameter was added to the `Configuration` class of the `PACECloudSDK`, which must be initialized with at least the `clientId` and the `redirectUri`.
