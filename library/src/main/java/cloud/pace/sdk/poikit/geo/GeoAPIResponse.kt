@@ -29,10 +29,11 @@ data class GeoGasStation(
     val appUrls: List<String>
 )
 
-data class CofuGasStation(
-    var id: String,
-    var coordinate: LatLng,
-    var connectedFuelingStatus: ConnectedFuelingStatus
+data class CofuGasStation @JvmOverloads constructor(
+    val id: String,
+    val coordinate: LatLng,
+    val connectedFuelingStatus: ConnectedFuelingStatus,
+    val properties: Map<String, Any> = emptyMap()
 )
 
 enum class ConnectedFuelingStatus(val value: String) {

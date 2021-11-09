@@ -185,7 +185,7 @@ class GeoAPIManagerImpl(
                             ConnectedFuelingStatus.values().associateBy(ConnectedFuelingStatus::value)[status]
                         }
                         if (lat != null && lng != null && status != null) {
-                            CofuGasStation(it.id, LatLng(lat, lng), status)
+                            CofuGasStation(it.id, LatLng(lat, lng), status, it.properties)
                         } else {
                             null
                         }
