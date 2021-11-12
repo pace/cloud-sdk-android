@@ -7,7 +7,7 @@ import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Completion
 import cloud.pace.sdk.utils.Success
-import org.koin.core.inject
+import org.koin.core.component.inject
 
 /**
  * Public callback functions to subscribe to app events.

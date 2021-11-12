@@ -11,7 +11,7 @@ import cloud.pace.sdk.appkit.utils.TestAppEventManager
 import org.junit.*
 import org.junit.runner.RunWith
 import org.koin.android.ext.koin.androidContext
-import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module

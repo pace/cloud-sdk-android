@@ -19,7 +19,7 @@ import cloud.pace.sdk.appkit.utils.BiometricUtils
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Event
 import kotlinx.android.synthetic.main.app_web_view.view.*
-import org.koin.core.inject
+import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 
 class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(context, attributeSet), CloudSDKKoinComponent {

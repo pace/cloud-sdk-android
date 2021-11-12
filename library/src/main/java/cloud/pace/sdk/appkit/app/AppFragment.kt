@@ -21,7 +21,7 @@ import cloud.pace.sdk.utils.getResultFor
 import kotlinx.android.synthetic.main.fragment_app.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AppFragment : Fragment(), CloudSDKKoinComponent {
 

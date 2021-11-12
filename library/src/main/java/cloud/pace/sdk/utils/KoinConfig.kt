@@ -37,7 +37,7 @@ import cloud.pace.sdk.poikit.search.AddressSearchClient
 import com.google.android.gms.location.LocationServices
 import net.openid.appauth.AuthorizationService
 import org.koin.android.ext.koin.androidContext
-import org.koin.android.viewmodel.dsl.viewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.KoinApplication
 import org.koin.core.module.Module
 import org.koin.dsl.koinApplication
@@ -45,29 +45,14 @@ import org.koin.dsl.module
 
 object KoinConfig {
 
-    internal lateinit var idKitKoinApp: KoinApplication
     internal lateinit var cloudSDKKoinApp: KoinApplication
-
-    @Synchronized
-    internal fun setupIDKit(context: Context) {
-        idKitKoinApp = koinApplication {
-            androidContext(context)
-            modules(module {
-                single { AuthorizationService(get()) }
-                single<SharedPreferencesModel> { SharedPreferencesImpl(PreferenceManager.getDefaultSharedPreferences(get())) }
-                single<PayAuthenticationManager> { PayAuthenticationManagerImpl(get()) }
-                single { AuthorizationManager(get(), get(), get()) }
-                single { CredentialsManager(get(), get(), get()) }
-            })
-            createEagerInstances()
-        }
-    }
 
     @Synchronized
     internal fun setupCloudSDK(context: Context, environment: Environment, apiKey: String) {
         cloudSDKKoinApp = koinApplication {
             androidContext(context)
             modules(module {
+                factory<LocationProvider> { LocationProviderImpl(get(), get()) }
                 single {
                     Room.databaseBuilder(get(), POIKitDatabase::class.java, POIKitDatabase.DATABASE_NAME)
                         .addMigrations(POIKitDatabase.migration1to2, POIKitDatabase.migration2to3, POIKitDatabase.migration3to4, POIKitDatabase.migration4to5, POIKitDatabase.migration5to6)
@@ -79,7 +64,6 @@ object KoinConfig {
                 single { GeoAPIClient(environment, get()) }
                 single { PriceHistoryClient(environment) }
                 single<SystemManager> { SystemManagerImpl(get()) }
-                factory<LocationProvider> { LocationProviderImpl(get(), get()) }
                 single<SharedPreferencesModel> { SharedPreferencesImpl(PreferenceManager.getDefaultSharedPreferences(get())) }
                 single<CacheModel> { CacheModelImpl() }
                 single<AppRepository> { AppRepositoryImpl(get(), get(), get(), get(), get()) }
@@ -93,11 +77,13 @@ object KoinConfig {
                 single<AppModel> { AppModelImpl(get()) }
                 single { AppManager(DefaultDispatcherProvider()) }
                 single<GeoAPIManager>(createdAtStart = true) { GeoAPIManagerImpl(get(), get(), get()) }
+                single { AuthorizationService(get()) }
+                single { AuthorizationManager(get(), get(), get()) }
+                single { CredentialsManager(get(), get(), get()) }
                 viewModel<AppFragmentViewModel> { AppFragmentViewModelImpl(get(), get()) }
                 viewModel<AppWebViewModel> { (context: Context) -> AppWebViewModelImpl(context, get(), get(), get(), get(), get()) }
                 viewModel<AppDrawerViewModel> { AppDrawerViewModelImpl(get()) }
             })
-            createEagerInstances()
         }
     }
 

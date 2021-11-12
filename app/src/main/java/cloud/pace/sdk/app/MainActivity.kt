@@ -77,12 +77,14 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-                if (it) {
+        // Since target SDK 31 (Android 12) ACCESS_FINE_LOCATION must be requested with ACCESS_COARSE_LOCATION
+        val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+        if (permissions.any { checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }) {
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+                if (permissions.all { permission -> it[permission] == true }) {
                     startLocationListener()
                 }
-            }.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }.launch(permissions)
         } else {
             startLocationListener()
         }

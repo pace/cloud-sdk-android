@@ -82,10 +82,11 @@ object PACECloudSDK {
             Timber.plant(Timber.DebugTree())
         }
 
+        KoinConfig.setupCloudSDK(context, configuration.environment, configuration.apiKey)
         configuration.oidConfiguration?.let { IDKit.setup(context, it) }
         API.setup(configuration.environment.apiUrl, configuration.apiKey)
+
         AppKit.locationAccuracy = configuration.locationAccuracy
-        KoinConfig.setupCloudSDK(context, configuration.environment, configuration.apiKey)
         AppKit.updateUserAgent()
 
         isSetup = true

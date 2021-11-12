@@ -18,6 +18,7 @@ import cloud.pace.sdk.PACECloudSDK
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
+import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
@@ -224,7 +225,7 @@ class LocationProviderImpl(
                         when {
                             systemManager.isGooglePlayServicesAvailable() -> {
                                 // Use Fused Location Provider API
-                                systemManager.getFusedLocationProviderClient().getCurrentLocation(LOCATION_REQUEST_PRIORITY, null)
+                                systemManager.getFusedLocationProviderClient().getCurrentLocation(LOCATION_REQUEST_PRIORITY, CancellationTokenSource().token)
                                     .addOnSuccessListener {
                                         continuation.resumeIfActive(if (validate) getLocationIfValid(it, LOW_ACCURACY, startTime) else it)
                                     }

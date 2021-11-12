@@ -82,20 +82,8 @@ class AppDrawerViewModelImpl(private val eventManager: AppEventManager) : AppDra
             }
         }
 
-        when {
-            textBackgroundColorInt != null && textColorInt != null -> {
-                background.value = textBackgroundColorInt
-                textColor.value = textColorInt
-            }
-            darkBackground -> {
-                background.value = Color.BLACK
-                textColor.value = Color.WHITE
-            }
-            else -> {
-                background.value = Color.WHITE
-                textColor.value = Color.BLACK
-            }
-        }
+        background.value = textBackgroundColorInt ?: if (darkBackground) Color.BLACK else Color.WHITE
+        textColor.value = textColorInt ?: if (darkBackground) Color.WHITE else Color.BLACK
     }
 
     override fun onCreate() {

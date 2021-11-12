@@ -19,7 +19,7 @@ object NotificationUtils {
     fun sendNotification(context: Context, title: String, text: String = "", @DrawableRes icon: Int, intent: Intent): Int {
         createNotificationChannel(context)
 
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(icon)
             .setColor(context.resources.getColor(R.color.pace_blue, context.theme))

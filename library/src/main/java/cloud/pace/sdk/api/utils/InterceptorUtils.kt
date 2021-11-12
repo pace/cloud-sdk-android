@@ -33,7 +33,7 @@ object InterceptorUtils {
     private var traceIdMaxAge = TimeUnit.MINUTES.toMillis(15)
 
     fun getInterceptor(accept: String?, contentType: String?, authorizationRequired: Boolean) = Interceptor {
-        val httpUrl = it.request().url().newBuilder()
+        val httpUrl = it.request().url.newBuilder()
         PACECloudSDK.additionalQueryParams.forEach { param ->
             httpUrl.addQueryParameter(param.key, param.value)
         }
@@ -62,7 +62,7 @@ object InterceptorUtils {
 
         it.proceed(builder.build()).also { response ->
             if (!response.isSuccessful) {
-                Timber.e("Request failed: code = ${response.code()} || message = ${response.message()} || request ID = ${response.requestId} || url: ${it.request().url()}")
+                Timber.e("Request failed: code = ${response.code} || message = ${response.message} || request ID = ${response.requestId} || url: ${it.request().url}")
             }
         }
     }
@@ -78,7 +78,7 @@ object InterceptorUtils {
                     }
                 }
             }.getOrNull()?.let {
-                response.request().newBuilder().header(AUTHORIZATION_HEADER, "Bearer $it").build()
+                response.request.newBuilder().header(AUTHORIZATION_HEADER, "Bearer $it").build()
             }
         } else {
             null

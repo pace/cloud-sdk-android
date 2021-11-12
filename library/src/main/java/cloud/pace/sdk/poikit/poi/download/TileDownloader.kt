@@ -17,6 +17,8 @@ import cloud.pace.sdk.utils.Environment
 import cloud.pace.sdk.utils.requestId
 import com.google.protobuf.InvalidProtocolBufferException
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import timber.log.Timber
 import vector_tile.VectorTile
 import java.io.IOException
@@ -41,32 +43,38 @@ class TileDownloader(environment: Environment) {
             .build()
 
     private var poiTileBaseUrl = "${environment.apiUrl}/poi/v1/tiles/query"
-    private val mediaType = MediaType.parse("application/protobuf")
+    private val mediaType = "application/protobuf".toMediaTypeOrNull()
 
     fun load(job: TileQueryRequestOuterClass.TileQueryRequest, handler: (Result<List<GasStation>>) -> Unit): Call {
-        val request = Request.Builder().url(poiTileBaseUrl).method(
-            "POST",
-            RequestBody.create(mediaType, job.toByteArray())
-        )
+        val content = job.toByteArray()
+        val request = Request.Builder()
+            .url(poiTileBaseUrl)
+            .method("POST", content.toRequestBody(mediaType, 0, content.size))
             .build()
 
         val call = client.newCall(request)
         call.enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Timber.e(e, "Request failed for URL: ${call.request().url()}")
+                Timber.e(e, "Request failed for URL: ${call.request().url}")
                 handler(Result.failure(e))
             }
 
             override fun onResponse(call: Call, response: Response) {
                 if (!response.isSuccessful) {
-                    Timber.e(ApiException(response.code(), response.message(), response.requestId), "Request unsuccessful for URL: ${call.request().url()}")
-                    handler(Result.failure(Exception("Request failed with code: ${response.code()}")))
+                    Timber.e(
+                        ApiException(response.code, response.message, response.requestId),
+                        "Request unsuccessful for URL: ${call.request().url}"
+                    )
+                    handler(Result.failure(Exception("Request failed with code: ${response.code}")))
                     return
                 }
 
-                val body = response.body()
+                val body = response.body
                 if (body == null) {
-                    Timber.e(ApiException(response.code(), response.message(), response.requestId), "Missing response body for URL: ${call.request().url()}")
+                    Timber.e(
+                        ApiException(response.code, response.message, response.requestId),
+                        "Missing response body for URL: ${call.request().url}"
+                    )
                     handler(Result.failure(Exception("Missing response body")))
                     return
                 }
@@ -82,7 +90,10 @@ class TileDownloader(environment: Environment) {
 
                     handler(Result.success(pois))
                 } catch (e: InvalidProtocolBufferException) {
-                    Timber.e(ApiException(response.code(), response.message(), response.requestId), "Failed to parse protobuffer response for URL: ${call.request().url()}")
+                    Timber.e(
+                        ApiException(response.code, response.message, response.requestId),
+                        "Failed to parse protobuffer response for URL: ${call.request().url}"
+                    )
                     handler(Result.failure(e))
                 }
             }

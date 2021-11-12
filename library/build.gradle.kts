@@ -15,14 +15,20 @@ plugins {
 }
 
 android {
-    compileSdkVersion(Versions.COMPILE_SDK)
+    compileSdk = Versions.COMPILE_SDK
 
     defaultConfig {
-        minSdkVersion(Versions.MIN_SDK)
-        targetSdkVersion(Versions.TARGET_SDK)
-        versionCode = properties.getOrDefault("buildNumber", Versions.DEFAULT_VERSION_CODE_LIBRARY)!!.toString().toInt()
-        versionName = properties.getOrDefault("versionName", Versions.DEFAULT_VERSION_NAME_LIBRARY)!!.toString()
+        minSdk = Versions.MIN_SDK
+        targetSdk = Versions.TARGET_SDK
+
+        val versionCode = properties.getOrDefault("buildNumber", Versions.DEFAULT_VERSION_CODE_LIBRARY)?.toString()?.toIntOrNull() ?: Versions.DEFAULT_VERSION_CODE_LIBRARY
+        val versionName = properties.getOrDefault("versionName", Versions.DEFAULT_VERSION_NAME_LIBRARY) ?: Versions.DEFAULT_VERSION_NAME_LIBRARY
+        version = versionName
+        buildConfigField("int", "VERSION_CODE", versionCode.toString())
+        buildConfigField("String", "VERSION_NAME", "\"$versionName\"")
+
         testInstrumentationRunner = Libs.TEST_INSTRUMENTATION_RUNNER
+
         manifestPlaceholders["pace_redirect_scheme"] = "\${pace_redirect_scheme}"
         manifestPlaceholders["appAuthRedirectScheme"] = "\${appAuthRedirectScheme}"
 
@@ -49,19 +55,19 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
         freeCompilerArgs = freeCompilerArgs + listOf("-module-name", "${Config.GROUP_ID}.${Config.ARTIFACT_ID}")
     }
 
     testOptions {
         unitTests {
-            it.isReturnDefaultValues = true
-            it.isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+            isIncludeAndroidResources = true
         }
     }
 
@@ -81,7 +87,6 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
     // Kotlin
-    implementation(Libs.KOTLIN_STDLIB)
     implementation(Libs.KOTLIN_COROUTINES_ANDROID)
 
     // Android
@@ -91,6 +96,7 @@ dependencies {
     implementation(Libs.PREFERENCE_KTX)
     implementation(Libs.FRAGMENT_KTX)
     implementation(Libs.LIFECYCLE_LIVE_DATA_KTX)
+    implementation(Libs.LIFECYCLE_PROCESS_KTX)
     implementation(Libs.BIOMETRIC)
     implementation(Libs.BROWSER)
     implementation(Libs.ROOM_RUNTIME)
@@ -104,9 +110,7 @@ dependencies {
 
     // Dependency injection
     api(Libs.KOIN_ANDROID)
-    implementation(Libs.KOIN_ANDROID_SCOPE)
-    implementation(Libs.KOIN_ANDROID_VIEWMODEL)
-    implementation(Libs.KOIN_ANDROID_EXT)
+    api(Libs.KOIN_CORE)
 
     // Networking
     api(Libs.RETROFIT)
@@ -116,7 +120,7 @@ dependencies {
     implementation(Libs.OKHTTP_LOGGING_INTERCEPTOR)
     implementation(Libs.MOSHI_KOTLIN)
     implementation(Libs.MOSHI_ADAPTERS)
-    implementation(Libs.MOSHI_JSONAPI)
+    api(Libs.MOSHI_JSONAPI)
     implementation(Libs.MOSHI_JSONAPI_RETROFIT_CONVERTER)
     implementation(Libs.GSON)
     api(Libs.RXJAVA)

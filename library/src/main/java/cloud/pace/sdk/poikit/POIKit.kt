@@ -35,7 +35,7 @@ import cloud.pace.sdk.poikit.utils.POIKitConfig
 import cloud.pace.sdk.utils.*
 import com.google.android.gms.maps.model.VisibleRegion
 import io.reactivex.rxjava3.core.Observable
-import org.koin.core.inject
+import org.koin.core.component.inject
 import java.util.*
 
 object POIKit : CloudSDKKoinComponent, LifecycleObserver {
@@ -216,9 +216,9 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
                         }
                     }
                     GasStationCodes.STATUS_OK -> {
-                        val priorResponse = it.raw().priorResponse()
+                        val priorResponse = it.raw().priorResponse
                         if (priorResponse != null) {
-                            val newUuid = priorResponse.headers().values(GasStationCodes.HEADER_LOCATION).first()?.split("/")?.last()
+                            val newUuid = priorResponse.headers.values(GasStationCodes.HEADER_LOCATION).firstOrNull()?.split("/")?.lastOrNull()
                             if (newUuid.isNotNullOrEmpty()) {
                                 completion(Success(GasStationMovedResponse(newUuid, true, null, null)))
                             } else {

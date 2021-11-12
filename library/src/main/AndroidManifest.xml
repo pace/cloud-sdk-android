@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cloud.pace.sdk">
 
+    <!--  Since target SDK 31 (Android 12) ACCESS_FINE_LOCATION must be requested with ACCESS_COARSE_LOCATION  -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
@@ -16,6 +18,7 @@
 
         <activity
             android:name=".appkit.app.AppActivity"
+            android:exported="false"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppKitTheme" />
@@ -40,7 +43,9 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".appkit.geofences.GeofenceBroadcastReceiver" />
+        <receiver
+            android:name=".appkit.geofences.GeofenceBroadcastReceiver"
+            android:exported="false" />
 
         <meta-data
             android:name="pace_redirect_scheme"

@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -93,10 +94,16 @@ internal class AuthorizationManager(
     }
 
     internal fun authorize(completedActivity: Class<*>, canceledActivity: Class<*>) {
+        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
+
         authorizationService.performAuthorizationRequest(
             authorizationRequest,
-            PendingIntent.getActivity(context, 0, Intent(context, completedActivity), 0),
-            PendingIntent.getActivity(context, 0, Intent(context, canceledActivity), 0)
+            PendingIntent.getActivity(context, 0, Intent(context, completedActivity), flags),
+            PendingIntent.getActivity(context, 0, Intent(context, canceledActivity), flags)
         )
     }
 
@@ -154,11 +161,17 @@ internal class AuthorizationManager(
     }
 
     internal fun endSession(completedActivity: Class<*>, canceledActivity: Class<*>): Boolean {
+        val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
+
         return createEndSessionRequest()?.let {
             authorizationService.performEndSessionRequest(
                 it,
-                PendingIntent.getActivity(context, 0, Intent(context, completedActivity), 0),
-                PendingIntent.getActivity(context, 0, Intent(context, canceledActivity), 0)
+                PendingIntent.getActivity(context, 0, Intent(context, completedActivity), flags),
+                PendingIntent.getActivity(context, 0, Intent(context, canceledActivity), flags)
             )
             true
         } ?: false
@@ -245,11 +258,10 @@ internal class AuthorizationManager(
 
     private fun createEndSessionRequest(): EndSessionRequest? {
         return session.idToken?.let {
-            EndSessionRequest.Builder(
-                getAuthorizationServiceConfiguration(),
-                it,
-                Uri.parse(configuration.redirectUri)
-            ).build()
+            EndSessionRequest.Builder(getAuthorizationServiceConfiguration())
+                .setIdTokenHint(it)
+                .setPostLogoutRedirectUri(Uri.parse(configuration.redirectUri))
+                .build()
         }
     }
 
