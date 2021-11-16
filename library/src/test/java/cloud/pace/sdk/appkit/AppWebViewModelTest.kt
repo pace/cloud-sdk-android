@@ -2,6 +2,7 @@ package cloud.pace.sdk.appkit
 
 import android.content.Context
 import android.os.Build
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModel
@@ -41,7 +42,11 @@ import org.robolectric.annotation.Config
 class AppWebViewModelTest {
 
     @get:Rule
-    var coroutineTestRule = CoroutineTestRule()
+    val coroutineTestRule = CoroutineTestRule()
+
+    @get:Rule
+    val instantExecutorRule = InstantTaskExecutorRule()
+
     private val context = mock(Context::class.java)
     private val sharedPreferencesModel = mock(SharedPreferencesModel::class.java)
     private val payManager = mock(PayAuthenticationManager::class.java)

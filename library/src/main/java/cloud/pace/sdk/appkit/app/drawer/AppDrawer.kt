@@ -22,7 +22,7 @@ import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Event
 import cloud.pace.sdk.utils.dp
 import kotlinx.android.synthetic.main.app_drawer.view.*
-import org.koin.core.inject
+import org.koin.core.component.inject
 
 class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs), CloudSDKKoinComponent {
 

@@ -18,7 +18,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import okhttp3.Call
-import org.koin.core.inject
+import org.koin.core.component.inject
 import java.util.*
 
 open class PoiKitObserverToken : CloudSDKKoinComponent {

@@ -65,7 +65,7 @@ It uses the following dependencies:
 - [Android Constraintlayout](https://developer.android.com/jetpack/androidx/releases/constraintlayout): Position and size widgets in a flexible way with relative positioning.
 - [Android Preference KTX](https://developer.android.com/jetpack/androidx/releases/preference): Build interactive settings screens without needing to interact with device storage or manage the UI.
 - [Android Fragment KTX](https://developer.android.com/kotlin/ktx#fragment): The Fragment KTX module provides a number of extensions to simplify the fragment API.
-- [Android LiveData KTX](https://developer.android.com/kotlin/ktx#livedata): Kotlin extension functions for Android LiveData.
+- [Android Lifecycle](https://developer.android.com/jetpack/androidx/releases/lifecycle): Lifecycle-aware components perform actions in response to a change in the lifecycle status of another component, such as activities and fragments.
 - [Android Biometric](https://developer.android.com/jetpack/androidx/releases/biometric): Authenticate with biometrics or device credentials, and perform cryptographic operations.
 - [Android Browser](https://developer.android.com/jetpack/androidx/releases/browser): This artifact is used for the Chrome Custom Tabs.
 - [Android Room](https://developer.android.com/jetpack/androidx/releases/room): The Room persistence library provides an abstraction layer over SQLite to allow for more robust database access while harnessing the full power of SQLite.
@@ -540,8 +540,9 @@ The `PACECloudSDK` provides the following methods to check and set the PIN:
 ### Setup
 
 #### Permission
-Please make sure that the user grants the following permission:
-* `Manifest.permission.ACCESS_FINE_LOCATION`
+Please make sure that the user grants the following permissions:
+* `Manifest.permission.ACCESS_FINE_LOCATION` // Since target SDK 31 (Android 12) ACCESS_FINE_LOCATION must be requested with ACCESS_COARSE_LOCATION
+* `Manifest.permission.ACCESS_COARSE_LOCATION`
 
 **Note:** *AppKit* needs this permission to get the user location but it will not request the permission.
 

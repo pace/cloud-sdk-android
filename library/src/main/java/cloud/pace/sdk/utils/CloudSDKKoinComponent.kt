@@ -1,11 +1,6 @@
 package cloud.pace.sdk.utils
 
-import org.koin.core.KoinComponent
-
-interface IDKitKoinComponent : KoinComponent {
-
-    override fun getKoin() = KoinConfig.idKitKoinApp.koin
-}
+import org.koin.core.component.KoinComponent
 
 interface CloudSDKKoinComponent : KoinComponent {
 

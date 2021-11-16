@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import com.google.android.gms.location.GeofencingEvent
-import org.koin.core.inject
+import org.koin.core.component.inject
 
 class GeofenceBroadcastReceiver : BroadcastReceiver() {
 

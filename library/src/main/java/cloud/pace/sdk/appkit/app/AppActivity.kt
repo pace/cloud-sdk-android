@@ -16,7 +16,6 @@ import org.koin.android.ext.android.inject
 class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
 
     private var backToFinish = true
-    private val eventManager: AppEventManager by inject()
     private val appModel: AppModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {

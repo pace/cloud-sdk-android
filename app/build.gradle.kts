@@ -5,16 +5,20 @@ plugins {
 }
 
 android {
-    compileSdkVersion(Versions.COMPILE_SDK)
+    compileSdk = Versions.COMPILE_SDK
 
     defaultConfig {
         applicationId = Config.APPLICATION_ID
-        minSdkVersion(Versions.MIN_SDK)
-        targetSdkVersion(Versions.TARGET_SDK)
+        minSdk = Versions.MIN_SDK
+        targetSdk = Versions.TARGET_SDK
+
         versionCode = 1
         versionName = "1.0"
+
         testInstrumentationRunner = Libs.TEST_INSTRUMENTATION_RUNNER
-        manifestPlaceholders = mapOf("appAuthRedirectScheme" to "pace", "pace_redirect_scheme" to "pace.99b69996-9d26-4d73-8dd2-b4414f2c8826")
+
+        manifestPlaceholders["pace_redirect_scheme"] = "pace.99b69996-9d26-4d73-8dd2-b4414f2c8826"
+        manifestPlaceholders["appAuthRedirectScheme"] = "pace"
     }
 
     buildTypes {
@@ -25,21 +29,18 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
 }
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(project(":library"))
-
-    // Kotlin
-    implementation(Libs.KOTLIN_STDLIB)
 
     // Android
     implementation(Libs.CORE_KTX)

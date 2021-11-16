@@ -3,6 +3,7 @@ package cloud.pace.sdk.appkit.communication
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.FileProvider
@@ -167,6 +168,12 @@ class AppModelImpl(private val context: Context) : AppModel {
 
             val chooserIntent = Intent.createChooser(shareIntent, null)
             chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+            val resInfoList = context.packageManager.queryIntentActivities(chooserIntent, PackageManager.MATCH_DEFAULT_ONLY)
+            resInfoList.forEach {
+                val packageName = it.activityInfo.packageName
+                context.grantUriPermission(packageName, contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
 
             startActivity(context, chooserIntent, null)
         } catch (e: FileNotFoundException) {

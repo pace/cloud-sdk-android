@@ -11,6 +11,7 @@ import cloud.pace.sdk.utils.requestId
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import okhttp3.*
+import okhttp3.Headers.Companion.toHeaders
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 import java.io.FileNotFoundException
@@ -46,7 +47,7 @@ class CacheModelImpl : CacheModel {
 
         val request = Request.Builder()
             .url(url)
-            .headers(Headers.of(headers))
+            .headers(headers.toHeaders())
             .build()
 
         OkHttpClient.Builder()
@@ -55,17 +56,20 @@ class CacheModelImpl : CacheModel {
             .build()
             .newCall(request).enqueue(object : Callback {
                 override fun onResponse(call: Call, response: Response) {
-                    val data = response.body()?.bytes()
+                    val data = response.body?.bytes()
                     if (data != null) {
                         completion(Result.success(data))
                     } else {
-                        Timber.e(ApiException(response.code(), response.message(), response.requestId), "Request returned with no content for URL: ${call.request().url()}")
+                        Timber.e(
+                            ApiException(response.code, response.message, response.requestId),
+                            "Request returned with no content for URL: ${call.request().url}"
+                        )
                         completion(Result.failure(Exception("Request returned with no content")))
                     }
                 }
 
                 override fun onFailure(call: Call, e: IOException) {
-                    Timber.e(e, "Request failed for URL: ${call.request().url()}")
+                    Timber.e(e, "Request failed for URL: ${call.request().url}")
                     completion(Result.failure(e))
                 }
             })

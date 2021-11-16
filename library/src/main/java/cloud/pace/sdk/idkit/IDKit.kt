@@ -23,10 +23,13 @@ import cloud.pace.sdk.idkit.credentials.CredentialsManager
 import cloud.pace.sdk.idkit.model.OIDConfiguration
 import cloud.pace.sdk.idkit.model.ServiceConfiguration
 import cloud.pace.sdk.idkit.userinfo.UserInfoResponse
-import cloud.pace.sdk.utils.*
-import org.koin.core.inject
+import cloud.pace.sdk.utils.CloudSDKKoinComponent
+import cloud.pace.sdk.utils.Completion
+import cloud.pace.sdk.utils.SetupLogger
+import cloud.pace.sdk.utils.handleCallback
+import org.koin.core.component.inject
 
-object IDKit : IDKitKoinComponent {
+object IDKit : CloudSDKKoinComponent {
 
     internal var isInitialized = false
     private val authorizationManager: AuthorizationManager by inject()
@@ -47,7 +50,6 @@ object IDKit : IDKitKoinComponent {
      * If set to `true` the session will additionally be persisted by [IDKit] to improve the change of not having to resign in again. Defaults to `true`.
      */
     internal fun setup(context: Context, configuration: OIDConfiguration, additionalCaching: Boolean = true) {
-        KoinConfig.setupIDKit(context)
         authorizationManager.setup(configuration, additionalCaching)
         authorizationManager.setAdditionalParameters(PACECloudSDK.additionalQueryParams)
         isInitialized = true

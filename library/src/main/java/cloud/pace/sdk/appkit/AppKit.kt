@@ -10,7 +10,7 @@ import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.Car
 import cloud.pace.sdk.utils.*
-import org.koin.core.inject
+import org.koin.core.component.inject
 
 object AppKit : CloudSDKKoinComponent {
 
