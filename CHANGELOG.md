@@ -10,6 +10,11 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * **IMPORTANT: We have updated all dependencies to the latest stable versions to fix possible security vulnerabilities in `kotlin-reflect`. We have also updated target and compile SDK versions to API level 31 (Android 12).**
 
+### Internal
+
+* Change routing URL endpoint to a `pace.cloud` domain
+
+
 11.0.0 Release notes (2021-11-09)
 =============================================================
 
