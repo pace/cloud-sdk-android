@@ -6,6 +6,11 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Enhancements
+
+* Introduce `shareText` PWA communication handler, which by default opens the system share sheet for sharing text. This behavior can be overridden in `AppCallback.onShareTextReceived(text, title)`.
+
+
 11.0.1 Release notes (2021-11-18)
 =============================================================
 

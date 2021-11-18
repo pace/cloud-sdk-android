@@ -20,6 +20,7 @@ import cloud.pace.sdk.appkit.communication.generated.model.request.OpenURLInNewT
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetSecureDataRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetTOTPRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetUserPropertyRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.ShareTextRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.VerifyLocationRequest
 import cloud.pace.sdk.appkit.communication.generated.model.response.AppInterceptableLinkResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.AppRedirectResult
@@ -46,6 +47,7 @@ import cloud.pace.sdk.appkit.communication.generated.model.response.OpenURLInNew
 import cloud.pace.sdk.appkit.communication.generated.model.response.SetSecureDataResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.SetTOTPResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.SetUserPropertyResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.ShareTextResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.VerifyLocationResult
 import kotlin.Long
 
@@ -288,4 +290,12 @@ public interface Communication {
    * should be used
    */
   public suspend fun isRemoteConfigAvailable(timeout: Long?): IsRemoteConfigAvailableResult
+
+  /**
+   * Request to offer the user to share a text via the native share sheet
+   *
+   * @param timeout The timeout of shareText in milliseconds or null if no timeout should be used
+   * @param shareTextRequest The shareText request body object
+   */
+  public suspend fun shareText(timeout: Long?, shareTextRequest: ShareTextRequest): ShareTextResult
 }

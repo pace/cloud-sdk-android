@@ -3,6 +3,7 @@ package cloud.pace.sdk.appkit.communication
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.*
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.core.content.ContextCompat.startActivity
@@ -37,6 +38,7 @@ interface AppModel {
     fun disable(host: String)
     fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (Completion<GetAccessTokenResponse>) -> Unit)
     fun showShareSheet(bitmap: Bitmap)
+    fun showShareSheet(text: String, title: String)
     fun onLogin(context: Context, result: Completion<String?>)
     fun onLogout(onResult: (LogoutResponse) -> Unit)
     fun onCustomSchemeError(context: Context?, scheme: String)
@@ -47,6 +49,7 @@ interface AppModel {
     fun isAppRedirectAllowed(app: String, isAllowed: (Boolean) -> Unit)
     fun isSignedIn(isSignedIn: (Boolean) -> Unit)
     fun isRemoteConfigAvailable(isAvailable: (Boolean) -> Unit)
+    fun onShareTextReceived(text: String, title: String)
 
     class Result<T>(val onResult: (T) -> Unit)
 }
@@ -166,8 +169,8 @@ class AppModelImpl(private val context: Context) : AppModel {
                 type = context.contentResolver.getType(contentUri)
             }
 
-            val chooserIntent = Intent.createChooser(shareIntent, null)
-            chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val chooserIntent = createChooser(shareIntent, null)
+            chooserIntent.addFlags(FLAG_ACTIVITY_NEW_TASK)
 
             val resInfoList = context.packageManager.queryIntentActivities(chooserIntent, PackageManager.MATCH_DEFAULT_ONLY)
             resInfoList.forEach {
@@ -186,6 +189,28 @@ class AppModelImpl(private val context: Context) : AppModel {
             Timber.e(e, "No Activity found to execute the share intent")
         } catch (e: Exception) {
             Timber.e(e, "Could not create, save or share the receipt bitmap")
+        }
+    }
+
+    override fun showShareSheet(text: String, title: String) {
+        try {
+            // Open share sheet
+            val shareIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                type = "text/plain"
+                putExtra(EXTRA_SUBJECT, title)
+                putExtra(EXTRA_TITLE, title)
+                putExtra(EXTRA_TEXT, text)
+            }
+
+            val chooserIntent = createChooser(shareIntent, title)
+            chooserIntent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+
+            startActivity(context, chooserIntent, null)
+        } catch (e: ActivityNotFoundException) {
+            Timber.e(e, "No Activity found to execute the share intent")
+        } catch (e: Exception) {
+            Timber.e(e, "Could not share the shareText")
         }
     }
 
@@ -218,6 +243,12 @@ class AppModelImpl(private val context: Context) : AppModel {
     override fun onImageDataReceived(bitmap: Bitmap) {
         onMainThread {
             callback?.onImageDataReceived(bitmap)
+        }
+    }
+
+    override fun onShareTextReceived(text: String, title: String) {
+        onMainThread {
+            callback?.onShareTextReceived(text, title)
         }
     }
 

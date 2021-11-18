@@ -700,6 +700,17 @@ class AppWebViewModelImpl(
         }
     }
 
+    override suspend fun shareText(timeout: Long?, shareTextRequest: ShareTextRequest): ShareTextResult {
+        return handle(
+            timeout,
+            ShareTextResult(ShareTextResult.Failure(ShareTextResult.Failure.StatusCode.RequestTimeout, ShareTextError("Timeout for shareText"))),
+            ShareTextResult(ShareTextResult.Failure(ShareTextResult.Failure.StatusCode.InternalServerError, ShareTextError("An error occurred")))
+        ) {
+            appModel.onShareTextReceived(shareTextRequest.text, shareTextRequest.title)
+            ShareTextResult(ShareTextResult.Success())
+        }
+    }
+
     private suspend inline fun <T : Result> handle(timeout: Long?, timeoutResult: T?, errorResult: T, crossinline block: suspend () -> T): T {
         return try {
             if (timeout != null) {
