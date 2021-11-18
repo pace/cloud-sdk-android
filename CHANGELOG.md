@@ -6,6 +6,9 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+11.0.1 Release notes (2021-11-18)
+=============================================================
+
 ### Fixes
 
 * **IMPORTANT: We have updated all dependencies to the latest stable versions to fix possible security vulnerabilities in `kotlin-reflect`. We have also updated target and compile SDK versions to API level 31 (Android 12).**
