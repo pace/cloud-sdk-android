@@ -92,6 +92,15 @@ interface AppCallback {
     fun onImageDataReceived(bitmap: Bitmap)
 
     /**
+     * Is called when the app sends a text to share.
+     * If it is not overwritten, it opens the system share sheet.
+     *
+     * @param text The text that will be shown.
+     * @param title The title that will shown
+     */
+    fun onShareTextReceived(text: String, title: String)
+
+    /**
      * Is called when the app sends a user property.
      *
      * @param key The key of the user property
@@ -166,6 +175,9 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
     override fun onCustomSchemeError(context: Context?, scheme: String) {}
     override fun onImageDataReceived(bitmap: Bitmap) {
         appModel.showShareSheet(bitmap)
+    }
+    override fun onShareTextReceived(text: String, title: String){
+        appModel.showShareSheet(text, title)
     }
 
     override fun setUserProperty(key: String, value: String, update: Boolean) {}

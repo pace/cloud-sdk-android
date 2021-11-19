@@ -26,5 +26,5 @@ public object Metadata {
       "/openURLInNewTab", "/verifyLocation", "/getAccessToken", "/imageData",
       "/applePayAvailabilityCheck", "/applePayRequest", "/back", "/appInterceptableLink",
       "/setUserProperty", "/logEvent", "/getConfig", "/getTraceId", "/getLocation", "/appRedirect",
-      "/isBiometricAuthEnabled", "/isSignedIn", "/isRemoteConfigAvailable")
+      "/isBiometricAuthEnabled", "/isSignedIn", "/isRemoteConfigAvailable", "/shareText")
 }
