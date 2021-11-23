@@ -104,7 +104,18 @@ class GeoAPIManagerImpl(
 
                 POIKit.requestGasStations(locations) { gasStations ->
                     when (gasStations) {
-                        is Success -> completion(Result.success(gasStations.result.filter { gasStation -> cofuGasStationsInRange.any { it.id == gasStation.id } }))
+                        is Success -> {
+                            val cofuStations = gasStations.result.mapNotNull { gasStation ->
+                                val cofuGasStation = cofuGasStationsInRange.firstOrNull { it.id == gasStation.id }
+                                if (cofuGasStation != null) {
+                                    gasStation.also { it.additionalProperties = cofuGasStation.properties }
+                                } else {
+                                    null
+                                }
+                            }
+                            completion(Result.success(cofuStations))
+
+                        }
                         is Failure -> completion(Result.failure(gasStations.throwable))
                     }
                 }

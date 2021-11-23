@@ -9,6 +9,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Internal
 
 * Add `ACCESS_COARSE_LOCATION` permission check in SystemManager
+* Add `additionalProperties` property to `GasStation` model.
 
 11.1.0 Release notes (2021-11-19)
 =============================================================
@@ -16,7 +17,6 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Enhancements
 
 * Introduce `shareText` PWA communication handler, which by default opens the system share sheet for sharing text. This behavior can be overridden in `AppCallback.onShareTextReceived(text, title)`.
-
 
 11.0.1 Release notes (2021-11-18)
 =============================================================
