@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Internal
+
+* Add `ACCESS_COARSE_LOCATION` permission check in SystemManager
+
 11.1.0 Release notes (2021-11-19)
 =============================================================
 

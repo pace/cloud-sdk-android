@@ -26,7 +26,8 @@ interface SystemManager {
 class SystemManagerImpl(private val context: Context) : SystemManager {
 
     override fun isLocationPermissionGranted(): Boolean {
-        return ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        return ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun isGooglePlayServicesAvailable(): Boolean {
