@@ -40,7 +40,7 @@ object Versions {
     const val RECYCLER_VIEW = "1.2.1"
     const val RETROFIT = "2.9.0"
     const val ROBOLECTRIC = "4.6.1"
-    const val ROOM = "2.3.0"
+    const val ROOM = "2.4.0-beta02"
     const val RXANDROID = "3.0.0"
     const val RXJAVA = "3.1.2"
     const val TEST_CORE = "1.4.0"

@@ -11,6 +11,7 @@ x.y.z Release notes (yyyy-MM-dd)
 * Add `ACCESS_COARSE_LOCATION` permission check in SystemManager
 * Add `additionalProperties` property to `GasStation` model
 * Set `pace.cloud` as default value of the `domainACL` property in the PACE Cloud SDK configuration
+* Update Room's version to `2.4.0-beta02` to fix a bug on Apple's M1 chips
 
 11.1.0 Release notes (2021-11-19)
 =============================================================
