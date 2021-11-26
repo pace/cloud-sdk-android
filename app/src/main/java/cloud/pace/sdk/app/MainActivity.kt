@@ -71,7 +71,6 @@ class MainActivity : AppCompatActivity() {
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),
                 apiKey = "YOUR_API_KEY",
                 environment = Environment.DEVELOPMENT,
-                domainACL = listOf("pace.cloud"),
                 geoAppsScope = "pace-drive-android-min",
                 oidConfiguration = OIDConfiguration.development(clientId = "cloud-sdk-example-app", redirectUri = "pace://cloud-sdk-example")
             )
