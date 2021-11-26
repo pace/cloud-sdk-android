@@ -9,7 +9,8 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Internal
 
 * Add `ACCESS_COARSE_LOCATION` permission check in SystemManager
-* Add `additionalProperties` property to `GasStation` model.
+* Add `additionalProperties` property to `GasStation` model
+* Set `pace.cloud` as default value of the `domainACL` property in the PACE Cloud SDK configuration
 
 11.1.0 Release notes (2021-11-19)
 =============================================================

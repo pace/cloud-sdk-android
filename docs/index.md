@@ -128,7 +128,7 @@ apiKey: String
 authenticationMode: AuthenticationMode // Default: AuthenticationMode.NATIVE
 environment: Environment // Default: Environment.PRODUCTION
 extensions: List<String> // Default: emptyList()
-domainACL: List<String> // Default: emptyList()
+domainACL: List<String> // Default: listOf("pace.cloud")
 locationAccuracy: Int? // Default: null
 speedThresholdInKmPerHour: Int // Default: 50
 geoAppsScope: String // Default: "pace-min"
@@ -442,7 +442,7 @@ IDKit.handleEndSessionResponse(intent) {
 ### 2FA setup
 In numerous cases a second authentication factor is required when using Connected Fueling, e.g. when authorizing a payment. Following are methods that can be used to setup biometric authentication on the user's device or setup an account PIN.
 
-In order to prevent websites from accessing your TOTP secrets (used when biometric authentication is used), a domain access control list has to be passed to the `domainACL` property of the `Configuration` object in the [setup phase](#setup). If you're not using a custom PWA, then setting the `domainACL` to `"pace.cloud"` is enough.
+In order to prevent websites from accessing your TOTP secrets (used when biometric authentication is used), a domain access control list has to be passed to the `domainACL` property of the `Configuration` object in the [setup phase](#setup) which defaults to `listOf("pace.cloud")`. If you're using a custom PWA, you need to adjust the `domainACL` accordingly.
 
 #### Mail-OTP
 For some of the below mentioned methods an OTP is needed, which can be requested to be sent to the user's email via
@@ -549,6 +549,7 @@ Please make sure that the user grants the following permissions:
 #### Biometric authentication
 To be able to authorize payments with biometry, the `domainACL` must be set during the [setup](#setup) of the `PACECloudSDK`.
 The `domainACL` (domain access control list) is a list of domains which should be allowed to use biometric authentication.
+This value defaults to `listOf("pace.cloud")`, which is sufficient in most cases. If you're using a custom PWA, you need to adjust the `domainACL` accordingly.
 
 ### Request local apps
 Location based apps can be requested with the following function. The completion contains a list with the available apps as `App` objects or a `Throwable`, if an error occurs.
