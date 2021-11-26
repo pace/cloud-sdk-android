@@ -121,6 +121,12 @@ open class GasStation(id: String, geometry: ArrayList<Geometry.CommandGeo>) :
      */
     var cofuPaymentMethods: MutableList<String> = mutableListOf()
 
+    /**
+     * Map of additional properties
+     */
+    @Ignore
+    var additionalProperties: Map<String, Any> = mapOf()
+
     /*protected constructor(parcel: Parcel) : this(
         parcel.readString()!!,
         parcel.readArrayList(Geometry.CommandGeo::class.java.classLoader) as ArrayList<Geometry.CommandGeo>,
