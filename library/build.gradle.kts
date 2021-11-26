@@ -37,6 +37,8 @@ android {
                 arg("room.schemaLocation", "$projectDir/schemas")
             }
         }
+
+        consumerProguardFile("proguard-rules.pro")
     }
 
     buildTypes {
