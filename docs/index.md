@@ -13,6 +13,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [7.x.x -> 8.x.x](#from-7xx-to-8xx)
         + [9.x.x -> 10.x.x](#from-9xx-to-10xx)
         + [10.x.x -> 11.x.x](#from-10xx-to-11xx)
+        + [11.x.x -> 12.x.x](#from-11xx-to-12xx)
     * [IDKit](#idkit)
         + [Setup](#setup-1)
         + [Discover configuration](#discover-configuration)
@@ -177,6 +178,13 @@ The `IDKit` setup has been combined with the general `PACECloudSDK` setup:
 * If used, the `OIDConfiguration` needs to be initialized with at least the `clientId` and the `redirectUri` of your identity provider. You can also use the factory methods of the `OIDConfiguration` if you want to use another environment than production which is now set by default with the primary constructor.
 * Please head over to [IDKit setup](#setup-1) to learn more about how to set up this functionality.
 
+### From 11.x.x to 12.x.x
+The `PACECloudSDK.setup()` has been simplified:
+* An optional `CustomOIDConfiguration` has been added to the `Configuration` class of the `PACECloudSDK`.
+* If you do not pass an `CustomOIDConfiguration`, the `IDKit` can not be used.
+* If used, the `CustomOIDConfiguration` needs to be initialized with at least the `clientId` and the `redirectUri` of your identity provider. All other properties in `CustomOIDConfiguration` can be additionally set if e.g. own identity provider endpoints are wanted.
+* Please head over to [IDKit setup](#setup-1) to learn more about how to set up this functionality.
+
 ## IDKit
 **IDKit** manages the OpenID (OID) authorization and the general session flow with its token handling via **PACE ID**.
 
@@ -185,9 +193,9 @@ The `IDKit` setup has been combined with the general `PACECloudSDK` setup:
 
 The parameter `additionalCaching` defines if *IDKit* persists the session additionally to the native WebView/Browser caching.
 
-To initialize the *IDKit* you have to pass an `OIDConfiguration` to the `Configuration` of the `PACECloudSDK.setup(...)` method. For this you can either use the preconfigured environments using the `OIDConfiguration.$environment` factory methods or you can also create an `OIDConfiguration` with your own identity provider endpoints. The primary constructor of `OIDConfiguration` defaults to production.
+To initialize the *IDKit* you have to pass an `CustomOIDConfiguration` to the `Configuration` of the `PACECloudSDK.setup(...)` method. If own identity provider endpoints should be used, they can also be set via the `CustomOIDConfiguration`.
 
-This example shows the initialization with the development environment. For production apps, use the primary constructor or `OIDConfiguration.production(...)`.
+This example shows the initialization with the development environment. For production apps, set `environment = Environment.PRODUCTION`.
 ```kotlin
 PACECloudSDK.setup(
     context, Configuration(
@@ -196,7 +204,7 @@ PACECloudSDK.setup(
         clientAppBuild = BuildConfig.VERSION_CODE.toString(),
         apiKey = "YOUR_API_KEY",
         environment = Environment.DEVELOPMENT,
-        oidConfiguration = OIDConfiguration.development(clientId = "cloud-sdk-example-app", redirectUri = "pace://cloud-sdk-example")
+        oidConfiguration = CustomOIDConfiguration(clientId = "cloud-sdk-example-app", redirectUri = "pace://cloud-sdk-example")
     )
 )
 ```

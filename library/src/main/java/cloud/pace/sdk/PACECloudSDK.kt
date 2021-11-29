@@ -6,10 +6,7 @@ import android.util.Log
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.idkit.IDKit
-import cloud.pace.sdk.utils.Configuration
-import cloud.pace.sdk.utils.Environment
-import cloud.pace.sdk.utils.KoinConfig
-import cloud.pace.sdk.utils.SetupLogger
+import cloud.pace.sdk.utils.*
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -83,7 +80,25 @@ object PACECloudSDK {
         }
 
         KoinConfig.setupCloudSDK(context, configuration.environment, configuration.apiKey)
-        configuration.oidConfiguration?.let { IDKit.setup(context, it) }
+        configuration.oidConfiguration?.let {
+
+            IDKit.setup(
+                context,
+                configuration.environment.getOIDConfiguration(
+                    it.clientId,
+                    it.clientSecret,
+                    it.scopes,
+                    it.redirectUri,
+                    it.responseType,
+                    it.additionalParameters,
+                    it.authorizationEndpoint,
+                    it.endSessionEndpoint,
+                    it.tokenEndpoint,
+                    it.userInfoEndpoint
+                )
+            )
+        }
+
         API.setup(configuration.environment.apiUrl, configuration.apiKey)
 
         AppKit.locationAccuracy = configuration.locationAccuracy

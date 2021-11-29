@@ -9,6 +9,9 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Fixes
 
 * Add default ProGuard rules to fix possible problems when using ProGuard in your app
+### Breaking Changes
+
+* Simplified setup of IDKit. SDK now decides which `OIDConfiguration` should be used so that clients only need to provide a `CustomOIDConfiguration` with  a `clientID` and `redirectURI`.
 
 ### Internal
 
@@ -16,6 +19,7 @@ x.y.z Release notes (yyyy-MM-dd)
 * Add `additionalProperties` property to `GasStation` model
 * Set `pace.cloud` as default value of the `domainACL` property in the PACE Cloud SDK configuration
 * Update Room's version to `2.4.0-beta02` to fix a bug on Apple's M1 chips
+
 
 11.1.0 Release notes (2021-11-19)
 =============================================================

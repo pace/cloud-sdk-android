@@ -21,7 +21,7 @@ import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.idkit.IDKit
-import cloud.pace.sdk.idkit.model.OIDConfiguration
+import cloud.pace.sdk.idkit.model.CustomOIDConfiguration
 import cloud.pace.sdk.poikit.POIKit
 import cloud.pace.sdk.poikit.geo.ConnectedFuelingStatus
 import cloud.pace.sdk.utils.*
@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
                 apiKey = "YOUR_API_KEY",
                 environment = Environment.DEVELOPMENT,
                 geoAppsScope = "pace-drive-android-min",
-                oidConfiguration = OIDConfiguration.development(clientId = "cloud-sdk-example-app", redirectUri = "pace://cloud-sdk-example")
+                oidConfiguration = CustomOIDConfiguration("cloud-sdk-example-app", "pace://cloud-sdk-example")
             )
         )
 

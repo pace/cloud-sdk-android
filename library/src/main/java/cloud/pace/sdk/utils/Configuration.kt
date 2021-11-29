@@ -1,6 +1,7 @@
 package cloud.pace.sdk.utils
 
-import cloud.pace.sdk.idkit.model.OIDConfiguration
+import cloud.pace.sdk.idkit.model.CustomOIDConfiguration
+import net.openid.appauth.ResponseTypeValues
 
 data class Configuration @JvmOverloads constructor(
     var clientAppName: String,
@@ -16,7 +17,7 @@ data class Configuration @JvmOverloads constructor(
     var speedThresholdInKmPerHour: Int = 50,
     var geoAppsScope: String = "pace-min",
     var appsDistanceThresholdInMeters: Int = 150,
-    var oidConfiguration: OIDConfiguration?
+    var oidConfiguration: CustomOIDConfiguration?
 )
 
 enum class AuthenticationMode(val value: String) {
