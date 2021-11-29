@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Fixes
+
+* Add default ProGuard rules to fix possible problems when using ProGuard in your app
+
 ### Internal
 
 * Add `ACCESS_COARSE_LOCATION` permission check in SystemManager
