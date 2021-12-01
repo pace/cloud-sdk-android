@@ -80,7 +80,7 @@ object KoinConfig {
                 single { AuthorizationService(get()) }
                 single { AuthorizationManager(get(), get(), get()) }
                 single { CredentialsManager(get(), get(), get()) }
-                viewModel<AppFragmentViewModel> { AppFragmentViewModelImpl(get(), get()) }
+                viewModel<AppFragmentViewModel> { AppFragmentViewModelImpl(get()) }
                 viewModel<AppWebViewModel> { (context: Context) -> AppWebViewModelImpl(context, get(), get(), get(), get(), get()) }
                 viewModel<AppDrawerViewModel> { AppDrawerViewModelImpl(get()) }
             })

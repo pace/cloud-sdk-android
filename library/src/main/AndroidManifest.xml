@@ -24,12 +24,19 @@
             android:theme="@style/AppKitTheme" />
 
         <activity
-            android:name=".appkit.app.customtab.CustomTabManagementActivity"
+            android:name=".appkit.app.deeplink.DeepLinkManagementActivity"
             android:exported="false"
             android:launchMode="singleTask" />
 
         <activity
-            android:name=".appkit.app.customtab.RedirectUriReceiverActivity"
+            android:name=".appkit.app.deeplink.WebViewActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppKitTheme" />
+
+        <activity
+            android:name=".appkit.app.deeplink.RedirectUriReceiverActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

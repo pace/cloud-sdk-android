@@ -18,7 +18,7 @@ android {
         testInstrumentationRunner = Libs.TEST_INSTRUMENTATION_RUNNER
 
         manifestPlaceholders["pace_redirect_scheme"] = "pace.99b69996-9d26-4d73-8dd2-b4414f2c8826"
-        manifestPlaceholders["appAuthRedirectScheme"] = "pace"
+        manifestPlaceholders["appAuthRedirectScheme"] = "cloud-sdk-example"
     }
 
     buildTypes {

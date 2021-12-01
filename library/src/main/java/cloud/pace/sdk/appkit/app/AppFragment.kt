@@ -1,19 +1,17 @@
 package cloud.pace.sdk.appkit.app
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import cloud.pace.sdk.R
 import cloud.pace.sdk.api.utils.InterceptorUtils
-import cloud.pace.sdk.appkit.app.AppFragmentViewModelImpl.Companion.CHROME_PACKAGE_NAME
-import cloud.pace.sdk.appkit.app.customtab.CustomTabManagementActivity
-import cloud.pace.sdk.appkit.app.customtab.CustomTabManagementActivity.Companion.CUSTOM_TABS_INTENT
+import cloud.pace.sdk.appkit.app.deeplink.DeepLinkManagementActivity
+import cloud.pace.sdk.appkit.app.deeplink.DeepLinkManagementActivity.Companion.INTEGRATED
+import cloud.pace.sdk.appkit.app.deeplink.DeepLinkManagementActivity.Companion.URL
 import cloud.pace.sdk.utils.Canceled
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Ok
@@ -35,7 +33,7 @@ class AppFragment : Fragment(), CloudSDKKoinComponent {
         super.onViewCreated(view, savedInstanceState)
 
         val url = activity?.intent?.extras?.getString(AppActivity.APP_URL)
-            ?: activity?.intent?.data?.getQueryParameter(CustomTabManagementActivity.TO)
+            ?: activity?.intent?.data?.getQueryParameter(DeepLinkManagementActivity.TO)
             ?: throw RuntimeException("Missing app URL")
 
         appWebView.init(this, InterceptorUtils.getUrlWithQueryParams(url))
@@ -49,17 +47,10 @@ class AppFragment : Fragment(), CloudSDKKoinComponent {
         viewModel.openUrlInNewTab.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { openURLInNewTabRequest ->
                 context?.let { context ->
-                    val customTabsIntent = CustomTabsIntent.Builder().build()
-
-                    if (viewModel.isChromeCustomTabsSupported(context)) {
-                        customTabsIntent.intent.setPackage(CHROME_PACKAGE_NAME)
-                    }
-
-                    customTabsIntent.intent.data = Uri.parse(openURLInNewTabRequest.url)
-
                     lifecycleScope.launch(Dispatchers.Main) {
-                        val intent = Intent(context, CustomTabManagementActivity::class.java)
-                        intent.putExtra(CUSTOM_TABS_INTENT, customTabsIntent.intent)
+                        val intent = Intent(context, DeepLinkManagementActivity::class.java)
+                            .putExtra(URL, openURLInNewTabRequest.url)
+                            .putExtra(INTEGRATED, openURLInNewTabRequest.integrated)
 
                         when (val result = getResultFor(intent)) {
                             is Ok -> {

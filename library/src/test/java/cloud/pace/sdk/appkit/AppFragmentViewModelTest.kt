@@ -4,8 +4,6 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import cloud.pace.sdk.appkit.app.AppFragmentViewModel
 import cloud.pace.sdk.appkit.app.AppFragmentViewModelImpl
-import cloud.pace.sdk.appkit.communication.AppEventManager
-import cloud.pace.sdk.appkit.communication.AppEventManagerImpl
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.communication.AppModelImpl
 import cloud.pace.sdk.appkit.communication.generated.model.request.OpenURLInNewTabRequest
@@ -35,21 +33,16 @@ class AppFragmentViewModelTest : KoinTest {
     val rule = InstantTaskExecutorRule()
 
     private val mockContext = mock(Context::class.java)
-    private val eventManager = AppEventManagerImpl()
     private val appModel = AppModelImpl(mockContext)
     private val viewModel: AppFragmentViewModel by inject()
 
     private val testModule = module {
-        single<AppEventManager> {
-            eventManager
-        }
-
         single<AppModel> {
             appModel
         }
 
         viewModel<AppFragmentViewModel> {
-            AppFragmentViewModelImpl(get(), get())
+            AppFragmentViewModelImpl(get())
         }
     }
 
@@ -69,7 +62,7 @@ class AppFragmentViewModelTest : KoinTest {
     @Test
     fun `open url in new tab`() {
         val url = "https://app.net"
-        val openURLInNewTabRequest = OpenURLInNewTabRequest(url, "cancelUrl")
+        val openURLInNewTabRequest = OpenURLInNewTabRequest(url, "cancelUrl", false)
         appModel.openUrlInNewTab(openURLInNewTabRequest)
         assertEquals(openURLInNewTabRequest, viewModel.openUrlInNewTab.value?.peekContent())
     }

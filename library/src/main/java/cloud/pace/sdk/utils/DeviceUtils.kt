@@ -1,5 +1,7 @@
 package cloud.pace.sdk.utils
 
+import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Build
 import okio.Buffer
 
@@ -108,5 +110,10 @@ object DeviceUtils {
             i += Character.charCount(codePoint)
         }
         return string
+    }
+
+    fun getRedirectScheme(context: Context): String? {
+        val applicationInfo = context.packageManager?.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+        return applicationInfo?.metaData?.get("pace_redirect_scheme")?.toString()
     }
 }

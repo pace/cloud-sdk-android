@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
                 apiKey = "YOUR_API_KEY",
                 environment = Environment.DEVELOPMENT,
                 geoAppsScope = "pace-drive-android-min",
-                oidConfiguration = CustomOIDConfiguration("cloud-sdk-example-app", "pace://cloud-sdk-example")
+                oidConfiguration = CustomOIDConfiguration("cloud-sdk-example-app", "cloud-sdk-example://callback")
             )
         )
 
