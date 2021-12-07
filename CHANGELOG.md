@@ -6,6 +6,14 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+12.0.1 Release notes (2021-12-07)
+=============================================================
+
+### Internal
+
+* Regenerate communication code and rewrite the `openUrlInNewTab` PWA request to handle the new `integrated` parameter. If the `integrated` parameter is set to true, then the URL will be loaded in a new WebView instead of the custom tab.
+
+
 12.0.0 Release notes (2021-12-06)
 =============================================================
 
@@ -14,24 +22,18 @@ x.y.z Release notes (yyyy-MM-dd)
 * Simplified setup of IDKit. SDK now decides which `OIDConfiguration` should be used so that clients only need to provide a `CustomOIDConfiguration` with a `clientId` and `redirectUri`.
 
 ### Enhancements
-### Fixes
-
-* Add default ProGuard rules to fix possible problems when using ProGuard in your app
-
-### Internal
 
 * Add `additionalProperties` property to `GasStation` model
 * Set `pace.cloud` as default value of the `domainACL` property in the PACE Cloud SDK configuration
 
 ### Fixes
 
-* Add default ProGuard rules to fix possible problems when using ProGuard in your app
+* Add default ProGuard rules to fix possible problems when client apps use ProGuard
 
 ### Internal
 
 * Add `ACCESS_COARSE_LOCATION` permission check in SystemManager
 * Update Room's version to `2.4.0-beta02` to fix a bug on Apple's M1 chips
-* Regenerate communication code and rewrite the `openUrlInNewTab` PWA request to handle the new `integrated` parameter. If the `integrated` parameter is set to true, then the URL will be loaded in a new WebView instead of the custom tab.
 
 
 11.1.0 Release notes (2021-11-19)
