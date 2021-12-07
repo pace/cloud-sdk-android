@@ -6,6 +6,7 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+import kotlin.Boolean
 import kotlin.String
 
 public data class OpenURLInNewTabRequest(
@@ -16,5 +17,9 @@ public data class OpenURLInNewTabRequest(
   /**
    * The url to be loaded if `url` cannot be opened.
    */
-  public val cancelUrl: String
+  public val cancelUrl: String,
+  /**
+   * Wheter the tab should be opened in the SDK's web view instead of the system's browser.
+   */
+  public val integrated: Boolean?
 )

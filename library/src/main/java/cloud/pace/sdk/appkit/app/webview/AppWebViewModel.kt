@@ -1,7 +1,6 @@
 package cloud.pace.sdk.appkit.app.webview
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.location.Location
 import android.net.Uri
@@ -381,7 +380,7 @@ class AppWebViewModelImpl(
             OpenURLInNewTabResult(OpenURLInNewTabResult.Failure(OpenURLInNewTabResult.Failure.StatusCode.RequestTimeout, OpenURLInNewTabError("Timeout for openURLInNewTab"))),
             OpenURLInNewTabResult(OpenURLInNewTabResult.Failure(OpenURLInNewTabResult.Failure.StatusCode.InternalServerError, OpenURLInNewTabError("An error occurred")))
         ) {
-            val redirectScheme = getRedirectScheme()
+            val redirectScheme = DeviceUtils.getRedirectScheme(context)
             if (!redirectScheme.isNullOrEmpty()) {
                 appModel.openUrlInNewTab(openURLInNewTabRequest)
                 OpenURLInNewTabResult(OpenURLInNewTabResult.Success())
@@ -494,7 +493,7 @@ class AppWebViewModelImpl(
             AppInterceptableLinkResult(AppInterceptableLinkResult.Failure(AppInterceptableLinkResult.Failure.StatusCode.RequestTimeout, AppInterceptableLinkError("Timeout for appInterceptableLink"))),
             AppInterceptableLinkResult(AppInterceptableLinkResult.Failure(AppInterceptableLinkResult.Failure.StatusCode.InternalServerError, AppInterceptableLinkError("An error occurred")))
         ) {
-            val redirectScheme = getRedirectScheme()
+            val redirectScheme = DeviceUtils.getRedirectScheme(context)
             if (!redirectScheme.isNullOrEmpty()) {
                 AppInterceptableLinkResult(AppInterceptableLinkResult.Success(AppInterceptableLinkResponse(redirectScheme)))
             } else {
@@ -743,11 +742,6 @@ class AppWebViewModelImpl(
             Timber.e(e, errorResult.body?.toString())
             errorResult
         }
-    }
-
-    private fun getRedirectScheme(): String? {
-        val applicationInfo = context.packageManager?.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-        return applicationInfo?.metaData?.get("pace_redirect_scheme")?.toString()
     }
 
     private fun getHost() = currentUrl.value?.let { Uri.parse(it).host }

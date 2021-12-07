@@ -1,7 +1,6 @@
 package cloud.pace.sdk
 
 import android.content.Context
-import android.content.pm.PackageManager
 import android.util.Log
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.appkit.AppKit
@@ -106,11 +105,8 @@ object PACECloudSDK {
 
         isSetup = true
 
-        val applicationInfo = context.packageManager?.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-        val redirectScheme = applicationInfo?.metaData?.get("pace_redirect_scheme")?.toString()
-
         SetupLogger.apiKey = configuration.apiKey
-        SetupLogger.redirectScheme = redirectScheme
+        SetupLogger.redirectScheme = DeviceUtils.getRedirectScheme(context)
         SetupLogger.environment = configuration.environment
         SetupLogger.domainACL = configuration.domainACL
         SetupLogger.checkRedirectScheme = configuration.checkRedirectScheme
