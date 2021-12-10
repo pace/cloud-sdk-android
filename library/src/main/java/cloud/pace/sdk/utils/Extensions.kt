@@ -2,6 +2,7 @@ package cloud.pace.sdk.utils
 
 import android.content.res.Resources
 import android.util.TypedValue
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.idkit.model.OIDConfiguration
 import net.openid.appauth.ResponseTypeValues
 import java.security.SecureRandom
@@ -90,3 +91,6 @@ fun Environment.getOIDConfiguration(
         }
     }
 }
+
+val PACECloudSDK.environment: Environment
+    get() = configuration.environment
