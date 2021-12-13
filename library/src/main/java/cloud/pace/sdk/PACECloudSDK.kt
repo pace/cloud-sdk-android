@@ -80,7 +80,6 @@ object PACECloudSDK {
 
         KoinConfig.setupCloudSDK(context, configuration.environment, configuration.apiKey)
         configuration.oidConfiguration?.let {
-
             IDKit.setup(
                 context,
                 configuration.environment.getOIDConfiguration(

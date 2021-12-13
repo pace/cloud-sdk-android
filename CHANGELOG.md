@@ -6,6 +6,11 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Enhancements
+
+* Add environment based URL extensions. All extensions are defined in the `URL` object e.g. `URL.dashboard` to get the URL of the dashboard app of the set environment. `Environment.$ENV.$url` is deprecated now.
+
+
 12.0.1 Release notes (2021-12-07)
 =============================================================
 

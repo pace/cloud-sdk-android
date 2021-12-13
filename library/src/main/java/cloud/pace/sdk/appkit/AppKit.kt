@@ -124,7 +124,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openPaceID(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, PACECloudSDK.configuration.environment.idUrl, enableBackToFinish, callback)
+        appManager.openAppActivity(context, URL.paceID, enableBackToFinish, callback)
     }
 
     /**
@@ -136,7 +136,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openPaymentApp(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, PACECloudSDK.configuration.environment.payUrl, enableBackToFinish, callback)
+        appManager.openAppActivity(context, URL.payment, enableBackToFinish, callback)
     }
 
     /**
@@ -148,7 +148,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openTransactions(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, PACECloudSDK.configuration.environment.transactionUrl, enableBackToFinish, callback)
+        appManager.openAppActivity(context, URL.transactions, enableBackToFinish, callback)
     }
 
     /**
@@ -162,11 +162,11 @@ object AppKit : CloudSDKKoinComponent {
     @JvmOverloads
     fun openFuelingApp(context: Context, id: String? = null, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
         if (id == null) {
-            appManager.openAppActivity(context, PACECloudSDK.configuration.environment.fuelingUrl, enableBackToFinish, callback)
+            appManager.openAppActivity(context, URL.fueling, enableBackToFinish, callback)
             return
         }
 
-        fetchAppsByUrl(PACECloudSDK.configuration.environment.fuelingUrl, id) {
+        fetchAppsByUrl(URL.fueling, id) {
             (it as? Success)?.result?.firstOrNull()?.url?.let { url -> appManager.openAppActivity(context, url, enableBackToFinish, callback) }
         }
     }
@@ -180,7 +180,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openDashboard(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, PACECloudSDK.configuration.environment.dashboardUrl, enableBackToFinish, callback)
+        appManager.openAppActivity(context, URL.dashboard, enableBackToFinish, callback)
     }
 
     /**

@@ -1,13 +1,18 @@
 package cloud.pace.sdk.utils
 
 enum class Environment(
+    @Deprecated("Use URL.paceID instead", ReplaceWith("URL.paceID"))
     val idUrl: String,
     val apiUrl: String,
     val searchBaseUrl: String,
     val routingBaseUrl: String,
+    @Deprecated("Use URL.payment instead", ReplaceWith("URL.payment"))
     val payUrl: String,
+    @Deprecated("Use URL.transactions instead", ReplaceWith("URL.transactions"))
     val transactionUrl: String,
+    @Deprecated("Use URL.fueling instead", ReplaceWith("URL.fueling"))
     val fuelingUrl: String,
+    @Deprecated("Use URL.dashboard instead", ReplaceWith("URL.dashboard"))
     val dashboardUrl: String
 ) {
 
