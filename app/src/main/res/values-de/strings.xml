@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PACE Example App</string>
+    <string name="short_login_screen_information">Wilkommen in der PACE Example App.\nKurze Information über den Sinn dieser App.</string>
+    <string name="common_use_unknown">unbekannt</string>
+    <string name="common_use_unit_meter">m</string>
+    <string name="common_use_unit_kilometer">km</string>
+    <string name="fuel_type_diesel">Diesel</string>
+    <string name="fuel_type_petrol_e5">Super</string>
+    <string name="fuel_type_petrol_e10">Super E10</string>
+    <string name="fuel_type_premium_diesel">Premium Diesel</string>
+    <string name="fuel_type_premium_petrol">Premium Benzin</string>
+    <string name="fuel_type_adBlue">AdBlue</string>
+    <string name="fuel_type_title">Kraftstoff</string>
+    <string name="fuel_type_super_plus">Super Plus</string>
+    <string name="fuel_type_e85">Super E85</string>
+    <string name="fuel_type_truckAdBlue">LKW AdBlue</string>
+    <string name="fuel_type_lpg">LPG</string>
+    <string name="fuel_type_truckDiesel">LKW Diesel</string>
+    <string name="fuel_type_dieselB7">Diesel B7</string>
+    <string name="fuel_type_dieselB15">Diesel B15</string>
+    <string name="fuel_type_cng">CNG</string>
+    <string name="fuel_type_lng">LNG</string>
+    <string name="fuel_type_h2">Wasserstoff</string>
+</resources>

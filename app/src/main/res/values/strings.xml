@@ -1,3 +1,24 @@
 <resources>
-    <string name="app_name">PACE Cloud SDK app</string>
+    <string name="app_name">PACE Example App</string>
+    <string name="short_login_screen_information">Welcome to the PACE Example App.\nShort information about the purpose of this application.</string>
+    <string name="common_use_unknown">unknown</string>
+    <string name="common_use_unit_meter">m</string>
+    <string name="common_use_unit_kilometer">km</string>
+    <string name="fuel_type_diesel">Diesel</string>
+    <string name="fuel_type_petrol_e5">Petrol</string>
+    <string name="fuel_type_petrol_e10">Petrol E10</string>
+    <string name="fuel_type_premium_diesel">Premium diesel</string>
+    <string name="fuel_type_premium_petrol">Premium petrol</string>
+    <string name="fuel_type_adBlue">AdBlue</string>
+    <string name="fuel_type_title">Fuel</string>
+    <string name="fuel_type_super_plus">Super Plus</string>
+    <string name="fuel_type_e85">Petrol E85</string>
+    <string name="fuel_type_truckAdBlue">Truck AdBlue</string>
+    <string name="fuel_type_lpg">LPG</string>
+    <string name="fuel_type_truckDiesel">Truck Diesel</string>
+    <string name="fuel_type_dieselB7">Diesel B7</string>
+    <string name="fuel_type_dieselB15">Diesel B15</string>
+    <string name="fuel_type_cng">CNG</string>
+    <string name="fuel_type_lng">LNG</string>
+    <string name="fuel_type_h2">Hydrogen</string>
 </resources>

@@ -1,0 +1,50 @@
+package cloud.pace.sdk.app
+
+import android.content.Intent
+import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.lifecycle.lifecycleScope
+import cloud.pace.sdk.app.view.loginscreen.ShowLoginScreen
+import cloud.pace.sdk.idkit.IDKit
+import cloud.pace.sdk.utils.Failure
+import cloud.pace.sdk.utils.Success
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
+class LoginScreenActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            ShowLoginScreen {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    IDKit.authorize(this@LoginScreenActivity) {
+                        when (it) {
+                            // it.result contains accessToken
+                            is Success -> {
+                                Toast.makeText(this@LoginScreenActivity, "$it: Login successful!", Toast.LENGTH_LONG).show()
+                                val intent = Intent(this@LoginScreenActivity, MainScreenActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            }
+                            // it.throwable contains error
+                            is Failure -> {
+                                Toast.makeText(this@LoginScreenActivity, "$it: Login failed!", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
