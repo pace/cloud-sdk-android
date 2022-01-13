@@ -6,9 +6,13 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Enhancements
+
+* Add the possibility to open authorization and end session requests in a WebView instead of the custom tab. This behavior can be controlled with the new `integrated` attribute of the `oidConfiguration` of the SDK setup `configuration`. Set `integrated` to `true`, if you want to open the authorization and end session requests in a WebView. Set it to `false` (default), if you want to open them in the custom tab as before.
+
+
 12.1.0 Release notes (2022-01-10)
 =============================================================
-
 
 ### Enhancements
 
@@ -85,7 +89,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Adjust TOTP secret handling
 * Send 499 status when user cancels login
-* Add `appAuthRedirectTheme` as `metaData` in Manifest
+* Add `appAuthRedirectScheme` as `metaData` in Manifest
 
 
 10.2.2 Release notes (2021-10-20)

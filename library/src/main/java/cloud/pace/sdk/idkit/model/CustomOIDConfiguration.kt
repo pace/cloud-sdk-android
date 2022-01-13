@@ -12,5 +12,6 @@ data class CustomOIDConfiguration @JvmOverloads constructor(
     val clientSecret: String? = null,
     val scopes: List<String>? = null,
     val responseType: String = ResponseTypeValues.CODE,
-    var additionalParameters: Map<String, String>? = null
+    var additionalParameters: Map<String, String>? = null,
+    val integrated: Boolean = false
 )

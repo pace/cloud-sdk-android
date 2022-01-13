@@ -92,7 +92,8 @@ object PACECloudSDK {
                     it.authorizationEndpoint,
                     it.endSessionEndpoint,
                     it.tokenEndpoint,
-                    it.userInfoEndpoint
+                    it.userInfoEndpoint,
+                    it.integrated
                 )
             )
         }
@@ -105,7 +106,7 @@ object PACECloudSDK {
         isSetup = true
 
         SetupLogger.apiKey = configuration.apiKey
-        SetupLogger.redirectScheme = DeviceUtils.getRedirectScheme(context)
+        SetupLogger.redirectScheme = DeviceUtils.getPACERedirectScheme(context)
         SetupLogger.environment = configuration.environment
         SetupLogger.domainACL = configuration.domainACL
         SetupLogger.checkRedirectScheme = configuration.checkRedirectScheme

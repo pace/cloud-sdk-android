@@ -50,6 +50,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".idkit.authorization.integrated.AuthorizationWebViewActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppKitTheme" />
+
         <receiver
             android:name=".appkit.geofences.GeofenceBroadcastReceiver"
             android:exported="false" />

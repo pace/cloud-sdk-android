@@ -1,12 +1,11 @@
 # PACE Cloud SDK – Android
 
-This framework combines multipe functionalities provided by PACE i.e. authorizing via **PACE ID** or requesting and displaying **Apps**. These functionalities are separated and structured into different ***Kits*** by namespaces, i.e. [IDKit](#idkit), [AppKit](#appkit).
+This framework combines multipe functionalities provided by PACE i.e. authorizing via **PACE ID** or requesting and displaying **Apps**. These functionalities are separated and structured into different ***Kits*** by namespaces, i.e. [IDKit](#idkit), [AppKit](#appkit) and [POIKit](#poikit).
 
 - [PACE Cloud SDK](#pace-cloud-sdk)
     * [Source code](#source-code)
     * [Specifications](#specifications)
     * [Installation](#installation)
-        + [Maven Central](#maven-central)
     * [Setup](#setup)
     * [Migration](#migration)
         + [2.x.x -> 3.x.x](#from-2xx-to-3xx)
@@ -91,9 +90,6 @@ It uses the following dependencies:
 - [Timber](https://github.com/JakeWharton/timber): A logger with a small, extensible API which provides utility on top of Android's normal Log class.
 
 ## Installation
-You can get the `PACECloudSDK` from **one** of the following repositories.
-
-### Maven Central
 Add Maven Central to your top-level `build.gradle` (if not yet):
 ```groovy
 allprojects {
@@ -115,7 +111,7 @@ dependencies {
 ## Setup
 The `PACECloudSDK` needs to be setup before any of its `Kits` can be used. Therefore you *must* call `PACECloudSDK.setup(context: Context, configuration: Configuration)`. The best way to do this is inside your `Application` class. It will automatically authorize your application with the provided api key.
 
-The `Configuration` only has `clientAppName`, `clientAppVersion`, `clientAppBuild` and `apiKey` as mandatory properties. All others are optional and can be passed as necessary.
+The `Configuration` only has `clientAppName`, `clientAppVersion`, `clientAppBuild`, `apiKey` and `oidConfiguration` as mandatory properties. All others are optional and can be passed as necessary.
 
 **Note:** `PACECloudSDK` is using the `PRODUCTION` environment as default. In case you are still doing tests, you probably want to change it to `SANDBOX` or `STAGING`.
 
@@ -126,6 +122,7 @@ clientAppName: String
 clientAppVersion: String
 clientAppBuild: String
 apiKey: String
+checkRedirectScheme: Boolean // Default: true
 authenticationMode: AuthenticationMode // Default: AuthenticationMode.NATIVE
 environment: Environment // Default: Environment.PRODUCTION
 extensions: List<String> // Default: emptyList()
@@ -133,6 +130,8 @@ domainACL: List<String> // Default: listOf("pace.cloud")
 locationAccuracy: Int? // Default: null
 speedThresholdInKmPerHour: Int // Default: 50
 geoAppsScope: String // Default: "pace-min"
+appsDistanceThresholdInMeters: Int // Default: 150
+oidConfiguration: CustomOIDConfiguration?
 ```
 
 PACE Cloud SDK uses [AppAuth for Android](https://github.com/openid/AppAuth-Android) for the native authentication in *IDKit*, which needs `appAuthRedirectScheme` manifest placeholder to be set. PACE Cloud SDK requires `pace_redirect_scheme` for [Deep Linking](#deep-linking) to be set. Both these manifest placeholder must be configured in your app's `build.gradle` file. In case you won't be using native login, you can set an empty string for `appAuthRedirectScheme`.
@@ -191,9 +190,8 @@ The `PACECloudSDK.setup()` has been simplified:
 ### Setup
 **Note:** For authorization and session ending please make sure that the `appAuthRedirectScheme` is set in your app's `build.gradle` file as described in the general [setup](#setup) section.
 
-The parameter `additionalCaching` defines if *IDKit* persists the session additionally to the native WebView/Browser caching.
-
 To initialize the *IDKit* you have to pass an `CustomOIDConfiguration` to the `Configuration` of the `PACECloudSDK.setup(...)` method. If own identity provider endpoints should be used, they can also be set via the `CustomOIDConfiguration`.
+If you want to perform the authorization and end session requests in a WebView instead of the [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs), you have to set the `integrated` attribute of the `CustomOIDConfiguration` to `true`.
 
 This example shows the initialization with the development environment. For production apps, set `environment = Environment.PRODUCTION`.
 ```kotlin

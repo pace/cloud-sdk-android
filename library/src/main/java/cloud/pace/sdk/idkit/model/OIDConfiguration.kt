@@ -12,7 +12,8 @@ data class OIDConfiguration @JvmOverloads constructor(
     val scopes: List<String>? = null,
     val redirectUri: String,
     val responseType: String = ResponseTypeValues.CODE,
-    var additionalParameters: Map<String, String>? = null
+    var additionalParameters: Map<String, String>? = null,
+    val integrated: Boolean = false
 ) {
 
     companion object {
@@ -29,6 +30,7 @@ data class OIDConfiguration @JvmOverloads constructor(
             endSessionEndpoint: String? = null,
             tokenEndpoint: String? = null,
             userInfoEndpoint: String? = null,
+            integrated: Boolean = false
         ) = OIDConfiguration(
             authorizationEndpoint = authorizationEndpoint ?: "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/auth",
             endSessionEndpoint = endSessionEndpoint ?: "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/logout",
@@ -39,7 +41,8 @@ data class OIDConfiguration @JvmOverloads constructor(
             scopes = scopes,
             redirectUri = redirectUri,
             responseType = responseType,
-            additionalParameters = additionalParameters
+            additionalParameters = additionalParameters,
+            integrated = integrated
         )
 
         @JvmOverloads
@@ -54,6 +57,7 @@ data class OIDConfiguration @JvmOverloads constructor(
             endSessionEndpoint: String? = null,
             tokenEndpoint: String? = null,
             userInfoEndpoint: String? = null,
+            integrated: Boolean = false
         ) = OIDConfiguration(
             authorizationEndpoint = authorizationEndpoint ?: "https://id.sandbox.pace.cloud/auth/realms/pace/protocol/openid-connect/auth",
             endSessionEndpoint = endSessionEndpoint ?: "https://id.sandbox.pace.cloud/auth/realms/pace/protocol/openid-connect/logout",
@@ -64,7 +68,8 @@ data class OIDConfiguration @JvmOverloads constructor(
             scopes = scopes,
             redirectUri = redirectUri,
             responseType = responseType,
-            additionalParameters = additionalParameters
+            additionalParameters = additionalParameters,
+            integrated = integrated
         )
 
         @JvmOverloads
@@ -79,6 +84,7 @@ data class OIDConfiguration @JvmOverloads constructor(
             endSessionEndpoint: String? = null,
             tokenEndpoint: String? = null,
             userInfoEndpoint: String? = null,
+            integrated: Boolean = false
         ) = OIDConfiguration(
             authorizationEndpoint = authorizationEndpoint ?: "https://id.stage.pace.cloud/auth/realms/pace/protocol/openid-connect/auth",
             endSessionEndpoint = endSessionEndpoint ?: "https://id.stage.pace.cloud/auth/realms/pace/protocol/openid-connect/logout",
@@ -89,7 +95,8 @@ data class OIDConfiguration @JvmOverloads constructor(
             scopes = scopes,
             redirectUri = redirectUri,
             responseType = responseType,
-            additionalParameters = additionalParameters
+            additionalParameters = additionalParameters,
+            integrated = integrated
         )
 
         @JvmOverloads
@@ -104,6 +111,7 @@ data class OIDConfiguration @JvmOverloads constructor(
             endSessionEndpoint: String? = null,
             tokenEndpoint: String? = null,
             userInfoEndpoint: String? = null,
+            integrated: Boolean = false
         ) = OIDConfiguration(
             authorizationEndpoint = authorizationEndpoint ?: "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/auth",
             endSessionEndpoint = endSessionEndpoint ?: "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/logout",
@@ -114,7 +122,8 @@ data class OIDConfiguration @JvmOverloads constructor(
             scopes = scopes,
             redirectUri = redirectUri,
             responseType = responseType,
-            additionalParameters = additionalParameters
+            additionalParameters = additionalParameters,
+            integrated = integrated
         )
     }
 }

@@ -75,19 +75,68 @@ fun Environment.getOIDConfiguration(
     endSessionEndpoint: String? = null,
     tokenEndpoint: String? = null,
     userInfoEndpoint: String? = null,
+    integrated: Boolean = false
 ): OIDConfiguration {
     return when (this) {
         Environment.DEVELOPMENT -> {
-            OIDConfiguration.development(clientId, clientSecret, scopes, redirectUri, responseType, additionalParameters, authorizationEndpoint, endSessionEndpoint, tokenEndpoint, userInfoEndpoint)
+            OIDConfiguration.development(
+                clientId,
+                clientSecret,
+                scopes,
+                redirectUri,
+                responseType,
+                additionalParameters,
+                authorizationEndpoint,
+                endSessionEndpoint,
+                tokenEndpoint,
+                userInfoEndpoint,
+                integrated
+            )
         }
         Environment.SANDBOX -> {
-            OIDConfiguration.sandbox(clientId, clientSecret, scopes, redirectUri, responseType, additionalParameters, authorizationEndpoint, endSessionEndpoint, tokenEndpoint, userInfoEndpoint)
+            OIDConfiguration.sandbox(
+                clientId,
+                clientSecret,
+                scopes,
+                redirectUri,
+                responseType,
+                additionalParameters,
+                authorizationEndpoint,
+                endSessionEndpoint,
+                tokenEndpoint,
+                userInfoEndpoint,
+                integrated
+            )
         }
         Environment.STAGING -> {
-            OIDConfiguration.staging(clientId, clientSecret, scopes, redirectUri, responseType, additionalParameters, authorizationEndpoint, endSessionEndpoint, tokenEndpoint, userInfoEndpoint)
+            OIDConfiguration.staging(
+                clientId,
+                clientSecret,
+                scopes,
+                redirectUri,
+                responseType,
+                additionalParameters,
+                authorizationEndpoint,
+                endSessionEndpoint,
+                tokenEndpoint,
+                userInfoEndpoint,
+                integrated
+            )
         }
         Environment.PRODUCTION -> {
-            OIDConfiguration.production(clientId, clientSecret, scopes, redirectUri, responseType, additionalParameters, authorizationEndpoint, endSessionEndpoint, tokenEndpoint, userInfoEndpoint)
+            OIDConfiguration.production(
+                clientId,
+                clientSecret,
+                scopes,
+                redirectUri,
+                responseType,
+                additionalParameters,
+                authorizationEndpoint,
+                endSessionEndpoint,
+                tokenEndpoint,
+                userInfoEndpoint,
+                integrated
+            )
         }
     }
 }
