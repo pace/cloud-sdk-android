@@ -6,8 +6,7 @@ import car.pace.cofu.core.util.decrease
 import car.pace.cofu.core.util.increase
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.pay.PayAPI.paymentMethods
-import cloud.pace.sdk.api.pay.generated.request.paymentMethods.GetPaymentMethodsIncludingCreditCheckAPI
-import cloud.pace.sdk.api.pay.generated.request.paymentMethods.GetPaymentMethodsIncludingCreditCheckAPI.getPaymentMethodsIncludingCreditCheck
+import cloud.pace.sdk.api.pay.generated.request.paymentMethods.GetPaymentMethodsAPI.getPaymentMethods
 import cloud.pace.sdk.utils.enqueue
 
 class PaymentMethodItemViewModel(parent: OnboardingViewModel) :
@@ -44,9 +43,7 @@ class PaymentMethodItemViewModel(parent: OnboardingViewModel) :
 
         parent.loading.increase()
 
-        API.paymentMethods.getPaymentMethodsIncludingCreditCheck(
-            GetPaymentMethodsIncludingCreditCheckAPI.Filterstatus.VALID
-        ).enqueue {
+        API.paymentMethods.getPaymentMethods().enqueue {
             onResponse = {
                 parent.loading.decrease()
                 val body = it.body()

@@ -1,7 +1,6 @@
 package car.pace.cofu.ui.main
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -15,12 +14,9 @@ import car.pace.cofu.core.events.ActivityEvent
 import car.pace.cofu.core.events.CloseDrawer
 import car.pace.cofu.core.events.ShowSnack
 import car.pace.cofu.core.mvvm.BaseActivity
-import car.pace.cofu.core.util.shareImageFile
-import car.pace.cofu.core.util.writeBitmap
 import car.pace.cofu.databinding.ActivityMainBinding
 import car.pace.cofu.ui.home.HomeFragmentDirections
 import cloud.pace.sdk.appkit.AppKit
-import cloud.pace.sdk.appkit.communication.*
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -97,19 +93,13 @@ class MainActivity : BaseMainActivity() {
     private fun onMenuItemClick(menuItemId: Int) {
         hideDrawer()
 
-        val appCallback = object : AppCallbackImpl() {
-            override fun onImageDataReceived(bitmap: Bitmap) {
-                shareImageFile(writeBitmap(bitmap), R.string.share_title)
-            }
-        }
-
         when (menuItemId) {
             R.string.menu_item_impressum -> openWebView("impressum.html")
             R.string.menu_item_privacy -> openWebView("privacy.html")
             R.string.menu_item_licenses -> showLicenseScreen()
             R.string.menu_item_fuel_type -> openFuelTypeSettings()
             R.string.menu_item_payment -> AppKit.openPaymentApp(this)
-            R.string.menu_item_history -> AppKit.openTransactions(this, callback = appCallback)
+            R.string.menu_item_history -> AppKit.openTransactions(this)
             R.string.menu_item_logout -> showLogoutConfirmation()
         }
     }

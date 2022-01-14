@@ -18,8 +18,7 @@ project.file("../secrets.properties").withReader("UTF-8") { reader ->
 }
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.3"
+    compileSdkVersion 31
 
     signingConfigs {
         config {
@@ -33,7 +32,7 @@ android {
     defaultConfig {
         applicationId "car.pace.cofu"
         minSdkVersion 23
-        targetSdkVersion 30
+        targetSdkVersion 31
 
         def version = versionProperties.getProperty("versionName")
         // versionCode is set via CI using -PversionCode=12345
@@ -52,7 +51,7 @@ android {
 
         manifestPlaceholders = [
                 'appAuthRedirectScheme': secretsProperties.getProperty("paceCloudRedirectScheme"), // e.g. reverse domain name notation: cloud.pace.app
-                'pace_redirect_scheme': secretsProperties.getProperty("paceCloudUniqueId") // e.g. pace.ad50262a-9c88-4a5f-bc55-00dc31b81e5a
+                'pace_redirect_scheme' : secretsProperties.getProperty("paceCloudUniqueId") // e.g. pace.ad50262a-9c88-4a5f-bc55-00dc31b81e5a
         ]
     }
 
@@ -64,11 +63,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
     buildFeatures {
         dataBinding = true
@@ -81,16 +80,13 @@ android {
 
 dependencies {
     // Pace Cloud SDK
-    implementation "cloud.pace:sdk:9.0.0"
-    
-    // Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "cloud.pace:sdk:12.2.0"
 
     // Google support and design libraries
-    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
     implementation 'com.google.android.material:material:1.4.0'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
     implementation "androidx.navigation:navigation-fragment-ktx:2.3.5"
     implementation "androidx.navigation:navigation-ui-ktx:2.3.5"
     implementation "com.google.android.gms:play-services-oss-licenses:17.0.0"

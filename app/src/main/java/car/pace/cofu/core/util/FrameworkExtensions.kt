@@ -3,14 +3,11 @@ package car.pace.cofu.core.util
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import androidx.annotation.StringRes
-import androidx.core.content.FileProvider
 import androidx.core.location.LocationManagerCompat
 import java.io.File
 
@@ -44,19 +41,6 @@ fun Context.writeBitmap(bitmap: Bitmap): File {
         out.flush()
     }
     return file
-}
-
-/**
- * Extension for showing a file.
- */
-fun Context.shareImageFile(file: File, @StringRes chooserResId: Int) {
-    val action = Intent(Intent.ACTION_SEND).apply {
-        val uri = FileProvider.getUriForFile(this@shareImageFile, "com.pace.fileprovider", file)
-        putExtra(Intent.EXTRA_STREAM, uri)
-        type = ("image/jpeg")
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    }
-    this.startActivity(Intent.createChooser(action, getString(chooserResId)))
 }
 
 /**
