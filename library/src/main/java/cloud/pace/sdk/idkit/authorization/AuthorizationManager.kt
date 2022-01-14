@@ -7,15 +7,15 @@ import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.SESSION_CACHE
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.idkit.IDKit
+import cloud.pace.sdk.idkit.authorization.integrated.AuthorizationWebViewActivity
 import cloud.pace.sdk.idkit.model.*
 import cloud.pace.sdk.idkit.userinfo.UserInfoApiClient
 import cloud.pace.sdk.idkit.userinfo.UserInfoResponse
@@ -23,12 +23,13 @@ import cloud.pace.sdk.utils.*
 import net.openid.appauth.*
 import org.json.JSONException
 import timber.log.Timber
+import kotlin.collections.set
 
 internal class AuthorizationManager(
     private val context: Context,
     private val authorizationService: AuthorizationService,
     private val sharedPreferencesModel: SharedPreferencesModel
-) : CloudSDKKoinComponent, LifecycleObserver {
+) : CloudSDKKoinComponent, DefaultLifecycleObserver {
 
     private lateinit var configuration: OIDConfiguration
     private lateinit var authorizationRequest: AuthorizationRequest
@@ -100,14 +101,31 @@ internal class AuthorizationManager(
             PendingIntent.FLAG_UPDATE_CURRENT
         }
 
-        authorizationService.performAuthorizationRequest(
-            authorizationRequest,
-            PendingIntent.getActivity(context, 0, Intent(context, completedActivity), flags),
-            PendingIntent.getActivity(context, 0, Intent(context, canceledActivity), flags)
-        )
+        if (configuration.integrated) {
+            val intent = AuthorizationWebViewActivity.createStartIntent(
+                context,
+                authorizationRequest,
+                PendingIntent.getActivity(context, 0, Intent(context, completedActivity), flags),
+                PendingIntent.getActivity(context, 0, Intent(context, canceledActivity), flags)
+            )
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+        } else {
+            authorizationService.performAuthorizationRequest(
+                authorizationRequest,
+                PendingIntent.getActivity(context, 0, Intent(context, completedActivity), flags),
+                PendingIntent.getActivity(context, 0, Intent(context, canceledActivity), flags)
+            )
+        }
     }
 
-    internal fun authorize() = authorizationService.getAuthorizationRequestIntent(authorizationRequest)
+    internal fun authorize(): Intent {
+        return if (configuration.integrated) {
+            AuthorizationWebViewActivity.createStartIntent(context, authorizationRequest)
+        } else {
+            authorizationService.getAuthorizationRequestIntent(authorizationRequest)
+        }
+    }
 
     internal fun handleAuthorizationResponse(intent: Intent, completion: (Completion<String?>) -> Unit) {
         val response = AuthorizationResponse.fromIntent(intent)
@@ -168,16 +186,35 @@ internal class AuthorizationManager(
         }
 
         return createEndSessionRequest()?.let {
-            authorizationService.performEndSessionRequest(
-                it,
-                PendingIntent.getActivity(context, 0, Intent(context, completedActivity), flags),
-                PendingIntent.getActivity(context, 0, Intent(context, canceledActivity), flags)
-            )
+            if (configuration.integrated) {
+                val intent = AuthorizationWebViewActivity.createStartIntent(
+                    context,
+                    it,
+                    PendingIntent.getActivity(context, 0, Intent(context, completedActivity), flags),
+                    PendingIntent.getActivity(context, 0, Intent(context, canceledActivity), flags)
+                )
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+            } else {
+                authorizationService.performEndSessionRequest(
+                    it,
+                    PendingIntent.getActivity(context, 0, Intent(context, completedActivity), flags),
+                    PendingIntent.getActivity(context, 0, Intent(context, canceledActivity), flags)
+                )
+            }
             true
         } ?: false
     }
 
-    internal fun endSession() = createEndSessionRequest()?.let { authorizationService.getEndSessionRequestIntent(it) }
+    internal fun endSession(): Intent? {
+        return createEndSessionRequest()?.let {
+            if (configuration.integrated) {
+                AuthorizationWebViewActivity.createStartIntent(context, it)
+            } else {
+                authorizationService.getEndSessionRequestIntent(it)
+            }
+        }
+    }
 
     internal fun handleEndSessionResponse(intent: Intent, completion: (Completion<Unit>) -> Unit) {
         val response = EndSessionResponse.fromIntent(intent)
@@ -339,8 +376,7 @@ internal class AuthorizationManager(
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    private fun dispose() {
+    override fun onDestroy(owner: LifecycleOwner) {
         // This must be called to avoid memory leaks.
         authorizationService.dispose()
     }

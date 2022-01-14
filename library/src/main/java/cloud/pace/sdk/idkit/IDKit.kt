@@ -3,7 +3,6 @@ package cloud.pace.sdk.idkit
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -23,10 +22,7 @@ import cloud.pace.sdk.idkit.credentials.CredentialsManager
 import cloud.pace.sdk.idkit.model.OIDConfiguration
 import cloud.pace.sdk.idkit.model.ServiceConfiguration
 import cloud.pace.sdk.idkit.userinfo.UserInfoResponse
-import cloud.pace.sdk.utils.CloudSDKKoinComponent
-import cloud.pace.sdk.utils.Completion
-import cloud.pace.sdk.utils.SetupLogger
-import cloud.pace.sdk.utils.handleCallback
+import cloud.pace.sdk.utils.*
 import org.koin.core.component.inject
 
 object IDKit : CloudSDKKoinComponent {
@@ -54,10 +50,7 @@ object IDKit : CloudSDKKoinComponent {
         authorizationManager.setAdditionalParameters(PACECloudSDK.additionalQueryParams)
         isInitialized = true
 
-        val applicationInfo = context.packageManager?.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-        val appAuthRedirectScheme = applicationInfo?.metaData?.get("appAuthRedirectScheme")?.toString()
-
-        SetupLogger.appAuthRedirectScheme = appAuthRedirectScheme
+        SetupLogger.appAuthRedirectScheme = DeviceUtils.getAppAuthRedirectScheme(context)
         SetupLogger.oidConfiguration = configuration
         SetupLogger.preCheckIDKitSetup()
     }

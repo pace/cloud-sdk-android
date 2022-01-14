@@ -380,7 +380,7 @@ class AppWebViewModelImpl(
             OpenURLInNewTabResult(OpenURLInNewTabResult.Failure(OpenURLInNewTabResult.Failure.StatusCode.RequestTimeout, OpenURLInNewTabError("Timeout for openURLInNewTab"))),
             OpenURLInNewTabResult(OpenURLInNewTabResult.Failure(OpenURLInNewTabResult.Failure.StatusCode.InternalServerError, OpenURLInNewTabError("An error occurred")))
         ) {
-            val redirectScheme = DeviceUtils.getRedirectScheme(context)
+            val redirectScheme = DeviceUtils.getPACERedirectScheme(context)
             if (!redirectScheme.isNullOrEmpty()) {
                 appModel.openUrlInNewTab(openURLInNewTabRequest)
                 OpenURLInNewTabResult(OpenURLInNewTabResult.Success())
@@ -493,7 +493,7 @@ class AppWebViewModelImpl(
             AppInterceptableLinkResult(AppInterceptableLinkResult.Failure(AppInterceptableLinkResult.Failure.StatusCode.RequestTimeout, AppInterceptableLinkError("Timeout for appInterceptableLink"))),
             AppInterceptableLinkResult(AppInterceptableLinkResult.Failure(AppInterceptableLinkResult.Failure.StatusCode.InternalServerError, AppInterceptableLinkError("An error occurred")))
         ) {
-            val redirectScheme = DeviceUtils.getRedirectScheme(context)
+            val redirectScheme = DeviceUtils.getPACERedirectScheme(context)
             if (!redirectScheme.isNullOrEmpty()) {
                 AppInterceptableLinkResult(AppInterceptableLinkResult.Success(AppInterceptableLinkResponse(redirectScheme)))
             } else {

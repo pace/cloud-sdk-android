@@ -80,7 +80,7 @@ class WebViewActivity : AppCompatActivity() {
 
     private fun intercept(newUri: Uri?): Boolean {
         // Intercept redirect service deep link
-        return if (newUri?.scheme == DeviceUtils.getRedirectScheme(this)) {
+        return if (newUri?.scheme == DeviceUtils.getPACERedirectScheme(this)) {
             startActivity(Intent(Intent.ACTION_VIEW, newUri))
             true
         } else {

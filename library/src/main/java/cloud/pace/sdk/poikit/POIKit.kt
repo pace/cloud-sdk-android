@@ -1,10 +1,7 @@
 package cloud.pace.sdk.poikit
 
 import android.location.Location
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
-import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.*
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.poi.POIAPI.gasStations
 import cloud.pace.sdk.api.poi.POIAPI.metadataFilters
@@ -38,7 +35,7 @@ import io.reactivex.rxjava3.core.Observable
 import org.koin.core.component.inject
 import java.util.*
 
-object POIKit : CloudSDKKoinComponent, LifecycleObserver {
+object POIKit : CloudSDKKoinComponent, DefaultLifecycleObserver {
 
     private val database: POIKitDatabase by inject()
     private val navigationApi: NavigationApiClient by inject()
@@ -64,13 +61,11 @@ object POIKit : CloudSDKKoinComponent, LifecycleObserver {
         locationProvider.removeLocationUpdates()
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    private fun onLifecycleStart() {
+    override fun onStart(owner: LifecycleOwner) {
         locationProvider.requestLocationUpdates()
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    private fun onLifecycleStop() {
+    override fun onStop(owner: LifecycleOwner) {
         stopLocationListener()
     }
 
