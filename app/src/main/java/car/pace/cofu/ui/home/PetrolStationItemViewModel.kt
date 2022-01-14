@@ -10,8 +10,8 @@ import car.pace.cofu.core.mvvm.BaseItemViewModel
 import car.pace.cofu.core.mvvm.BaseViewModel
 import car.pace.cofu.core.resources.ResourcesProvider
 import car.pace.cofu.core.util.formattedAsMeter
-import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.app.api.AppRepositoryImpl
+import cloud.pace.sdk.poikit.POIKit
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.Price
 import kotlinx.coroutines.launch
@@ -99,7 +99,7 @@ class PetrolStationItemViewModel(
 
         // the call is async, but it is a local check so it will be quick
         parent.viewModelScope.launch {
-            isCloseEnoughForFueling.set(AppKit.isPoiInRange(item.id, location))
+            isCloseEnoughForFueling.set(POIKit.isPoiInRange(item.id, location))
         }
     }
 

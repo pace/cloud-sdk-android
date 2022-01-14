@@ -12,7 +12,7 @@ import car.pace.cofu.core.mvvm.BaseItemViewModel
 import car.pace.cofu.core.mvvm.BaseViewModel
 import car.pace.cofu.core.resources.ResourcesProvider
 import car.pace.cofu.repository.UserDataRepository
-import cloud.pace.sdk.appkit.AppKit
+import cloud.pace.sdk.poikit.POIKit
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
@@ -68,7 +68,7 @@ class HomeViewModel @Inject constructor(
         infoImageNoResults.set(false)
         infoText.set(R.string.home_loading_stations_text)
         loadingCount += 1
-        AppKit.requestCofuGasStations(location, 10000) {
+        POIKit.requestCofuGasStations(location, 10000) {
             loadingCount -= 1
             when (it) {
                 is Success -> setPetrolStations(it.result, location)
