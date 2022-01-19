@@ -70,7 +70,7 @@ object InterceptorUtils {
     fun getAuthenticator() = Authenticator { _, response ->
         if (IDKit.isInitialized && IDKit.isAuthorizationValid()) {
             val oldToken = IDKit.cachedToken()
-            synchronized(this) {
+            synchronized(this) { // perform all 401 in sync blocks, to avoid multiply token updates
                 runCatching {
                     runBlocking {
                         val cachedToken = IDKit.cachedToken()
