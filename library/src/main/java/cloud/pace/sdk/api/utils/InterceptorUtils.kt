@@ -69,16 +69,24 @@ object InterceptorUtils {
 
     fun getAuthenticator() = Authenticator { _, response ->
         if (IDKit.isInitialized && IDKit.isAuthorizationValid()) {
-            runCatching {
-                runBlocking {
-                    suspendCancellableCoroutine<String?> { continuation ->
-                        IDKit.refreshToken {
-                            continuation.resumeIfActive((it as? Success)?.result)
+            val oldToken = IDKit.cachedToken()
+            synchronized(this) {
+                runCatching {
+                    runBlocking {
+                        val cachedToken = IDKit.cachedToken()
+                        if (oldToken == cachedToken) {
+                            suspendCancellableCoroutine { continuation ->
+                                IDKit.refreshToken {
+                                    continuation.resumeIfActive((it as? Success)?.result)
+                                }
+                            }
+                        } else {
+                            cachedToken
                         }
                     }
+                }.getOrNull()?.let {
+                    response.request.newBuilder().header(AUTHORIZATION_HEADER, "Bearer $it").build()
                 }
-            }.getOrNull()?.let {
-                response.request.newBuilder().header(AUTHORIZATION_HEADER, "Bearer $it").build()
             }
         } else {
             null

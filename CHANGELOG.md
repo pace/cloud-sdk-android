@@ -6,6 +6,11 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Internal
+
+* Reduce requests to the token endpoint by refreshing the token only once if multiple API requests fail with `401 - Unauthorized`
+
+
 12.2.0 Release notes (2022-01-14)
 =============================================================
 
