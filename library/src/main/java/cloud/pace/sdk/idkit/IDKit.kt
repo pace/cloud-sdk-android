@@ -6,7 +6,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.pay.PayAPI.paymentMethods
 import cloud.pace.sdk.api.pay.PayAPI.paymentTransactions
@@ -42,12 +41,9 @@ object IDKit : CloudSDKKoinComponent {
      * Sets up [IDKit] with the passed [configuration].
      *
      * @param context The context.
-     * @param additionalCaching If set to `false` persistent session cookies will be shared only natively.
-     * If set to `true` the session will additionally be persisted by [IDKit] to improve the change of not having to resign in again. Defaults to `true`.
      */
-    internal fun setup(context: Context, configuration: OIDConfiguration, additionalCaching: Boolean = true) {
-        authorizationManager.setup(configuration, additionalCaching)
-        authorizationManager.setAdditionalParameters(PACECloudSDK.additionalQueryParams)
+    internal fun setup(context: Context, configuration: OIDConfiguration) {
+        authorizationManager.setup(configuration)
         isInitialized = true
 
         SetupLogger.appAuthRedirectScheme = DeviceUtils.getAppAuthRedirectScheme(context)
@@ -60,6 +56,13 @@ object IDKit : CloudSDKKoinComponent {
      */
     fun setAdditionalParameters(params: Map<String, String>?) {
         authorizationManager.setAdditionalParameters(params)
+    }
+
+    /**
+     * Returns the additional parameters map.
+     */
+    fun getAdditionalParameters(): Map<String, String>? {
+        return authorizationManager.getAdditionalParameters()
     }
 
     /**

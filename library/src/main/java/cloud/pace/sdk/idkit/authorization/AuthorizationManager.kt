@@ -23,7 +23,6 @@ import cloud.pace.sdk.utils.*
 import net.openid.appauth.*
 import org.json.JSONException
 import timber.log.Timber
-import kotlin.collections.set
 
 internal class AuthorizationManager(
     private val context: Context,
@@ -35,28 +34,35 @@ internal class AuthorizationManager(
     private lateinit var authorizationRequest: AuthorizationRequest
     private lateinit var session: AuthState
 
-    private var additionalCaching = true
-
-    internal fun setup(configuration: OIDConfiguration, additionalCaching: Boolean = true) {
+    internal fun setup(configuration: OIDConfiguration) {
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 
-        this.configuration = configuration
-        this.additionalCaching = additionalCaching
+        this.configuration = configuration.apply {
+            additionalParameters = getMergedParameters(additionalParameters ?: emptyMap())
+        }
+
         createAuthorizationRequest(true)
 
-        if (additionalCaching) {
-            loadSession()?.let {
-                session = it
-            }
+        loadSession()?.let {
+            session = it
         }
     }
 
     internal fun setAdditionalParameters(params: Map<String, String>?) {
         if (::configuration.isInitialized) {
-            configuration.additionalParameters = params
+            configuration.additionalParameters = getMergedParameters(params ?: emptyMap())
             createAuthorizationRequest(false)
         } else {
             SetupLogger.logSDKWarningIfNeeded()
+        }
+    }
+
+    internal fun getAdditionalParameters(): Map<String, String>? {
+        return if (::configuration.isInitialized) {
+            configuration.additionalParameters
+        } else {
+            SetupLogger.logSDKWarningIfNeeded()
+            null
         }
     }
 
@@ -272,24 +278,20 @@ internal class AuthorizationManager(
         }
     }
 
+    private fun getMergedParameters(idKitParams: Map<String, String>): Map<String, String> {
+        // If there are keys in both param maps, they will be overwritten with the values from PACECloudSDK.additionalQueryParams
+        return idKitParams + PACECloudSDK.additionalQueryParams
+    }
+
     private fun createAuthorizationRequest(createNewSession: Boolean) {
         val serviceConfiguration = getAuthorizationServiceConfiguration()
         if (createNewSession) {
             session = AuthState(serviceConfiguration)
         }
 
-        val additionalParameters = mutableMapOf<String, String>()
-        configuration.additionalParameters?.let {
-            additionalParameters.putAll(it)
-        }
-
-        if (!additionalParameters.containsKey("utm_source")) {
-            additionalParameters["utm_source"] = PACECloudSDK.configuration.clientAppName
-        }
-
         authorizationRequest = AuthorizationRequest.Builder(serviceConfiguration, configuration.clientId, configuration.responseType, Uri.parse(configuration.redirectUri))
             .setScopes(configuration.scopes?.plus("openid") ?: listOf("openid")) // Make sure that 'openid' is passed as scope so that the idToken for the end session request is returned
-            .setAdditionalParameters(additionalParameters)
+            .setAdditionalParameters(configuration.additionalParameters)
             .build()
     }
 
@@ -334,9 +336,7 @@ internal class AuthorizationManager(
 
     private fun handleTokenResponse(tokenResponse: TokenResponse?, exception: AuthorizationException?, completion: (Completion<String?>) -> Unit) {
         session.update(tokenResponse, exception)
-        if (additionalCaching) {
-            persistSession(session)
-        }
+        persistSession(session)
 
         when {
             exception != null -> {
