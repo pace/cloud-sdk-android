@@ -5,6 +5,7 @@ import android.util.Log
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.idkit.IDKit
+import cloud.pace.sdk.idkit.model.CustomOIDConfiguration
 import cloud.pace.sdk.utils.*
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -14,22 +15,33 @@ object PACECloudSDK {
 
     internal lateinit var configuration: Configuration
     var isSetup: Boolean = false
+
+    /**
+     * The setter replaces the additional query parameters which are appended to each request.
+     * It also updates the additional parameters of the [CustomOIDConfiguration] of the [IDKit].
+     */
     var additionalQueryParams: Map<String, String> = mapOf()
         set(value) {
-            val newQueryParams = mutableMapOf<String, String>()
-            newQueryParams.putAll(value)
+            val newQueryParams = value.toMutableMap()
 
-            defaultUtmParams.forEach {
-                val oldValue = field[it]
-                if (!newQueryParams.containsKey(it) && oldValue != null)
-                    newQueryParams[it] = oldValue
+            if (::configuration.isInitialized) {
+                // Set the default params
+                val defaultUtmParams = mapOf("utm_source" to configuration.clientAppName)
+                for ((key, defaultValue) in defaultUtmParams) {
+                    if (!newQueryParams.containsKey(key)) {
+                        newQueryParams[key] = defaultValue
+                    }
+                }
             }
 
-            IDKit.setAdditionalParameters(newQueryParams)
             field = newQueryParams
+
+            if (IDKit.isInitialized) {
+                // Set the parameters to the same values as before, since they will be merged with the updated additionalQueryParams in the AuthorizationManager (values from the latter map take precedence)
+                IDKit.setAdditionalParameters((IDKit.getAdditionalParameters() ?: emptyMap()))
+            }
         }
 
-    private val defaultUtmParams = listOf("utm_source")
     private var loggingListener: ((String) -> Unit)? = null
     private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ROOT)
     private val cloudSDKTree: Timber.DebugTree by lazy {
@@ -72,6 +84,9 @@ object PACECloudSDK {
      */
     fun setup(context: Context, configuration: Configuration) {
         this.configuration = configuration
+
+        // Call setter of additionalQueryParams to set the default params
+        additionalQueryParams = additionalQueryParams
 
         // Do not log to logcat on production
         if (configuration.environment != Environment.PRODUCTION) {
