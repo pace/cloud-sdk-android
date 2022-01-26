@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Breaking Changes
+
+* The `connectedFuelingStatus` property of the `CofuGasStation` is now nullable so that the Cofu gas station is not skipped in the cache loading if this property is absent in the API response
+
 ### Enhancements
 
 * Add the function `TokenValidator.paymentMethodKinds(accessToken)` to return a list of payment method kinds that are allowed to be onboarded for the passed `accessToken` (see function documentation for further information)

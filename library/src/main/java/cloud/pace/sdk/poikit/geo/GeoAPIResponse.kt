@@ -32,7 +32,7 @@ data class GeoGasStation(
 data class CofuGasStation @JvmOverloads constructor(
     val id: String,
     val coordinate: LatLng,
-    val connectedFuelingStatus: ConnectedFuelingStatus,
+    val connectedFuelingStatus: ConnectedFuelingStatus? = null,
     val properties: Map<String, Any> = emptyMap()
 )
 

@@ -195,7 +195,7 @@ class GeoAPIManagerImpl(
                         val status = (it.properties["connectedFuelingStatus"] as? String)?.let { status ->
                             ConnectedFuelingStatus.values().associateBy(ConnectedFuelingStatus::value)[status]
                         }
-                        if (lat != null && lng != null && status != null) {
+                        if (lat != null && lng != null) {
                             CofuGasStation(it.id, LatLng(lat, lng), status, it.properties)
                         } else {
                             null
