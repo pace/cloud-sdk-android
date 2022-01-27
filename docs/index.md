@@ -350,6 +350,8 @@ IDKit.refreshToken(force) {
 }
 ```
 If the refresh attempt fails an error will be returned.
+This refresh attempt will also be triggered when an API request failed with status code 401.
+If there is no old session for various reasons the client will get an 401 error. In that case the client can e.g. display an `AlertDialog` and perform `IDKit.authorize()` to get an active session.
 
 ### Cached token
 You can get the cached (last refreshed) access token (nullable) as follows:
