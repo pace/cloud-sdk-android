@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Enhancements
+
+* Add the function `TokenValidator.paymentMethodKinds(accessToken)` to return a list of payment method kinds that are allowed to be onboarded for the passed `accessToken`
+
 ### Fixes
 
 * Fix a bug where the `additionalParameters` of the `CustomOIDConfiguration` were overwritten by the values from the `PACECloudSDK.additionalQueryParams`
