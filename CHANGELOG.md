@@ -8,7 +8,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 ### Enhancements
 
-* Add the function `TokenValidator.paymentMethodKinds(accessToken)` to return a list of payment method kinds that are allowed to be onboarded for the passed `accessToken`
+* Add the function `TokenValidator.paymentMethodKinds(accessToken)` to return a list of payment method kinds that are allowed to be onboarded for the passed `accessToken` (see function documentation for further information)
 
 ### Fixes
 
