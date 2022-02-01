@@ -5,22 +5,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.communication.*
+import cloud.pace.sdk.databinding.ActivityAppBinding
+import cloud.pace.sdk.databinding.FragmentAppBinding
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.FailedRetrievingSessionWhileEnding
 import cloud.pace.sdk.utils.*
-import kotlinx.android.synthetic.main.fragment_app.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
 
+    private val binding: ActivityAppBinding by viewBinding(ActivityAppBinding::inflate)
+    private val fragmentBinding: FragmentAppBinding by viewBinding(FragmentAppBinding::inflate)
     private var backToFinish = true
     private val appModel: AppModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_app)
+        setContentView(binding.root)
 
         appModel.reset()
 
@@ -67,12 +70,12 @@ class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
         if (backToFinish) {
             finish()
         } else {
-            appWebView.onBackPressed()
+            fragmentBinding.appWebView.onBackPressed()
         }
     }
 
     override fun onDestroy() {
-        appWebView.onDestroy()
+        fragmentBinding.appWebView.onDestroy()
         super.onDestroy()
     }
 

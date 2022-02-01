@@ -12,17 +12,15 @@ import cloud.pace.sdk.api.utils.InterceptorUtils
 import cloud.pace.sdk.appkit.app.deeplink.DeepLinkManagementActivity
 import cloud.pace.sdk.appkit.app.deeplink.DeepLinkManagementActivity.Companion.INTEGRATED
 import cloud.pace.sdk.appkit.app.deeplink.DeepLinkManagementActivity.Companion.URL
-import cloud.pace.sdk.utils.Canceled
-import cloud.pace.sdk.utils.CloudSDKKoinComponent
-import cloud.pace.sdk.utils.Ok
-import cloud.pace.sdk.utils.getResultFor
-import kotlinx.android.synthetic.main.fragment_app.*
+import cloud.pace.sdk.databinding.FragmentAppBinding
+import cloud.pace.sdk.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AppFragment : Fragment(), CloudSDKKoinComponent {
 
+    private val binding: FragmentAppBinding by viewBinding(FragmentAppBinding::bind)
     private val viewModel: AppFragmentViewModel by viewModel()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -36,7 +34,7 @@ class AppFragment : Fragment(), CloudSDKKoinComponent {
             ?: activity?.intent?.data?.getQueryParameter(DeepLinkManagementActivity.TO)
             ?: throw RuntimeException("Missing app URL")
 
-        appWebView.init(this, InterceptorUtils.getUrlWithQueryParams(url))
+        binding.appWebView.init(this, InterceptorUtils.getUrlWithQueryParams(url))
 
         viewModel.closeEvent.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let {
@@ -56,12 +54,12 @@ class AppFragment : Fragment(), CloudSDKKoinComponent {
                             is Ok -> {
                                 val redirectUri = result.data?.data?.toString()
                                 if (redirectUri != null) {
-                                    appWebView.loadUrl(redirectUri)
+                                    binding.appWebView.loadUrl(redirectUri)
                                 } else {
-                                    appWebView.loadUrl(openURLInNewTabRequest.cancelUrl)
+                                    binding.appWebView.loadUrl(openURLInNewTabRequest.cancelUrl)
                                 }
                             }
-                            is Canceled -> appWebView.loadUrl(openURLInNewTabRequest.cancelUrl)
+                            is Canceled -> binding.appWebView.loadUrl(openURLInNewTabRequest.cancelUrl)
                         }
                     }
                 }

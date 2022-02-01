@@ -6,9 +6,13 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+### Internal
+
+* Replace Kotlin synthetics with Jetpack View Binding
+
+
 13.0.0 Release notes (2022-02-10)
 =============================================================
-
 
 ### Breaking Changes
 

@@ -5,14 +5,11 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.lifecycle.lifecycleScope
 import cloud.pace.sdk.app.view.loginscreen.ShowLoginScreen
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

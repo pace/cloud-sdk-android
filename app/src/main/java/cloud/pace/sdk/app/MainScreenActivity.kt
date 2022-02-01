@@ -7,8 +7,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -19,13 +20,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import cloud.pace.sdk.api.pay.generated.model.Transactions
-import cloud.pace.sdk.app.ui.theme.*
-import cloud.pace.sdk.app.view.*
+import cloud.pace.sdk.app.databinding.ActivityMainBinding
+import cloud.pace.sdk.app.ui.theme.Screen
 import cloud.pace.sdk.app.view.mainscreen.BottomBar
 import cloud.pace.sdk.app.view.mainscreen.SuccessfulLoginDialog
 import cloud.pace.sdk.app.view.mainscreen.dashboardscreen.DashboardScreen
-import cloud.pace.sdk.app.view.mainscreen.settings.SettingsScreen
 import cloud.pace.sdk.app.view.mainscreen.listscreen.ListScreen
+import cloud.pace.sdk.app.view.mainscreen.settings.SettingsScreen
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.model.App
@@ -34,11 +35,12 @@ import cloud.pace.sdk.poikit.POIKit
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
-import kotlinx.android.synthetic.main.activity_main.*
+import cloud.pace.sdk.utils.viewBinding
 import kotlinx.coroutines.launch
 
-class MainScreenActivity() : AppCompatActivity() {
+class MainScreenActivity : AppCompatActivity() {
 
+    private val binding: ActivityMainBinding by viewBinding(ActivityMainBinding::inflate)
     private val gasStations = mutableStateOf<List<GasStation>>(emptyList())
     private val transactions = mutableStateOf<Transactions>(emptyList())
     private var currentApps by mutableStateOf(listOf<App>())
@@ -57,9 +59,9 @@ class MainScreenActivity() : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
 
-        compose_view.apply {
+        binding.composeView.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 BottomBarController()
@@ -69,7 +71,8 @@ class MainScreenActivity() : AppCompatActivity() {
                         lifecycleScope.launch {
                             IDKit.enableBiometricAuthentication {
                                 when (it) {
-                                    is Success -> Toast.makeText(this@MainScreenActivity, if (it.result) "Biometric authentication set" else "Biometric authentication not set", Toast.LENGTH_SHORT).show()
+                                    is Success -> Toast.makeText(this@MainScreenActivity, if (it.result) "Biometric authentication set" else "Biometric authentication not set", Toast.LENGTH_SHORT)
+                                        .show()
                                     is Failure -> Toast.makeText(this@MainScreenActivity, it.throwable.toString(), Toast.LENGTH_LONG).show()
                                 }
                             }
@@ -116,7 +119,7 @@ class MainScreenActivity() : AppCompatActivity() {
                         // Only refresh App Drawers if old and new app lists are not equal
                         if (currentApps.size != apps.size || !currentApps.containsAll(apps)) {
                             currentApps = apps
-                            AppKit.openApps(this, completion.result, main_layout, bottomMargin = 100f, callback = defaultAppCallback)
+                            AppKit.openApps(this, completion.result, binding.mainLayout, bottomMargin = 100f, callback = defaultAppCallback)
                         }
                     }
                 }

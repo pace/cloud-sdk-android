@@ -3,24 +3,23 @@ package cloud.pace.sdk.appkit.network
 import android.content.Context
 import android.os.Handler
 import android.util.AttributeSet
-import android.view.View
+import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import cloud.pace.sdk.R
-import kotlinx.android.synthetic.main.network_failure_view.view.*
+import cloud.pace.sdk.databinding.NetworkFailureViewBinding
 
 class NetworkFailureView(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs) {
 
+    private val binding = NetworkFailureViewBinding.inflate(LayoutInflater.from(context), this)
     var onClick: (() -> Unit)? = null
 
     init {
-        View.inflate(context, R.layout.network_failure_view, this)
-
         findViewById<ProgressButton>(R.id.tryAgainButton).setOnClickListener {
             onClick?.invoke()
-            tryAgainButton.showLoading()
+            binding.tryAgainButton.showLoading()
 
             Handler().postDelayed({
-                tryAgainButton?.stopShowingLoading()
+                binding.tryAgainButton.stopShowingLoading()
             }, 500)
         }
     }
