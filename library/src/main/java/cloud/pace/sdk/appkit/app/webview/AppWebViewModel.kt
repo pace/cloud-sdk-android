@@ -40,6 +40,7 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
 
     abstract val currentUrl: MutableLiveData<String?>
     abstract val init: LiveData<Event<String>>
+    abstract val loadUrl: LiveData<Event<String>>
     abstract val isInErrorState: LiveData<Event<Boolean>>
     abstract val showLoadingIndicator: LiveData<Event<Boolean>>
     abstract val biometricRequest: LiveData<Event<BiometricRequest>>
@@ -68,13 +69,14 @@ class AppWebViewModelImpl(
 
     override val currentUrl = MutableLiveData<String?>()
     override val init = MutableLiveData<Event<String>>()
+    override val loadUrl = MutableLiveData<Event<String>>()
     override val isInErrorState = MutableLiveData<Event<Boolean>>()
     override val showLoadingIndicator = MutableLiveData<Event<Boolean>>()
     override val biometricRequest = MutableLiveData<Event<BiometricRequest>>()
     override val goBack = MutableLiveData<Event<Unit>>()
 
     override fun init(url: String) {
-        this.init.value = Event(url)
+        init.value = Event(url)
     }
 
     override fun closeApp() {
@@ -380,18 +382,25 @@ class AppWebViewModelImpl(
             OpenURLInNewTabResult(OpenURLInNewTabResult.Failure(OpenURLInNewTabResult.Failure.StatusCode.RequestTimeout, OpenURLInNewTabError("Timeout for openURLInNewTab"))),
             OpenURLInNewTabResult(OpenURLInNewTabResult.Failure(OpenURLInNewTabResult.Failure.StatusCode.InternalServerError, OpenURLInNewTabError("An error occurred")))
         ) {
-            val redirectScheme = DeviceUtils.getPACERedirectScheme(context)
-            if (!redirectScheme.isNullOrEmpty()) {
+            // If integrated is true, do not check if PACE redirect scheme is set but always load the URL in the WebViewActivity
+            if (openURLInNewTabRequest.integrated == true) {
                 appModel.openUrlInNewTab(openURLInNewTabRequest)
                 OpenURLInNewTabResult(OpenURLInNewTabResult.Success())
             } else {
-                appModel.onCustomSchemeError(context, "${redirectScheme}://redirect")
-                OpenURLInNewTabResult(
-                    OpenURLInNewTabResult.Failure(
-                        OpenURLInNewTabResult.Failure.StatusCode.MethodNotAllowed,
-                        OpenURLInNewTabError("Redirect scheme for deep linking has not been specified.")
+                val redirectScheme = DeviceUtils.getPACERedirectScheme(context)
+                if (!redirectScheme.isNullOrEmpty()) {
+                    appModel.openUrlInNewTab(openURLInNewTabRequest)
+                    OpenURLInNewTabResult(OpenURLInNewTabResult.Success())
+                } else {
+                    appModel.onCustomSchemeError(context, "${redirectScheme}://redirect")
+                    loadUrl.postValue(Event(openURLInNewTabRequest.cancelUrl))
+                    OpenURLInNewTabResult(
+                        OpenURLInNewTabResult.Failure(
+                            OpenURLInNewTabResult.Failure.StatusCode.MethodNotAllowed,
+                            OpenURLInNewTabError("Redirect scheme for deep linking has not been specified.")
+                        )
                     )
-                )
+                }
             }
         }
     }
