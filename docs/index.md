@@ -13,6 +13,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [9.x.x -> 10.x.x](#from-9xx-to-10xx)
         + [10.x.x -> 11.x.x](#from-10xx-to-11xx)
         + [11.x.x -> 12.x.x](#from-11xx-to-12xx)
+        + [12.x.x -> 13.x.x](#from-12xx-to-13xx)
     * [IDKit](#idkit)
         + [Setup](#setup-1)
         + [Discover configuration](#discover-configuration)
@@ -183,6 +184,10 @@ The `PACECloudSDK.setup()` has been simplified:
 * If you do not pass an `CustomOIDConfiguration`, the `IDKit` can not be used.
 * If used, the `CustomOIDConfiguration` needs to be initialized with at least the `clientId` and the `redirectUri` of your identity provider. All other properties in `CustomOIDConfiguration` can be additionally set if e.g. own identity provider endpoints are wanted.
 * Please head over to [IDKit setup](#setup-1) to learn more about how to set up this functionality.
+
+### From 12.x.x to 13.x.x
+The `connectedFuelingStatus` property of the `CofuGasStation` is now nullable so that the Cofu gas station is not skipped in the cache loading if this property is absent in the API response.
+If you use the `CofuGasStation` object, keep in mind that the `connectedFuelingStatus` property can now be `null`.
 
 ## IDKit
 **IDKit** manages the OpenID (OID) authorization and the general session flow with its token handling via **PACE ID**.
