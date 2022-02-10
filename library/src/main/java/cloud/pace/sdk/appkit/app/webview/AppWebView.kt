@@ -8,13 +8,11 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView.setWebContentsDebuggingEnabled
 import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.generated.CommunicationManager
-import cloud.pace.sdk.appkit.communication.generated.model.request.*
-import cloud.pace.sdk.appkit.communication.generated.model.response.*
 import cloud.pace.sdk.appkit.utils.BiometricUtils
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Event
@@ -41,6 +39,10 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         loadUrl(url)
     }
 
+    private val loadUrlObserver = Observer<Event<String>> {
+        val url = it.getContentIfNotHandled() ?: return@Observer
+        loadUrl(url)
+    }
     private val isInErrorStateObserver = Observer<Event<Boolean>> {
         val isInErrorState = it.getContentIfNotHandled() ?: return@Observer
 
@@ -140,11 +142,10 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        val lifecycleOwner = context as? LifecycleOwner
-            ?: throw RuntimeException("lifecycle owner not found ")
 
-        // TODO: should this be moved to "onResume" and "onPause" and replaced with "observeForever"?
+        val lifecycleOwner = findViewTreeLifecycleOwner() ?: throw RuntimeException("lifecycle owner not found ")
         webViewModel.init.observe(lifecycleOwner, initObserver)
+        webViewModel.loadUrl.observe(lifecycleOwner, loadUrlObserver)
         webViewModel.isInErrorState.observe(lifecycleOwner, isInErrorStateObserver)
         webViewModel.showLoadingIndicator.observe(lifecycleOwner, showLoadingIndicatorObserver)
         webViewModel.biometricRequest.observe(lifecycleOwner, biometricRequestObserver)

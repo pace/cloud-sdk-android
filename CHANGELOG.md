@@ -13,6 +13,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Fixes
 
 * Fix a bug where the `additionalParameters` of the `CustomOIDConfiguration` were overwritten by the values from the `PACECloudSDK.additionalQueryParams`
+* Fix a bug where the payment process was not possible if the `pace_redirect_scheme` is not specified
 
 ### Internal
 
