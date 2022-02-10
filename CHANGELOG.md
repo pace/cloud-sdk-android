@@ -6,6 +6,10 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+13.0.0 Release notes (2022-02-10)
+=============================================================
+
+
 ### Breaking Changes
 
 * The `connectedFuelingStatus` property of the `CofuGasStation` is now nullable so that the Cofu gas station is not skipped in the cache loading if this property is absent in the API response
