@@ -22,6 +22,7 @@ import moe.banana.jsonapi2.JsonApiConverterFactory
 import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -40,7 +41,7 @@ object GetPoisDumpAPI {
         @GET("datadumps/pois")
         fun getPoisDump(
             @Header("Accept") accept: Accept
-        ): Call<Void>
+        ): Call<ResponseBody>
     }
 
     /* Dump all POI data in XLSX format, along with full amenities.
@@ -51,7 +52,7 @@ object GetPoisDumpAPI {
         APPLICATIONVNDOPENXMLFORMATSOFFICEDOCUMENTSPREADSHEETMLSHEET("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     }
 
-    fun POIAPI.DataDumpsAPI.getPoisDump(accept: Accept, readTimeout: Long? = null): Call<Void> {
+    fun POIAPI.DataDumpsAPI.getPoisDump(accept: Accept, readTimeout: Long? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())

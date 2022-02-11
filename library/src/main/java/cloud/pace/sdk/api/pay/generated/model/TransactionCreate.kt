@@ -38,8 +38,12 @@ class TransactionCreate : Resource() {
     var merchantPRN: String? = null
     /* Current mileage in meters */
     var mileage: Int? = null
+    /* Number plate of the car */
+    var numberPlate: String? = null
     var priceExcludingVAT: Double? = null
     var priceIncludingVAT: Double? = null
+    /* The given productFlow (e.g. preAuth, postPay) */
+    var productFlow: String? = null
     /* Vehicle identification number */
     var vin: String? = null
 

@@ -22,6 +22,7 @@ import moe.banana.jsonapi2.JsonApiConverterFactory
 import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -39,10 +40,10 @@ object DeleteSourceAPI {
         fun deleteSource(
             /* ID of the source */
             @Path("sourceId") sourceId: String? = null
-        ): Call<Void>
+        ): Call<ResponseBody>
     }
 
-    fun POIAPI.SourcesAPI.deleteSource(sourceId: String? = null, readTimeout: Long? = null): Call<Void> {
+    fun POIAPI.SourcesAPI.deleteSource(sourceId: String? = null, readTimeout: Long? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())

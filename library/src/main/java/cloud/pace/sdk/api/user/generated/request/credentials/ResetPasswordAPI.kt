@@ -22,6 +22,7 @@ import moe.banana.jsonapi2.JsonApiConverterFactory
 import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -41,10 +42,10 @@ If no recover pin is passed in the body user's payment methods will also be rese
         fun resetPassword(
             /* Recover pin */
             @Query("pin") pin: String? = null
-        ): Call<Void>
+        ): Call<ResponseBody>
     }
 
-    fun UserAPI.CredentialsAPI.resetPassword(pin: String? = null, readTimeout: Long? = null): Call<Void> {
+    fun UserAPI.CredentialsAPI.resetPassword(pin: String? = null, readTimeout: Long? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false))
                         .authenticator(InterceptorUtils.getAuthenticator())

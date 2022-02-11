@@ -22,6 +22,7 @@ import moe.banana.jsonapi2.JsonApiConverterFactory
 import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -51,7 +52,7 @@ user is deleted in order to prevent theft.
         @POST("callbacks/password-reset")
         fun callbackPasswordReset(
             @retrofit2.http.Body body: Body
-        ): Call<Void>
+        ): Call<ResponseBody>
     }
 
     /* During a password reset the user is only able to provide the HAVE
@@ -73,7 +74,7 @@ user is deleted in order to prevent theft.
         var data: UserPINBody? = null
     }
 
-    fun UserAPI.CallbacksAPI.callbackPasswordReset(body: Body, readTimeout: Long? = null): Call<Void> {
+    fun UserAPI.CallbacksAPI.callbackPasswordReset(body: Body, readTimeout: Long? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())

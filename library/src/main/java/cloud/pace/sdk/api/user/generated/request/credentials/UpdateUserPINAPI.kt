@@ -22,6 +22,7 @@ import moe.banana.jsonapi2.JsonApiConverterFactory
 import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -43,7 +44,7 @@ The following rules apply to verify the PIN:
         @PUT("user/pin")
         fun updateUserPIN(
             @retrofit2.http.Body body: Body
-        ): Call<Void>
+        ): Call<ResponseBody>
     }
 
     /* Sets the PIN of the user. The user has to select a secure PIN, this is ensured via rules. If one of the rules fails `406` is returned. To set the PIN an account OTP needs to be provided.
@@ -57,7 +58,7 @@ The following rules apply to verify the PIN:
         var data: UserPINBody? = null
     }
 
-    fun UserAPI.CredentialsAPI.updateUserPIN(body: Body, readTimeout: Long? = null): Call<Void> {
+    fun UserAPI.CredentialsAPI.updateUserPIN(body: Body, readTimeout: Long? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())

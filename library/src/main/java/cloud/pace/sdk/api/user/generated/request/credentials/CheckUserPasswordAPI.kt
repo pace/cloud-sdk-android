@@ -22,6 +22,7 @@ import moe.banana.jsonapi2.JsonApiConverterFactory
 import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -40,10 +41,10 @@ object CheckUserPasswordAPI {
         fun checkUserPassword(
             /* Timeout in seconds, wait until password is set (long polling) */
             @Query("timeout") timeout: Int? = null
-        ): Call<Void>
+        ): Call<ResponseBody>
     }
 
-    fun UserAPI.CredentialsAPI.checkUserPassword(timeout: Int? = null, readTimeout: Long? = null): Call<Void> {
+    fun UserAPI.CredentialsAPI.checkUserPassword(timeout: Int? = null, readTimeout: Long? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())

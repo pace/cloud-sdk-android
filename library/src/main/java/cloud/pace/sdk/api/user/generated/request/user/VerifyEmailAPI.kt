@@ -22,6 +22,7 @@ import moe.banana.jsonapi2.JsonApiConverterFactory
 import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -39,10 +40,10 @@ object VerifyEmailAPI {
         @GET("user/email/verify")
         fun verifyEmail(
             @retrofit2.http.Body body: Email
-        ): Call<Void>
+        ): Call<ResponseBody>
     }
 
-    fun UserAPI.UserAPI.verifyEmail(body: Email, readTimeout: Long? = null): Call<Void> {
+    fun UserAPI.UserAPI.verifyEmail(body: Email, readTimeout: Long? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false))
                         .authenticator(InterceptorUtils.getAuthenticator())

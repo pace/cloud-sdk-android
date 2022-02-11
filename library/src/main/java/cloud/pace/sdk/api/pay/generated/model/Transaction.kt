@@ -34,6 +34,8 @@ class Transaction : Resource() {
     var location: ReadOnlyLocation? = null
     /* Current mileage in meters */
     var mileage: Int? = null
+    /* Number plate of the car */
+    var numberPlate: String? = null
     /* ID of the paymentMethod */
     var paymentMethodId: String? = null
     /* Payment Method Kind as name. */
@@ -42,6 +44,8 @@ class Transaction : Resource() {
     var paymentToken: String? = null
     var priceIncludingVAT: Double? = null
     var priceWithoutVAT: Double? = null
+    /* The given productFlow (e.g. preAuth, postPay) */
+    var productFlow: String? = null
     /* PACE resource name - referring to the transaction purpose with provider details. */
     var providerPRN: String? = null
     /* PACE resource name */

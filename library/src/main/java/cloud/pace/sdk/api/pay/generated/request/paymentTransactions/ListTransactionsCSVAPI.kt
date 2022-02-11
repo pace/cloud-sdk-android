@@ -22,6 +22,7 @@ import moe.banana.jsonapi2.JsonApiConverterFactory
 import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -62,7 +63,7 @@ object ListTransactionsCSVAPI {
             @Query("filter[fuel.productName]") filterfuelProductName: String? = null,
             /* Fuel type which was used in the transaction. */
             @Query("filter[fuel.type]") filterfuelType: String? = null
-        ): Call<Void>
+        ): Call<ResponseBody>
     }
 
     /* Sort by given attribute, plus and minus are used to indicate ascending and descending order. */
@@ -123,7 +124,7 @@ object ListTransactionsCSVAPI {
         FUELTYPEDESCENDING("-fuel.type")
     }
 
-    fun PayAPI.PaymentTransactionsAPI.listTransactionsCSV(pagenumber: Int? = null, pagesize: Int? = null, sort: Sort? = null, filterid: String? = null, filtercreatedAt: Date? = null, filterupdatedAt: Date? = null, filterpaymentMethodId: String? = null, filterpaymentMethodKind: String? = null, filterpurposePRN: String? = null, filterproviderPRN: String? = null, filterfuelProductName: String? = null, filterfuelType: String? = null, readTimeout: Long? = null): Call<Void> {
+    fun PayAPI.PaymentTransactionsAPI.listTransactionsCSV(pagenumber: Int? = null, pagesize: Int? = null, sort: Sort? = null, filterid: String? = null, filtercreatedAt: Date? = null, filterupdatedAt: Date? = null, filterpaymentMethodId: String? = null, filterpaymentMethodKind: String? = null, filterpurposePRN: String? = null, filterproviderPRN: String? = null, filterfuelProductName: String? = null, filterfuelType: String? = null, readTimeout: Long? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())

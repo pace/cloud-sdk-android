@@ -22,6 +22,7 @@ import moe.banana.jsonapi2.JsonApiConverterFactory
 import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -37,7 +38,7 @@ object MovePoiAtPositionAPI {
         @PATCH("admin/poi/move")
         fun movePoiAtPosition(
             @retrofit2.http.Body body: Body
-        ): Call<Void>
+        ): Call<ResponseBody>
     }
 
     class Body {
@@ -45,7 +46,7 @@ object MovePoiAtPositionAPI {
         var data: MoveRequestBody? = null
     }
 
-    fun POIAPI.AdminAPI.movePoiAtPosition(body: Body, readTimeout: Long? = null): Call<Void> {
+    fun POIAPI.AdminAPI.movePoiAtPosition(body: Body, readTimeout: Long? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())

@@ -5,7 +5,7 @@
  * https://github.com/pace/SwagGen
  */
 
-package cloud.pace.sdk.api.pay.generated.request.paymentTokens
+package cloud.pace.sdk.api.pay.generated.request.newPaymentMethods
 
 import cloud.pace.sdk.api.pay.PayAPI
 import cloud.pace.sdk.api.pay.generated.model.*
@@ -31,18 +31,28 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-object GetPaymentTokenAPI {
+object CreatePaymentMethodRadiusAPI {
 
-    interface GetPaymentTokenService {
-        /* Get a payment token */
-        @GET("payment-tokens/{paymentTokenId}")
-        fun getPaymentToken(
-            /* paymentToken ID. */
-            @Path("paymentTokenId") paymentTokenId: String
-        ): Call<PaymentToken>
+    interface CreatePaymentMethodRadiusService {
+        /* Register a Radius Card as a payment method */
+        /* By registering you allow the user to use a Radius Card as a payment method.
+The payment method ID is optional when posting data.
+ */
+        @POST("payment-methods/radius")
+        fun createPaymentMethodRadius(
+            @retrofit2.http.Body body: Body
+        ): Call<PaymentMethod>
     }
 
-    fun PayAPI.PaymentTokensAPI.getPaymentToken(paymentTokenId: String, readTimeout: Long? = null): Call<PaymentToken> {
+    /* By registering you allow the user to use a Radius Card as a payment method.
+    The payment method ID is optional when posting data.
+     */
+    class Body {
+
+        var data: PaymentMethodRadiusCreateBody? = null
+    }
+
+    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodRadius(body: Body, readTimeout: Long? = null): Call<PaymentMethod> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())
@@ -51,7 +61,7 @@ object GetPaymentTokenAPI {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
         }
 
-        val service: GetPaymentTokenService =
+        val service: CreatePaymentMethodRadiusService =
             Retrofit.Builder()
                 .client(client.build())
                 .baseUrl(PayAPI.baseUrl)
@@ -76,8 +86,8 @@ object GetPaymentTokenAPI {
                     )
                 )
                 .build()
-                .create(GetPaymentTokenService::class.java)
+                .create(CreatePaymentMethodRadiusService::class.java)
 
-        return service.getPaymentToken(paymentTokenId)
+        return service.createPaymentMethodRadius(body)
     }
 }
