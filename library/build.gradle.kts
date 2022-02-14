@@ -6,7 +6,7 @@ import com.google.protobuf.gradle.protoc
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("android.extensions")
+    id("kotlin-parcelize")
     kotlin("kapt")
     id(Libs.DOKKA)
     id(Libs.GOOGLE_PROTOBUF_GRADLE_PLUGIN)
@@ -64,6 +64,10 @@ android {
     kotlinOptions {
         jvmTarget = "11"
         freeCompilerArgs = freeCompilerArgs + listOf("-module-name", "${Config.GROUP_ID}.${Config.ARTIFACT_ID}")
+    }
+
+    buildFeatures {
+        viewBinding = true
     }
 
     testOptions {

@@ -2,6 +2,7 @@ package cloud.pace.sdk.appkit.app.webview
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
@@ -10,31 +11,31 @@ import android.widget.RelativeLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.findViewTreeLifecycleOwner
-import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.generated.CommunicationManager
 import cloud.pace.sdk.appkit.utils.BiometricUtils
+import cloud.pace.sdk.databinding.AppWebViewBinding
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Event
-import kotlinx.android.synthetic.main.app_web_view.view.*
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 
 class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(context, attributeSet), CloudSDKKoinComponent {
 
+    private val binding = AppWebViewBinding.inflate(LayoutInflater.from(context), this, true)
     private val webViewModel: AppWebViewModel by inject { parametersOf(context) }
     private val communicationManager: CommunicationManager
     private var fragment: Fragment? = null
     private val loadingIndicatorRunnable = Runnable {
-        loadingIndicator?.visibility = View.VISIBLE
+        binding.loadingIndicator.visibility = View.VISIBLE
     }
 
     private val initObserver = Observer<Event<String>> {
         val url = it.getContentIfNotHandled() ?: return@Observer
 
         val appWebViewClient = AppWebViewClient(url, webViewModel, context)
-        webView.webViewClient = appWebViewClient
-        webView.webChromeClient = appWebViewClient.chromeClient
+        binding.webView.webViewClient = appWebViewClient
+        binding.webView.webChromeClient = appWebViewClient.chromeClient
 
         loadUrl(url)
     }
@@ -43,21 +44,22 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         val url = it.getContentIfNotHandled() ?: return@Observer
         loadUrl(url)
     }
+
     private val isInErrorStateObserver = Observer<Event<Boolean>> {
         val isInErrorState = it.getContentIfNotHandled() ?: return@Observer
 
         if (isInErrorState) {
-            webView?.visibility = View.GONE
-            failureView?.visibility = View.VISIBLE
+            binding.webView.visibility = View.GONE
+            binding.failureView.visibility = View.VISIBLE
         } else {
-            failureView?.visibility = View.GONE
-            webView?.visibility = View.VISIBLE
+            binding.failureView.visibility = View.GONE
+            binding.webView.visibility = View.VISIBLE
         }
     }
 
     private val showLoadingIndicatorObserver = Observer<Event<Boolean>> {
         val showLoadingIndicator = it.getContentIfNotHandled() ?: return@Observer
-        loadingIndicator?.apply {
+        binding.loadingIndicator.apply {
             if (showLoadingIndicator) {
                 postDelayed(loadingIndicatorRunnable, 500)
             } else {
@@ -76,8 +78,8 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
 
     private val goBackObserver = Observer<Event<Unit>> {
         it.getContentIfNotHandled()?.let {
-            if (webView.canGoBack()) {
-                webView.goBack()
+            if (binding.webView.canGoBack()) {
+                binding.webView.goBack()
             } else {
                 webViewModel.closeApp()
             }
@@ -85,11 +87,9 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
     }
 
     init {
-        addView(View.inflate(context, R.layout.app_web_view, null))
+        CookieManager.getInstance().setAcceptThirdPartyCookies(binding.webView, true)
 
-        CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
-
-        webView.settings.apply {
+        binding.webView.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
             setSupportMultipleWindows(true)
@@ -99,12 +99,12 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         }
 
         communicationManager = CommunicationManager(webViewModel) {
-            webView.evaluateJavascript("window.postMessage('$it', window.origin)") {}
+            binding.webView.evaluateJavascript("window.postMessage('$it', window.origin)") {}
         }
-        webView.addJavascriptInterface(CommunicationHandler(), "pace_native_api")
+        binding.webView.addJavascriptInterface(CommunicationHandler(), "pace_native_api")
 
-        failureView.setButtonClickListener {
-            webView.reload()
+        binding.failureView.setButtonClickListener {
+            binding.webView.reload()
         }
     }
 
@@ -126,18 +126,18 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         if (url == AppWebViewClient.CLOSE_URI) {
             webViewModel.closeApp()
         } else {
-            webView?.loadUrl(url)
+            binding.webView.loadUrl(url)
         }
     }
 
     fun onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack()
+        if (binding.webView.canGoBack()) {
+            binding.webView.goBack()
         }
     }
 
     fun onDestroy() {
-        webView.destroy()
+        binding.webView.destroy()
     }
 
     override fun onAttachedToWindow() {
