@@ -22,6 +22,7 @@ import moe.banana.jsonapi2.JsonApiConverterFactory
 import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -42,7 +43,7 @@ object PutGasStationReferenceStatusAPI {
             /* Service Provider PRN */
             @Path("reference") reference: String, 
             @retrofit2.http.Body body: Body
-        ): Call<Void>
+        ): Call<ResponseBody>
     }
 
     /* Creates or updates a reference status of a gas station */
@@ -51,7 +52,7 @@ object PutGasStationReferenceStatusAPI {
         var data: ReferenceStatusBody? = null
     }
 
-    fun POIAPI.DeliveryAPI.putGasStationReferenceStatus(gasStationId: String, reference: String, body: Body, readTimeout: Long? = null): Call<Void> {
+    fun POIAPI.DeliveryAPI.putGasStationReferenceStatus(gasStationId: String, reference: String, body: Body, readTimeout: Long? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())

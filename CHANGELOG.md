@@ -10,6 +10,10 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Replace Kotlin synthetics with Jetpack View Binding
 
+### Fixes
+
+* Regenerate all API files to change the return type from `Void` to `ResponseBody`
+
 
 13.0.0 Release notes (2022-02-10)
 =============================================================

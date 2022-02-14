@@ -5,7 +5,7 @@
  * https://github.com/pace/SwagGen
  */
 
-package cloud.pace.sdk.api.pay.generated.request.paymentTokens
+package cloud.pace.sdk.api.pay.generated.request.newPaymentMethods
 
 import cloud.pace.sdk.api.pay.PayAPI
 import cloud.pace.sdk.api.pay.generated.model.*
@@ -31,18 +31,30 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-object GetPaymentTokenAPI {
+object CreatePaymentMethodGiropayAPI {
 
-    interface GetPaymentTokenService {
-        /* Get a payment token */
-        @GET("payment-tokens/{paymentTokenId}")
-        fun getPaymentToken(
-            /* paymentToken ID. */
-            @Path("paymentTokenId") paymentTokenId: String
-        ): Call<PaymentToken>
+    interface CreatePaymentMethodGiropayService {
+        /* Register Giropay (formerly paydirekt) as a payment method */
+        /* By registering you allow the user to use giropay as a payment method.
+The payment method ID is optional when posting data.
+Registering giropay as payment method is a 2-step process, thus the payment method will only be created after the user approved it on the PayDirekt website. The approval URL in the response will point you to the correct page. After the user takes action the user is redirected to one of the three redirect URLs provided by you.
+ */
+        @POST("payment-methods/giropay")
+        fun createPaymentMethodGiropay(
+            @retrofit2.http.Body body: Body
+        ): Call<PaymentMethod>
     }
 
-    fun PayAPI.PaymentTokensAPI.getPaymentToken(paymentTokenId: String, readTimeout: Long? = null): Call<PaymentToken> {
+    /* By registering you allow the user to use giropay as a payment method.
+    The payment method ID is optional when posting data.
+    Registering giropay as payment method is a 2-step process, thus the payment method will only be created after the user approved it on the PayDirekt website. The approval URL in the response will point you to the correct page. After the user takes action the user is redirected to one of the three redirect URLs provided by you.
+     */
+    class Body {
+
+        var data: PaymentMethodGiropayCreateBody? = null
+    }
+
+    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodGiropay(body: Body, readTimeout: Long? = null): Call<PaymentMethod> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())
@@ -51,7 +63,7 @@ object GetPaymentTokenAPI {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
         }
 
-        val service: GetPaymentTokenService =
+        val service: CreatePaymentMethodGiropayService =
             Retrofit.Builder()
                 .client(client.build())
                 .baseUrl(PayAPI.baseUrl)
@@ -76,8 +88,8 @@ object GetPaymentTokenAPI {
                     )
                 )
                 .build()
-                .create(GetPaymentTokenService::class.java)
+                .create(CreatePaymentMethodGiropayService::class.java)
 
-        return service.getPaymentToken(paymentTokenId)
+        return service.createPaymentMethodGiropay(body)
     }
 }

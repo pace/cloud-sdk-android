@@ -5,7 +5,7 @@
  * https://github.com/pace/SwagGen
  */
 
-package cloud.pace.sdk.api.pay.generated.request.paymentTokens
+package cloud.pace.sdk.api.pay.generated.request.paymentMethods
 
 import cloud.pace.sdk.api.pay.PayAPI
 import cloud.pace.sdk.api.pay.generated.model.*
@@ -31,27 +31,27 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-object GetPaymentTokenAPI {
+object DeletePaymentMethodsAPI {
 
-    interface GetPaymentTokenService {
-        /* Get a payment token */
-        @GET("payment-tokens/{paymentTokenId}")
-        fun getPaymentToken(
-            /* paymentToken ID. */
-            @Path("paymentTokenId") paymentTokenId: String
-        ): Call<PaymentToken>
+    interface DeletePaymentMethodsService {
+        /* Delete all user's payment methods. */
+        /* Deletes all payment methods of the current user.
+ */
+        @DELETE("payment-methods")
+        fun deletePaymentMethods(
+        ): Call<ResponseBody>
     }
 
-    fun PayAPI.PaymentTokensAPI.getPaymentToken(paymentTokenId: String, readTimeout: Long? = null): Call<PaymentToken> {
+    fun PayAPI.PaymentMethodsAPI.deletePaymentMethods(readTimeout: Long? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
         }
 
-        val service: GetPaymentTokenService =
+        val service: DeletePaymentMethodsService =
             Retrofit.Builder()
                 .client(client.build())
                 .baseUrl(PayAPI.baseUrl)
@@ -76,8 +76,8 @@ object GetPaymentTokenAPI {
                     )
                 )
                 .build()
-                .create(GetPaymentTokenService::class.java)
+                .create(DeletePaymentMethodsService::class.java)
 
-        return service.getPaymentToken(paymentTokenId)
+        return service.deletePaymentMethods()
     }
 }

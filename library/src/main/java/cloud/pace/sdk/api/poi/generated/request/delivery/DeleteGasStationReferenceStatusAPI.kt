@@ -22,6 +22,7 @@ import moe.banana.jsonapi2.JsonApiConverterFactory
 import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -41,10 +42,10 @@ object DeleteGasStationReferenceStatusAPI {
             @Path("gasStationId") gasStationId: String,
             /* Service Provider PRN */
             @Path("reference") reference: String
-        ): Call<Void>
+        ): Call<ResponseBody>
     }
 
-    fun POIAPI.DeliveryAPI.deleteGasStationReferenceStatus(gasStationId: String, reference: String, readTimeout: Long? = null): Call<Void> {
+    fun POIAPI.DeliveryAPI.deleteGasStationReferenceStatus(gasStationId: String, reference: String, readTimeout: Long? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())

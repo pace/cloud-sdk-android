@@ -22,6 +22,7 @@ import moe.banana.jsonapi2.JsonApiConverterFactory
 import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -49,7 +50,7 @@ in the language that is determined to be spoken in the area that the point of in
 *Prefer using the `Accept-Language` header if you use this endpoint on an end-user device.*
  */
             @Query("language") language: String? = null
-        ): Call<Void>
+        ): Call<ResponseBody>
     }
 
     /* Format of the expected file */
@@ -62,7 +63,7 @@ in the language that is determined to be spoken in the area that the point of in
         PDF("pdf")
     }
 
-    fun PayAPI.PaymentTransactionsAPI.getReceiptByFormat(transactionID: String, fileFormat: FileFormat? = null, language: String? = null, readTimeout: Long? = null): Call<Void> {
+    fun PayAPI.PaymentTransactionsAPI.getReceiptByFormat(transactionID: String, fileFormat: FileFormat? = null, language: String? = null, readTimeout: Long? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())

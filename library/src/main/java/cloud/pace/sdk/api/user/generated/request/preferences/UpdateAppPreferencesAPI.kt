@@ -22,6 +22,7 @@ import moe.banana.jsonapi2.JsonApiConverterFactory
 import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -48,10 +49,10 @@ value not longer than 255 bytes (including complex json objects).
         fun updateAppPreferences(
             @Path("clientId") clientId: String? = null,
             @retrofit2.http.Body body: Map<String, Any>
-        ): Call<Void>
+        ): Call<ResponseBody>
     }
 
-    fun UserAPI.PreferencesAPI.updateAppPreferences(clientId: String? = null, body: Map<String, Any>, readTimeout: Long? = null): Call<Void> {
+    fun UserAPI.PreferencesAPI.updateAppPreferences(clientId: String? = null, body: Map<String, Any>, readTimeout: Long? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
                         .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
                         .authenticator(InterceptorUtils.getAuthenticator())
