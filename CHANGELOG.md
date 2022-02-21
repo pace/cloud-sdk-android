@@ -9,6 +9,7 @@ x.y.z Release notes (yyyy-MM-dd)
 ### Internal
 
 * Replace Kotlin synthetics with Jetpack View Binding
+* Changed the `screenOrientation` for all activities to `behind`, which uses the same `screenOrientation` as the activity immediately beneath it in the activity stack
 
 ### Fixes
 

@@ -20,24 +20,26 @@
             android:name=".appkit.app.AppActivity"
             android:exported="false"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
+            android:screenOrientation="behind"
             android:theme="@style/AppKitTheme" />
 
         <activity
             android:name=".appkit.app.deeplink.DeepLinkManagementActivity"
             android:exported="false"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:screenOrientation="behind" />
 
         <activity
             android:name=".appkit.app.deeplink.WebViewActivity"
             android:exported="false"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
+            android:screenOrientation="behind"
             android:theme="@style/AppKitTheme" />
 
         <activity
             android:name=".appkit.app.deeplink.RedirectUriReceiverActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="behind">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -53,7 +55,7 @@
         <activity
             android:name=".idkit.authorization.integrated.AuthorizationWebViewActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
+            android:screenOrientation="behind"
             android:theme="@style/AppKitTheme" />
 
         <receiver
