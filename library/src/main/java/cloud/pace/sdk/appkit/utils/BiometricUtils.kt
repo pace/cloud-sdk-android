@@ -25,7 +25,7 @@ object BiometricUtils {
         onFailure: (errorCode: Int, errString: CharSequence) -> Unit
     ) {
         val callback = getCallback(onSuccess, onFailure)
-        val negativeText = cancelText ?: fragment.getText(R.string.general_cancel)
+        val negativeText = cancelText ?: fragment.getText(R.string.common_cancel)
         val promptInfoBuilder = getPromptInfoBuilder(title, subtitle, negativeText, isDeviceCredentialsAllowed)
         fragment.context?.let {
             val executor = ContextCompat.getMainExecutor(it)
@@ -49,7 +49,7 @@ object BiometricUtils {
         onFailure: (errorCode: Int, errString: CharSequence) -> Unit
     ) {
         val callback = getCallback(onSuccess, onFailure)
-        val negativeText = cancelText ?: activity.getText(R.string.general_cancel)
+        val negativeText = cancelText ?: activity.getText(R.string.common_cancel)
         val promptInfoBuilder = getPromptInfoBuilder(title, subtitle, negativeText, isDeviceCredentialsAllowed)
         val executor = ContextCompat.getMainExecutor(activity)
         val biometricPrompt = BiometricPrompt(activity, executor, callback)

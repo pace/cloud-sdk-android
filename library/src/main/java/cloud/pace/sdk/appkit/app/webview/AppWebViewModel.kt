@@ -207,7 +207,7 @@ class AppWebViewModelImpl(
 
                     if (totpSecret != null) {
                         biometricRequest.postValue(Event(BiometricRequest(
-                            R.string.biometric_totp_title,
+                            R.string.payment_biometric_prompt_title,
                             onSuccess = {
                                 try {
                                     val decryptedSecret = EncryptionUtils.decrypt(totpSecret.encryptedSecret)
@@ -298,7 +298,7 @@ class AppWebViewModelImpl(
                     val encryptedValue = sharedPreferencesModel.getString(preferenceKey)
                     if (encryptedValue != null) {
                         biometricRequest.postValue(Event(BiometricRequest(
-                            R.string.biometric_secure_data_title,
+                            R.string.appkit_secureData_authentication_confirmation,
                             onSuccess = {
                                 try {
                                     val value = EncryptionUtils.decrypt(encryptedValue)

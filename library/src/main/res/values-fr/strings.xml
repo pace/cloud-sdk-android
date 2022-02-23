@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="common_retry">Essayez à nouveau</string>
+    <string name="error_connection_problem_network_headline">Connexion réseau insuffisante</string>
+    <string name="error_connection_problem_network">PACE a besoin d\'une connexion réseau stable et suffisamment rapide pour continuer. Veuillez vous assurer que votre application est autorisée à accéder aux données mobiles de votre téléphone. Vous pouvez également utiliser le Wi-Fi.</string>
+    <string name="appkit_secureData_authentication_confirmation">Autoriser l\'accès aux données sécurisées</string>
+    <string name="payment_biometric_prompt_title">Payez maintenant</string>
+    <string name="geofence_notification_title">Paiement mobile disponible</string>
+    <string name="geofence_notification_text">Une station-service à proximité prend en charge le paiement mobile</string>
+    <string name="common_cancel">Annuler</string>
+</resources>
