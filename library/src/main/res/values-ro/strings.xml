@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="common_retry">Încearcă din nou</string>
+    <string name="error_connection_problem_network_headline">Conexiune de rețea insuficientă</string>
+    <string name="error_connection_problem_network">PACE are nevoie de o conexiune de rețea stabilă și suficient de rapidă pentru a continua.\n\nVă rugăm să vă asigurați că aplicația dvs. are permisiunea de a accesa datele mobile ale telefonului dvs. De asemenea, puteți utiliza Wi-Fi.</string>
+    <string name="appkit_secureData_authentication_confirmation">Autorizarea accesului la date securizate</string>
+    <string name="payment_biometric_prompt_title">Plătiți acum</string>
+    <string name="geofence_notification_title">Plata mobilă disponibilă</string>
+    <string name="geofence_notification_text">O benzinărie din apropiere acceptă plata cu telefonul mobil</string>
+    <string name="common_cancel">Anulează</string>
+</resources>

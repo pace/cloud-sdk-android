@@ -6,14 +6,15 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
-### Internal
-
-* Replace Kotlin synthetics with Jetpack View Binding
-* Changed the `screenOrientation` for all activities to `behind`, which uses the same `screenOrientation` as the activity immediately beneath it in the activity stack
-
 ### Fixes
 
 * Regenerate all API files to change the return type from `Void` to `ResponseBody`
+
+### Internal
+
+* Replace Kotlin synthetics with Jetpack View Binding
+* Change the `screenOrientation` for all activities to `behind`, which uses the same `screenOrientation` as the activity immediately beneath it in the activity stack
+* Add the following languages: Czech, French, Portuguese, Dutch, Italian, Polish, Romanian, Russian and Spanish
 
 
 13.0.0 Release notes (2022-02-10)

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="common_retry">Попробуйте еще раз</string>
+    <string name="error_connection_problem_network_headline">Недостаточное сетевое подключение</string>
+    <string name="error_connection_problem_network">Для продолжения работы PACE необходимо стабильное и достаточно быстрое подключение к сети.\n\nПожалуйста, убедитесь, что приложению разрешен доступ к мобильным данным вашего телефона. Вы также можете использовать Wi-Fi.</string>
+    <string name="appkit_secureData_authentication_confirmation">Разрешить доступ к защищенным данным</string>
+    <string name="payment_biometric_prompt_title">Оплатить сейчас</string>
+    <string name="geofence_notification_title">Доступен мобильный платеж</string>
+    <string name="geofence_notification_text">Заправочная станция поблизости поддерживает мобильные платежи</string>
+    <string name="common_cancel">Отмена</string>
+</resources>

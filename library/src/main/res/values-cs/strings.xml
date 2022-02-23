@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="common_retry">Zkuste to znovu</string>
+    <string name="error_connection_problem_network_headline">Nedostatečné síťové připojení</string>
+    <string name="error_connection_problem_network">Aplikace PACE potřebuje stabilní a dostatečně rychlé připojení k síti, aby mohla pokračovat.\n\nUjistěte se, že má aplikace povolen přístup k mobilním datům vašeho telefonu. Můžete také použít Wi-Fi.</string>
+    <string name="appkit_secureData_authentication_confirmation">Autorizace přístupu k zabezpečeným datům</string>
+    <string name="payment_biometric_prompt_title">Zaplaťte nyní</string>
+    <string name="geofence_notification_title">Mobilní platby jsou k dispozici</string>
+    <string name="geofence_notification_text">Nedaleká čerpací stanice podporuje mobilní platby</string>
+    <string name="common_cancel">Zrušit</string>
+</resources>
