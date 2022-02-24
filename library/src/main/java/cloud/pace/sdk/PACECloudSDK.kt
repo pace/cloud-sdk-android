@@ -85,6 +85,9 @@ object PACECloudSDK {
     fun setup(context: Context, configuration: Configuration) {
         this.configuration = configuration
 
+        // Indicates that setup function has been called for logging purposes
+        isSetup = true
+
         // Call setter of additionalQueryParams to set the default params
         additionalQueryParams = additionalQueryParams
 
@@ -117,8 +120,6 @@ object PACECloudSDK {
 
         AppKit.locationAccuracy = configuration.locationAccuracy
         AppKit.updateUserAgent()
-
-        isSetup = true
 
         SetupLogger.apiKey = configuration.apiKey
         SetupLogger.redirectScheme = DeviceUtils.getPACERedirectScheme(context)
