@@ -56,9 +56,9 @@ PaymentSession that can be used to obtain the applePay payload.
         var data: PaymentTokenCreateApplePayBody? = null
     }
 
-    fun PayAPI.PaymentTokensAPI.authorizeApplePayPaymentToken(body: Body, readTimeout: Long? = null): Call<PaymentToken> {
+    fun PayAPI.PaymentTokensAPI.authorizeApplePayPaymentToken(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentToken> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

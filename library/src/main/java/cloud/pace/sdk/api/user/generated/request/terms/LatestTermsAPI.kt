@@ -44,9 +44,9 @@ object LatestTermsAPI {
         ): Call<Terms>
     }
 
-    fun UserAPI.TermsAPI.latestTerms(filterserviceName: String, readTimeout: Long? = null): Call<Terms> {
+    fun UserAPI.TermsAPI.latestTerms(filterserviceName: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Terms> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", false))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", false, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

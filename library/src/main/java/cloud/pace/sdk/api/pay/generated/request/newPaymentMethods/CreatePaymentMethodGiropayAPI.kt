@@ -54,9 +54,9 @@ Registering giropay as payment method is a 2-step process, thus the payment meth
         var data: PaymentMethodGiropayCreateBody? = null
     }
 
-    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodGiropay(body: Body, readTimeout: Long? = null): Call<PaymentMethod> {
+    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodGiropay(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentMethod> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

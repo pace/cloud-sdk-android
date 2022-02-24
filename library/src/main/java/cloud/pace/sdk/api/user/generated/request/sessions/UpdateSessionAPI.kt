@@ -45,9 +45,9 @@ In case the session is created an OTP for the user is created and send via email
         ): Call<CreateOTP>
     }
 
-    fun UserAPI.SessionsAPI.updateSession(sessionId: String? = null, body: Session, readTimeout: Long? = null): Call<CreateOTP> {
+    fun UserAPI.SessionsAPI.updateSession(sessionId: String? = null, body: Session, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<CreateOTP> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

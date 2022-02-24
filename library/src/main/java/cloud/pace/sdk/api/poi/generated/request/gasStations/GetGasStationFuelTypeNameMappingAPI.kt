@@ -46,9 +46,9 @@ object GetGasStationFuelTypeNameMappingAPI {
         ): Call<FuelType>
     }
 
-    fun POIAPI.GasStationsAPI.getGasStationFuelTypeNameMapping(id: String, filterproductName: String, readTimeout: Long? = null): Call<FuelType> {
+    fun POIAPI.GasStationsAPI.getGasStationFuelTypeNameMapping(id: String, filterproductName: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<FuelType> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

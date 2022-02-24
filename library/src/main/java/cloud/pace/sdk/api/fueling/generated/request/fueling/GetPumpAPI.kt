@@ -48,9 +48,9 @@ Only use after approaching, otherwise returns `403 Forbidden`.
         ): Call<PumpResponse>
     }
 
-    fun FuelingAPI.FuelingAPI.getPump(gasStationId: String, pumpId: String, readTimeout: Long? = null): Call<PumpResponse> {
+    fun FuelingAPI.FuelingAPI.getPump(gasStationId: String, pumpId: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PumpResponse> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

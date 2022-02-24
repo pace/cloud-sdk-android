@@ -50,9 +50,9 @@ object ChangePoiAPI {
         var data: POIBody? = null
     }
 
-    fun POIAPI.POIAPI.changePoi(poiId: String? = null, body: Body, readTimeout: Long? = null): Call<POI> {
+    fun POIAPI.POIAPI.changePoi(poiId: String? = null, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<POI> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

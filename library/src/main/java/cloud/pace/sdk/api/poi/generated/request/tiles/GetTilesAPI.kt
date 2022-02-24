@@ -69,9 +69,9 @@ message Coordinate {
         ): Call<ResponseBody>
     }
 
-    fun POIAPI.TilesAPI.getTiles(body: File, readTimeout: Long? = null): Call<ResponseBody> {
+    fun POIAPI.TilesAPI.getTiles(body: File, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/protobuf", "application/protobuf", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/protobuf", "application/protobuf", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

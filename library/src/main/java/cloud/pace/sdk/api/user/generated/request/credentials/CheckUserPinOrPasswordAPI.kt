@@ -42,9 +42,9 @@ object CheckUserPinOrPasswordAPI {
         ): Call<PinOrPassword>
     }
 
-    fun UserAPI.CredentialsAPI.checkUserPinOrPassword(readTimeout: Long? = null): Call<PinOrPassword> {
+    fun UserAPI.CredentialsAPI.checkUserPinOrPassword(readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PinOrPassword> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

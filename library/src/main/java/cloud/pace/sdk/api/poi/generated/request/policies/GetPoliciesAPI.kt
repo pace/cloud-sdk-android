@@ -51,9 +51,9 @@ object GetPoliciesAPI {
         ): Call<Policies>
     }
 
-    fun POIAPI.PoliciesAPI.getPolicies(pagenumber: Int? = null, pagesize: Int? = null, filterpoiType: POIType? = null, filtercountryId: String? = null, filteruserId: String? = null, readTimeout: Long? = null): Call<Policies> {
+    fun POIAPI.PoliciesAPI.getPolicies(pagenumber: Int? = null, pagesize: Int? = null, filterpoiType: POIType? = null, filtercountryId: String? = null, filteruserId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Policies> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

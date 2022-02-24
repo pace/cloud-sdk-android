@@ -62,9 +62,9 @@ RFCs for reference:
         ): Call<OAuth2Token>
     }
 
-    fun UserAPI.OAuth2API.tokenExchange(body: OAuth2TokenExchange, readTimeout: Long? = null): Call<OAuth2Token> {
+    fun UserAPI.OAuth2API.tokenExchange(body: OAuth2TokenExchange, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<OAuth2Token> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/x-www-form-urlencoded", "application/x-www-form-urlencoded", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/x-www-form-urlencoded", "application/x-www-form-urlencoded", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

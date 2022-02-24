@@ -49,9 +49,9 @@ object GetPaymentTokensAPI {
         `TRUE`("true")
     }
 
-    fun PayAPI.PaymentTokensAPI.getPaymentTokens(filtervalid: Filtervalid, readTimeout: Long? = null): Call<PaymentTokens> {
+    fun PayAPI.PaymentTokensAPI.getPaymentTokens(filtervalid: Filtervalid, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentTokens> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

@@ -50,9 +50,9 @@ object UpdateSourceAPI {
         var data: SourceBody? = null
     }
 
-    fun POIAPI.SourcesAPI.updateSource(sourceId: String? = null, body: Body, readTimeout: Long? = null): Call<Source> {
+    fun POIAPI.SourcesAPI.updateSource(sourceId: String? = null, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Source> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

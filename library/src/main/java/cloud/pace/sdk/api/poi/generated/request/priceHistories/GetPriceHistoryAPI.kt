@@ -52,9 +52,9 @@ object GetPriceHistoryAPI {
         ): Call<PriceHistory>
     }
 
-    fun POIAPI.PriceHistoriesAPI.getPriceHistory(id: String, fuelType: Fuel? = null, filterfrom: Date? = null, filterto: Date? = null, filtergranularity: String? = null, readTimeout: Long? = null): Call<PriceHistory> {
+    fun POIAPI.PriceHistoriesAPI.getPriceHistory(id: String, fuelType: Fuel? = null, filterfrom: Date? = null, filterto: Date? = null, filtergranularity: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PriceHistory> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

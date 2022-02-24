@@ -52,9 +52,9 @@ object GetPoisDumpAPI {
         APPLICATIONVNDOPENXMLFORMATSOFFICEDOCUMENTSPREADSHEETMLSHEET("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     }
 
-    fun POIAPI.DataDumpsAPI.getPoisDump(accept: Accept, readTimeout: Long? = null): Call<ResponseBody> {
+    fun POIAPI.DataDumpsAPI.getPoisDump(accept: Accept, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

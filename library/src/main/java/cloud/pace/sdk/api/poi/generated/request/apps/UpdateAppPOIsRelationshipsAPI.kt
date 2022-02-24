@@ -44,9 +44,9 @@ object UpdateAppPOIsRelationshipsAPI {
         ): Call<AppPOIsRelationships>
     }
 
-    fun POIAPI.AppsAPI.updateAppPOIsRelationships(appID: String? = null, body: AppPOIsRelationships, readTimeout: Long? = null): Call<AppPOIsRelationships> {
+    fun POIAPI.AppsAPI.updateAppPOIsRelationships(appID: String? = null, body: AppPOIsRelationships, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<AppPOIsRelationships> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

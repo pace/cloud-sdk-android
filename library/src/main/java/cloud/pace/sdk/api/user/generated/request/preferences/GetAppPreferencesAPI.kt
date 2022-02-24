@@ -48,9 +48,9 @@ In case no preferences were ever set an empty object `{}` is returned.
         ): Call<Map<String, Any>>
     }
 
-    fun UserAPI.PreferencesAPI.getAppPreferences(clientId: String? = null, readTimeout: Long? = null): Call<Map<String, Any>> {
+    fun UserAPI.PreferencesAPI.getAppPreferences(clientId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Map<String, Any>> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

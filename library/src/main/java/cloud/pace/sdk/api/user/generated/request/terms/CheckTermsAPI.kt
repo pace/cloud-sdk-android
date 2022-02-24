@@ -68,9 +68,9 @@ In order to identify the user any oauth2 token must be passed.
         PACEDRIVEAPP("PACE Drive App")
     }
 
-    fun UserAPI.TermsAPI.checkTerms(filterserviceName: FilterserviceName, redirectUri: String? = null, readTimeout: Long? = null): Call<ResponseBody> {
+    fun UserAPI.TermsAPI.checkTerms(filterserviceName: FilterserviceName, redirectUri: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

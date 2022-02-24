@@ -80,9 +80,9 @@ object GetBetaGeojsonPoisAPI {
         SPEEDCAMERA("SpeedCamera")
     }
 
-    fun GeoJSONAPI.GeoJSONAPI.getBetaGeojsonPois(fieldsgasStation: String? = null, filterpoiType: FilterpoiType? = null, filteronlinePaymentMethod: String? = null, filtermerchant: String? = null, filtercountry: String? = null, filterconnectedFueling: String? = null, filterdkvAppAndGo: String? = null, readTimeout: Long? = null): Call<GeoJson> {
+    fun GeoJSONAPI.GeoJSONAPI.getBetaGeojsonPois(fieldsgasStation: String? = null, filterpoiType: FilterpoiType? = null, filteronlinePaymentMethod: String? = null, filtermerchant: String? = null, filtercountry: String? = null, filterconnectedFueling: String? = null, filterdkvAppAndGo: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<GeoJson> {
         val client = OkHttpClient.Builder()
-            .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+            .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
             .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

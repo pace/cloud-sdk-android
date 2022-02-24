@@ -51,9 +51,9 @@ object GetSubscriptionsAPI {
         var data: List<Subscription>? = null
     }
 
-    fun POIAPI.SubscriptionsAPI.getSubscriptions(body: Body, readTimeout: Long? = null): Call<Subscription> {
+    fun POIAPI.SubscriptionsAPI.getSubscriptions(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Subscription> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {
