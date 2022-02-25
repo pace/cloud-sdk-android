@@ -32,7 +32,7 @@ object InterceptorUtils {
     private var traceId: Pair<String, Long>? = null
     private var traceIdMaxAge = TimeUnit.MINUTES.toMillis(15)
 
-    fun getInterceptor(accept: String?, contentType: String?, authorizationRequired: Boolean) = Interceptor {
+    fun getInterceptor(accept: String?, contentType: String?, authorizationRequired: Boolean, additionalHeaders: Map<String, String>? = null) = Interceptor {
         val httpUrl = it.request().url.newBuilder()
         PACECloudSDK.additionalQueryParams.forEach { param ->
             httpUrl.addQueryParameter(param.key, param.value)
@@ -55,6 +55,11 @@ object InterceptorUtils {
         builder.header(API_KEY_HEADER, API.apiKey)
         builder.header(UBER_TRACE_ID_HEADER, getUberTraceId())
         builder.header(USER_AGENT_HEADER, getUserAgent())
+
+        // Additional parameters of the request have priority over the globally set parameters, so set them last to override any existing header
+        additionalHeaders?.forEach { header ->
+            builder.header(header.key, header.value)
+        }
 
         it.proceed(builder.build()).also { response ->
             if (!response.isSuccessful) {

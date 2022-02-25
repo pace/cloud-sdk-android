@@ -54,9 +54,9 @@ Registering PayDirekt as payment method is a 2-step process, thus the payment me
         var data: PaymentMethodPayDirektCreateBody? = null
     }
 
-    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodPayDirekt(body: Body, readTimeout: Long? = null): Call<PaymentMethod> {
+    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodPayDirekt(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentMethod> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

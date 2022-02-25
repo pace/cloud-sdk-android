@@ -55,9 +55,9 @@ You can optionally provide:
         ): Call<ProcessPaymentResponse>
     }
 
-    fun FuelingAPI.FuelingAPI.processPayment(gasStationId: String, body: TransactionRequest, readTimeout: Long? = null): Call<ProcessPaymentResponse> {
+    fun FuelingAPI.FuelingAPI.processPayment(gasStationId: String, body: TransactionRequest, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ProcessPaymentResponse> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

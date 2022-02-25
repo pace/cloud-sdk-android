@@ -43,9 +43,9 @@ object CreateOTPAPI {
         ): Call<CreateOTP>
     }
 
-    fun UserAPI.TOTPAPI.createOTP(body: CreateOTP, readTimeout: Long? = null): Call<CreateOTP> {
+    fun UserAPI.TOTPAPI.createOTP(body: CreateOTP, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<CreateOTP> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

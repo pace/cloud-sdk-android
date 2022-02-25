@@ -46,9 +46,9 @@ object GetRegionalPricesAPI {
         ): Call<RegionalPrices>
     }
 
-    fun POIAPI.PricesAPI.getRegionalPrices(filterlatitude: Float, filterlongitude: Float, readTimeout: Long? = null): Call<RegionalPrices> {
+    fun POIAPI.PricesAPI.getRegionalPrices(filterlatitude: Float, filterlongitude: Float, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<RegionalPrices> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

@@ -46,9 +46,9 @@ object CancelPreAuthAPI {
         ): Call<ResponseBody>
     }
 
-    fun FuelingAPI.FuelingAPI.cancelPreAuth(gasStationId: String, transactionId: String, readTimeout: Long? = null): Call<ResponseBody> {
+    fun FuelingAPI.FuelingAPI.cancelPreAuth(gasStationId: String, transactionId: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

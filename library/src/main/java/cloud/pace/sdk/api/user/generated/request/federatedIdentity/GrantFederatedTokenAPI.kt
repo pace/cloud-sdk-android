@@ -43,9 +43,9 @@ object GrantFederatedTokenAPI {
         ): Call<AccessToken>
     }
 
-    fun UserAPI.FederatedIdentityAPI.grantFederatedToken(identityProvider: String? = null, readTimeout: Long? = null): Call<AccessToken> {
+    fun UserAPI.FederatedIdentityAPI.grantFederatedToken(identityProvider: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<AccessToken> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

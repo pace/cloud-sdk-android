@@ -124,9 +124,9 @@ object ListTransactionsAPI {
         FUELTYPEDESCENDING("-fuel.type")
     }
 
-    fun PayAPI.PaymentTransactionsAPI.listTransactions(pagenumber: Int? = null, pagesize: Int? = null, sort: Sort? = null, filterid: String? = null, filtercreatedAt: Date? = null, filterupdatedAt: Date? = null, filterpaymentMethodId: String? = null, filterpaymentMethodKind: String? = null, filterpurposePRN: String? = null, filterproviderPRN: String? = null, filterfuelProductName: String? = null, filterfuelType: String? = null, readTimeout: Long? = null): Call<Transactions> {
+    fun PayAPI.PaymentTransactionsAPI.listTransactions(pagenumber: Int? = null, pagesize: Int? = null, sort: Sort? = null, filterid: String? = null, filtercreatedAt: Date? = null, filterupdatedAt: Date? = null, filterpaymentMethodId: String? = null, filterpaymentMethodKind: String? = null, filterpurposePRN: String? = null, filterproviderPRN: String? = null, filterfuelProductName: String? = null, filterfuelType: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Transactions> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

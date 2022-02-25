@@ -16,6 +16,7 @@ x.y.z Release notes (yyyy-MM-dd)
 * Replace Kotlin synthetics with Jetpack View Binding
 * Change the `screenOrientation` for all activities to `behind`, which uses the same `screenOrientation` as the activity immediately beneath it in the activity stack
 * Add the following languages: Czech, French, Portuguese, Dutch, Italian, Polish, Romanian, Russian and Spanish
+* Regenerate all API files with a new headers parameters per request
 
 
 13.0.0 Release notes (2022-02-10)

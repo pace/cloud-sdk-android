@@ -52,9 +52,9 @@ value not longer than 255 bytes (including complex json objects).
         ): Call<ResponseBody>
     }
 
-    fun UserAPI.PreferencesAPI.updateAppPreferences(clientId: String? = null, body: Map<String, Any>, readTimeout: Long? = null): Call<ResponseBody> {
+    fun UserAPI.PreferencesAPI.updateAppPreferences(clientId: String? = null, body: Map<String, Any>, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

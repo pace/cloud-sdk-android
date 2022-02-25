@@ -51,9 +51,9 @@ object GetTermsAPI {
         TEXT_HTML("text/html")
     }
 
-    fun UserAPI.TermsAPI.getTerms(termsId: String? = null, redirectUri: String? = null, acceptLanguage: String? = null, readTimeout: Long? = null, accept: GetTermsAcceptHeader? = null): Call<Terms> {
+    fun UserAPI.TermsAPI.getTerms(termsId: String? = null, redirectUri: String? = null, acceptLanguage: String? = null, readTimeout: Long? = null, accept: GetTermsAcceptHeader? = null, additionalHeaders: Map<String, String>? = null): Call<Terms> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor(null, "application/vnd.api+json", false))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor(null, "application/vnd.api+json", false, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

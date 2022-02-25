@@ -83,9 +83,9 @@ Only use after approaching, otherwise returns `403 Forbidden`.
         OUTOFORDER("outOfOrder")
     }
 
-    fun FuelingAPI.FuelingAPI.waitOnPumpStatusChange(gasStationId: String, pumpId: String, update: Update? = null, lastStatus: LastStatus? = null, timeout: Int? = null, readTimeout: Long? = null): Call<PumpResponse> {
+    fun FuelingAPI.FuelingAPI.waitOnPumpStatusChange(gasStationId: String, pumpId: String, update: Update? = null, lastStatus: LastStatus? = null, timeout: Int? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PumpResponse> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

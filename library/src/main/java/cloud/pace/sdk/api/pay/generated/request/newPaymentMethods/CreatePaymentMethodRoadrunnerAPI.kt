@@ -52,9 +52,9 @@ The payment method ID is optional when posting data.
         var data: PaymentMethodRoadrunnerCreateBody? = null
     }
 
-    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodRoadrunner(body: Body, readTimeout: Long? = null): Call<PaymentMethod> {
+    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodRoadrunner(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentMethod> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

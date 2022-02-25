@@ -58,9 +58,9 @@ Only use after approaching (fueling api), otherwise returns `403 Forbidden`.
         var data: TransactionCreateBody? = null
     }
 
-    fun PayAPI.PaymentTransactionsAPI.processPayment(announce: Boolean? = null, body: Body, readTimeout: Long? = null): Call<Transaction> {
+    fun PayAPI.PaymentTransactionsAPI.processPayment(announce: Boolean? = null, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Transaction> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

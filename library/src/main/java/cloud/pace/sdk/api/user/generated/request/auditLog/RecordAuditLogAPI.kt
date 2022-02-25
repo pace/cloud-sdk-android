@@ -42,9 +42,9 @@ object RecordAuditLogAPI {
         ): Call<AuditLogRecord>
     }
 
-    fun UserAPI.AuditLogAPI.recordAuditLog(readTimeout: Long? = null): Call<AuditLogRecord> {
+    fun UserAPI.AuditLogAPI.recordAuditLog(readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<AuditLogRecord> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

@@ -59,9 +59,9 @@ Other than authorization, the most common error states encountered should be:
         ): Call<ApproachingResponse>
     }
 
-    fun FuelingAPI.FuelingAPI.approachingAtTheForecourt(gasStationId: String, compileopeningHours: Boolean? = null, readTimeout: Long? = null): Call<ApproachingResponse> {
+    fun FuelingAPI.FuelingAPI.approachingAtTheForecourt(gasStationId: String, compileopeningHours: Boolean? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ApproachingResponse> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

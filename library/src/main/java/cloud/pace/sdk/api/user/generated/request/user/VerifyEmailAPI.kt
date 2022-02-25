@@ -43,9 +43,9 @@ object VerifyEmailAPI {
         ): Call<ResponseBody>
     }
 
-    fun UserAPI.UserAPI.verifyEmail(body: Email, readTimeout: Long? = null): Call<ResponseBody> {
+    fun UserAPI.UserAPI.verifyEmail(body: Email, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

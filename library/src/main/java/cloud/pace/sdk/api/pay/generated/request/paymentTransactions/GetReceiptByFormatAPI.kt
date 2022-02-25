@@ -63,9 +63,9 @@ in the language that is determined to be spoken in the area that the point of in
         PDF("pdf")
     }
 
-    fun PayAPI.PaymentTransactionsAPI.getReceiptByFormat(transactionID: String, fileFormat: FileFormat? = null, language: String? = null, readTimeout: Long? = null): Call<ResponseBody> {
+    fun PayAPI.PaymentTransactionsAPI.getReceiptByFormat(transactionID: String, fileFormat: FileFormat? = null, language: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

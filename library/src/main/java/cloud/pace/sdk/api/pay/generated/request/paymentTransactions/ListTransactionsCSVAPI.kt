@@ -124,9 +124,9 @@ object ListTransactionsCSVAPI {
         FUELTYPEDESCENDING("-fuel.type")
     }
 
-    fun PayAPI.PaymentTransactionsAPI.listTransactionsCSV(pagenumber: Int? = null, pagesize: Int? = null, sort: Sort? = null, filterid: String? = null, filtercreatedAt: Date? = null, filterupdatedAt: Date? = null, filterpaymentMethodId: String? = null, filterpaymentMethodKind: String? = null, filterpurposePRN: String? = null, filterproviderPRN: String? = null, filterfuelProductName: String? = null, filterfuelType: String? = null, readTimeout: Long? = null): Call<ResponseBody> {
+    fun PayAPI.PaymentTransactionsAPI.listTransactionsCSV(pagenumber: Int? = null, pagesize: Int? = null, sort: Sort? = null, filterid: String? = null, filtercreatedAt: Date? = null, filterupdatedAt: Date? = null, filterpaymentMethodId: String? = null, filterpaymentMethodKind: String? = null, filterpurposePRN: String? = null, filterproviderPRN: String? = null, filterfuelProductName: String? = null, filterfuelType: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

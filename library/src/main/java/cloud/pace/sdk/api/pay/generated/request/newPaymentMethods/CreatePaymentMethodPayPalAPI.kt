@@ -54,9 +54,9 @@ If you provide a valid Billing Agreement ID, the payment method is created direc
         var data: PaymentMethodPayPalCreateBody? = null
     }
 
-    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodPayPal(body: Body, readTimeout: Long? = null): Call<PaymentMethod> {
+    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodPayPal(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentMethod> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {

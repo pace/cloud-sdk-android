@@ -43,9 +43,9 @@ object VerifyOTPAPI {
         ): Call<ResponseBody>
     }
 
-    fun UserAPI.TOTPAPI.verifyOTP(body: OTP, readTimeout: Long? = null): Call<ResponseBody> {
+    fun UserAPI.TOTPAPI.verifyOTP(body: OTP, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
         val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
+                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
                         .authenticator(InterceptorUtils.getAuthenticator())
 
         if (readTimeout != null) {
