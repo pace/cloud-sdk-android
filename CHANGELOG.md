@@ -18,6 +18,7 @@ x.y.z Release notes (yyyy-MM-dd)
 * Change the `screenOrientation` for all activities to `behind`, which uses the same `screenOrientation` as the activity immediately beneath it in the activity stack
 * Add the following languages: Czech, French, Portuguese, Dutch, Italian, Polish, Romanian, Russian and Spanish
 * Regenerate all API files with a new headers parameters per request
+* Add process payment quick fix for pre auth payments
 
 
 13.0.0 Release notes (2022-02-10)
