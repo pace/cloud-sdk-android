@@ -82,6 +82,11 @@ open class GasStation(id: String, geometry: ArrayList<Geometry.CommandGeo>) :
     var isConnectedFuelingAvailable: Boolean? = null
 
     /**
+     * Specifies if this gas station instance is a `POIKit.CoFuGasStation`
+     */
+    var isOnlineCoFuGasStation: Boolean? = null
+
+    /**
      * List of [Amenity]
      */
     var amenities: MutableList<Amenity> = mutableListOf()

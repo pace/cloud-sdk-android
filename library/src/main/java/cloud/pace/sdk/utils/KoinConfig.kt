@@ -55,7 +55,8 @@ object KoinConfig {
                 factory<LocationProvider> { LocationProviderImpl(get(), get()) }
                 single {
                     Room.databaseBuilder(get(), POIKitDatabase::class.java, POIKitDatabase.DATABASE_NAME)
-                        .addMigrations(POIKitDatabase.migration1to2, POIKitDatabase.migration2to3, POIKitDatabase.migration3to4, POIKitDatabase.migration4to5, POIKitDatabase.migration5to6)
+                        .addMigrations(POIKitDatabase.migration1to2, POIKitDatabase.migration2to3, POIKitDatabase.migration3to4, POIKitDatabase.migration4to5, POIKitDatabase.migration5to6,
+                            POIKitDatabase.migration6to7)
                         .build()
                 }
                 single { TileDownloader(environment) }

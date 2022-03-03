@@ -72,7 +72,6 @@ class VisibleRegionNotificationToken(
 
         downloadTask = tileDownloader.load(tileRequest) {
             it.onSuccess { stations ->
-                stations.forEach { station -> station.updatedAt = Date() }
                 gasStationDao.insertGasStations(stations)
 
                 MainScope().launch { loading.value = false }
@@ -125,7 +124,6 @@ class IDsNotificationToken(
 
             downloadTask = tileDownloader.load(tileRequest) {
                 it.onSuccess { stations ->
-                    stations.forEach { station -> station.updatedAt = Date() }
                     gasStationDao.insertGasStations(stations)
                     MainScope().launch { loading.value = false }
                 }
@@ -202,7 +200,6 @@ class IDNotificationToken(
     private fun download(location: LocationPoint, zoomLevel: Int) {
         downloadTask = tileDownloader.load(location.toTileQueryRequest(zoomLevel)) {
             it.onSuccess { stations ->
-                stations.forEach { station -> station.updatedAt = Date() }
                 gasStationDao.insertGasStations(stations)
                 MainScope().launch { loading.value = false }
             }
@@ -237,7 +234,6 @@ class LocationsNotificationToken(
 
             downloadTask = tileDownloader.load(tileRequest) {
                 it.onSuccess { stations ->
-                    stations.forEach { station -> station.updatedAt = Date() }
                     gasStationDao.insertGasStations(stations)
                     MainScope().launch { loading.value = false }
                 }

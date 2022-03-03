@@ -93,7 +93,6 @@ object POIKit : CloudSDKKoinComponent, DefaultLifecycleObserver {
 
             tileDownloader.load(tileRequest) {
                 it.onSuccess { stations ->
-                    stations.forEach { station -> station.updatedAt = Date() }
                     database.gasStationDao().insertGasStations(stations)
                     onMainThread {
                         completion(Success(stations))

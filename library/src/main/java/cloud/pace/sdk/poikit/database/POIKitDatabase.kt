@@ -11,7 +11,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
 
-@Database(entities = [GasStation::class], version = 6)
+@Database(entities = [GasStation::class], version = 7)
 @TypeConverters(Converters::class)
 abstract class POIKitDatabase : RoomDatabase() {
     abstract fun gasStationDao(): GasStationDAO
@@ -75,6 +75,12 @@ abstract class POIKitDatabase : RoomDatabase() {
         val migration5to6 = object : Migration(5, 6) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE GasStation ADD COLUMN cofuPaymentMethods TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
+        val migration6to7 = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE GasStation ADD COLUMN isOnlineCoFuGasStation INTEGER")
             }
         }
     }
