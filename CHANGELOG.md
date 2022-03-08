@@ -10,6 +10,7 @@ x.y.z Release notes (yyyy-MM-dd)
 
 * Regenerate all API files to change the return type from `Void` to `ResponseBody`
 * Fix wrong setup check error message
+* Check if the manifest request was successful before deserializing the response body
 
 ### Internal
 

@@ -54,10 +54,11 @@ class CacheModelImpl : CacheModel {
             .cache(Cache(context.cacheDir, CACHE_SIZE_BYTES))
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS))
             .build()
-            .newCall(request).enqueue(object : Callback {
+            .newCall(request)
+            .enqueue(object : Callback {
                 override fun onResponse(call: Call, response: Response) {
                     val data = response.body?.bytes()
-                    if (data != null) {
+                    if (response.isSuccessful && data != null) {
                         completion(Result.success(data))
                     } else {
                         Timber.e(
