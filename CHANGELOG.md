@@ -21,6 +21,7 @@ x.y.z Release notes (yyyy-MM-dd)
 * Add process payment quick fix for pre auth payments
 * Add new property `isOnlineCoFuGasStation` to `GasStation`
 * Remove JCenter as dependency repository
+* Remove fallback to `apps/query` endpoint to request local apps if GeoJSON file couldn't be retrieved
 
 
 13.0.0 Release notes (2022-02-10)
