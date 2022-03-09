@@ -125,9 +125,10 @@ dependencies {
     implementation(Libs.RETROFIT_ADAPTER_RXJAVA)
     implementation(Libs.OKHTTP_LOGGING_INTERCEPTOR)
     implementation(Libs.MOSHI_KOTLIN)
+    // The moshi-jsonapi dependency is now added as JAR so that JCenter is not used as dependency repository anymore
     implementation(Libs.MOSHI_ADAPTERS)
-    api(Libs.MOSHI_JSONAPI)
-    implementation(Libs.MOSHI_JSONAPI_RETROFIT_CONVERTER)
+    api(files(Libs.MOSHI_JSONAPI_JAR))
+    implementation(files(Libs.MOSHI_JSONAPI_RETROFIT_CONVERTER_JAR))
     implementation(Libs.GSON)
     api(Libs.RXJAVA)
     api(Libs.RXANDROID)
