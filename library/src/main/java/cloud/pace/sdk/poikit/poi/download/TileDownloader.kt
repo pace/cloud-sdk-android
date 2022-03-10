@@ -3,6 +3,8 @@ package cloud.pace.sdk.poikit.poi.download
 import TileQueryRequestOuterClass
 import TileQueryResponseOuterClass
 import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.poikit.POIKit
+import cloud.pace.sdk.poikit.geo.ConnectedFuelingStatus
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.Geometry
 import cloud.pace.sdk.poikit.poi.LocationPoint
@@ -14,6 +16,7 @@ import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_ID
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_TYPE
 import cloud.pace.sdk.poikit.utils.POIKitConfig
 import cloud.pace.sdk.utils.Environment
+import cloud.pace.sdk.utils.Success
 import cloud.pace.sdk.utils.requestId
 import com.google.protobuf.InvalidProtocolBufferException
 import okhttp3.*
@@ -22,7 +25,9 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import timber.log.Timber
 import vector_tile.VectorTile
 import java.io.IOException
+import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayList
 import kotlin.math.atan
 import kotlin.math.exp
 
@@ -87,8 +92,24 @@ class TileDownloader(environment: Environment) {
                         val tileInformation = TileInformation(result.zoom, vectorTile.geo.x, vectorTile.geo.y)
                         pois.addAll(this@TileDownloader.loadPois(vectorTile, tileInformation))
                     }
-
-                    handler(Result.success(pois))
+                    POIKit.requestCofuGasStations {
+                        when (it) {
+                            is Success -> {
+                                val cofuStationMap = it.result.map { it.id to it }.toMap()
+                                pois.forEach { station ->
+                                    station.updatedAt = Date()
+                                    station.isOnlineCoFuGasStation = cofuStationMap[station.id]?.let { it.connectedFuelingStatus == ConnectedFuelingStatus.ONLINE }
+                                }
+                                handler(Result.success(pois))
+                            }
+                            else -> {
+                                pois.forEach { station ->
+                                    station.updatedAt = Date()
+                                }
+                                handler(Result.success(pois))
+                            }
+                        }
+                    }
                 } catch (e: InvalidProtocolBufferException) {
                     Timber.e(
                         ApiException(response.code, response.message, response.requestId),

@@ -48,7 +48,8 @@ class MigrationTest {
             POIKitDatabase.migration2to3,
             POIKitDatabase.migration3to4,
             POIKitDatabase.migration4to5,
-            POIKitDatabase.migration5to6
+            POIKitDatabase.migration5to6,
+            POIKitDatabase.migration6to7
             // Add all migrations here
         ).build()
     }
@@ -180,5 +181,30 @@ class MigrationTest {
 
         assertEquals(true, cursor.moveToFirst())
         assertEquals("", cursor.getString(cursor.getColumnIndex("cofuPaymentMethods")))
+    }
+
+    @Test
+    @Throws(IOException::class)
+    fun migrate6to7() {
+        helper.createDatabase(TEST_DB, 6).apply {
+            execSQL(
+                "INSERT INTO \"GasStation\" (\"name\", \"brand\", \"openingHours\", \"prices\", \"currency\", \"priceFormat\", \"validFrom\", \"paymentMethods\", \"isConnectedFuelingAvailable\", \"amenities\", \"foods\", \"loyaltyPrograms\", \"postalServices\", \"services\", \"shopGoods\", \"priceComparisonOptOut\", \"temporary\", \"updatedAt\", \"latitude\", \"longitude\", \"id\", \"geometry\", \"countryCode\", \"city\", \"postalCode\", \"suburb\", \"state\", \"street\", \"houseNumber\", \"encodedAddress\", \"cofuPaymentMethods\") VALUES ('Shell', 'Shell', '[{\"days\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"],\"hours\":[{\"from\":\"6\",\"to\":\"22\"}],\"rule\":\"OPEN\"}]', '[{\"name\":\"Diesel FuelSave\",\"price\":1.329,\"type\":\"DIESEL\"},{\"name\":\"V-Power Racing\",\"price\":1.739,\"type\":\"RON100\"},{\"name\":\"Super FuelSave E10\",\"price\":1.489,\"type\":\"E10\"},{\"name\":\"Super FuelSave 95\",\"price\":1.549,\"type\":\"E5\"}]', 'EUR', 'd.dds', '1619679925000', '[\"CASH\",\"EUROSHELL\",\"MASTER_CARD\",\"PAYPAL\",\"VISA\"]', '0', '[\"SHOP\",\"TOILET\"]', '[\"CAFE\"]', '[\"SHELL_CLUBSMART\"]', '[]', '[\"CAR_WASH\",\"SCREEN_WASH_WATER\",\"TYRE_AIR\"]', '[\"AD_BLUE\"]', '0', '0', '1619683525520', '52.5563160654065', '13.4150576591492', 'a041f06f-f60d-49cc-a99a-def2f0a104f0', '[{\"commandType\":\"MOVETO\",\"locationPoint\":{\"lat\":52.55631606540652,\"lon\":13.41505765914917}}]', 'DE', 'Berlin', '13189', '', '', 'Berliner Str. 83 Eschengraben', '', 'c=DE;l=Berlin;pc=13189;s=Berliner Str. 83 Eschengraben', '[\"cofu:creditcard\",\"cofu:paypal\",\"cofu:applepay\",\"cofu:giropay\",\"cofu:dkv\"]');"
+            )
+            execSQL(
+                "INSERT INTO \"GasStation\" (\"name\", \"brand\", \"openingHours\", \"prices\", \"currency\", \"priceFormat\", \"validFrom\", \"paymentMethods\", \"isConnectedFuelingAvailable\", \"amenities\", \"foods\", \"loyaltyPrograms\", \"postalServices\", \"services\", \"shopGoods\", \"priceComparisonOptOut\", \"temporary\", \"updatedAt\", \"latitude\", \"longitude\", \"id\", \"geometry\", \"countryCode\", \"city\", \"postalCode\", \"suburb\", \"state\", \"street\", \"houseNumber\", \"encodedAddress\", \"cofuPaymentMethods\") VALUES ('Elan', 'Elan', '[{\"days\":[\"MONDAY\",\"TUESDAY\",\"WEDNESDAY\",\"THURSDAY\",\"FRIDAY\",\"SATURDAY\",\"SUNDAY\"],\"hours\":[{\"from\":\"0\",\"to\":\"0\"}],\"rule\":\"OPEN\"}]', '[{\"name\":\"Diesel\",\"price\":1.299,\"type\":\"DIESEL\"},{\"name\":\"Super E10\",\"price\":1.459,\"type\":\"E10\"},{\"name\":\"Super 95\",\"price\":1.519,\"type\":\"E5\"}]', 'EUR', 'd.dds', '1619681691000', '[\"AMERICAN_EXPRESS\",\"APPLE_PAY\",\"DKV\",\"FF_CARD\",\"GIROCARD\",\"GOOGLE_PAY\",\"MAESTRO\",\"MASTER_CARD\",\"UTA\",\"V_PAY\",\"VISA\",\"WESTFALEN_CARD\"]', '0', '[\"TRUCK_SUITABLE\"]', '[\"CAFE\",\"TAKE_AWAY\"]', '[]', '[]', '[\"CAR_WASH\",\"GAS_BOTTLE_REFILL\",\"TWENTY_FOUR_HOURS_FUELING\"]', '[]', '0', '0', '1619683525520', '52.5584098766817', '13.4327495098114', '0cd0782f-2a41-4c99-8b34-f5ad02a07f52', '[{\"commandType\":\"MOVETO\",\"locationPoint\":{\"lat\":52.55840987668165,\"lon\":13.432749509811401}}]', 'DE', 'Berlin', '13089', '', '', 'Tino-Schwierzina-Str', '37', 'c=DE;l=Berlin;pc=13089;s=Tino-Schwierzina-Str;hn=37', '[\"cofu:giropay\",\"cofu:applepay\",\"cofu:creditcard\",\"cofu:dkv\",\"cofu:hoyer\",\"cofu:sepa\",\"cofu:zgm\",\"cofu:paypal\"]');"
+            )
+
+            // Prepare for the next version.
+            close()
+        }
+
+        val db = helper.runMigrationsAndValidate(TEST_DB, 7, true, POIKitDatabase.migration6to7)
+
+        val cursor = db.query("SELECT * FROM GasStation")
+        assertEquals(2, cursor.count)
+        assertEquals(32, cursor.columnCount)
+
+        assertEquals(true, cursor.moveToFirst())
+        assertEquals(null, cursor.getString(cursor.getColumnIndex("isOnlineCoFuGasStation")))
     }
 }
