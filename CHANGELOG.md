@@ -20,6 +20,7 @@ x.y.z Release notes (yyyy-MM-dd)
 * Regenerate all API files with a new headers parameters per request
 * Add process payment quick fix for pre auth payments
 * Add new property `isOnlineCoFuGasStation` to `GasStation`
+* Remove JCenter as dependency repository
 
 
 13.0.0 Release notes (2022-02-10)
