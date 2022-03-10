@@ -214,7 +214,6 @@ class GeoAPIManagerImpl(
     private suspend fun isPoiInRange(poiId: String, latitude: Double, longitude: Double): Boolean {
         return try {
             suspendCancellableCoroutine { continuation ->
-                // Try to load the apps from the cache
                 features(poiId, latitude, longitude) { response ->
                     response.onSuccess { geoAPIFeatures ->
                         val isPoiInRange = geoAPIFeatures
@@ -225,16 +224,7 @@ class GeoAPIManagerImpl(
                     }
 
                     response.onFailure {
-                        // Fetch the apps from the API
-                        appApi.getLocationBasedApps(latitude, longitude) { response ->
-                            response.onSuccess { apps ->
-                                continuation.resumeIfActive(apps.any { it.references?.any { reference -> reference.resourceUuid == poiId } ?: false })
-                            }
-
-                            response.onFailure {
-                                continuation.resumeIfActive(false)
-                            }
-                        }
+                        continuation.resumeIfActive(false)
                     }
                 }
             }

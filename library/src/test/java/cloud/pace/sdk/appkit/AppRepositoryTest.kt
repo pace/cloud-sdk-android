@@ -4,7 +4,6 @@ import android.content.Context
 import android.location.Location
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppWithRefs
-import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppsWithRefs
 import cloud.pace.sdk.appkit.app.api.AppRepositoryImpl
 import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.utils.TestAppAPI
@@ -46,15 +45,7 @@ class AppRepositoryTest {
         textColor = ""
     )
 
-    private val appApi = object : TestAppAPI() {
-        override fun getLocationBasedApps(latitude: Double, longitude: Double, completion: (Result<LocationBasedAppsWithRefs>) -> Unit) {
-            if (latitude == locationWithApp.latitude && longitude == locationWithApp.longitude) {
-                completion(Result.success(listOf(locationBasedApp)))
-            } else {
-                completion(Result.success(emptyList()))
-            }
-        }
-    }
+    private val appApi = TestAppAPI()
 
     private val uriUtil = object : TestUriUtils() {
         override fun getStartUrls(baseUrl: String, manifestUrl: String, sdkStartUrl: String?, references: List<String>?): Map<String?, String> {
@@ -124,60 +115,8 @@ class AppRepositoryTest {
                 completion(Result.failure(RuntimeException()))
             }
         }
-
-        val appApi = object : TestAppAPI() {
-            override fun getLocationBasedApps(latitude: Double, longitude: Double, completion: (Result<LocationBasedAppsWithRefs>) -> Unit) {
-                completion(Result.failure(RuntimeException()))
-            }
-        }
         val appRepository = AppRepositoryImpl(context, cache, appApi, uriUtil, geoApiManager)
         val exception = appRepository.getLocationBasedApps(locationWithApp.latitude, locationWithApp.longitude)
         assertTrue((exception as Failure).throwable is RuntimeException)
-    }
-
-    @Test
-    fun `return two apps when one app references two pois`() = runBlocking {
-        val id1 = "c34a78bc-de0a-4daa-9f5e-8cc7103cf55e"
-        val id2 = "2069125c-b65b-4514-81f9-3d09779b175f"
-        val locationBasedApp = LocationBasedAppWithRefs().apply {
-            pwaUrl = urlLocationBasedApp
-            references = listOf(id1, id2)
-        }
-        val appApi = object : TestAppAPI() {
-            override fun getLocationBasedApps(latitude: Double, longitude: Double, completion: (Result<LocationBasedAppsWithRefs>) -> Unit) {
-                if (latitude == locationWithApp.latitude && longitude == locationWithApp.longitude) {
-                    completion(Result.success(listOf(locationBasedApp)))
-                } else {
-                    completion(Result.success(emptyList()))
-                }
-            }
-        }
-        val uriUtil = object : TestUriUtils() {
-            override fun getStartUrls(baseUrl: String, manifestUrl: String, sdkStartUrl: String?, references: List<String>?): Map<String?, String> {
-                return mapOf(
-                    id1 to "$startUrl/?references=$id1",
-                    id2 to "$startUrl/?references=$id2"
-                )
-            }
-        }
-        val appRepository = AppRepositoryImpl(context, cache, appApi, uriUtil, geoApiManager)
-        val apps = (appRepository.getLocationBasedApps(locationWithApp.latitude, locationWithApp.longitude) as Success).result
-        assertEquals(2, apps.size)
-
-        val app1 = apps[0]
-        assertEquals(manifest.name, app1.name)
-        assertEquals(manifest.description, app1.description)
-        assertEquals(manifest.backgroundColor, app1.iconBackgroundColor)
-        assertEquals(id1, app1.poiId)
-        assertEquals("$startUrl/?references=$id1", app1.url)
-        assertNull(app1.logo)
-
-        val app2 = apps[1]
-        assertEquals(manifest.name, app2.name)
-        assertEquals(manifest.description, app2.description)
-        assertEquals(manifest.backgroundColor, app2.iconBackgroundColor)
-        assertEquals(id2, app2.poiId)
-        assertEquals("$startUrl/?references=$id2", app2.url)
-        assertNull(app2.logo)
     }
 }

@@ -3,15 +3,11 @@ package cloud.pace.sdk.appkit.app.api
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.location.Location
 import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.persistence.CacheModel
-import cloud.pace.sdk.poikit.geo.CofuGasStation
 import cloud.pace.sdk.poikit.geo.GeoAPIManager
-import cloud.pace.sdk.poikit.geo.isInRange
-import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.utils.*
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -34,8 +30,7 @@ class AppRepositoryImpl(
 
     override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
         return try {
-            val deferred = suspendCancellableCoroutine<List<Deferred<List<App>>>> { continuation ->
-                // Try to load the apps from the cache
+            val deferred = suspendCancellableCoroutine<Completion<List<Deferred<List<App>>>>> { continuation ->
                 geoApiManager.apps(latitude, longitude) { response ->
                     response.onSuccess {
                         val result = it.flatMap { geoGasStation ->
@@ -45,30 +40,19 @@ class AppRepositoryImpl(
                                 }
                             }
                         }
-
-                        continuation.resumeIfActive(result)
+                        continuation.resumeIfActive(Success(result))
                     }
 
                     response.onFailure {
-                        // Fetch the apps from the API
-                        appApi.getLocationBasedApps(latitude, longitude) { response ->
-                            response.onSuccess { apps ->
-                                val result = apps.map {
-                                    CoroutineScope(Dispatchers.IO).async {
-                                        castLocationBasedApp(it.pwaUrl, it.references)
-                                    }
-                                }
-                                continuation.resumeIfActive(result)
-                            }
-
-                            response.onFailure { throwable ->
-                                continuation.resumeWithExceptionIfActive(throwable)
-                            }
-                        }
+                        continuation.resumeIfActive(Failure(it))
                     }
                 }
             }
-            Success(deferred.awaitAll().flatten())
+
+            when (deferred) {
+                is Success -> Success(deferred.result.awaitAll().flatten())
+                is Failure -> Failure(deferred.throwable)
+            }
         } catch (e: Exception) {
             Failure(e)
         }
@@ -76,7 +60,7 @@ class AppRepositoryImpl(
 
     override suspend fun getAllApps(): Completion<List<App>> {
         return try {
-            val deferred = suspendCancellableCoroutine<List<Deferred<List<App>>>> { continuation ->
+            val deferred = suspendCancellableCoroutine<Completion<List<Deferred<List<App>>>>> { continuation ->
                 appApi.getAllApps { response ->
                     response.onSuccess { apps ->
                         val result = apps.map {
@@ -84,15 +68,19 @@ class AppRepositoryImpl(
                                 castLocationBasedApp(it.pwaUrl, null)
                             }
                         }
-                        continuation.resumeIfActive(result)
+                        continuation.resumeIfActive(Success(result))
                     }
 
                     response.onFailure { throwable ->
-                        continuation.resumeWithExceptionIfActive(throwable)
+                        continuation.resumeIfActive(Failure(throwable))
                     }
                 }
             }
-            Success(deferred.awaitAll().flatten())
+
+            when (deferred) {
+                is Success -> Success(deferred.result.awaitAll().flatten())
+                is Failure -> Failure(deferred.throwable)
+            }
         } catch (e: Exception) {
             Failure(e)
         }
@@ -185,9 +173,5 @@ class AppRepositoryImpl(
         val preferredIcon = IconUtils.getBestMatchingIcon(buttonWidth, icons) ?: return null
 
         return uriUtil.buildUrl(url, preferredIcon.src)
-    }
-
-    companion object {
-        private const val IS_POI_IN_RANGE_DISTANCE_THRESHOLD = 500 // meters
     }
 }

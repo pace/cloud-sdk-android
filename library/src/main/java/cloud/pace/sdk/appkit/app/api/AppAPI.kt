@@ -4,8 +4,6 @@ import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.poi.POIAPI.apps
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApps
-import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppsWithRefs
-import cloud.pace.sdk.api.poi.generated.request.apps.CheckForPaceAppAPI.checkForPaceApp
 import cloud.pace.sdk.api.poi.generated.request.apps.GetAppAPI.getApp
 import cloud.pace.sdk.api.poi.generated.request.apps.GetAppsAPI.getApps
 import cloud.pace.sdk.poikit.geo.GeoAPIClient
@@ -18,7 +16,6 @@ import retrofit2.Call
 interface AppAPI {
 
     fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit)
-    fun getLocationBasedApps(latitude: Double, longitude: Double, completion: (Result<LocationBasedAppsWithRefs>) -> Unit)
     fun getAllApps(completion: (Result<LocationBasedApps>) -> Unit)
     fun getAppByAppId(appId: String, completion: (Result<LocationBasedApp>) -> Unit)
 }
@@ -27,10 +24,6 @@ class AppAPIImpl(private val geoApiClient: GeoAPIClient) : AppAPI {
 
     override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
         geoApiClient.getGeoApiApps(completion)
-    }
-
-    override fun getLocationBasedApps(latitude: Double, longitude: Double, completion: (Result<LocationBasedAppsWithRefs>) -> Unit) {
-        API.apps.checkForPaceApp(latitude.toFloat(), longitude.toFloat()).executeWithRetry(completion)
     }
 
     override fun getAllApps(completion: (Result<LocationBasedApps>) -> Unit) {

@@ -8,7 +8,6 @@ import android.os.Handler
 import androidx.lifecycle.MutableLiveData
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApps
-import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppsWithRefs
 import cloud.pace.sdk.appkit.app.api.AppAPI
 import cloud.pace.sdk.appkit.app.api.AppRepository
 import cloud.pace.sdk.appkit.app.api.UriManager
@@ -25,7 +24,6 @@ import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.utils.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import org.mockito.Mockito.mock
-import java.util.*
 
 open class TestLocationProvider(
     private val mockedLocation: Location? = null,
@@ -187,7 +185,6 @@ open class TestWebClientCallback : AppWebViewClient.WebClientCallback {
 open class TestAppAPI : AppAPI {
 
     override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {}
-    override fun getLocationBasedApps(latitude: Double, longitude: Double, completion: (Result<LocationBasedAppsWithRefs>) -> Unit) {}
     override fun getAllApps(completion: (Result<LocationBasedApps>) -> Unit) {}
     override fun getAppByAppId(appId: String, completion: (Result<LocationBasedApp>) -> Unit) {}
 }
