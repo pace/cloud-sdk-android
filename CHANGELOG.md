@@ -6,20 +6,26 @@ x.y.z Release notes (yyyy-MM-dd)
 <!-- ### Fixes - Include, if needed -->
 <!-- ### Internal - Include, if needed -->
 
+13.1.0 Release notes (2022-03-10)
+=============================================================
+
+### Enhancements
+
+* Add the following languages: Czech, French, Portuguese, Dutch, Italian, Polish, Romanian, Russian and Spanish
+* Regenerate all API files with a new headers parameters per request
+* Add new property `isOnlineCoFuGasStation` to `GasStation`
+
 ### Fixes
 
 * Regenerate all API files to change the return type from `Void` to `ResponseBody`
 * Fix wrong setup check error message
 * Check if the manifest request was successful before deserializing the response body
+* Add process payment quick fix for pre auth payments
 
 ### Internal
 
 * Replace Kotlin synthetics with Jetpack View Binding
 * Change the `screenOrientation` for all activities to `behind`, which uses the same `screenOrientation` as the activity immediately beneath it in the activity stack
-* Add the following languages: Czech, French, Portuguese, Dutch, Italian, Polish, Romanian, Russian and Spanish
-* Regenerate all API files with a new headers parameters per request
-* Add process payment quick fix for pre auth payments
-* Add new property `isOnlineCoFuGasStation` to `GasStation`
 * Remove JCenter as dependency repository
 * Remove fallback to `apps/query` endpoint to request local apps if GeoJSON file couldn't be retrieved
 
