@@ -11,16 +11,16 @@ class CloudSDKApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        PACECloudSDK.setup(this, Configuration(
-            clientAppName = "PACECloudSDKExample",
-            clientAppVersion = BuildConfig.VERSION_NAME,
-            clientAppBuild = BuildConfig.VERSION_CODE.toString(),
-            apiKey = "YOUR_API_KEY",
-            environment = Environment.DEVELOPMENT,
-            domainACL = listOf("pace.cloud"),
-            geoAppsScope = "pace-drive-android",
-            oidConfiguration = CustomOIDConfiguration(clientId = "cloud-sdk-example-app", redirectUri = "cloud-sdk-example://callback")
-        )
+        PACECloudSDK.setup(
+            this, Configuration(
+                clientAppName = "PACECloudSDKExample",
+                clientAppVersion = BuildConfig.VERSION_NAME,
+                clientAppBuild = BuildConfig.VERSION_CODE.toString(),
+                apiKey = "YOUR_API_KEY",
+                environment = Environment.DEVELOPMENT,
+                geoAppsScope = "pace-drive-android",
+                oidConfiguration = CustomOIDConfiguration(clientId = "cloud-sdk-example-app", redirectUri = "cloud-sdk-example://callback")
+            )
         )
     }
 }

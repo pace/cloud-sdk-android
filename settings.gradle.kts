@@ -1,2 +1,2 @@
 rootProject.name = "PACECloudSDK"
-include(":library", ":app")
+include(":library", ":app", ":fueling-app")
