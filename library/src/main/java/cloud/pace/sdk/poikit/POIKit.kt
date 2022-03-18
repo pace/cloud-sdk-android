@@ -32,6 +32,10 @@ import cloud.pace.sdk.poikit.utils.POIKitConfig
 import cloud.pace.sdk.utils.*
 import com.google.android.gms.maps.model.VisibleRegion
 import io.reactivex.rxjava3.core.Observable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.core.component.inject
 import java.util.*
 
@@ -88,21 +92,21 @@ object POIKit : CloudSDKKoinComponent, DefaultLifecycleObserver {
 
     @JvmOverloads
     fun requestGasStations(locations: Map<String, LocationPoint>, zoomLevel: Int = POIKitConfig.ZOOMLEVEL, completion: (Completion<List<GasStation>>) -> Unit) {
-        onBackgroundThread {
-            val tileRequest = locations.values.toTileQueryRequest(zoomLevel)
+        val tileRequest = locations.values.toTileQueryRequest(zoomLevel)
 
-            tileDownloader.load(tileRequest) {
-                it.onSuccess { stations ->
+        tileDownloader.load(tileRequest) {
+            it.onSuccess { stations ->
+                CoroutineScope(Dispatchers.IO).launch {
                     database.gasStationDao().insertGasStations(stations)
-                    onMainThread {
+                    withContext(Dispatchers.Main) {
                         completion(Success(stations))
                     }
                 }
+            }
 
-                it.onFailure { error ->
-                    onMainThread {
-                        completion(Failure(error))
-                    }
+            it.onFailure { error ->
+                onMainThread {
+                    completion(Failure(error))
                 }
             }
         }
