@@ -14,9 +14,7 @@ import cloud.pace.sdk.poikit.utils.addPadding
 import cloud.pace.sdk.poikit.utils.toTileQueryRequest
 import cloud.pace.sdk.utils.*
 import com.google.android.gms.maps.model.VisibleRegion
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.Call
 import org.koin.core.component.inject
 import java.util.*
@@ -72,19 +70,21 @@ class VisibleRegionNotificationToken(
 
         downloadTask = tileDownloader.load(tileRequest) {
             it.onSuccess { stations ->
-                gasStationDao.insertGasStations(stations)
+                CoroutineScope(Dispatchers.IO).launch {
+                    gasStationDao.insertGasStations(stations)
 
-                MainScope().launch { loading.value = false }
+                    withContext(Dispatchers.Main) { loading.value = false }
 
-                // Delete gas stations not reported by new tiles anymore
-                val persistedGasStations = gasStationDao.getInBoundingBox(
-                    minLat = visibleRegion.latLngBounds.southwest.latitude,
-                    minLon = visibleRegion.latLngBounds.southwest.longitude,
-                    maxLat = visibleRegion.latLngBounds.northeast.latitude,
-                    maxLon = visibleRegion.latLngBounds.northeast.longitude
-                )
-                val outdatedStations = persistedGasStations.filter { it.id !in stations.map { it.id } }
-                gasStationDao.delete(outdatedStations)
+                    // Delete gas stations not reported by new tiles anymore
+                    val persistedGasStations = gasStationDao.getInBoundingBox(
+                        minLat = visibleRegion.latLngBounds.southwest.latitude,
+                        minLon = visibleRegion.latLngBounds.southwest.longitude,
+                        maxLat = visibleRegion.latLngBounds.northeast.latitude,
+                        maxLon = visibleRegion.latLngBounds.northeast.longitude
+                    )
+                    val outdatedStations = persistedGasStations.filter { it.id !in stations.map { it.id } }
+                    gasStationDao.delete(outdatedStations)
+                }
             }
 
             it.onFailure { error ->
@@ -119,13 +119,15 @@ class IDsNotificationToken(
     override fun refresh(zoomLevel: Int) {
         loading.value = true
 
-        GlobalScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val tileRequest = gasStationDao.getByIds(ids).mapNotNull { it.center }.toTileQueryRequest(zoomLevel)
 
             downloadTask = tileDownloader.load(tileRequest) {
                 it.onSuccess { stations ->
-                    gasStationDao.insertGasStations(stations)
-                    MainScope().launch { loading.value = false }
+                    CoroutineScope(Dispatchers.IO).launch {
+                        gasStationDao.insertGasStations(stations)
+                        withContext(Dispatchers.Main) { loading.value = false }
+                    }
                 }
 
                 it.onFailure { error ->
@@ -200,8 +202,10 @@ class IDNotificationToken(
     private fun download(location: LocationPoint, zoomLevel: Int) {
         downloadTask = tileDownloader.load(location.toTileQueryRequest(zoomLevel)) {
             it.onSuccess { stations ->
-                gasStationDao.insertGasStations(stations)
-                MainScope().launch { loading.value = false }
+                CoroutineScope(Dispatchers.IO).launch {
+                    gasStationDao.insertGasStations(stations)
+                    withContext(Dispatchers.Main) { loading.value = false }
+                }
             }
 
             it.onFailure { error ->
@@ -229,19 +233,18 @@ class LocationsNotificationToken(
     override fun refresh(zoomLevel: Int) {
         loading.value = true
 
-        GlobalScope.launch {
-            val tileRequest = locations.values.toTileQueryRequest(zoomLevel)
-
-            downloadTask = tileDownloader.load(tileRequest) {
-                it.onSuccess { stations ->
+        val tileRequest = locations.values.toTileQueryRequest(zoomLevel)
+        downloadTask = tileDownloader.load(tileRequest) {
+            it.onSuccess { stations ->
+                CoroutineScope(Dispatchers.IO).launch {
                     gasStationDao.insertGasStations(stations)
-                    MainScope().launch { loading.value = false }
+                    withContext(Dispatchers.Main) { loading.value = false }
                 }
+            }
 
-                it.onFailure { error ->
-                    completion(Failure(error))
-                    MainScope().launch { loading.value = false }
-                }
+            it.onFailure { error ->
+                completion(Failure(error))
+                MainScope().launch { loading.value = false }
             }
         }
 
