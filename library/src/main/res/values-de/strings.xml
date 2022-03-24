@@ -5,7 +5,5 @@
     <string name="error_connection_problem_network">PACE benötigt eine stabile und ausreichend schnelle Internetverbindung, um fortzufahren.\n\nBitte stelle sicher, dass deine App auf mobile Daten zugreifen darf, oder nutze eine WLAN-Verbindung.</string>
     <string name="appkit_secureData_authentication_confirmation">Jetzt autorisieren, um auf gesicherte Daten zuzugreifen</string>
     <string name="payment_biometric_prompt_title">Jetzt bezahlen</string>
-    <string name="geofence_notification_title">Mobiles Bezahlen verfügbar</string>
-    <string name="geofence_notification_text">Bei einer Tankstelle in deiner Nähe kann mobil bezahlt werden</string>
     <string name="common_cancel">Abbrechen</string>
 </resources>

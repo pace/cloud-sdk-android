@@ -5,7 +5,5 @@
     <string name="error_connection_problem_network">PACE heeft een stabiele en voldoende snelle netwerkverbinding nodig om door te kunnen gaan.\ Zorg ervoor dat uw app toegang heeft tot de mobiele gegevens van uw telefoon. U kunt ook Wi-Fi gebruiken.</string>
     <string name="appkit_secureData_authentication_confirmation">Machtigen voor toegang tot beveiligde gegevens</string>
     <string name="payment_biometric_prompt_title">Betaal nu</string>
-    <string name="geofence_notification_title">Mobiele betaling beschikbaar</string>
-    <string name="geofence_notification_text">Een benzinestation in de buurt ondersteunt mobiele betaling</string>
     <string name="common_cancel">Annuleren</string>
 </resources>

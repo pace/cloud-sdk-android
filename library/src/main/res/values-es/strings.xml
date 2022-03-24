@@ -5,7 +5,5 @@
     <string name="error_connection_problem_network">PACE necesita una conexión de red estable y lo suficientemente rápida para continuar.\N- Asegúrate de que tu aplicación tiene permiso para acceder a los datos móviles de tu teléfono. También puedes utilizar el Wi-Fi.</string>
     <string name="appkit_secureData_authentication_confirmation">Autorizar el acceso a los datos protegidos</string>
     <string name="payment_biometric_prompt_title">Pagar ahora</string>
-    <string name="geofence_notification_title">Pago por móvil disponible</string>
-    <string name="geofence_notification_text">Una gasolinera cercana admite el pago por móvil</string>
     <string name="common_cancel">Cancelar</string>
 </resources>

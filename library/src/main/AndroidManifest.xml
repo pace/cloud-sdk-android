@@ -58,10 +58,6 @@
             android:screenOrientation="behind"
             android:theme="@style/AppKitTheme" />
 
-        <receiver
-            android:name=".appkit.geofences.GeofenceBroadcastReceiver"
-            android:exported="false" />
-
         <meta-data
             android:name="pace_redirect_scheme"
             android:value="${pace_redirect_scheme}" />

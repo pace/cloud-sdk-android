@@ -5,7 +5,5 @@
     <string name="error_connection_problem_network">PACE ha bisogno di una connessione di rete stabile e sufficientemente veloce per continuare. Puoi anche usare il Wi-Fi.</string>
     <string name="appkit_secureData_authentication_confirmation">Autorizzare l\'accesso ai dati protetti</string>
     <string name="payment_biometric_prompt_title">Paga ora</string>
-    <string name="geofence_notification_title">Pagamento mobile disponibile</string>
-    <string name="geofence_notification_text">Una stazione di servizio nelle vicinanze supporta il pagamento mobile</string>
     <string name="common_cancel">Cancella</string>
 </resources>
