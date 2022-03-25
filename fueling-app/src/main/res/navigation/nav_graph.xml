@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="cloud.pace.sdk.fueling_app.ui.main.MainFragment"
+        android:label="MainFragment"
+        tools:layout="@layout/fragment_main">
+
+        <action
+            android:id="@+id/action_mainFragment_to_paymentMethodsFragment"
+            app:destination="@id/paymentMethodsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/paymentMethodsFragment"
+        android:name="cloud.pace.sdk.fueling_app.ui.payment_method.PaymentMethodsFragment"
+        android:label="PaymentMethodsFragment"
+        tools:layout="@layout/fragment_payment_methods">
+
+        <action
+            android:id="@+id/action_paymentMethodsFragment_to_pumpsFragment"
+            app:destination="@id/pumpsFragment" />
+
+        <argument
+            android:name="gasStation"
+            app:argType="cloud.pace.sdk.fueling_app.data.model.GasStation" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/pumpsFragment"
+        android:name="cloud.pace.sdk.fueling_app.ui.pump.PumpsFragment"
+        android:label="PumpsFragment"
+        tools:layout="@layout/fragment_pumps">
+
+        <!-- Post pay only transition -->
+        <action
+            android:id="@+id/action_pumpsFragment_to_statusFragment"
+            app:destination="@id/statusFragment" />
+
+        <!-- Pre auth only transition -->
+        <action
+            android:id="@+id/action_pumpsFragment_to_amountFragment"
+            app:destination="@id/amountFragment" />
+
+        <argument
+            android:name="gasStation"
+            app:argType="cloud.pace.sdk.fueling_app.data.model.GasStation" />
+
+        <argument
+            android:name="paymentMethod"
+            app:argType="cloud.pace.sdk.fueling_app.data.model.PaymentMethod" />
+
+        <argument
+            android:name="pumps"
+            app:argType="cloud.pace.sdk.fueling_app.data.model.Pump[]" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/statusFragment"
+        android:name="cloud.pace.sdk.fueling_app.ui.status.StatusFragment"
+        android:label="StatusFragment"
+        tools:layout="@layout/fragment_status">
+
+        <!-- Post pay only transition -->
+        <action
+            android:id="@+id/action_statusFragment_to_payFragment"
+            app:destination="@id/payFragment"
+            app:popUpTo="@id/statusFragment"
+            app:popUpToInclusive="true" />
+
+        <!-- Pre auth only transition -->
+        <action
+            android:id="@+id/action_statusFragment_to_summaryFragment"
+            app:destination="@id/summaryFragment"
+            app:popUpTo="@id/mainFragment" />
+
+        <argument
+            android:name="gasStation"
+            app:argType="cloud.pace.sdk.fueling_app.data.model.GasStation" />
+
+        <argument
+            android:name="pump"
+            app:argType="cloud.pace.sdk.fueling_app.data.model.Pump" />
+
+        <argument
+            android:name="paymentMethod"
+            app:argType="cloud.pace.sdk.fueling_app.data.model.PaymentMethod" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/amountFragment"
+        android:name="cloud.pace.sdk.fueling_app.ui.amount.AmountFragment"
+        android:label="AmountFragment"
+        tools:layout="@layout/fragment_amount">
+
+        <!-- Pre auth only transition -->
+        <action
+            android:id="@+id/action_amountFragment_to_payFragment"
+            app:destination="@id/payFragment" />
+
+        <argument
+            android:name="gasStation"
+            app:argType="cloud.pace.sdk.fueling_app.data.model.GasStation" />
+
+        <argument
+            android:name="paymentMethod"
+            app:argType="cloud.pace.sdk.fueling_app.data.model.PaymentMethod" />
+
+        <argument
+            android:name="pump"
+            app:argType="cloud.pace.sdk.fueling_app.data.model.Pump" />
+
+        <argument
+            android:name="pumpResponse"
+            app:argType="cloud.pace.sdk.fueling_app.data.model.PumpResponse" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/payFragment"
+        android:name="cloud.pace.sdk.fueling_app.ui.pay.PayFragment"
+        android:label="PayFragment"
+        tools:layout="@layout/fragment_pay">
+
+        <!-- Post pay only transition -->
+        <action
+            android:id="@+id/action_payFragment_to_summaryFragment"
+            app:destination="@id/summaryFragment"
+            app:popUpTo="@id/mainFragment" />
+
+        <!-- Pre auth only transition -->
+        <action
+            android:id="@+id/action_payFragment_to_statusFragment"
+            app:destination="@id/statusFragment"
+            app:popUpTo="@id/amountFragment"
+            app:popUpToInclusive="true" />
+
+        <argument
+            android:name="gasStation"
+            app:argType="cloud.pace.sdk.fueling_app.data.model.GasStation" />
+
+        <argument
+            android:name="paymentMethod"
+            app:argType="cloud.pace.sdk.fueling_app.data.model.PaymentMethod" />
+
+        <argument
+            android:name="pump"
+            app:argType="cloud.pace.sdk.fueling_app.data.model.Pump" />
+
+        <argument
+            android:name="pumpResponse"
+            app:argType="cloud.pace.sdk.fueling_app.data.model.PumpResponse" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/summaryFragment"
+        android:name="cloud.pace.sdk.fueling_app.ui.summary.SummaryFragment"
+        android:label="SummaryFragment"
+        tools:layout="@layout/fragment_summary">
+
+        <argument
+            android:name="transactionId"
+            app:argType="string"
+            app:nullable="true" />
+
+    </fragment>
+
+</navigation>

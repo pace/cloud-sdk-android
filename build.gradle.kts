@@ -9,6 +9,8 @@ buildscript {
     dependencies {
         classpath(Libs.ANDROID_GRADLE_PLUGIN)
         classpath(Libs.KOTLIN_GRADLE_PLUGIN)
+        classpath(Libs.HILT_GRADLE_PLUGIN)
+        classpath(Libs.NAVIGATION_SAFE_ARGS)
     }
 }
 

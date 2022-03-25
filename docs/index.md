@@ -215,22 +215,6 @@ PACECloudSDK.setup(
 Once the authorization flow is completed in the browser, the authorization service will redirect to a URI specified as part of the authorization request.
 In order for your app to capture this response, you must register the **redirect URI scheme** in your app's `build.gradle` as described above.
 
-From Android API 30 (R) and above, set queries in the your app's manifest, to enable AppAuth searching for usable installed browsers:
-```xml
-<queries>
-    <intent>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.BROWSABLE" />
-        <data android:scheme="https" />
-    </intent>
-    <intent>
-        <action android:name="android.intent.action.VIEW" />
-        <category android:name="android.intent.category.APP_BROWSER" />
-        <data android:scheme="https" />
-    </intent>
-</queries>
-```
-
 ### Discover configuration
 The *IDKit* offers a function to discover the authorization service configuration by an issuer URI. For example:
 
