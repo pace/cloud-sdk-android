@@ -15,7 +15,6 @@ import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppEventManagerImpl
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.communication.AppModelImpl
-import cloud.pace.sdk.appkit.geofences.GeofenceCallback
 import cloud.pace.sdk.appkit.network.NetworkChangeListener
 import cloud.pace.sdk.appkit.network.NetworkChangeListenerImpl
 import cloud.pace.sdk.appkit.pay.PayAuthenticationManager
@@ -55,8 +54,14 @@ object KoinConfig {
                 factory<LocationProvider> { LocationProviderImpl(get(), get()) }
                 single {
                     Room.databaseBuilder(get(), POIKitDatabase::class.java, POIKitDatabase.DATABASE_NAME)
-                        .addMigrations(POIKitDatabase.migration1to2, POIKitDatabase.migration2to3, POIKitDatabase.migration3to4, POIKitDatabase.migration4to5, POIKitDatabase.migration5to6,
-                            POIKitDatabase.migration6to7)
+                        .addMigrations(
+                            POIKitDatabase.migration1to2,
+                            POIKitDatabase.migration2to3,
+                            POIKitDatabase.migration3to4,
+                            POIKitDatabase.migration4to5,
+                            POIKitDatabase.migration5to6,
+                            POIKitDatabase.migration6to7
+                        )
                         .build()
                 }
                 single { TileDownloader(environment) }
@@ -73,7 +78,6 @@ object KoinConfig {
                 single<PayAuthenticationManager> { PayAuthenticationManagerImpl(get()) }
                 single<UriManager> { UriManagerImpl() }
                 single<AppAPI> { AppAPIImpl(get()) }
-                single { GeofenceCallback() }
                 single { LocationServices.getGeofencingClient(get<Context>()) }
                 single<AppModel> { AppModelImpl(get()) }
                 single { AppManager(DefaultDispatcherProvider()) }
