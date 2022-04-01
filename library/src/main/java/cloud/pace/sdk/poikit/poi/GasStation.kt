@@ -314,6 +314,7 @@ enum class FuelType(val value: String) {
     RON91("ron91"),
     RON100("ron100"),
     DIESEL_GTL("dieselGtl"),
+    DIESEL_B0("dieselB0"),
     DIESEL_B7("dieselB7"),
     DIESEL_PREMIUM("dieselPremium"),
     COMPRESSED_NATURAL_GAS("cng"),
@@ -358,6 +359,7 @@ enum class PaymentMethod {
     PAYPAL,
     ROUTEX,
     SEPA_DIRECT_DEBIT,
+    SHELL_CARD,
     STAR_FLEET_CARD,
     TICKET_CADOU,
     TND_CARD,
@@ -397,6 +399,7 @@ enum class PaymentMethod {
             PAYPAL -> "paypal"
             ROUTEX -> "routex"
             SEPA_DIRECT_DEBIT -> "sepaDirectDebit"
+            SHELL_CARD -> "shellCard"
             STAR_FLEET_CARD -> "starFleetCard"
             TICKET_CADOU -> "ticketCadou"
             TND_CARD -> "tndCard"
@@ -439,6 +442,7 @@ enum class PaymentMethod {
                 "paypal" -> PAYPAL
                 "routex" -> ROUTEX
                 "sepaDirectDebit" -> SEPA_DIRECT_DEBIT
+                "shellCard" -> SHELL_CARD
                 "starFleetCard" -> STAR_FLEET_CARD
                 "ticketCadou" -> TICKET_CADOU
                 "tndCard" -> TND_CARD
