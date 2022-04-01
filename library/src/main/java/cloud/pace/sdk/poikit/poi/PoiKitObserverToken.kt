@@ -1,5 +1,6 @@
 package cloud.pace.sdk.poikit.poi
 
+import TileQueryRequestOuterClass
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -8,7 +9,6 @@ import cloud.pace.sdk.api.poi.POIAPI.gasStations
 import cloud.pace.sdk.api.poi.generated.request.gasStations.GetGasStationAPI.getGasStation
 import cloud.pace.sdk.poikit.database.GasStationDAO
 import cloud.pace.sdk.poikit.poi.download.TileDownloader
-import cloud.pace.sdk.poikit.utils.ApiException
 import cloud.pace.sdk.poikit.utils.POIKitConfig
 import cloud.pace.sdk.poikit.utils.addPadding
 import cloud.pace.sdk.poikit.utils.toTileQueryRequest
@@ -70,7 +70,7 @@ class VisibleRegionNotificationToken(
 
         downloadTask = tileDownloader.load(tileRequest) {
             it.onSuccess { stations ->
-                CoroutineScope(Dispatchers.IO).launch {
+                onIOBackgroundThread {
                     gasStationDao.insertGasStations(stations)
 
                     withContext(Dispatchers.Main) { loading.value = false }
@@ -89,7 +89,7 @@ class VisibleRegionNotificationToken(
 
             it.onFailure { error ->
                 completion(Failure(error))
-                MainScope().launch { loading.value = false }
+                onMainThread { loading.value = false }
             }
         }
 
@@ -119,21 +119,45 @@ class IDsNotificationToken(
     override fun refresh(zoomLevel: Int) {
         loading.value = true
 
-        CoroutineScope(Dispatchers.IO).launch {
-            val tileRequest = gasStationDao.getByIds(ids).mapNotNull { it.center }.toTileQueryRequest(zoomLevel)
+        CoroutineScope(Dispatchers.Default).launch {
+            val dbStations = gasStationDao.getByIds(ids)
+            // Gas station we don't have in the database
+            val missingStationIds = ids - dbStations.map { it.id }
+            // Database stations without location
+            val stationsWithoutLocations = dbStations.filter { it.center == null }.map { it.id }
+            // List of unknown gas station locations
+            val stationsToFetch = (missingStationIds + stationsWithoutLocations).toSet()
 
-            downloadTask = tileDownloader.load(tileRequest) {
-                it.onSuccess { stations ->
-                    CoroutineScope(Dispatchers.IO).launch {
-                        gasStationDao.insertGasStations(stations)
-                        withContext(Dispatchers.Main) { loading.value = false }
-                    }
-                }
+            if (stationsToFetch.isNotEmpty()) {
+                // First fetch gas stations to get locations for tile request
+                try {
+                    val tileRequest = stationsToFetch
+                        .map {
+                            async {
+                                getGasStation(it)
+                            }
+                        }
+                        .awaitAll()
+                        .mapNotNull {
+                            val latitude = it?.latitude?.toDouble()
+                            val longitude = it?.longitude?.toDouble()
+                            if (latitude != null && longitude != null) {
+                                LocationPoint(latitude, longitude)
+                            } else {
+                                null
+                            }
+                        }
+                        .plus(dbStations.mapNotNull { it.center }) // List of gas stations we already have in the database
+                        .toTileQueryRequest(zoomLevel)
 
-                it.onFailure { error ->
-                    completion(Failure(error))
-                    MainScope().launch { loading.value = false }
+                    download(tileRequest)
+                } catch (e: Exception) {
+                    completion(Failure(e))
                 }
+            } else {
+                // We already have all gas station locations, download the data from the tiles right now
+                val tileRequest = dbStations.mapNotNull { it.center }.toTileQueryRequest(zoomLevel)
+                download(tileRequest)
             }
         }
 
@@ -143,6 +167,22 @@ class IDsNotificationToken(
     override fun invalidate() {
         gasStations.removeObserver(gasStationsObserver)
         downloadTask?.cancel()
+    }
+
+    private suspend fun download(tileRequest: TileQueryRequestOuterClass.TileQueryRequest) = withContext(Dispatchers.IO) {
+        downloadTask = tileDownloader.load(tileRequest) {
+            it.onSuccess { stations ->
+                onIOBackgroundThread {
+                    gasStationDao.insertGasStations(stations)
+                    withContext(Dispatchers.Main) { loading.value = false }
+                }
+            }
+
+            it.onFailure { error ->
+                completion(Failure(error))
+                onMainThread { loading.value = false }
+            }
+        }
     }
 }
 
@@ -163,30 +203,22 @@ class IDNotificationToken(
     override fun refresh(zoomLevel: Int) {
         loading.value = true
 
-        GlobalScope.launch {
+        onIOBackgroundThread {
             val location = gasStationDao.getByIds(listOf(id)).mapNotNull { it.center }.firstOrNull()
             if (location != null) {
                 download(location, zoomLevel)
             } else {
-                API.gasStations.getGasStation(id, false).enqueue {
-                    onResponse = {
-                        val body = it.body()
-                        if (it.isSuccessful && body != null) {
-                            val latitude = body.latitude?.toDouble()
-                            val longitude = body.longitude?.toDouble()
-                            if (latitude != null && longitude != null) {
-                                download(LocationPoint(latitude, longitude), zoomLevel)
-                            } else {
-                                completion(Failure(Exception("Latitude or longitude is null")))
-                            }
-                        } else {
-                            completion(Failure(ApiException(it.code(), it.message(), it.requestId)))
-                        }
+                try {
+                    val gasStation = getGasStation(id)
+                    val latitude = gasStation?.latitude?.toDouble()
+                    val longitude = gasStation?.longitude?.toDouble()
+                    if (latitude != null && longitude != null) {
+                        download(LocationPoint(latitude, longitude), zoomLevel)
+                    } else {
+                        completion(Failure(Exception("Latitude, longitude or gas station itself is null. Gas station ID: $id")))
                     }
-
-                    onFailure = {
-                        completion(Failure(it ?: Exception("Unknown exception")))
-                    }
+                } catch (e: Exception) {
+                    completion(Failure(e))
                 }
             }
         }
@@ -202,7 +234,7 @@ class IDNotificationToken(
     private fun download(location: LocationPoint, zoomLevel: Int) {
         downloadTask = tileDownloader.load(location.toTileQueryRequest(zoomLevel)) {
             it.onSuccess { stations ->
-                CoroutineScope(Dispatchers.IO).launch {
+                onIOBackgroundThread {
                     gasStationDao.insertGasStations(stations)
                     withContext(Dispatchers.Main) { loading.value = false }
                 }
@@ -210,7 +242,7 @@ class IDNotificationToken(
 
             it.onFailure { error ->
                 completion(Failure(error))
-                MainScope().launch { loading.value = false }
+                onMainThread { loading.value = false }
             }
         }
     }
@@ -236,7 +268,7 @@ class LocationsNotificationToken(
         val tileRequest = locations.values.toTileQueryRequest(zoomLevel)
         downloadTask = tileDownloader.load(tileRequest) {
             it.onSuccess { stations ->
-                CoroutineScope(Dispatchers.IO).launch {
+                onIOBackgroundThread {
                     gasStationDao.insertGasStations(stations)
                     withContext(Dispatchers.Main) { loading.value = false }
                 }
@@ -244,7 +276,7 @@ class LocationsNotificationToken(
 
             it.onFailure { error ->
                 completion(Failure(error))
-                MainScope().launch { loading.value = false }
+                onMainThread { loading.value = false }
             }
         }
 
@@ -254,5 +286,24 @@ class LocationsNotificationToken(
     override fun invalidate() {
         gasStations.removeObserver(gasStationsObserver)
         downloadTask?.cancel()
+    }
+}
+
+suspend fun getGasStation(id: String) = withContext(Dispatchers.IO) {
+    suspendCancellableCoroutine<cloud.pace.sdk.api.poi.generated.model.GasStation?> { continuation ->
+        API.gasStations.getGasStation(id, false).enqueue {
+            onResponse = {
+                val body = it.body()
+                if (it.isSuccessful && body != null) {
+                    continuation.resumeIfActive(body)
+                } else {
+                    continuation.resumeIfActive(null)
+                }
+            }
+
+            onFailure = {
+                continuation.resumeIfActive(null)
+            }
+        }
     }
 }
