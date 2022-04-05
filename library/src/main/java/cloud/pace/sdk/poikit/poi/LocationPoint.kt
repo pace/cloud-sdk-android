@@ -122,7 +122,6 @@ fun LocationPoint.toTileQueryRequest(zoomLevel: Int): TileQueryRequestOuterClass
 }
 
 fun Collection<LocationPoint>.toTileQueryRequest(zoomLevel: Int): TileQueryRequestOuterClass.TileQueryRequest {
-    // Build request from bounding box
     val tiles = this
         .map { it.tileInfo(zoomLevel) }
         .distinct()
