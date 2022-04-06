@@ -17,21 +17,24 @@ class LoginScreenActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
-            ShowLoginScreen {
-                lifecycleScope.launch(Dispatchers.Main) {
-                    IDKit.authorize(this@LoginScreenActivity) {
-                        when (it) {
-                            // it.result contains accessToken
-                            is Success -> {
-                                Toast.makeText(this@LoginScreenActivity, "$it: Login successful!", Toast.LENGTH_LONG).show()
-                                val intent = Intent(this@LoginScreenActivity, MainScreenActivity::class.java)
-                                startActivity(intent)
-                                finish()
-                            }
-                            // it.throwable contains error
-                            is Failure -> {
-                                Toast.makeText(this@LoginScreenActivity, "$it: Login failed!", Toast.LENGTH_LONG).show()
+            if (IDKit.isAuthorizationValid()) {
+                startMainActivity()
+            } else {
+                ShowLoginScreen {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        IDKit.authorize(this@LoginScreenActivity) {
+                            when (it) {
+                                // it.result contains accessToken
+                                is Success -> {
+                                    Toast.makeText(this@LoginScreenActivity, "$it: Login successful!", Toast.LENGTH_LONG).show()
+                                    startMainActivity()
+                                }
+                                // it.throwable contains error
+                                is Failure -> {
+                                    Toast.makeText(this@LoginScreenActivity, "$it: Login failed!", Toast.LENGTH_LONG).show()
+                                }
                             }
                         }
                     }
@@ -39,9 +42,10 @@ class LoginScreenActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun startMainActivity() {
+        val intent = Intent(this, MainScreenActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
 }
-
-
-
-
-

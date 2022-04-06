@@ -104,3 +104,14 @@ suspend inline fun <T> suspendCoroutineWithTimeout(
 ) = withTimeout(timeoutMillis) {
     suspendCancellableCoroutine(block)
 }
+
+/**
+ * Resumes the [CancellableContinuation] with the [Success.result] if the [completion] is [Success]
+ * or with the [Failure.throwable] if the [completion] is [Failure] so that the exception is re-thrown right after the last suspension point.
+ */
+fun <T> CancellableContinuation<T>.resume(completion: Completion<T>) {
+    when (completion) {
+        is Success -> resumeIfActive(completion.result)
+        is Failure -> resumeWithExceptionIfActive(completion.throwable)
+    }
+}

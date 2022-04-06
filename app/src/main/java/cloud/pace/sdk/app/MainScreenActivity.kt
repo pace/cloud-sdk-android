@@ -84,12 +84,6 @@ class MainScreenActivity : AppCompatActivity() {
 
         biometryStatus.value = IDKit.isBiometricAuthenticationEnabled()
 
-        IDKit.getTransactions {
-            when (it) {
-                is Success -> transactions.value = it.result
-                is Failure -> Toast.makeText(this@MainScreenActivity, it.throwable.toString(), Toast.LENGTH_LONG).show()
-            }
-        }
         // Since target SDK 31 (Android 12) ACCESS_FINE_LOCATION must be requested with ACCESS_COARSE_LOCATION
         if (permissions.any { checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }) {
             requestPermissions.launch(permissions)
@@ -106,6 +100,13 @@ class MainScreenActivity : AppCompatActivity() {
             permissionsGranted.value = true
         } else {
             permissionsGranted.value = false
+        }
+
+        IDKit.getTransactions {
+            when (it) {
+                is Success -> transactions.value = it.result.take(10)
+                is Failure -> Toast.makeText(this@MainScreenActivity, it.throwable.toString(), Toast.LENGTH_LONG).show()
+            }
         }
     }
 
