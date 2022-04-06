@@ -1,3 +1,20 @@
+13.2.0 Release notes (2022-04-06)
+=============================================================
+
+### Enhancements
+
+* Implement fueling example app
+
+### Fixes
+
+* Fetch the gas stations to observe first if we don't have the coordinates
+
+### Internal
+
+* Add shellCard payment method and dieselB0 fuel type to GasStation model
+* Remove geofence related code and strings
+* Adjust bump script to automatically create changelog
+
 13.1.1 Release notes (2022-03-18)
 =============================================================
 
