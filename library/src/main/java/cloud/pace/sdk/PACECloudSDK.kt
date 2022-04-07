@@ -138,6 +138,13 @@ object PACECloudSDK {
     }
 
     /**
+     * Set the error listener to [errorListener].
+     */
+    fun setErrorListener(errorListener: ErrorListener?) {
+        ErrorListener.errorListener = errorListener
+    }
+
+    /**
      * Replaces the list of optional [extensions] at the end of the user agent (separated with a space).
      */
     fun setUserAgentExtensions(extensions: List<String>) {
