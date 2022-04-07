@@ -1,3 +1,10 @@
+13.3.0 Release notes (2022-04-07)
+=============================================================
+
+### Enhancements
+
+* Add callbacks to report breadcrumbs or errors to client app
+
 13.2.0 Release notes (2022-04-06)
 =============================================================
 
