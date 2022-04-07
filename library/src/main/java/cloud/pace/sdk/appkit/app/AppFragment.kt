@@ -50,20 +50,38 @@ class AppFragment : Fragment(), CloudSDKKoinComponent {
                             .putExtra(URL, openURLInNewTabRequest.url)
                             .putExtra(INTEGRATED, openURLInNewTabRequest.integrated)
 
+                        ErrorListener.reportBreadcrumb(TAG, "Created intent to start DeepLinkManagementActivity", mapOf("openURLInNewTabRequest" to openURLInNewTabRequest))
+
                         when (val result = getResultFor(intent)) {
                             is Ok -> {
                                 val redirectUri = result.data?.data?.toString()
                                 if (redirectUri != null) {
+                                    ErrorListener.reportBreadcrumb(TAG, "OpenURLInNewTabRequest finished successfully. Load redirect URL in original WebView.", mapOf("Redirect URL" to redirectUri))
                                     binding.appWebView.loadUrl(redirectUri)
                                 } else {
+                                    ErrorListener.reportError(
+                                        NullPointerException("OpenURLInNewTabRequest cannot succeed without redirect URL. Load cancelUrl in original WebView: ${openURLInNewTabRequest.cancelUrl}")
+                                    )
                                     binding.appWebView.loadUrl(openURLInNewTabRequest.cancelUrl)
                                 }
                             }
-                            is Canceled -> binding.appWebView.loadUrl(openURLInNewTabRequest.cancelUrl)
+                            is Canceled -> {
+                                ErrorListener.reportBreadcrumb(
+                                    TAG,
+                                    "OpenURLInNewTabRequest was canceled. Load cancelUrl in original WebView",
+                                    mapOf("Cancel URL" to openURLInNewTabRequest.cancelUrl),
+                                    ErrorLevel.WARNING
+                                )
+                                binding.appWebView.loadUrl(openURLInNewTabRequest.cancelUrl)
+                            }
                         }
                     }
                 }
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "AppFragment"
     }
 }

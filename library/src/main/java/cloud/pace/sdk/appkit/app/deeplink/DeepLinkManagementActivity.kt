@@ -7,6 +7,8 @@ import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.browser.customtabs.CustomTabsService
 import cloud.pace.sdk.appkit.app.AppFragmentViewModelImpl
+import cloud.pace.sdk.utils.ErrorLevel
+import cloud.pace.sdk.utils.ErrorListener
 
 class DeepLinkManagementActivity : Activity() {
 
@@ -22,14 +24,18 @@ class DeepLinkManagementActivity : Activity() {
             * stack underneath the new activity (WebViewActivity or custom tab).
             */
             val url = intent.extras?.getString(URL)
+            ErrorListener.reportBreadcrumb(TAG, "It is the first run of the activity", mapOf("isProcessStarted" to isProcessStarted, "URL" to url))
+
             if (url != null) {
                 val integrated = intent.extras?.getBoolean(INTEGRATED) ?: false
                 try {
                     val intent = if (integrated) {
                         // Create WebViewActivity intent to open URL in WebView
+                        ErrorListener.reportBreadcrumb(TAG, "Open URL in WebView of WebViewActivity", mapOf("integrated" to integrated, "isProcessStarted" to isProcessStarted))
                         Intent(this, WebViewActivity::class.java)
                     } else {
                         // Create custom tab intent to open URL in custom tab activity
+                        ErrorListener.reportBreadcrumb(TAG, "Open URL in custom tab activity", mapOf("integrated" to integrated, "isProcessStarted" to isProcessStarted))
                         CustomTabsIntent.Builder().build().intent.apply {
                             if (isChromeCustomTabsSupported()) {
                                 setPackage(AppFragmentViewModelImpl.CHROME_PACKAGE_NAME)
@@ -41,9 +47,11 @@ class DeepLinkManagementActivity : Activity() {
                     startActivity(intent)
                     isProcessStarted = true
                 } catch (e: ActivityNotFoundException) {
+                    ErrorListener.reportError(e)
                     setCanceled()
                 }
             } else {
+                ErrorListener.reportError(NullPointerException("The start URL cannot be null."))
                 setCanceled()
             }
         } else {
@@ -55,9 +63,13 @@ class DeepLinkManagementActivity : Activity() {
             * pressing the back button or closes the custom tab.
             */
             val redirectUri = intent.data?.getQueryParameter(TO)
+            ErrorListener.reportBreadcrumb(TAG, "It is the subsequent run of the activity", mapOf("isProcessStarted" to isProcessStarted, "Intent data" to intent.data?.toString()))
+
             if (redirectUri != null) {
+                ErrorListener.reportBreadcrumb(TAG, "The process succeeded. Load redirect URL in original WebView.", mapOf("isProcessStarted" to isProcessStarted, "Redirect URL" to redirectUri))
                 setSuccess(redirectUri)
             } else {
+                ErrorListener.reportBreadcrumb(TAG, "The process failed. Load cancel URL in original WebView.", mapOf("isProcessStarted" to isProcessStarted), ErrorLevel.WARNING)
                 setCanceled()
             }
         }
@@ -84,6 +96,7 @@ class DeepLinkManagementActivity : Activity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        ErrorListener.reportBreadcrumb(TAG, "Set new intent", mapOf("isProcessStarted" to isProcessStarted, "Intent data" to intent?.data?.toString()))
         setIntent(intent)
     }
 
@@ -91,5 +104,6 @@ class DeepLinkManagementActivity : Activity() {
         const val URL = "url"
         const val INTEGRATED = "integrated"
         const val TO = "to"
+        private const val TAG = "DeepLinkManagementActivity"
     }
 }

@@ -9,6 +9,7 @@ import android.webkit.*
 import androidx.appcompat.app.AppCompatActivity
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.utils.DeviceUtils
+import cloud.pace.sdk.utils.ErrorListener
 import timber.log.Timber
 
 class WebViewActivity : AppCompatActivity() {
@@ -19,6 +20,8 @@ class WebViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val uri = intent.data
+        ErrorListener.reportBreadcrumb(TAG, "Payment process started", mapOf("URL" to uri?.toString()))
+
         if (uri != null) {
             webView = WebView(this).apply {
                 settings.apply {
@@ -74,18 +77,31 @@ class WebViewActivity : AppCompatActivity() {
 
             setContentView(webView)
         } else {
+            ErrorListener.reportError(NullPointerException("URL to load in payment WebView cannot be null. Finish WebViewActivity."))
             finish()
         }
     }
 
     private fun intercept(newUri: Uri?): Boolean {
+        ErrorListener.reportBreadcrumb(TAG, "Intercept new URL", mapOf("New URL" to newUri))
+
         // Intercept redirect service deep link
-        return if (newUri?.scheme == DeviceUtils.getPACERedirectScheme(this) || newUri?.scheme == FALLBACK_REDIRECT_SCHEME) {
+        val paceRedirectScheme = DeviceUtils.getPACERedirectScheme(this)
+        return if (newUri?.scheme == paceRedirectScheme || newUri?.scheme == FALLBACK_REDIRECT_SCHEME) {
+            ErrorListener.reportBreadcrumb(
+                TAG,
+                "New URL is a redirect URL. Start RedirectUriReceiverActivity.",
+                mapOf("paceRedirectScheme" to paceRedirectScheme, "fallbackRedirectScheme" to FALLBACK_REDIRECT_SCHEME)
+            )
+
             val newIntent = Intent(this, RedirectUriReceiverActivity::class.java)
             newIntent.data = newUri
             startActivity(newIntent)
             true
         } else {
+            if (newUri?.scheme != "https" && newUri?.scheme != "http") {
+                ErrorListener.reportError(IllegalArgumentException("The scheme ${newUri?.scheme} is not a valid scheme."))
+            }
             false
         }
     }
@@ -108,5 +124,6 @@ class WebViewActivity : AppCompatActivity() {
     companion object {
         // Is needed so that the payment process also works for apps that have not set a redirect scheme (e.g. instant apps)
         private const val FALLBACK_REDIRECT_SCHEME = "cloudsdk"
+        private const val TAG = "WebViewActivity"
     }
 }
