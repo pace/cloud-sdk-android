@@ -12,8 +12,7 @@ import cloud.pace.sdk.utils.requestId
 import cloud.pace.sdk.utils.resume
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
-import net.openid.appauth.AuthorizationException.GeneralErrors.NETWORK_ERROR
-import net.openid.appauth.AuthorizationException.GeneralErrors.SERVER_ERROR
+import net.openid.appauth.AuthorizationException.GeneralErrors.*
 import okhttp3.Interceptor
 import timber.log.Timber
 import java.net.HttpURLConnection
@@ -58,15 +57,20 @@ object InterceptorUtils {
         return headers
     }
 
-    fun getQueryParameters(additionalParams: Map<String, String>? = null): Map<String, String> {
-        // Additional query parameters of the request have priority over the globally set query parameters, so set them last to override any existing query parameter
-        return if (additionalParams != null) PACECloudSDK.additionalQueryParams + additionalParams else PACECloudSDK.additionalQueryParams
-    }
+    fun getInterceptor(additionalParams: Map<String, String>? = null) = Interceptor {
+        val httpUrl = it.request().url.newBuilder()
 
-    fun getInterceptor() = Interceptor {
-        val response = it.proceed(it.request())
+        // Additional query parameters of the request have priority over the globally set query parameters, so set them last to override any existing query parameter
+        val queryParams = if (additionalParams != null) PACECloudSDK.additionalQueryParams + additionalParams else PACECloudSDK.additionalQueryParams
+        queryParams.forEach { param ->
+            httpUrl.addQueryParameter(param.key, param.value)
+        }
+
+        val newRequest = it.request().newBuilder().url(httpUrl.build()).build()
+        val response = it.proceed(newRequest)
+
         if (!response.isSuccessful) {
-            Timber.e("Request failed: code = ${response.code} || message = ${response.message} || request ID = ${response.requestId} || url: ${it.request().url}")
+            Timber.e("Request failed: code = ${response.code} || message = ${response.message} || request ID = ${response.requestId} || url: ${newRequest.url}")
         }
 
         if (response.code == HttpURLConnection.HTTP_UNAUTHORIZED && IDKit.isInitialized && IDKit.isAuthorizationValid()) {
@@ -87,12 +91,12 @@ object InterceptorUtils {
                     if (newToken != null) {
                         // Close previous response body
                         response.body?.close()
-                        it.proceed(it.request().newBuilder().header(AUTHORIZATION_HEADER, "Bearer $newToken").build())
+                        it.proceed(newRequest.newBuilder().header(AUTHORIZATION_HEADER, "Bearer $newToken").build())
                     } else {
                         response
                     }
                 } catch (e: Exception) {
-                    if (e == NETWORK_ERROR || e == SERVER_ERROR) {
+                    if (e == JSON_DESERIALIZATION_ERROR || e == NETWORK_ERROR || e == SERVER_ERROR) {
                         response.newBuilder().code(HttpURLConnection.HTTP_UNAVAILABLE).build()
                     } else {
                         response

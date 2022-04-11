@@ -38,6 +38,7 @@ object PutGasStationReferenceStatusAPI {
         /* Creates or updates a reference status of a gas station */
         @PUT("delivery/gas-stations/{gasStationId}/reference-status/{reference}")
         fun putGasStationReferenceStatus(
+            @HeaderMap headers: Map<String, String>,
             /* Gas station ID */
             @Path("gasStationId") gasStationId: String,
             /* Service Provider PRN */
@@ -52,10 +53,9 @@ object PutGasStationReferenceStatusAPI {
         var data: ReferenceStatusBody? = null
     }
 
-    fun POIAPI.DeliveryAPI.putGasStationReferenceStatus(gasStationId: String, reference: String, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.DeliveryAPI.putGasStationReferenceStatus(gasStationId: String, reference: String, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -88,6 +88,6 @@ object PutGasStationReferenceStatusAPI {
                 .build()
                 .create(PutGasStationReferenceStatusService::class.java)
 
-        return service.putGasStationReferenceStatus(gasStationId, reference, body)
+        return service.putGasStationReferenceStatus(headers, gasStationId, reference, body)
     }
 }

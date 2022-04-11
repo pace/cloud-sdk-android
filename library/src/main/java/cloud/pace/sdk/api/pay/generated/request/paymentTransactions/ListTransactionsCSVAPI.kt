@@ -39,6 +39,7 @@ object ListTransactionsCSVAPI {
  */
         @GET("transactions.csv")
         fun listTransactionsCSV(
+            @HeaderMap headers: Map<String, String>,
             /* Number of the page that should be returned (sometimes referred to as "offset"). Page `0` is the first page. */
             @Query("page[number]") pagenumber: Int? = null,
             /* Page size of the currently returned page (sometimes referred to as "limit"). */
@@ -124,10 +125,9 @@ object ListTransactionsCSVAPI {
         FUELTYPEDESCENDING("-fuel.type")
     }
 
-    fun PayAPI.PaymentTransactionsAPI.listTransactionsCSV(pagenumber: Int? = null, pagesize: Int? = null, sort: Sort? = null, filterid: String? = null, filtercreatedAt: Date? = null, filterupdatedAt: Date? = null, filterpaymentMethodId: String? = null, filterpaymentMethodKind: String? = null, filterpurposePRN: String? = null, filterproviderPRN: String? = null, filterfuelProductName: String? = null, filterfuelType: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentTransactionsAPI.listTransactionsCSV(pagenumber: Int? = null, pagesize: Int? = null, sort: Sort? = null, filterid: String? = null, filtercreatedAt: Date? = null, filterupdatedAt: Date? = null, filterpaymentMethodId: String? = null, filterpaymentMethodKind: String? = null, filterpurposePRN: String? = null, filterproviderPRN: String? = null, filterfuelProductName: String? = null, filterfuelType: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -160,6 +160,6 @@ object ListTransactionsCSVAPI {
                 .build()
                 .create(ListTransactionsCSVService::class.java)
 
-        return service.listTransactionsCSV(pagenumber, pagesize, sort, filterid, filtercreatedAt?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filterupdatedAt?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filterpaymentMethodId, filterpaymentMethodKind, filterpurposePRN, filterproviderPRN, filterfuelProductName, filterfuelType)
+        return service.listTransactionsCSV(headers, pagenumber, pagesize, sort, filterid, filtercreatedAt?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filterupdatedAt?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filterpaymentMethodId, filterpaymentMethodKind, filterpurposePRN, filterproviderPRN, filterfuelProductName, filterfuelType)
     }
 }

@@ -38,6 +38,7 @@ object GetPaymentMethodKindsAPI {
         /* Returns all payment method kinds that are supported by this service. Use the Accept-Language header for localization. */
         @GET("payment-method-kinds")
         fun getPaymentMethodKinds(
+            @HeaderMap headers: Map<String, String>,
             /* Language preference of localized response properties. The full standard of RFC 7231 (https://tools.ietf.org/html/rfc7231#section-5.3.5) is supported. */
             @Header("Accept-Language") acceptLanguage: String? = null,
             /* Flag to allow more data to the payment method kinds. */
@@ -45,10 +46,9 @@ object GetPaymentMethodKindsAPI {
         ): Call<PaymentMethodKinds>
     }
 
-    fun PayAPI.PaymentMethodKindsAPI.getPaymentMethodKinds(acceptLanguage: String? = null, additionalData: Boolean? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentMethodKinds> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", false, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentMethodKindsAPI.getPaymentMethodKinds(acceptLanguage: String? = null, additionalData: Boolean? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<PaymentMethodKinds> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(false, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -81,6 +81,6 @@ object GetPaymentMethodKindsAPI {
                 .build()
                 .create(GetPaymentMethodKindsService::class.java)
 
-        return service.getPaymentMethodKinds(acceptLanguage, additionalData)
+        return service.getPaymentMethodKinds(headers, acceptLanguage, additionalData)
     }
 }

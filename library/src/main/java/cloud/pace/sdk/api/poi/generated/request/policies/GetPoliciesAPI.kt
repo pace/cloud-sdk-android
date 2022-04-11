@@ -38,6 +38,7 @@ object GetPoliciesAPI {
         /* Returns a paginated list of policies optionally filtered by poi type and/or country id and/or user id */
         @GET("policies")
         fun getPolicies(
+            @HeaderMap headers: Map<String, String>,
             /* page number */
             @Query("page[number]") pagenumber: Int? = null,
             /* items per page */
@@ -51,10 +52,9 @@ object GetPoliciesAPI {
         ): Call<Policies>
     }
 
-    fun POIAPI.PoliciesAPI.getPolicies(pagenumber: Int? = null, pagesize: Int? = null, filterpoiType: POIType? = null, filtercountryId: String? = null, filteruserId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Policies> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.PoliciesAPI.getPolicies(pagenumber: Int? = null, pagesize: Int? = null, filterpoiType: POIType? = null, filtercountryId: String? = null, filteruserId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<Policies> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -87,6 +87,6 @@ object GetPoliciesAPI {
                 .build()
                 .create(GetPoliciesService::class.java)
 
-        return service.getPolicies(pagenumber, pagesize, filterpoiType, filtercountryId, filteruserId)
+        return service.getPolicies(headers, pagenumber, pagesize, filterpoiType, filtercountryId, filteruserId)
     }
 }

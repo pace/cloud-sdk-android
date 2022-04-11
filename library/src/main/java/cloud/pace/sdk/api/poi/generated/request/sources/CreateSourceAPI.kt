@@ -38,6 +38,7 @@ object CreateSourceAPI {
         /* Creates a new source */
         @POST("sources")
         fun createSource(
+            @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: Body
         ): Call<Source>
     }
@@ -48,10 +49,9 @@ object CreateSourceAPI {
         var data: SourceBody? = null
     }
 
-    fun POIAPI.SourcesAPI.createSource(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Source> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.SourcesAPI.createSource(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<Source> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -84,6 +84,6 @@ object CreateSourceAPI {
                 .build()
                 .create(CreateSourceService::class.java)
 
-        return service.createSource(body)
+        return service.createSource(headers, body)
     }
 }

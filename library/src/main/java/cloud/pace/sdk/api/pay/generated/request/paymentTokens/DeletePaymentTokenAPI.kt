@@ -37,15 +37,15 @@ object DeletePaymentTokenAPI {
         /* Delete the paymentToken record. */
         @DELETE("payment-tokens/{paymentTokenId}")
         fun deletePaymentToken(
+            @HeaderMap headers: Map<String, String>,
             /* paymentToken ID. */
             @Path("paymentTokenId") paymentTokenId: String
         ): Call<ResponseBody>
     }
 
-    fun PayAPI.PaymentTokensAPI.deletePaymentToken(paymentTokenId: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentTokensAPI.deletePaymentToken(paymentTokenId: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -78,6 +78,6 @@ object DeletePaymentTokenAPI {
                 .build()
                 .create(DeletePaymentTokenService::class.java)
 
-        return service.deletePaymentToken(paymentTokenId)
+        return service.deletePaymentToken(headers, paymentTokenId)
     }
 }

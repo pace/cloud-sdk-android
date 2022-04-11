@@ -38,14 +38,14 @@ object DeleteUserAPI {
         /* The user deletion is implemented according to GDPR regulation. */
         @DELETE("users/{userId}")
         fun deleteUser(
+            @HeaderMap headers: Map<String, String>,
             @Path("userId") userId: String? = null
         ): Call<ResponseBody>
     }
 
-    fun UserAPI.UserAPI.deleteUser(userId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.UserAPI.deleteUser(userId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -78,6 +78,6 @@ object DeleteUserAPI {
                 .build()
                 .create(DeleteUserService::class.java)
 
-        return service.deleteUser(userId)
+        return service.deleteUser(headers, userId)
     }
 }

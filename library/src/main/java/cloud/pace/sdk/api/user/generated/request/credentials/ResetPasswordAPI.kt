@@ -40,15 +40,15 @@ If no recover pin is passed in the body user's payment methods will also be rese
  */
         @PUT("user/password/reset")
         fun resetPassword(
+            @HeaderMap headers: Map<String, String>,
             /* Recover pin */
             @Query("pin") pin: String? = null
         ): Call<ResponseBody>
     }
 
-    fun UserAPI.CredentialsAPI.resetPassword(pin: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.CredentialsAPI.resetPassword(pin: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(false, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -81,6 +81,6 @@ If no recover pin is passed in the body user's payment methods will also be rese
                 .build()
                 .create(ResetPasswordService::class.java)
 
-        return service.resetPassword(pin)
+        return service.resetPassword(headers, pin)
     }
 }

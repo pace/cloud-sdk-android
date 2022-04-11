@@ -11,21 +11,18 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.HeaderMap
 import java.util.*
 
 object CmsAPI {
     interface GetPaymentMethodVendorsService {
         @GET("cms/payment-method-vendors")
-        fun getPaymentMethodVendors(): Call<List<PaymentMethodVendor>>
+        fun getPaymentMethodVendors(@HeaderMap headers: Map<String, String>): Call<List<PaymentMethodVendor>>
     }
 
     private val service: GetPaymentMethodVendorsService by lazy {
-        val client = OkHttpClient.Builder()
-            .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true))
-            .authenticator(InterceptorUtils.getAuthenticator())
-
         Retrofit.Builder()
-            .client(client.build())
+            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor()).build())
             .baseUrl(API.baseUrl)
             .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(
@@ -40,5 +37,6 @@ object CmsAPI {
             .create(GetPaymentMethodVendorsService::class.java)
     }
 
-    fun CmsAPI.getPaymentMethodVendors() = service.getPaymentMethodVendors()
+    fun CmsAPI.getPaymentMethodVendors(additionalHeaders: Map<String, String>? = null) =
+        service.getPaymentMethodVendors(InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders))
 }

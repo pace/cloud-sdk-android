@@ -39,6 +39,7 @@ object GetPaymentMethodsIncludingPaymentTokenAPI {
 The list will contain the pre-authorized amount (incl. currency), the purpose PRNs, all information about the payment method, and the paymentToken that can be used to complete the payment.</br> If no payment method is associated with a pre-authorized token, the result will contain only the payment methods.</br></br> */
         @GET("payment-methods")
         fun getPaymentMethodsIncludingPaymentToken(
+            @HeaderMap headers: Map<String, String>,
             @Query("include") include: Include,
             @Query("filter[purpose]") filterpurpose: PRN? = null
         ): Call<PaymentMethods>
@@ -52,10 +53,9 @@ The list will contain the pre-authorized amount (incl. currency), the purpose PR
         PAYMENTTOKENS("paymentTokens")
     }
 
-    fun PayAPI.PaymentMethodsAPI.getPaymentMethodsIncludingPaymentToken(include: Include, filterpurpose: PRN? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentMethods> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentMethodsAPI.getPaymentMethodsIncludingPaymentToken(include: Include, filterpurpose: PRN? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<PaymentMethods> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -88,6 +88,6 @@ The list will contain the pre-authorized amount (incl. currency), the purpose PR
                 .build()
                 .create(GetPaymentMethodsIncludingPaymentTokenService::class.java)
 
-        return service.getPaymentMethodsIncludingPaymentToken(include, filterpurpose)
+        return service.getPaymentMethodsIncludingPaymentToken(headers, include, filterpurpose)
     }
 }

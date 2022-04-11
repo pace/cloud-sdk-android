@@ -1,4 +1,4 @@
-package cloud.pace.sdk.api.pay
+package cloud.pace.sdk.api.fueling.generated.request.fueling
 
 import cloud.pace.sdk.api.fueling.FuelingAPI
 import cloud.pace.sdk.api.fueling.generated.model.TransactionRequest
@@ -14,6 +14,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.http.HeaderMap
 import retrofit2.http.POST
 import retrofit2.http.Path
 import java.util.*
@@ -37,16 +38,16 @@ You can optionally provide:
  */
         @POST("gas-stations/{gasStationId}/transactions")
         fun processPreAuthPayment(
+            @HeaderMap headers: Map<String, String>,
             /* Gas station ID */
             @Path("gasStationId") gasStationId: String,
             @retrofit2.http.Body body: TransactionRequest
         ): Call<ResponseBody>
     }
 
-    fun FuelingAPI.FuelingAPI.processPreAuthPayment(gasStationId: String, body: TransactionRequest, readTimeout: Long? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-            .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true))
-            .authenticator(InterceptorUtils.getAuthenticator())
+    fun FuelingAPI.FuelingAPI.processPreAuthPayment(gasStationId: String, body: TransactionRequest, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -80,6 +81,6 @@ You can optionally provide:
                 .build()
                 .create(ProcessPaymentPreAuthService::class.java)
 
-        return service.processPreAuthPayment(gasStationId, body)
+        return service.processPreAuthPayment(headers, gasStationId, body)
     }
 }

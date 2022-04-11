@@ -38,6 +38,7 @@ object AuthorizePaymentTokenAPI {
         /* When successful, returns a paymentToken value. */
         @POST("payment-methods/{paymentMethodId}/authorize")
         fun authorizePaymentToken(
+            @HeaderMap headers: Map<String, String>,
             /* ID of the paymentMethod */
             @Path("paymentMethodId") paymentMethodId: String, 
             @retrofit2.http.Body body: Body
@@ -50,10 +51,9 @@ object AuthorizePaymentTokenAPI {
         var data: PaymentTokenCreateBody? = null
     }
 
-    fun PayAPI.PaymentTokensAPI.authorizePaymentToken(paymentMethodId: String, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentToken> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentTokensAPI.authorizePaymentToken(paymentMethodId: String, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<PaymentToken> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -86,6 +86,6 @@ object AuthorizePaymentTokenAPI {
                 .build()
                 .create(AuthorizePaymentTokenService::class.java)
 
-        return service.authorizePaymentToken(paymentMethodId, body)
+        return service.authorizePaymentToken(headers, paymentMethodId, body)
     }
 }

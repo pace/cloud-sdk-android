@@ -38,15 +38,15 @@ object GetAppPOIsRelationshipsAPI {
         /* Returns all POI relations for specified app id */
         @GET("apps/{appID}/relationships/pois")
         fun getAppPOIsRelationships(
+            @HeaderMap headers: Map<String, String>,
             /* ID of the App */
             @Path("appID") appID: String? = null
         ): Call<AppPOIsRelationships>
     }
 
-    fun POIAPI.AppsAPI.getAppPOIsRelationships(appID: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<AppPOIsRelationships> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.AppsAPI.getAppPOIsRelationships(appID: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<AppPOIsRelationships> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -79,6 +79,6 @@ object GetAppPOIsRelationshipsAPI {
                 .build()
                 .create(GetAppPOIsRelationshipsService::class.java)
 
-        return service.getAppPOIsRelationships(appID)
+        return service.getAppPOIsRelationships(headers, appID)
     }
 }

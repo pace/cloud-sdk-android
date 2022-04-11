@@ -38,6 +38,7 @@ object GetEventsAPI {
         /* Returns a list of events optionally filtered by poi type and/or country id and/or user id */
         @GET("events")
         fun getEvents(
+            @HeaderMap headers: Map<String, String>,
             /* page number */
             @Query("page[number]") pagenumber: Int? = null,
             /* items per page */
@@ -49,10 +50,9 @@ object GetEventsAPI {
         ): Call<Events>
     }
 
-    fun POIAPI.EventsAPI.getEvents(pagenumber: Int? = null, pagesize: Int? = null, filtersourceId: String? = null, filteruserId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Events> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.EventsAPI.getEvents(pagenumber: Int? = null, pagesize: Int? = null, filtersourceId: String? = null, filteruserId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<Events> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -85,6 +85,6 @@ object GetEventsAPI {
                 .build()
                 .create(GetEventsService::class.java)
 
-        return service.getEvents(pagenumber, pagesize, filtersourceId, filteruserId)
+        return service.getEvents(headers, pagenumber, pagesize, filtersourceId, filteruserId)
     }
 }

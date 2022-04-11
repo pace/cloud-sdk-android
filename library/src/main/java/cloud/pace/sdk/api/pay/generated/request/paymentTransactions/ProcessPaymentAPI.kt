@@ -42,6 +42,7 @@ Only use after approaching (fueling api), otherwise returns `403 Forbidden`.
  */
         @POST("transactions")
         fun processPayment(
+            @HeaderMap headers: Map<String, String>,
             /* Announcing the transaction without actually capturing the payment. An announced transaction can later be processed only if providing the same `paymentToken`, `purposePRN`, and `providerPRN`. By announcing the transaction the token is locked to be used only with this transaction. The `priceIncludingVAT` and `currency` will be taken from the token, and upon capturing the transaction, must be equal or lower than what was announced. */
             @Query("announce") announce: Boolean? = null, 
             @retrofit2.http.Body body: Body
@@ -58,10 +59,9 @@ Only use after approaching (fueling api), otherwise returns `403 Forbidden`.
         var data: TransactionCreateBody? = null
     }
 
-    fun PayAPI.PaymentTransactionsAPI.processPayment(announce: Boolean? = null, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Transaction> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentTransactionsAPI.processPayment(announce: Boolean? = null, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<Transaction> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -94,6 +94,6 @@ Only use after approaching (fueling api), otherwise returns `403 Forbidden`.
                 .build()
                 .create(ProcessPaymentService::class.java)
 
-        return service.processPayment(announce, body)
+        return service.processPayment(headers, announce, body)
     }
 }

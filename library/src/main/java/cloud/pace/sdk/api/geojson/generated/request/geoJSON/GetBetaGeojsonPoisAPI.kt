@@ -21,6 +21,7 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.HeaderMap
 import retrofit2.http.Query
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -32,6 +33,7 @@ object GetBetaGeojsonPoisAPI {
         /* get a GeoJSON representation of POIs */
         @GET("beta/geojson/pois")
         fun getBetaGeojsonPois(
+            @HeaderMap headers: Map<String, String>,
             /** Comma separated list of fields. Selects additional fields to be returned. The requested fields will be shown in the `properties` attribute of each `GeoJsonFeature`.
             Possible values are:
              * type
@@ -80,10 +82,9 @@ object GetBetaGeojsonPoisAPI {
         SPEEDCAMERA("SpeedCamera")
     }
 
-    fun GeoJSONAPI.GeoJSONAPI.getBetaGeojsonPois(fieldsgasStation: String? = null, filterpoiType: FilterpoiType? = null, filteronlinePaymentMethod: String? = null, filtermerchant: String? = null, filtercountry: String? = null, filterconnectedFueling: String? = null, filterdkvAppAndGo: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<GeoJson> {
-        val client = OkHttpClient.Builder()
-            .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-            .authenticator(InterceptorUtils.getAuthenticator())
+    fun GeoJSONAPI.GeoJSONAPI.getBetaGeojsonPois(fieldsgasStation: String? = null, filterpoiType: FilterpoiType? = null, filteronlinePaymentMethod: String? = null, filtermerchant: String? = null, filtercountry: String? = null, filterconnectedFueling: String? = null, filterdkvAppAndGo: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<GeoJson> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(false, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -105,6 +106,6 @@ object GetBetaGeojsonPoisAPI {
                 .build()
                 .create(GetBetaGeojsonPoisService::class.java)
 
-        return service.getBetaGeojsonPois(fieldsgasStation, filterpoiType, filteronlinePaymentMethod, filtermerchant, filtercountry, filterconnectedFueling, filterdkvAppAndGo)
+        return service.getBetaGeojsonPois(headers, fieldsgasStation, filterpoiType, filteronlinePaymentMethod, filtermerchant, filtercountry, filterconnectedFueling, filterdkvAppAndGo)
     }
 }

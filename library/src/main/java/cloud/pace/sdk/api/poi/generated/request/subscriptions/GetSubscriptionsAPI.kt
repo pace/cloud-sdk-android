@@ -40,6 +40,7 @@ object GetSubscriptionsAPI {
  */
         @GET("subscriptions")
         fun getSubscriptions(
+            @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: Body
         ): Call<Subscription>
     }
@@ -48,13 +49,12 @@ object GetSubscriptionsAPI {
      */
     class Body {
 
-        var data: List<Subscription>? = null
+        var data: List<SubscriptionBody>? = null
     }
 
-    fun POIAPI.SubscriptionsAPI.getSubscriptions(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Subscription> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.SubscriptionsAPI.getSubscriptions(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<Subscription> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -87,6 +87,6 @@ object GetSubscriptionsAPI {
                 .build()
                 .create(GetSubscriptionsService::class.java)
 
-        return service.getSubscriptions(body)
+        return service.getSubscriptions(headers, body)
     }
 }

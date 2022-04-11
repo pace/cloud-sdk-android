@@ -39,6 +39,7 @@ object GetRegionalPricesAPI {
  */
         @GET("prices/regional")
         fun getRegionalPrices(
+            @HeaderMap headers: Map<String, String>,
             /* Latitude in degrees */
             @Query("filter[latitude]") filterlatitude: Float,
             /* Longitude in degrees */
@@ -46,10 +47,9 @@ object GetRegionalPricesAPI {
         ): Call<RegionalPrices>
     }
 
-    fun POIAPI.PricesAPI.getRegionalPrices(filterlatitude: Float, filterlongitude: Float, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<RegionalPrices> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.PricesAPI.getRegionalPrices(filterlatitude: Float, filterlongitude: Float, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<RegionalPrices> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(false, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -82,6 +82,6 @@ object GetRegionalPricesAPI {
                 .build()
                 .create(GetRegionalPricesService::class.java)
 
-        return service.getRegionalPrices(filterlatitude, filterlongitude)
+        return service.getRegionalPrices(headers, filterlatitude, filterlongitude)
     }
 }

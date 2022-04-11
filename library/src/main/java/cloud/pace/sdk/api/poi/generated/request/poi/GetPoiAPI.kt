@@ -38,15 +38,15 @@ object GetPoiAPI {
         /* Returns POI with specified id */
         @GET("pois/{poiId}")
         fun getPoi(
+            @HeaderMap headers: Map<String, String>,
             /* ID of the POI */
             @Path("poiId") poiId: String? = null
         ): Call<POI>
     }
 
-    fun POIAPI.POIAPI.getPoi(poiId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<POI> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.POIAPI.getPoi(poiId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<POI> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -80,6 +80,6 @@ object GetPoiAPI {
                 .build()
                 .create(GetPoiService::class.java)
 
-        return service.getPoi(poiId)
+        return service.getPoi(headers, poiId)
     }
 }

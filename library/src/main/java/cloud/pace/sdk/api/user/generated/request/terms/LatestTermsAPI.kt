@@ -39,15 +39,15 @@ object LatestTermsAPI {
  */
         @GET("terms/latest")
         fun latestTerms(
+            @HeaderMap headers: Map<String, String>,
             /* The name of the service */
             @Query("filter[serviceName]") filterserviceName: String
         ): Call<Terms>
     }
 
-    fun UserAPI.TermsAPI.latestTerms(filterserviceName: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Terms> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", false, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.TermsAPI.latestTerms(filterserviceName: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<Terms> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(false, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -80,6 +80,6 @@ object LatestTermsAPI {
                 .build()
                 .create(LatestTermsService::class.java)
 
-        return service.latestTerms(filterserviceName)
+        return service.latestTerms(headers, filterserviceName)
     }
 }

@@ -39,6 +39,7 @@ object GetAppsAPI {
  */
         @GET("apps")
         fun getApps(
+            @HeaderMap headers: Map<String, String>,
             /* page number */
             @Query("page[number]") pagenumber: Int? = null,
             /* items per page */
@@ -71,10 +72,9 @@ object GetAppsAPI {
         APPROACHING("approaching")
     }
 
-    fun POIAPI.AppsAPI.getApps(pagenumber: Int? = null, pagesize: Int? = null, filterappType: FilterappType? = null, filtercache: Filtercache? = null, filtersince: Date? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<LocationBasedApps> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.AppsAPI.getApps(pagenumber: Int? = null, pagesize: Int? = null, filterappType: FilterappType? = null, filtercache: Filtercache? = null, filtersince: Date? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<LocationBasedApps> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -107,6 +107,6 @@ object GetAppsAPI {
                 .build()
                 .create(GetAppsService::class.java)
 
-        return service.getApps(pagenumber, pagesize, filterappType, filtercache, filtersince?.toIso8601()?.dropLast(9)?.let { it +'Z'} )
+        return service.getApps(headers, pagenumber, pagesize, filterappType, filtercache, filtersince?.toIso8601()?.dropLast(9)?.let { it +'Z'} )
     }
 }

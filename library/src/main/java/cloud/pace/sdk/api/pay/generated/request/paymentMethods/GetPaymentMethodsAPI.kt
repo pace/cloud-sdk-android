@@ -37,13 +37,13 @@ object GetPaymentMethodsAPI {
         /* Get all payment methods for user */
         @GET("payment-methods")
         fun getPaymentMethods(
+            @HeaderMap headers: Map<String, String>,
         ): Call<PaymentMethods>
     }
 
-    fun PayAPI.PaymentMethodsAPI.getPaymentMethods(readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentMethods> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentMethodsAPI.getPaymentMethods(readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<PaymentMethods> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -79,6 +79,6 @@ object GetPaymentMethodsAPI {
                 .build()
                 .create(GetPaymentMethodsService::class.java)
 
-        return service.getPaymentMethods()
+        return service.getPaymentMethods(headers)
     }
 }

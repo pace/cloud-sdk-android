@@ -41,6 +41,7 @@ Registering PayDirekt as payment method is a 2-step process, thus the payment me
  */
         @POST("payment-methods/paydirekt")
         fun createPaymentMethodPayDirekt(
+            @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: Body
         ): Call<PaymentMethod>
     }
@@ -54,10 +55,9 @@ Registering PayDirekt as payment method is a 2-step process, thus the payment me
         var data: PaymentMethodPayDirektCreateBody? = null
     }
 
-    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodPayDirekt(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentMethod> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodPayDirekt(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<PaymentMethod> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -90,6 +90,6 @@ Registering PayDirekt as payment method is a 2-step process, thus the payment me
                 .build()
                 .create(CreatePaymentMethodPayDirektService::class.java)
 
-        return service.createPaymentMethodPayDirekt(body)
+        return service.createPaymentMethodPayDirekt(headers, body)
     }
 }

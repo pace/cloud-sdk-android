@@ -38,15 +38,15 @@ object GetSourceAPI {
         /* Returns source with specified id */
         @GET("sources/{sourceId}")
         fun getSource(
+            @HeaderMap headers: Map<String, String>,
             /* ID of the source */
             @Path("sourceId") sourceId: String? = null
         ): Call<Source>
     }
 
-    fun POIAPI.SourcesAPI.getSource(sourceId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Source> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.SourcesAPI.getSource(sourceId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<Source> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -79,6 +79,6 @@ object GetSourceAPI {
                 .build()
                 .create(GetSourceService::class.java)
 
-        return service.getSource(sourceId)
+        return service.getSource(headers, sourceId)
     }
 }

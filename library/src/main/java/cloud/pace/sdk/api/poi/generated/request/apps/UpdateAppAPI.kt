@@ -38,6 +38,7 @@ object UpdateAppAPI {
         /* Updates App with specified id */
         @PUT("apps/{appID}")
         fun updateApp(
+            @HeaderMap headers: Map<String, String>,
             /* ID of the App */
             @Path("appID") appID: String? = null, 
             @retrofit2.http.Body body: Body
@@ -50,10 +51,9 @@ object UpdateAppAPI {
         var data: LocationBasedAppBody? = null
     }
 
-    fun POIAPI.AppsAPI.updateApp(appID: String? = null, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<LocationBasedApp> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.AppsAPI.updateApp(appID: String? = null, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<LocationBasedApp> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -86,6 +86,6 @@ object UpdateAppAPI {
                 .build()
                 .create(UpdateAppService::class.java)
 
-        return service.updateApp(appID, body)
+        return service.updateApp(headers, appID, body)
     }
 }

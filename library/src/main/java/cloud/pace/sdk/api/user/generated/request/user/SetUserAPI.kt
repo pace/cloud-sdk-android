@@ -39,14 +39,14 @@ object SetUserAPI {
  */
         @PUT("users/{userId}")
         fun setUser(
+            @HeaderMap headers: Map<String, String>,
             @Path("userId") userId: String? = null
         ): Call<User>
     }
 
-    fun UserAPI.UserAPI.setUser(userId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<User> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.UserAPI.setUser(userId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<User> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -79,6 +79,6 @@ object SetUserAPI {
                 .build()
                 .create(SetUserService::class.java)
 
-        return service.setUser(userId)
+        return service.setUser(headers, userId)
     }
 }

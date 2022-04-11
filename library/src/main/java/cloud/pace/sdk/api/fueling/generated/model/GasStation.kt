@@ -20,6 +20,8 @@ class GasStation : Resource() {
 
     var address: Address? = null
     var amenities: List<String>? = null
+    /* Currency as specified in ISO-4217. */
+    var currency: String? = null
     /* Time of last update of this gas station's fuel prices */
     var lastUpdateTime: Date? = null
     var latitude: Float? = null

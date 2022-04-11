@@ -38,15 +38,15 @@ object ConfirmPaymentMethodAPI {
         /* Redirect endpoint to confirm a payment method. External services redirect the user here and in turn this endpoint redirects the user to the frontend. */
         @GET("payment-methods/confirm/{token}")
         fun confirmPaymentMethod(
+            @HeaderMap headers: Map<String, String>,
             /* single use token */
             @Path("token") token: String
         ): Call<ResponseBody>
     }
 
-    fun PayAPI.PaymentMethodsAPI.confirmPaymentMethod(token: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentMethodsAPI.confirmPaymentMethod(token: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(false, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -79,6 +79,6 @@ object ConfirmPaymentMethodAPI {
                 .build()
                 .create(ConfirmPaymentMethodService::class.java)
 
-        return service.confirmPaymentMethod(token)
+        return service.confirmPaymentMethod(headers, token)
     }
 }

@@ -41,6 +41,7 @@ You should trigger this when the user is approaching on a gas station with fueli
 If the list is empty, you can ask the user to add a payment method to use PACE fueling. */
         @GET("payment-methods")
         fun getPaymentMethodsIncludingCreditCheckMultiStatus(
+            @HeaderMap headers: Map<String, String>,
             @Query("filter[status]") filterstatus: Filterstatus,
             @Query("filter[purpose]") filterpurpose: PRN? = null
         ): Call<PaymentMethods>
@@ -56,10 +57,9 @@ If the list is empty, you can ask the user to add a payment method to use PACE f
         CREATEDORVALID("createdOrValid")
     }
 
-    fun PayAPI.PaymentMethodsAPI.getPaymentMethodsIncludingCreditCheckMultiStatus(filterstatus: Filterstatus, filterpurpose: PRN? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentMethods> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentMethodsAPI.getPaymentMethodsIncludingCreditCheckMultiStatus(filterstatus: Filterstatus, filterpurpose: PRN? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<PaymentMethods> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -92,6 +92,6 @@ If the list is empty, you can ask the user to add a payment method to use PACE f
                 .build()
                 .create(GetPaymentMethodsIncludingCreditCheckMultiStatusService::class.java)
 
-        return service.getPaymentMethodsIncludingCreditCheckMultiStatus(filterstatus, filterpurpose)
+        return service.getPaymentMethodsIncludingCreditCheckMultiStatus(headers, filterstatus, filterpurpose)
     }
 }

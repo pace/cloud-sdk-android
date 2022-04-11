@@ -40,6 +40,7 @@ object GetTilesAPI {
  */
         @POST("v1/tiles/query")
         fun getTiles(
+            @HeaderMap headers: Map<String, String>,
             /* Protobuf binary wire format of the following definition
 ```
 syntax = "proto3";
@@ -69,10 +70,9 @@ message Coordinate {
         ): Call<ResponseBody>
     }
 
-    fun POIAPI.TilesAPI.getTiles(body: File, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/protobuf", "application/protobuf", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.TilesAPI.getTiles(body: File, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/protobuf", "application/protobuf", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -105,6 +105,6 @@ message Coordinate {
                 .build()
                 .create(GetTilesService::class.java)
 
-        return service.getTiles(body)
+        return service.getTiles(headers, body)
     }
 }

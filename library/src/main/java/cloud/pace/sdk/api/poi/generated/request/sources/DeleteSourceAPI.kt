@@ -38,15 +38,15 @@ object DeleteSourceAPI {
         /* Deletes source with specified id */
         @DELETE("sources/{sourceId}")
         fun deleteSource(
+            @HeaderMap headers: Map<String, String>,
             /* ID of the source */
             @Path("sourceId") sourceId: String? = null
         ): Call<ResponseBody>
     }
 
-    fun POIAPI.SourcesAPI.deleteSource(sourceId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.SourcesAPI.deleteSource(sourceId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -79,6 +79,6 @@ object DeleteSourceAPI {
                 .build()
                 .create(DeleteSourceService::class.java)
 
-        return service.deleteSource(sourceId)
+        return service.deleteSource(headers, sourceId)
     }
 }

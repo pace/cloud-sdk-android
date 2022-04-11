@@ -39,14 +39,14 @@ object VerifyUserPhoneAPI {
  */
         @PUT("user/phone/verify")
         fun verifyUserPhone(
+            @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: VerifyUserPhone
         ): Call<ResponseBody>
     }
 
-    fun UserAPI.PhoneAPI.verifyUserPhone(body: VerifyUserPhone, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.PhoneAPI.verifyUserPhone(body: VerifyUserPhone, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -79,6 +79,6 @@ object VerifyUserPhoneAPI {
                 .build()
                 .create(VerifyUserPhoneService::class.java)
 
-        return service.verifyUserPhone(body)
+        return service.verifyUserPhone(headers, body)
     }
 }

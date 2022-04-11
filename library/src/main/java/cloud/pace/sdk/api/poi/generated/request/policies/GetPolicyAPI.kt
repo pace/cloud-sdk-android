@@ -38,15 +38,15 @@ object GetPolicyAPI {
         /* Returns policy with specified id */
         @GET("policies/{policyId}")
         fun getPolicy(
+            @HeaderMap headers: Map<String, String>,
             /* ID of the policy */
             @Path("policyId") policyId: String? = null
         ): Call<Policy>
     }
 
-    fun POIAPI.PoliciesAPI.getPolicy(policyId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Policy> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.PoliciesAPI.getPolicy(policyId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<Policy> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -79,6 +79,6 @@ object GetPolicyAPI {
                 .build()
                 .create(GetPolicyService::class.java)
 
-        return service.getPolicy(policyId)
+        return service.getPolicy(headers, policyId)
     }
 }

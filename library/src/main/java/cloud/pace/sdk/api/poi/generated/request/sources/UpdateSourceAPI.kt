@@ -38,6 +38,7 @@ object UpdateSourceAPI {
         /* Updates source with specified id */
         @PUT("sources/{sourceId}")
         fun updateSource(
+            @HeaderMap headers: Map<String, String>,
             /* ID of the source */
             @Path("sourceId") sourceId: String? = null, 
             @retrofit2.http.Body body: Body
@@ -50,10 +51,9 @@ object UpdateSourceAPI {
         var data: SourceBody? = null
     }
 
-    fun POIAPI.SourcesAPI.updateSource(sourceId: String? = null, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Source> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.SourcesAPI.updateSource(sourceId: String? = null, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<Source> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -86,6 +86,6 @@ object UpdateSourceAPI {
                 .build()
                 .create(UpdateSourceService::class.java)
 
-        return service.updateSource(sourceId, body)
+        return service.updateSource(headers, sourceId, body)
     }
 }

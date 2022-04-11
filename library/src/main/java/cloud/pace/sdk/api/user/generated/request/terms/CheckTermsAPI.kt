@@ -40,6 +40,7 @@ In order to identify the user any oauth2 token must be passed.
  */
         @GET("terms/check")
         fun checkTerms(
+            @HeaderMap headers: Map<String, String>,
             /* The name of the service */
             @Query("filter[serviceName]") filterserviceName: FilterserviceName,
             @Query("redirectUri") redirectUri: String? = null
@@ -68,10 +69,9 @@ In order to identify the user any oauth2 token must be passed.
         PACEDRIVEAPP("PACE Drive App")
     }
 
-    fun UserAPI.TermsAPI.checkTerms(filterserviceName: FilterserviceName, redirectUri: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.TermsAPI.checkTerms(filterserviceName: FilterserviceName, redirectUri: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -104,6 +104,6 @@ In order to identify the user any oauth2 token must be passed.
                 .build()
                 .create(CheckTermsService::class.java)
 
-        return service.checkTerms(filterserviceName, redirectUri)
+        return service.checkTerms(headers, filterserviceName, redirectUri)
     }
 }

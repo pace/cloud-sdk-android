@@ -39,6 +39,7 @@ object CancelPreAuthAPI {
  */
         @DELETE("gas-stations/{gasStationId}/transactions/{transactionId}")
         fun cancelPreAuth(
+            @HeaderMap headers: Map<String, String>,
             /* Gas station ID */
             @Path("gasStationId") gasStationId: String,
             /* Transaction ID (for pre auth transactions). */
@@ -46,10 +47,9 @@ object CancelPreAuthAPI {
         ): Call<ResponseBody>
     }
 
-    fun FuelingAPI.FuelingAPI.cancelPreAuth(gasStationId: String, transactionId: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun FuelingAPI.FuelingAPI.cancelPreAuth(gasStationId: String, transactionId: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -82,6 +82,6 @@ object CancelPreAuthAPI {
                 .build()
                 .create(CancelPreAuthService::class.java)
 
-        return service.cancelPreAuth(gasStationId, transactionId)
+        return service.cancelPreAuth(headers, gasStationId, transactionId)
     }
 }

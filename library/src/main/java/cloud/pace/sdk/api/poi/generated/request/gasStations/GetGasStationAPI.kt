@@ -39,6 +39,7 @@ object GetGasStationAPI {
  */
         @GET("gas-stations/{id}")
         fun getGasStation(
+            @HeaderMap headers: Map<String, String>,
             /* Gas station ID */
             @Path("id") id: String,
             /* Reduces the opening hours rules. After compilation, only rules with the action open will remain in the response. */
@@ -46,10 +47,9 @@ object GetGasStationAPI {
         ): Call<GasStation>
     }
 
-    fun POIAPI.GasStationsAPI.getGasStation(id: String, compileopeningHours: Boolean? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<GasStation> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.GasStationsAPI.getGasStation(id: String, compileopeningHours: Boolean? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<GasStation> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -85,6 +85,6 @@ object GetGasStationAPI {
                 .build()
                 .create(GetGasStationService::class.java)
 
-        return service.getGasStation(id, compileopeningHours)
+        return service.getGasStation(headers, id, compileopeningHours)
     }
 }

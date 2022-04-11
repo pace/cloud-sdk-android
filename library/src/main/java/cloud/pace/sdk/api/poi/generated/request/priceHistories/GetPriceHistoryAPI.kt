@@ -39,6 +39,7 @@ object GetPriceHistoryAPI {
  */
         @GET("gas-stations/{id}/fuel-price-histories/{fuel_type}")
         fun getPriceHistory(
+            @HeaderMap headers: Map<String, String>,
             /* Gas station ID */
             @Path("id") id: String,
             /* Filter after a specific fuel type */
@@ -52,10 +53,9 @@ object GetPriceHistoryAPI {
         ): Call<PriceHistory>
     }
 
-    fun POIAPI.PriceHistoriesAPI.getPriceHistory(id: String, fuelType: Fuel? = null, filterfrom: Date? = null, filterto: Date? = null, filtergranularity: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PriceHistory> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.PriceHistoriesAPI.getPriceHistory(id: String, fuelType: Fuel? = null, filterfrom: Date? = null, filterto: Date? = null, filtergranularity: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<PriceHistory> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -88,6 +88,6 @@ object GetPriceHistoryAPI {
                 .build()
                 .create(GetPriceHistoryService::class.java)
 
-        return service.getPriceHistory(id, fuelType, filterfrom?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filterto?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filtergranularity)
+        return service.getPriceHistory(headers, id, fuelType, filterfrom?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filterto?.toIso8601()?.dropLast(9)?.let { it +'Z'} , filtergranularity)
     }
 }

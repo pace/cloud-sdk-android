@@ -39,6 +39,7 @@ object CreateTOTPAPI {
  */
         @POST("user/devices/totp")
         fun createTOTP(
+            @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: Body
         ): Call<DeviceTOTP>
     }
@@ -50,10 +51,9 @@ object CreateTOTPAPI {
         var data: DeviceTOTPBody? = null
     }
 
-    fun UserAPI.TOTPAPI.createTOTP(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<DeviceTOTP> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.TOTPAPI.createTOTP(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<DeviceTOTP> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -86,6 +86,6 @@ object CreateTOTPAPI {
                 .build()
                 .create(CreateTOTPService::class.java)
 
-        return service.createTOTP(body)
+        return service.createTOTP(headers, body)
     }
 }

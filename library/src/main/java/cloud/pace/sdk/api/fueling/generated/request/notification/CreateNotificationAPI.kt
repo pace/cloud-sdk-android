@@ -42,15 +42,15 @@ object CreateNotificationAPI {
  */
         @POST("notifications")
         fun createNotification(
+            @HeaderMap headers: Map<String, String>,
             /* Name of the vendor providing the notification. This will enforce a certain format depending on the vendor. */
             @Query("vendor") vendor: String? = null
         ): Call<ResponseBody>
     }
 
-    fun FuelingAPI.NotificationAPI.createNotification(vendor: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun FuelingAPI.NotificationAPI.createNotification(vendor: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -83,6 +83,6 @@ object CreateNotificationAPI {
                 .build()
                 .create(CreateNotificationService::class.java)
 
-        return service.createNotification(vendor)
+        return service.createNotification(headers, vendor)
     }
 }

@@ -37,15 +37,15 @@ object GetPaymentTokenAPI {
         /* Get a payment token */
         @GET("payment-tokens/{paymentTokenId}")
         fun getPaymentToken(
+            @HeaderMap headers: Map<String, String>,
             /* paymentToken ID. */
             @Path("paymentTokenId") paymentTokenId: String
         ): Call<PaymentToken>
     }
 
-    fun PayAPI.PaymentTokensAPI.getPaymentToken(paymentTokenId: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentToken> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentTokensAPI.getPaymentToken(paymentTokenId: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<PaymentToken> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -78,6 +78,6 @@ object GetPaymentTokenAPI {
                 .build()
                 .create(GetPaymentTokenService::class.java)
 
-        return service.getPaymentToken(paymentTokenId)
+        return service.getPaymentToken(headers, paymentTokenId)
     }
 }
