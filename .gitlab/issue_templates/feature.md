@@ -6,7 +6,5 @@
 
 <!-- What are the implementation details? Which alternatives have been considered? -->
 
-/label ~"T::Feature" ~"S::Ready" ~"P:PACECloudSDK" ~"stream::mobile"
-/weight 1
-/estimate 1h
+/label ~"T::Feature" ~"S::Pending" ~"P:PACECloudSDK" ~"stream::mobile"
 /iteration *iteration:"Sprint Next"
