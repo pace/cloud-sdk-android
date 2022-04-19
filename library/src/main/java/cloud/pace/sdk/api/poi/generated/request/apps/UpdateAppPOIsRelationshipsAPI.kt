@@ -38,16 +38,16 @@ object UpdateAppPOIsRelationshipsAPI {
         /* Update all POI relations for specified app id */
         @PATCH("apps/{appID}/relationships/pois")
         fun updateAppPOIsRelationships(
+            @HeaderMap headers: Map<String, String>,
             /* ID of the App */
             @Path("appID") appID: String? = null, 
             @retrofit2.http.Body body: AppPOIsRelationships
         ): Call<AppPOIsRelationships>
     }
 
-    fun POIAPI.AppsAPI.updateAppPOIsRelationships(appID: String? = null, body: AppPOIsRelationships, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<AppPOIsRelationships> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.AppsAPI.updateAppPOIsRelationships(appID: String? = null, body: AppPOIsRelationships, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<AppPOIsRelationships> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -80,6 +80,6 @@ object UpdateAppPOIsRelationshipsAPI {
                 .build()
                 .create(UpdateAppPOIsRelationshipsService::class.java)
 
-        return service.updateAppPOIsRelationships(appID, body)
+        return service.updateAppPOIsRelationships(headers, appID, body)
     }
 }

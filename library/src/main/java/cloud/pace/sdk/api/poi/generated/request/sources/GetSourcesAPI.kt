@@ -38,6 +38,7 @@ object GetSourcesAPI {
         /* Returns a paginated list of sources optionally filtered by poi type and/or name */
         @GET("sources")
         fun getSources(
+            @HeaderMap headers: Map<String, String>,
             /* page number */
             @Query("page[number]") pagenumber: Int? = null,
             /* items per page */
@@ -49,10 +50,9 @@ object GetSourcesAPI {
         ): Call<Sources>
     }
 
-    fun POIAPI.SourcesAPI.getSources(pagenumber: Int? = null, pagesize: Int? = null, filterpoiType: POIType? = null, filtername: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Sources> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.SourcesAPI.getSources(pagenumber: Int? = null, pagesize: Int? = null, filterpoiType: POIType? = null, filtername: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<Sources> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -85,6 +85,6 @@ object GetSourcesAPI {
                 .build()
                 .create(GetSourcesService::class.java)
 
-        return service.getSources(pagenumber, pagesize, filterpoiType, filtername)
+        return service.getSources(headers, pagenumber, pagesize, filterpoiType, filtername)
     }
 }

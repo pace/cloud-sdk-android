@@ -37,6 +37,7 @@ object DeduplicatePoiAPI {
         /* Specify if a list of POI are considered to be duplicates of a specific POI */
         @PATCH("admin/poi/dedupe")
         fun deduplicatePoi(
+            @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: Body
         ): Call<ResponseBody>
     }
@@ -46,10 +47,9 @@ object DeduplicatePoiAPI {
         var data: DedupeRequestBody? = null
     }
 
-    fun POIAPI.AdminAPI.deduplicatePoi(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.AdminAPI.deduplicatePoi(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -82,6 +82,6 @@ object DeduplicatePoiAPI {
                 .build()
                 .create(DeduplicatePoiService::class.java)
 
-        return service.deduplicatePoi(body)
+        return service.deduplicatePoi(headers, body)
     }
 }

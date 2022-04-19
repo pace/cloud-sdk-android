@@ -47,15 +47,15 @@ value not longer than 255 bytes (including complex json objects).
         @JvmSuppressWildcards
         @PUT("preferences/{clientId}")
         fun updateAppPreferences(
+            @HeaderMap headers: Map<String, String>,
             @Path("clientId") clientId: String? = null,
             @retrofit2.http.Body body: Map<String, Any>
         ): Call<ResponseBody>
     }
 
-    fun UserAPI.PreferencesAPI.updateAppPreferences(clientId: String? = null, body: Map<String, Any>, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.PreferencesAPI.updateAppPreferences(clientId: String? = null, body: Map<String, Any>, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -88,6 +88,6 @@ value not longer than 255 bytes (including complex json objects).
                 .build()
                 .create(UpdateAppPreferencesService::class.java)
 
-        return service.updateAppPreferences(clientId, body)
+        return service.updateAppPreferences(headers, clientId, body)
     }
 }

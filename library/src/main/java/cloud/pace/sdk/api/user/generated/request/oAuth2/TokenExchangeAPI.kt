@@ -58,14 +58,14 @@ RFCs for reference:
  */
         @POST("protocol/openid-connect/token")
         fun tokenExchange(
+            @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: OAuth2TokenExchange
         ): Call<OAuth2Token>
     }
 
-    fun UserAPI.OAuth2API.tokenExchange(body: OAuth2TokenExchange, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<OAuth2Token> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/x-www-form-urlencoded", "application/x-www-form-urlencoded", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.OAuth2API.tokenExchange(body: OAuth2TokenExchange, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<OAuth2Token> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/x-www-form-urlencoded", "application/x-www-form-urlencoded", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -98,6 +98,6 @@ RFCs for reference:
                 .build()
                 .create(TokenExchangeService::class.java)
 
-        return service.tokenExchange(body)
+        return service.tokenExchange(headers, body)
     }
 }

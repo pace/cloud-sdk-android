@@ -37,15 +37,15 @@ object GetAppRedirectAPI {
         /* Redirects the caller to the specified app */
         @GET("apps/{appID}/redirect")
         fun getAppRedirect(
+            @HeaderMap headers: Map<String, String>,
             /* ID of the App */
             @Path("appID") appID: String? = null
         ): Call<ResponseBody>
     }
 
-    fun POIAPI.AppsAPI.getAppRedirect(appID: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.AppsAPI.getAppRedirect(appID: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(false, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -78,6 +78,6 @@ object GetAppRedirectAPI {
                 .build()
                 .create(GetAppRedirectService::class.java)
 
-        return service.getAppRedirect(appID)
+        return service.getAppRedirect(headers, appID)
     }
 }

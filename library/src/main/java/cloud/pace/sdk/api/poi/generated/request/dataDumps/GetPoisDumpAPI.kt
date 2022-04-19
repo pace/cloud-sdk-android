@@ -40,6 +40,7 @@ object GetPoisDumpAPI {
  */
         @GET("datadumps/pois")
         fun getPoisDump(
+            @HeaderMap headers: Map<String, String>,
             @Header("Accept") accept: Accept
         ): Call<ResponseBody>
     }
@@ -52,10 +53,9 @@ object GetPoisDumpAPI {
         APPLICATIONVNDOPENXMLFORMATSOFFICEDOCUMENTSPREADSHEETMLSHEET("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     }
 
-    fun POIAPI.DataDumpsAPI.getPoisDump(accept: Accept, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.DataDumpsAPI.getPoisDump(accept: Accept, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -88,6 +88,6 @@ object GetPoisDumpAPI {
                 .build()
                 .create(GetPoisDumpService::class.java)
 
-        return service.getPoisDump(accept)
+        return service.getPoisDump(headers, accept)
     }
 }

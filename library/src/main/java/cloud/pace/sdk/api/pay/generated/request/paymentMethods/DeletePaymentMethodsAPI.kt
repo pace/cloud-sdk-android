@@ -39,13 +39,13 @@ object DeletePaymentMethodsAPI {
  */
         @DELETE("payment-methods")
         fun deletePaymentMethods(
+            @HeaderMap headers: Map<String, String>,
         ): Call<ResponseBody>
     }
 
-    fun PayAPI.PaymentMethodsAPI.deletePaymentMethods(readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentMethodsAPI.deletePaymentMethods(readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -78,6 +78,6 @@ object DeletePaymentMethodsAPI {
                 .build()
                 .create(DeletePaymentMethodsService::class.java)
 
-        return service.deletePaymentMethods()
+        return service.deletePaymentMethods(headers)
     }
 }

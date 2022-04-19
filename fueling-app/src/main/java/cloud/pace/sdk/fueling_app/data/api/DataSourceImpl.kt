@@ -12,11 +12,11 @@ import cloud.pace.sdk.api.fueling.generated.request.fueling.ApproachingAtTheFore
 import cloud.pace.sdk.api.fueling.generated.request.fueling.CancelPreAuthAPI.cancelPreAuth
 import cloud.pace.sdk.api.fueling.generated.request.fueling.GetPumpAPI.getPump
 import cloud.pace.sdk.api.fueling.generated.request.fueling.ProcessPaymentAPI.processPayment
+import cloud.pace.sdk.api.fueling.generated.request.fueling.ProcessPreAuthPaymentAPI.processPreAuthPayment
 import cloud.pace.sdk.api.fueling.generated.request.fueling.WaitOnPumpStatusChangeAPI
 import cloud.pace.sdk.api.fueling.generated.request.fueling.WaitOnPumpStatusChangeAPI.waitOnPumpStatusChange
 import cloud.pace.sdk.api.pay.PayAPI.paymentTokens
 import cloud.pace.sdk.api.pay.PayAPI.paymentTransactions
-import cloud.pace.sdk.api.pay.ProcessPreAuthPaymentAPI.processPreAuthPayment
 import cloud.pace.sdk.api.pay.generated.model.PaymentToken
 import cloud.pace.sdk.api.pay.generated.model.PaymentTokenCreateBody
 import cloud.pace.sdk.api.pay.generated.model.Transaction

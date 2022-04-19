@@ -40,14 +40,14 @@ An account OTP is required to perform the action.
  */
         @DELETE("user")
         fun deleteCurrentUser(
+            @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: PlainOTP
         ): Call<ResponseBody>
     }
 
-    fun UserAPI.UserAPI.deleteCurrentUser(body: PlainOTP, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.UserAPI.deleteCurrentUser(body: PlainOTP, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -80,6 +80,6 @@ An account OTP is required to perform the action.
                 .build()
                 .create(DeleteCurrentUserService::class.java)
 
-        return service.deleteCurrentUser(body)
+        return service.deleteCurrentUser(headers, body)
     }
 }

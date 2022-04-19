@@ -39,6 +39,7 @@ object GetTermsAPI {
  */
         @GET("terms/{termsId}")
         fun getTerms(
+            @HeaderMap headers: Map<String, String>,
             @Path("termsId") termsId: String? = null,
             @Query("redirectUri") redirectUri: String? = null,
             @Header("Accept-Language") acceptLanguage: String? = null, 
@@ -51,10 +52,9 @@ object GetTermsAPI {
         TEXT_HTML("text/html")
     }
 
-    fun UserAPI.TermsAPI.getTerms(termsId: String? = null, redirectUri: String? = null, acceptLanguage: String? = null, readTimeout: Long? = null, accept: GetTermsAcceptHeader? = null, additionalHeaders: Map<String, String>? = null): Call<Terms> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor(null, "application/vnd.api+json", false, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.TermsAPI.getTerms(termsId: String? = null, redirectUri: String? = null, acceptLanguage: String? = null, readTimeout: Long? = null, accept: GetTermsAcceptHeader? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<Terms> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(false, "application/vnd.api+json", null, additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -87,6 +87,6 @@ object GetTermsAPI {
                 .build()
                 .create(GetTermsService::class.java)
 
-        return service.getTerms(termsId, redirectUri, acceptLanguage, accept?.value)
+        return service.getTerms(headers, termsId, redirectUri, acceptLanguage, accept?.value)
     }
 }

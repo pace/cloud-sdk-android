@@ -41,15 +41,15 @@ Only use after approaching, otherwise returns `403 Forbidden`.
  */
         @GET("gas-stations/{gasStationId}/pumps")
         fun getPumps(
+            @HeaderMap headers: Map<String, String>,
             /* Gas station ID */
             @Path("gasStationId") gasStationId: String
         ): Call<GetPumpsResponse>
     }
 
-    fun FuelingAPI.FuelingAPI.getPumps(gasStationId: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<GetPumpsResponse> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun FuelingAPI.FuelingAPI.getPumps(gasStationId: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<GetPumpsResponse> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -83,6 +83,6 @@ Only use after approaching, otherwise returns `403 Forbidden`.
                 .build()
                 .create(GetPumpsService::class.java)
 
-        return service.getPumps(gasStationId)
+        return service.getPumps(headers, gasStationId)
     }
 }

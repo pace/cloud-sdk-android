@@ -13,8 +13,7 @@ import cloud.pace.sdk.api.user.generated.model.DeviceTOTP
 import cloud.pace.sdk.api.user.generated.model.PinOrPassword
 import cloud.pace.sdk.fueling_app.data.api.DataSource
 import cloud.pace.sdk.poikit.poi.GasStation
-import cloud.pace.sdk.utils.*
-import kotlinx.coroutines.CancellableContinuation
+import cloud.pace.sdk.utils.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.ResponseBody
 import java.io.File
@@ -128,11 +127,4 @@ class Repository @Inject constructor(
                 continuation.resume(it)
             }
         }
-
-    private fun <T> CancellableContinuation<T>.resume(completion: Completion<T>) {
-        when (completion) {
-            is Success -> resumeIfActive(completion.result)
-            is Failure -> resumeWithExceptionIfActive(completion.throwable)
-        }
-    }
 }

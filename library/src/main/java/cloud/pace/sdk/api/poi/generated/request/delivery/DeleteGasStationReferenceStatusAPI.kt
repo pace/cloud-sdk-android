@@ -38,6 +38,7 @@ object DeleteGasStationReferenceStatusAPI {
         /* Deletes a reference status of a gas station */
         @DELETE("delivery/gas-stations/{gasStationId}/reference-status/{reference}")
         fun deleteGasStationReferenceStatus(
+            @HeaderMap headers: Map<String, String>,
             /* Gas station ID */
             @Path("gasStationId") gasStationId: String,
             /* Service Provider PRN */
@@ -45,10 +46,9 @@ object DeleteGasStationReferenceStatusAPI {
         ): Call<ResponseBody>
     }
 
-    fun POIAPI.DeliveryAPI.deleteGasStationReferenceStatus(gasStationId: String, reference: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.DeliveryAPI.deleteGasStationReferenceStatus(gasStationId: String, reference: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -81,6 +81,6 @@ object DeleteGasStationReferenceStatusAPI {
                 .build()
                 .create(DeleteGasStationReferenceStatusService::class.java)
 
-        return service.deleteGasStationReferenceStatus(gasStationId, reference)
+        return service.deleteGasStationReferenceStatus(headers, gasStationId, reference)
     }
 }

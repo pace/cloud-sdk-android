@@ -39,14 +39,14 @@ object VerifyEmailAPI {
  */
         @GET("user/email/verify")
         fun verifyEmail(
+            @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: Email
         ): Call<ResponseBody>
     }
 
-    fun UserAPI.UserAPI.verifyEmail(body: Email, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.UserAPI.verifyEmail(body: Email, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(false, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -79,6 +79,6 @@ object VerifyEmailAPI {
                 .build()
                 .create(VerifyEmailService::class.java)
 
-        return service.verifyEmail(body)
+        return service.verifyEmail(headers, body)
     }
 }

@@ -39,13 +39,13 @@ object CheckUserPhoneAPI {
  */
         @GET("user/phone")
         fun checkUserPhone(
+            @HeaderMap headers: Map<String, String>,
         ): Call<ResponseBody>
     }
 
-    fun UserAPI.PhoneAPI.checkUserPhone(readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.PhoneAPI.checkUserPhone(readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -78,6 +78,6 @@ object CheckUserPhoneAPI {
                 .build()
                 .create(CheckUserPhoneService::class.java)
 
-        return service.checkUserPhone()
+        return service.checkUserPhone(headers)
     }
 }

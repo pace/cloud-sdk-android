@@ -39,13 +39,13 @@ object RecordAuditLogAPI {
  */
         @POST("auditlogs/record")
         fun recordAuditLog(
+            @HeaderMap headers: Map<String, String>,
         ): Call<AuditLogRecord>
     }
 
-    fun UserAPI.AuditLogAPI.recordAuditLog(readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<AuditLogRecord> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.AuditLogAPI.recordAuditLog(readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<AuditLogRecord> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(false, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -78,6 +78,6 @@ object RecordAuditLogAPI {
                 .build()
                 .create(RecordAuditLogService::class.java)
 
-        return service.recordAuditLog()
+        return service.recordAuditLog(headers)
     }
 }

@@ -52,6 +52,7 @@ Other than authorization, the most common error states encountered should be:
  */
         @POST("gas-stations/{gasStationId}/approaching")
         fun approachingAtTheForecourt(
+            @HeaderMap headers: Map<String, String>,
             /* Gas station ID */
             @Path("gasStationId") gasStationId: String,
             /* Reduces the opening hours rules. After compilation, only rules with the action open will remain in the response. */
@@ -59,10 +60,9 @@ Other than authorization, the most common error states encountered should be:
         ): Call<ApproachingResponse>
     }
 
-    fun FuelingAPI.FuelingAPI.approachingAtTheForecourt(gasStationId: String, compileopeningHours: Boolean? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ApproachingResponse> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun FuelingAPI.FuelingAPI.approachingAtTheForecourt(gasStationId: String, compileopeningHours: Boolean? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ApproachingResponse> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -102,6 +102,6 @@ Other than authorization, the most common error states encountered should be:
                 .build()
                 .create(ApproachingAtTheForecourtService::class.java)
 
-        return service.approachingAtTheForecourt(gasStationId, compileopeningHours)
+        return service.approachingAtTheForecourt(headers, gasStationId, compileopeningHours)
     }
 }

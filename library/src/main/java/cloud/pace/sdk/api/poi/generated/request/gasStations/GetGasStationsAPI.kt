@@ -45,6 +45,7 @@ To search inside a bounding box provide the following query parameter:
  */
         @GET("gas-stations")
         fun getGasStations(
+            @HeaderMap headers: Map<String, String>,
             /* page number */
             @Query("page[number]") pagenumber: Int? = null,
             /* items per page */
@@ -66,7 +67,9 @@ To search inside a bounding box provide the following query parameter:
             /* Reduces the opening hours rules. After compilation only rules with the action open will remain in the response. */
             @Query("compile[openingHours]") compileopeningHours: Boolean? = null,
             /* Filter by source ID */
-            @Query("filter[source]") filtersource: String? = null
+            @Query("filter[source]") filtersource: String? = null,
+            /* Comma separated strings that filter stations according to supported payment methods. */
+            @Query("filter[paymentMethod]") filterpaymentMethod: String? = null
         ): Call<GasStations>
     }
 
@@ -84,10 +87,9 @@ To search inside a bounding box provide the following query parameter:
         FUELING("fueling")
     }
 
-    fun POIAPI.GasStationsAPI.getGasStations(pagenumber: Int? = null, pagesize: Int? = null, filterpoiType: FilterpoiType? = null, filterappType: List<FilterappType>? = null, filterlatitude: Float? = null, filterlongitude: Float? = null, filterradius: Float? = null, filterboundingBox: List<Float>? = null, compileopeningHours: Boolean? = null, filtersource: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<GasStations> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.GasStationsAPI.getGasStations(pagenumber: Int? = null, pagesize: Int? = null, filterpoiType: FilterpoiType? = null, filterappType: List<FilterappType>? = null, filterlatitude: Float? = null, filterlongitude: Float? = null, filterradius: Float? = null, filterboundingBox: List<Float>? = null, compileopeningHours: Boolean? = null, filtersource: String? = null, filterpaymentMethod: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<GasStations> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -123,6 +125,6 @@ To search inside a bounding box provide the following query parameter:
                 .build()
                 .create(GetGasStationsService::class.java)
 
-        return service.getGasStations(pagenumber, pagesize, filterpoiType, filterappType, filterlatitude, filterlongitude, filterradius, filterboundingBox, compileopeningHours, filtersource)
+        return service.getGasStations(headers, pagenumber, pagesize, filterpoiType, filterappType, filterlatitude, filterlongitude, filterradius, filterboundingBox, compileopeningHours, filtersource, filterpaymentMethod)
     }
 }

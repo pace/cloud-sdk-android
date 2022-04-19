@@ -6,12 +6,16 @@ import cloud.pace.sdk.BuildConfig
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.idkit.IDKit
-import cloud.pace.sdk.utils.*
+import cloud.pace.sdk.utils.DeviceUtils
+import cloud.pace.sdk.utils.randomHexString
+import cloud.pace.sdk.utils.requestId
+import cloud.pace.sdk.utils.resume
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
-import okhttp3.Authenticator
+import net.openid.appauth.AuthorizationException.GeneralErrors.*
 import okhttp3.Interceptor
 import timber.log.Timber
+import java.net.HttpURLConnection
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -32,65 +36,81 @@ object InterceptorUtils {
     private var traceId: Pair<String, Long>? = null
     private var traceIdMaxAge = TimeUnit.MINUTES.toMillis(15)
 
-    fun getInterceptor(accept: String?, contentType: String?, authorizationRequired: Boolean, additionalHeaders: Map<String, String>? = null) = Interceptor {
+    fun getHeaders(isAuthorizationRequired: Boolean, contentTypeHeader: String, acceptHeader: String? = null, additionalHeaders: Map<String, String>? = null): Map<String, String> {
+        val headers = API.additionalHeaders.toMutableMap()
+        if (!isAuthorizationRequired) {
+            // Only send the authorization header when authorization is required
+            headers.remove(AUTHORIZATION_HEADER)
+        }
+
+        if (acceptHeader != null) headers[ACCEPT_HEADER] = acceptHeader
+        headers[CONTENT_TYPE_HEADER] = contentTypeHeader
+        headers[API_KEY_HEADER] = API.apiKey
+        headers[UBER_TRACE_ID_HEADER] = getUberTraceId()
+        headers[USER_AGENT_HEADER] = getUserAgent()
+
+        // Additional headers of the request have priority over the globally set headers, so set them last to override any existing header
+        if (!additionalHeaders.isNullOrEmpty()) {
+            headers += additionalHeaders
+        }
+
+        return headers
+    }
+
+    fun getInterceptor(additionalParams: Map<String, String>? = null) = Interceptor {
         val httpUrl = it.request().url.newBuilder()
-        PACECloudSDK.additionalQueryParams.forEach { param ->
+
+        // Additional query parameters of the request have priority over the globally set query parameters, so set them last to override any existing query parameter
+        val queryParams = if (additionalParams != null) PACECloudSDK.additionalQueryParams + additionalParams else PACECloudSDK.additionalQueryParams
+        queryParams.forEach { param ->
             httpUrl.addQueryParameter(param.key, param.value)
         }
 
-        val builder = it.request().newBuilder().url(httpUrl.build())
+        val newRequest = it.request().newBuilder().url(httpUrl.build()).build()
+        val response = it.proceed(newRequest)
 
-        API.additionalHeaders.forEach { header ->
-            if (header.key == AUTHORIZATION_HEADER) {
-                if (authorizationRequired)
-                    builder.header(header.key, header.value)
-            } else {
-                builder.header(header.key, header.value)
-            }
+        if (!response.isSuccessful) {
+            Timber.e("Request failed: code = ${response.code} || message = ${response.message} || request ID = ${response.requestId} || url: ${newRequest.url}")
         }
 
-        if (accept != null) builder.header(ACCEPT_HEADER, accept)
-        if (contentType != null) builder.header(CONTENT_TYPE_HEADER, contentType)
-
-        builder.header(API_KEY_HEADER, API.apiKey)
-        builder.header(UBER_TRACE_ID_HEADER, getUberTraceId())
-        builder.header(USER_AGENT_HEADER, getUserAgent())
-
-        // Additional parameters of the request have priority over the globally set parameters, so set them last to override any existing header
-        additionalHeaders?.forEach { header ->
-            builder.header(header.key, header.value)
-        }
-
-        it.proceed(builder.build()).also { response ->
-            if (!response.isSuccessful) {
-                Timber.e("Request failed: code = ${response.code} || message = ${response.message} || request ID = ${response.requestId} || url: ${it.request().url}")
-            }
-        }
-    }
-
-    fun getAuthenticator() = Authenticator { _, response ->
-        if (IDKit.isInitialized && IDKit.isAuthorizationValid()) {
+        if (response.code == HttpURLConnection.HTTP_UNAUTHORIZED && IDKit.isInitialized && IDKit.isAuthorizationValid()) {
             val oldToken = IDKit.cachedToken()
-            synchronized(this) { // perform all 401 in sync blocks, to avoid multiply token updates
-                runCatching {
-                    runBlocking {
-                        val cachedToken = IDKit.cachedToken()
-                        if (oldToken == cachedToken) {
-                            suspendCancellableCoroutine { continuation ->
-                                IDKit.refreshToken {
-                                    continuation.resumeIfActive((it as? Success)?.result)
-                                }
-                            }
-                        } else {
-                            cachedToken
+            // Make sure that the token is only refreshed once for multiple requests
+            synchronized(this) {
+                try {
+                    val cachedToken = IDKit.cachedToken()
+                    val newToken = if (oldToken == cachedToken) {
+                        runBlocking {
+                            getNewToken()
                         }
+                    } else {
+                        // Token has already been refreshed from another request. Use the cached token
+                        cachedToken
                     }
-                }.getOrNull()?.let {
-                    response.request.newBuilder().header(AUTHORIZATION_HEADER, "Bearer $it").build()
+
+                    if (newToken != null) {
+                        // Close previous response body
+                        response.body?.close()
+                        it.proceed(newRequest.newBuilder().header(AUTHORIZATION_HEADER, "Bearer $newToken").build())
+                    } else {
+                        response
+                    }
+                } catch (e: Exception) {
+                    if (e == JSON_DESERIALIZATION_ERROR || e == NETWORK_ERROR || e == SERVER_ERROR) {
+                        response.newBuilder().code(HttpURLConnection.HTTP_UNAVAILABLE).build()
+                    } else {
+                        response
+                    }
                 }
             }
         } else {
-            null
+            response
+        }
+    }
+
+    private suspend fun getNewToken() = suspendCancellableCoroutine<String?> { continuation ->
+        IDKit.refreshToken {
+            continuation.resume(it)
         }
     }
 

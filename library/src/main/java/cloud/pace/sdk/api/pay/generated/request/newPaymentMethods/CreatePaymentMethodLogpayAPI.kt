@@ -5,10 +5,10 @@
  * https://github.com/pace/SwagGen
  */
 
-package cloud.pace.sdk.api.user.generated.request.phone
+package cloud.pace.sdk.api.pay.generated.request.newPaymentMethods
 
-import cloud.pace.sdk.api.user.UserAPI
-import cloud.pace.sdk.api.user.generated.model.*
+import cloud.pace.sdk.api.pay.PayAPI
+import cloud.pace.sdk.api.pay.generated.model.*
 import cloud.pace.sdk.api.utils.EnumConverterFactory
 import cloud.pace.sdk.api.utils.InterceptorUtils
 import cloud.pace.sdk.utils.toIso8601
@@ -31,31 +31,29 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-object UpdateUserPhoneAPI {
+object CreatePaymentMethodLogpayAPI {
 
-    interface UpdateUserPhoneService {
-        /* Request a change of the users phone number */
-        /* The endpoint will issue an email to the customer, to confirm the update of the phone number is valid. After confirmation by the user an SMS is send to the user to verify the phone number. The SMS contains a code, that needs to be provided to the [verify user phone](#operation/VerifyUserPhone) operation.
-Mailing the customer will be omitted for the first time (if there is no phone number set).
-If the process is not completed within 24h the process is canceled.
+    interface CreatePaymentMethodLogpayService {
+        /* Register a Logpay Card as a payment method */
+        /* By registering you allow the user to use a Logpay Card as a payment method.
+The payment method ID is optional when posting data.
  */
-        @PUT("user/phone")
-        fun updateUserPhone(
+        @POST("payment-methods/logpay")
+        fun createPaymentMethodLogpay(
             @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: Body
-        ): Call<ResponseBody>
+        ): Call<PaymentMethod>
     }
 
-    /* The endpoint will issue an email to the customer, to confirm the update of the phone number is valid. After confirmation by the user an SMS is send to the user to verify the phone number. The SMS contains a code, that needs to be provided to the [verify user phone](#operation/VerifyUserPhone) operation.
-    Mailing the customer will be omitted for the first time (if there is no phone number set).
-    If the process is not completed within 24h the process is canceled.
+    /* By registering you allow the user to use a Logpay Card as a payment method.
+    The payment method ID is optional when posting data.
      */
     class Body {
 
-        var data: UpdateUserPhoneBody? = null
+        var data: PaymentMethodLogpayCreateBody? = null
     }
 
-    fun UserAPI.PhoneAPI.updateUserPhone(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodLogpay(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<PaymentMethod> {
         val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
         val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
@@ -63,10 +61,10 @@ If the process is not completed within 24h the process is canceled.
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
         }
 
-        val service: UpdateUserPhoneService =
+        val service: CreatePaymentMethodLogpayService =
             Retrofit.Builder()
                 .client(client.build())
-                .baseUrl(UserAPI.baseUrl)
+                .baseUrl(PayAPI.baseUrl)
                 .addConverterFactory(EnumConverterFactory())
                 .addConverterFactory(
                     JsonApiConverterFactory.create(
@@ -88,8 +86,8 @@ If the process is not completed within 24h the process is canceled.
                     )
                 )
                 .build()
-                .create(UpdateUserPhoneService::class.java)
+                .create(CreatePaymentMethodLogpayService::class.java)
 
-        return service.updateUserPhone(headers, body)
+        return service.createPaymentMethodLogpay(headers, body)
     }
 }

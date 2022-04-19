@@ -39,6 +39,7 @@ object GetReceiptByFormatAPI {
  */
         @GET("receipts/{transactionID}.{fileFormat}")
         fun getReceiptByFormat(
+            @HeaderMap headers: Map<String, String>,
             /* ID of the payment transaction */
             @Path("transactionID") transactionID: String,
             /* Format of the expected file */
@@ -63,10 +64,9 @@ in the language that is determined to be spoken in the area that the point of in
         PDF("pdf")
     }
 
-    fun PayAPI.PaymentTransactionsAPI.getReceiptByFormat(transactionID: String, fileFormat: FileFormat? = null, language: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentTransactionsAPI.getReceiptByFormat(transactionID: String, fileFormat: FileFormat? = null, language: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -99,6 +99,6 @@ in the language that is determined to be spoken in the area that the point of in
                 .build()
                 .create(GetReceiptByFormatService::class.java)
 
-        return service.getReceiptByFormat(transactionID, fileFormat, language)
+        return service.getReceiptByFormat(headers, transactionID, fileFormat, language)
     }
 }

@@ -41,14 +41,14 @@ consent with the terms of service.
  */
         @POST("terms/{termsId}/accept")
         fun acceptTerms(
+            @HeaderMap headers: Map<String, String>,
             @Path("termsId") termsId: String? = null
         ): Call<ResponseBody>
     }
 
-    fun UserAPI.TermsAPI.acceptTerms(termsId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.TermsAPI.acceptTerms(termsId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -81,6 +81,6 @@ consent with the terms of service.
                 .build()
                 .create(AcceptTermsService::class.java)
 
-        return service.acceptTerms(termsId)
+        return service.acceptTerms(headers, termsId)
     }
 }

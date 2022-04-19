@@ -38,15 +38,15 @@ object GetDuplicatesKMLAPI {
         /* Generates a map of potential gas station duplicates (closer than 50m to eachother) for specified country. */
         @GET("datadumps/duplicatemap/{countryCode}")
         fun getDuplicatesKML(
+            @HeaderMap headers: Map<String, String>,
             /* Country code in ISO 3166-1 alpha-2 format */
             @Path("countryCode") countryCode: String? = null
         ): Call<ResponseBody>
     }
 
-    fun POIAPI.DataDumpsAPI.getDuplicatesKML(countryCode: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.DataDumpsAPI.getDuplicatesKML(countryCode: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -79,6 +79,6 @@ object GetDuplicatesKMLAPI {
                 .build()
                 .create(GetDuplicatesKMLService::class.java)
 
-        return service.getDuplicatesKML(countryCode)
+        return service.getDuplicatesKML(headers, countryCode)
     }
 }

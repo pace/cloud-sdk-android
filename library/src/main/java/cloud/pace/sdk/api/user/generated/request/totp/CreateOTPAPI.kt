@@ -39,14 +39,14 @@ object CreateOTPAPI {
  */
         @POST("user/otp")
         fun createOTP(
+            @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: CreateOTP
         ): Call<CreateOTP>
     }
 
-    fun UserAPI.TOTPAPI.createOTP(body: CreateOTP, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<CreateOTP> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.TOTPAPI.createOTP(body: CreateOTP, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<CreateOTP> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -79,6 +79,6 @@ object CreateOTPAPI {
                 .build()
                 .create(CreateOTPService::class.java)
 
-        return service.createOTP(body)
+        return service.createOTP(headers, body)
     }
 }

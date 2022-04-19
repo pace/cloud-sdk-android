@@ -41,6 +41,7 @@ If you provide a valid Billing Agreement ID, the payment method is created direc
  */
         @POST("payment-methods/paypal")
         fun createPaymentMethodPayPal(
+            @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: Body
         ): Call<PaymentMethod>
     }
@@ -54,10 +55,9 @@ If you provide a valid Billing Agreement ID, the payment method is created direc
         var data: PaymentMethodPayPalCreateBody? = null
     }
 
-    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodPayPal(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentMethod> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodPayPal(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<PaymentMethod> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -90,6 +90,6 @@ If you provide a valid Billing Agreement ID, the payment method is created direc
                 .build()
                 .create(CreatePaymentMethodPayPalService::class.java)
 
-        return service.createPaymentMethodPayPal(body)
+        return service.createPaymentMethodPayPal(headers, body)
     }
 }

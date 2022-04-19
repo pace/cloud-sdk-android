@@ -38,6 +38,7 @@ object GetPaymentTokensAPI {
         /* Get all valid payment tokens for user. Valid means that a token was successfully created and is not expired. It might be unusable, for example if it is used in a transaction already. */
         @GET("payment-tokens")
         fun getPaymentTokens(
+            @HeaderMap headers: Map<String, String>,
             @Query("filter[valid]") filtervalid: Filtervalid
         ): Call<PaymentTokens>
     }
@@ -49,10 +50,9 @@ object GetPaymentTokensAPI {
         `TRUE`("true")
     }
 
-    fun PayAPI.PaymentTokensAPI.getPaymentTokens(filtervalid: Filtervalid, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentTokens> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentTokensAPI.getPaymentTokens(filtervalid: Filtervalid, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<PaymentTokens> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -85,6 +85,6 @@ object GetPaymentTokensAPI {
                 .build()
                 .create(GetPaymentTokensService::class.java)
 
-        return service.getPaymentTokens(filtervalid)
+        return service.getPaymentTokens(headers, filtervalid)
     }
 }

@@ -39,14 +39,14 @@ object GrantFederatedTokenAPI {
  */
         @POST("federated-identities/{identityProvider}/token")
         fun grantFederatedToken(
+            @HeaderMap headers: Map<String, String>,
             @Path("identityProvider") identityProvider: String? = null
         ): Call<AccessToken>
     }
 
-    fun UserAPI.FederatedIdentityAPI.grantFederatedToken(identityProvider: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<AccessToken> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.FederatedIdentityAPI.grantFederatedToken(identityProvider: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<AccessToken> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(false, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -79,6 +79,6 @@ object GrantFederatedTokenAPI {
                 .build()
                 .create(GrantFederatedTokenService::class.java)
 
-        return service.grantFederatedToken(identityProvider)
+        return service.grantFederatedToken(headers, identityProvider)
     }
 }

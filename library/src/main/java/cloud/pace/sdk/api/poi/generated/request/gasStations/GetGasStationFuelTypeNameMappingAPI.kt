@@ -39,6 +39,7 @@ object GetGasStationFuelTypeNameMappingAPI {
  */
         @GET("gas-stations/{id}/fueltype")
         fun getGasStationFuelTypeNameMapping(
+            @HeaderMap headers: Map<String, String>,
             /* Gas station ID */
             @Path("id") id: String,
             /* Product Name */
@@ -46,10 +47,9 @@ object GetGasStationFuelTypeNameMappingAPI {
         ): Call<FuelType>
     }
 
-    fun POIAPI.GasStationsAPI.getGasStationFuelTypeNameMapping(id: String, filterproductName: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<FuelType> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.GasStationsAPI.getGasStationFuelTypeNameMapping(id: String, filterproductName: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<FuelType> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -82,6 +82,6 @@ object GetGasStationFuelTypeNameMappingAPI {
                 .build()
                 .create(GetGasStationFuelTypeNameMappingService::class.java)
 
-        return service.getGasStationFuelTypeNameMapping(id, filterproductName)
+        return service.getGasStationFuelTypeNameMapping(headers, id, filterproductName)
     }
 }

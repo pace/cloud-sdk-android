@@ -39,6 +39,7 @@ object PatchPaymentMethodAPI {
  */
         @PATCH("payment-methods/{paymentMethodId}")
         fun patchPaymentMethod(
+            @HeaderMap headers: Map<String, String>,
             /* ID of the paymentMethod */
             @Path("paymentMethodId") paymentMethodId: String, 
             @retrofit2.http.Body body: Body
@@ -52,10 +53,9 @@ object PatchPaymentMethodAPI {
         var data: PaymentMethodBody? = null
     }
 
-    fun PayAPI.PaymentMethodsAPI.patchPaymentMethod(paymentMethodId: String, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentMethod> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentMethodsAPI.patchPaymentMethod(paymentMethodId: String, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<PaymentMethod> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -88,6 +88,6 @@ object PatchPaymentMethodAPI {
                 .build()
                 .create(PatchPaymentMethodService::class.java)
 
-        return service.patchPaymentMethod(paymentMethodId, body)
+        return service.patchPaymentMethod(headers, paymentMethodId, body)
     }
 }

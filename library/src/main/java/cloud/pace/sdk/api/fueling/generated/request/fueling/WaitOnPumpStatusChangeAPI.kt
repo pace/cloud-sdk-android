@@ -41,6 +41,7 @@ Only use after approaching, otherwise returns `403 Forbidden`.
  */
         @GET("gas-stations/{gasStationId}/pumps/{pumpId}/wait-for-status-change")
         fun waitOnPumpStatusChange(
+            @HeaderMap headers: Map<String, String>,
             /* Gas station ID */
             @Path("gasStationId") gasStationId: String,
             /* Pump ID */
@@ -83,10 +84,9 @@ Only use after approaching, otherwise returns `403 Forbidden`.
         OUTOFORDER("outOfOrder")
     }
 
-    fun FuelingAPI.FuelingAPI.waitOnPumpStatusChange(gasStationId: String, pumpId: String, update: Update? = null, lastStatus: LastStatus? = null, timeout: Int? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PumpResponse> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun FuelingAPI.FuelingAPI.waitOnPumpStatusChange(gasStationId: String, pumpId: String, update: Update? = null, lastStatus: LastStatus? = null, timeout: Int? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<PumpResponse> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -119,6 +119,6 @@ Only use after approaching, otherwise returns `403 Forbidden`.
                 .build()
                 .create(WaitOnPumpStatusChangeService::class.java)
 
-        return service.waitOnPumpStatusChange(gasStationId, pumpId, update, lastStatus, timeout)
+        return service.waitOnPumpStatusChange(headers, gasStationId, pumpId, update, lastStatus, timeout)
     }
 }

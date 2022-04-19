@@ -42,15 +42,15 @@ object CancelPreAuthPaymentAPI {
  */
         @POST("transactions/{transactionId}/cancel")
         fun cancelPreAuthPayment(
+            @HeaderMap headers: Map<String, String>,
             /* transaction ID. */
             @Path("transactionId") transactionId: String
         ): Call<ResponseBody>
     }
 
-    fun PayAPI.PaymentTransactionsAPI.cancelPreAuthPayment(transactionId: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentTransactionsAPI.cancelPreAuthPayment(transactionId: String, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -83,6 +83,6 @@ object CancelPreAuthPaymentAPI {
                 .build()
                 .create(CancelPreAuthPaymentService::class.java)
 
-        return service.cancelPreAuthPayment(transactionId)
+        return service.cancelPreAuthPayment(headers, transactionId)
     }
 }

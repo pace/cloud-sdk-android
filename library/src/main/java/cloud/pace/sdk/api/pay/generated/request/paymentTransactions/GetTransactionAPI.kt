@@ -41,6 +41,7 @@ In case the transaction is not yet completed the call may be delayed 20s until a
  */
         @GET("transactions/{transactionId}")
         fun getTransaction(
+            @HeaderMap headers: Map<String, String>,
             /* transaction ID. */
             @Path("transactionId") transactionId: String,
             /* Specify this parameter if you want to enable long-polling on this endpoint. Long-polling means that the endpoint will wait a fixed set of seconds (20s)
@@ -59,10 +60,9 @@ before returning the result.
         LONGPOLLING("longPolling")
     }
 
-    fun PayAPI.PaymentTransactionsAPI.getTransaction(transactionId: String, update: Update? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Transaction> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentTransactionsAPI.getTransaction(transactionId: String, update: Update? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<Transaction> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -95,6 +95,6 @@ before returning the result.
                 .build()
                 .create(GetTransactionService::class.java)
 
-        return service.getTransaction(transactionId, update)
+        return service.getTransaction(headers, transactionId, update)
     }
 }

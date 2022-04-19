@@ -44,14 +44,14 @@ In case no preferences were ever set an empty object `{}` is returned.
  */
         @GET("preferences/{clientId}")
         fun getAppPreferences(
+            @HeaderMap headers: Map<String, String>,
             @Path("clientId") clientId: String? = null
         ): Call<Map<String, Any>>
     }
 
-    fun UserAPI.PreferencesAPI.getAppPreferences(clientId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Map<String, Any>> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.PreferencesAPI.getAppPreferences(clientId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<Map<String, Any>> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -84,6 +84,6 @@ In case no preferences were ever set an empty object `{}` is returned.
                 .build()
                 .create(GetAppPreferencesService::class.java)
 
-        return service.getAppPreferences(clientId)
+        return service.getAppPreferences(headers, clientId)
     }
 }

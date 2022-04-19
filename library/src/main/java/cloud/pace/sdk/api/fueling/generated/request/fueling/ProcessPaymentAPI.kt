@@ -49,16 +49,16 @@ You can optionally provide:
  */
         @POST("gas-stations/{gasStationId}/transactions")
         fun processPayment(
+            @HeaderMap headers: Map<String, String>,
             /* Gas station ID */
             @Path("gasStationId") gasStationId: String, 
             @retrofit2.http.Body body: TransactionRequest
         ): Call<ProcessPaymentResponse>
     }
 
-    fun FuelingAPI.FuelingAPI.processPayment(gasStationId: String, body: TransactionRequest, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ProcessPaymentResponse> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun FuelingAPI.FuelingAPI.processPayment(gasStationId: String, body: TransactionRequest, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ProcessPaymentResponse> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -91,6 +91,6 @@ You can optionally provide:
                 .build()
                 .create(ProcessPaymentService::class.java)
 
-        return service.processPayment(gasStationId, body)
+        return service.processPayment(headers, gasStationId, body)
     }
 }

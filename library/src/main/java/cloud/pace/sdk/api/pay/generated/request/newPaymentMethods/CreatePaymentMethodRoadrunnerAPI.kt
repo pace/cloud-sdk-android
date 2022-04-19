@@ -40,6 +40,7 @@ The payment method ID is optional when posting data.
  */
         @POST("payment-methods/roadrunner")
         fun createPaymentMethodRoadrunner(
+            @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: Body
         ): Call<PaymentMethod>
     }
@@ -52,10 +53,9 @@ The payment method ID is optional when posting data.
         var data: PaymentMethodRoadrunnerCreateBody? = null
     }
 
-    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodRoadrunner(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<PaymentMethod> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodRoadrunner(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<PaymentMethod> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -88,6 +88,6 @@ The payment method ID is optional when posting data.
                 .build()
                 .create(CreatePaymentMethodRoadrunnerService::class.java)
 
-        return service.createPaymentMethodRoadrunner(body)
+        return service.createPaymentMethodRoadrunner(headers, body)
     }
 }

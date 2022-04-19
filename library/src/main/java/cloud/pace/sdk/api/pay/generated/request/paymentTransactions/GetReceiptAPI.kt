@@ -39,6 +39,7 @@ object GetReceiptAPI {
  */
         @GET("receipts/{transactionID}")
         fun getReceipt(
+            @HeaderMap headers: Map<String, String>,
             /* ID of the payment transaction */
             @Path("transactionID") transactionID: String,
             /* (Optional) Specify the language you want the returned receipt to be localized in.
@@ -51,10 +52,9 @@ in the language that is determined to be spoken in the area that the point of in
         ): Call<ResponseBody>
     }
 
-    fun PayAPI.PaymentTransactionsAPI.getReceipt(transactionID: String, language: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentTransactionsAPI.getReceipt(transactionID: String, language: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -87,6 +87,6 @@ in the language that is determined to be spoken in the area that the point of in
                 .build()
                 .create(GetReceiptService::class.java)
 
-        return service.getReceipt(transactionID, language)
+        return service.getReceipt(headers, transactionID, language)
     }
 }

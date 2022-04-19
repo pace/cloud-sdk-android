@@ -43,6 +43,7 @@ The following rules apply to verify the PIN:
  */
         @PUT("user/pin")
         fun updateUserPIN(
+            @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: Body
         ): Call<ResponseBody>
     }
@@ -58,10 +59,9 @@ The following rules apply to verify the PIN:
         var data: UserPINBody? = null
     }
 
-    fun UserAPI.CredentialsAPI.updateUserPIN(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.CredentialsAPI.updateUserPIN(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -94,6 +94,6 @@ The following rules apply to verify the PIN:
                 .build()
                 .create(UpdateUserPINService::class.java)
 
-        return service.updateUserPIN(body)
+        return service.updateUserPIN(headers, body)
     }
 }

@@ -40,15 +40,15 @@ In case the query returns a `404` (`Not Found`) the app was deleted and should b
  */
         @GET("apps/{appID}")
         fun getApp(
+            @HeaderMap headers: Map<String, String>,
             /* ID of the App */
             @Path("appID") appID: String? = null
         ): Call<LocationBasedApp>
     }
 
-    fun POIAPI.AppsAPI.getApp(appID: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<LocationBasedApp> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.AppsAPI.getApp(appID: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<LocationBasedApp> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -81,6 +81,6 @@ In case the query returns a `404` (`Not Found`) the app was deleted and should b
                 .build()
                 .create(GetAppService::class.java)
 
-        return service.getApp(appID)
+        return service.getApp(headers, appID)
     }
 }

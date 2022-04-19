@@ -45,6 +45,7 @@ Please note that calling this API is very cheap and can be done regularly.
  */
         @GET("apps/query")
         fun checkForPaceApp(
+            @HeaderMap headers: Map<String, String>,
             /* Latitude */
             @Query("filter[latitude]") filterlatitude: Float,
             /* Longitude */
@@ -61,10 +62,9 @@ Please note that calling this API is very cheap and can be done regularly.
         FUELING("fueling")
     }
 
-    fun POIAPI.AppsAPI.checkForPaceApp(filterlatitude: Float, filterlongitude: Float, filterappType: FilterappType? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<LocationBasedAppsWithRefs> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.AppsAPI.checkForPaceApp(filterlatitude: Float, filterlongitude: Float, filterappType: FilterappType? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<LocationBasedAppsWithRefs> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -97,6 +97,6 @@ Please note that calling this API is very cheap and can be done regularly.
                 .build()
                 .create(CheckForPaceAppService::class.java)
 
-        return service.checkForPaceApp(filterlatitude, filterlongitude, filterappType)
+        return service.checkForPaceApp(headers, filterlatitude, filterlongitude, filterappType)
     }
 }

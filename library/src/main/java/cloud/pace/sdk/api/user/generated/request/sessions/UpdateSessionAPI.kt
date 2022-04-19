@@ -40,15 +40,15 @@ In case the session is created an OTP for the user is created and send via email
  */
         @PUT("sessions/{sessionId}")
         fun updateSession(
+            @HeaderMap headers: Map<String, String>,
             @Path("sessionId") sessionId: String? = null, 
             @retrofit2.http.Body body: Session
         ): Call<CreateOTP>
     }
 
-    fun UserAPI.SessionsAPI.updateSession(sessionId: String? = null, body: Session, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<CreateOTP> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.SessionsAPI.updateSession(sessionId: String? = null, body: Session, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<CreateOTP> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -81,6 +81,6 @@ In case the session is created an OTP for the user is created and send via email
                 .build()
                 .create(UpdateSessionService::class.java)
 
-        return service.updateSession(sessionId, body)
+        return service.updateSession(headers, sessionId, body)
     }
 }

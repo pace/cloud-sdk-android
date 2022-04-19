@@ -1,5 +1,6 @@
 package cloud.pace.sdk.idkit.userinfo
 
+import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.utils.InterceptorUtils
 import cloud.pace.sdk.utils.Completion
 import cloud.pace.sdk.utils.handleCallback
@@ -10,39 +11,27 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.HeaderMap
 
 interface UserInfoService {
     @GET(".")
-    fun getUserInfo(): Call<UserInfoResponse>
+    fun getUserInfo(@HeaderMap headers: Map<String, String>): Call<UserInfoResponse>
 }
 
-class UserInfoApiClient(userInfoEndpoint: String, accessToken: String) {
-    private val service = create(userInfoEndpoint, accessToken)
+class UserInfoApiClient(userInfoEndpoint: String, accessToken: String, val additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null) {
+    private val service = create(userInfoEndpoint, accessToken, additionalParameters)
 
     fun getUserInfo(completion: (Completion<UserInfoResponse>) -> Unit) {
-        service.getUserInfo().handleCallback(completion)
+        service.getUserInfo(InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)).handleCallback(completion)
     }
 
     companion object {
-        private fun create(userInfoUrl: String, accessToken: String): UserInfoService {
+        private fun create(userInfoUrl: String, accessToken: String, additionalParameters: Map<String, String>? = null): UserInfoService {
+            API.addAuthorizationHeader(accessToken)
             val baseUrl = if (userInfoUrl.endsWith("/")) userInfoUrl else "$userInfoUrl/"
+
             return Retrofit.Builder()
-                .client(
-                    OkHttpClient.Builder()
-                        .addInterceptor {
-                            it.proceed(
-                                it.request()
-                                    .newBuilder()
-                                    .header(InterceptorUtils.ACCEPT_HEADER, "application/json")
-                                    .header(InterceptorUtils.CONTENT_TYPE_HEADER, "application/json")
-                                    .header(InterceptorUtils.AUTHORIZATION_HEADER, "Bearer $accessToken")
-                                    .header(InterceptorUtils.UBER_TRACE_ID_HEADER, InterceptorUtils.getUberTraceId())
-                                    .header(InterceptorUtils.USER_AGENT_HEADER, InterceptorUtils.getUserAgent())
-                                    .build()
-                            )
-                        }
-                        .authenticator(InterceptorUtils.getAuthenticator())
-                        .build())
+                .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters)).build())
                 .baseUrl(baseUrl)
                 .addConverterFactory(
                     MoshiConverterFactory.create(

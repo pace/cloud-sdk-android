@@ -41,14 +41,14 @@ user record will be returned.
  */
         @PATCH("users/{userId}")
         fun updateUser(
+            @HeaderMap headers: Map<String, String>,
             @Path("userId") userId: String? = null
         ): Call<User>
     }
 
-    fun UserAPI.UserAPI.updateUser(userId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<User> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun UserAPI.UserAPI.updateUser(userId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<User> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -81,6 +81,6 @@ user record will be returned.
                 .build()
                 .create(UpdateUserService::class.java)
 
-        return service.updateUser(userId)
+        return service.updateUser(headers, userId)
     }
 }

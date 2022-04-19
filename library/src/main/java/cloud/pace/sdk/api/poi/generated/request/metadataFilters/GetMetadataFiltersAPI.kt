@@ -43,6 +43,7 @@ For the latitude and longitude values used in the request, returns the available
  */
         @GET("meta")
         fun getMetadataFilters(
+            @HeaderMap headers: Map<String, String>,
             /* Latitude in degrees */
             @Query("latitude") latitude: Float,
             /* Longitude in degrees */
@@ -50,10 +51,9 @@ For the latitude and longitude values used in the request, returns the available
         ): Call<Categories>
     }
 
-    fun POIAPI.MetadataFiltersAPI.getMetadataFilters(latitude: Float, longitude: Float, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<Categories> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/vnd.api+json", "application/vnd.api+json", true, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun POIAPI.MetadataFiltersAPI.getMetadataFilters(latitude: Float, longitude: Float, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<Categories> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -86,6 +86,6 @@ For the latitude and longitude values used in the request, returns the available
                 .build()
                 .create(GetMetadataFiltersService::class.java)
 
-        return service.getMetadataFilters(latitude, longitude)
+        return service.getMetadataFilters(headers, latitude, longitude)
     }
 }

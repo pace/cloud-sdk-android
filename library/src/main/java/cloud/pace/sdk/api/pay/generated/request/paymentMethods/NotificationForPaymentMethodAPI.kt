@@ -37,15 +37,15 @@ object NotificationForPaymentMethodAPI {
         /* Notify about payment method data */
         @POST("payment-methods/{paymentMethodId}/notification")
         fun notificationForPaymentMethod(
+            @HeaderMap headers: Map<String, String>,
             /* Type of the notification */
             @Query("type") type: String? = null
         ): Call<ResponseBody>
     }
 
-    fun PayAPI.PaymentMethodsAPI.notificationForPaymentMethod(type: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null): Call<ResponseBody> {
-        val client = OkHttpClient.Builder()
-                        .addNetworkInterceptor(InterceptorUtils.getInterceptor("application/json", "application/json", false, additionalHeaders))
-                        .authenticator(InterceptorUtils.getAuthenticator())
+    fun PayAPI.PaymentMethodsAPI.notificationForPaymentMethod(type: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(false, "application/json", "application/json", additionalHeaders)
 
         if (readTimeout != null) {
             client.readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -78,6 +78,6 @@ object NotificationForPaymentMethodAPI {
                 .build()
                 .create(NotificationForPaymentMethodService::class.java)
 
-        return service.notificationForPaymentMethod(type)
+        return service.notificationForPaymentMethod(headers, type)
     }
 }
