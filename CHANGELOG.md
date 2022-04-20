@@ -1,3 +1,15 @@
+13.3.1 Release notes (2022-04-20)
+=============================================================
+
+### Fixes
+
+* Make sure that the API call returns the server error and not 401 if PACE ID is not reachable
+
+### Internal
+
+* Regenerate all API files to remove Authenticator
+* Update GitLab templates
+
 13.3.0 Release notes (2022-04-07)
 =============================================================
 
