@@ -26,6 +26,7 @@ object Libs {
     const val KOIN_TEST = "io.insert-koin:koin-test:${Versions.KOIN}"
     const val KOTLIN_GRADLE_PLUGIN = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.KOTLIN}"
     const val KOTLIN_COROUTINES_ANDROID = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.COROUTINES}"
+    const val KTLINT_GRADLE_PLUGIN = "org.jlleitschuh.gradle.ktlint"
     const val JETPACK_COMPOSE_CONSTRAINT_LAYOUT = "androidx.constraintlayout:constraintlayout-compose:${Versions.JETPACK_COMPOSE_CONSTRAINT_LAYOUT}"
     const val JETPACK_COMPOSE_MATERIAL = "androidx.compose.material:material:${Versions.JETPACK_COMPOSE}"
     const val JETPACK_COMPOSE_MATERIAL_ICONS = "androidx.compose.material:material-icons-extended:${Versions.JETPACK_COMPOSE}"

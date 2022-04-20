@@ -1,5 +1,9 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
+    plugins {
+        id(Libs.KTLINT_GRADLE_PLUGIN) version Versions.KTLINT_GRADLE_PLUGIN
+    }
+
     repositories {
         google()
         mavenCentral()
@@ -34,6 +38,15 @@ allprojects {
     extra["ossrhUsername"] = properties["ossrhUsername"]
     extra["ossrhPassword"] = properties["ossrhPassword"]
     extra["sonatypeStagingProfileId"] = properties["sonatypeStagingProfileId"]
+}
+
+subprojects {
+    apply(plugin = Libs.KTLINT_GRADLE_PLUGIN)
+
+    // Adds pre-commit git hook to run ktlintFormat on changed files to .git/hooks/pre-commit. Only copies hook for assembleDebug and assembleRelease and not for testing assemble tasks.
+    // Also runs ktlintApplyToIdea to generate Kotlin style files in the project .idea/ folder.
+    tasks.getByPath("$path:assembleDebug").dependsOn(":addKtlintFormatGitPreCommitHook", ":ktlintApplyToIdea")
+    tasks.getByPath("$path:assembleRelease").dependsOn(":addKtlintFormatGitPreCommitHook", ":ktlintApplyToIdea")
 }
 
 nexusStaging {

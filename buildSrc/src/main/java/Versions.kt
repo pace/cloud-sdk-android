@@ -30,6 +30,7 @@ object Versions {
     const val JETPACK_COMPOSE_CONSTRAINT_LAYOUT = "1.0.0-beta02"
     const val KOIN = "3.1.3"
     const val KOTLIN = "1.6.10"
+    const val KTLINT_GRADLE_PLUGIN = "10.2.1"
     const val LIFECYCLE_KTX = "2.4.0"
     const val MATERIAL_COMPONENTS = "1.6.0-alpha03"
     const val MOCKITO = "4.0.0"
