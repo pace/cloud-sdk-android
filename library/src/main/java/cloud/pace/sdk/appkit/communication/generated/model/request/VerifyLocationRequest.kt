@@ -6,19 +6,17 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
-import kotlin.Double
-
 public data class VerifyLocationRequest(
-  /**
-   * The latitude of the location to be verified.
-   */
-  public val lat: Double,
-  /**
-   * The longitude of the location to be verified.
-   */
-  public val lon: Double,
-  /**
-   * The maximum location offset / inaccuracy in meters.
-   */
-  public val threshold: Double
+    /**
+     * The latitude of the location to be verified.
+     */
+    public val lat: Double,
+    /**
+     * The longitude of the location to be verified.
+     */
+    public val lon: Double,
+    /**
+     * The maximum location offset / inaccuracy in meters.
+     */
+    public val threshold: Double
 )

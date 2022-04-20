@@ -6,37 +6,34 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
-import kotlin.String
-import kotlin.collections.List
-
 public data class ApplePayRequestRequest(
-  /**
-   * The currency code of the payment request.
-   */
-  public val currencyCode: String,
-  /**
-   * The country code of the payment request
-   */
-  public val countryCode: String,
-  /**
-   * The supported payment protocols.
-   */
-  public val merchantCapabilities: List<String>,
-  /**
-   * The supported payment networks which constrains the payment cards to be selected.
-   */
-  public val supportedNetworks: List<String>,
-  /**
-   * The type of shipping used by this request.
-   */
-  public val shippingType: String,
-  /**
-   * The list of fields that you need for a billing contact in order to process the transaction.
-   */
-  public val requiredBillingContactFields: List<String>,
-  /**
-   * The list of fields that you need for a shipping contact in order to process the transaction.
-   */
-  public val requiredShippingContactFields: List<String>,
-  public val total: Total
+    /**
+     * The currency code of the payment request.
+     */
+    public val currencyCode: String,
+    /**
+     * The country code of the payment request
+     */
+    public val countryCode: String,
+    /**
+     * The supported payment protocols.
+     */
+    public val merchantCapabilities: List<String>,
+    /**
+     * The supported payment networks which constrains the payment cards to be selected.
+     */
+    public val supportedNetworks: List<String>,
+    /**
+     * The type of shipping used by this request.
+     */
+    public val shippingType: String,
+    /**
+     * The list of fields that you need for a billing contact in order to process the transaction.
+     */
+    public val requiredBillingContactFields: List<String>,
+    /**
+     * The list of fields that you need for a shipping contact in order to process the transaction.
+     */
+    public val requiredShippingContactFields: List<String>,
+    public val total: Total
 )

@@ -7,18 +7,11 @@
 
 package cloud.pace.sdk.api.poi.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
-
 class PolicyRulePriority {
 
     /* Tracks who did last change */
     lateinit var sourceId: String
+
     /* Time to live in seconds (in relation to other entries) */
     var timeToLive: Double? = null
 }

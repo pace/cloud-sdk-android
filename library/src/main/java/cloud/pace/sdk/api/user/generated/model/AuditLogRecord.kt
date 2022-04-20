@@ -7,21 +7,18 @@
 
 package cloud.pace.sdk.api.user.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
+import java.util.Date
 
 class AuditLogRecord {
 
     var actionData: Map<String, Any>? = null
+
     /* Date the action happened */
     var actionDate: Date? = null
     var actionName: String? = null
     var resource: Resource? = null
+
     /* Name of the service this action was performed on, e.g., pay or fueling */
     var service: String? = null
 

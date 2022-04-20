@@ -6,15 +6,13 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
-import kotlin.String
-
 public data class ShareTextRequest(
-  /**
-   * A title/description to be displayed when sharing
-   */
-  public val title: String,
-  /**
-   * the string to be shared
-   */
-  public val text: String
+    /**
+     * A title/description to be displayed when sharing
+     */
+    public val title: String,
+    /**
+     * the string to be shared
+     */
+    public val text: String
 )

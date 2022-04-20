@@ -176,7 +176,8 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
     override fun onImageDataReceived(bitmap: Bitmap) {
         appModel.showShareSheet(bitmap)
     }
-    override fun onShareTextReceived(text: String, title: String){
+
+    override fun onShareTextReceived(text: String, title: String) {
         appModel.showShareSheet(text, title)
     }
 

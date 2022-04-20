@@ -9,16 +9,12 @@ package cloud.pace.sdk.api.poi.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
 
 /* Creates a new event object at lat/lng from this POI ID */
 class MoveRequestBody {
 
     var attributes: Attributes? = null
+
     /* UUID of the POI that is going to be moved */
     var id: String? = null
     var type: Type? = null
@@ -35,6 +31,7 @@ class MoveRequestBody {
 
         /* Latitude in degrees */
         var latitude: Float? = null
+
         /* Longitude in degrees */
         var longitude: Float? = null
     }

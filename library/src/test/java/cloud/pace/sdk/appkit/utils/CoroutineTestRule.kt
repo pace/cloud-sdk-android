@@ -32,4 +32,3 @@ class CoroutineTestRule(val testDispatcher: TestCoroutineDispatcher = TestCorout
         Dispatchers.resetMain()
     }
 }
-

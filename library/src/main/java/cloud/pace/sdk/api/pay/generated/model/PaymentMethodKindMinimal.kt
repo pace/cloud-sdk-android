@@ -7,29 +7,27 @@
 
 package cloud.pace.sdk.api.pay.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
 
 @JsonApi(type = "paymentMethodKindMinimal")
 class PaymentMethodKindMinimal : Resource() {
 
     /* Indicates whether the payment method is a fuel card. Fuelcard `no` means no. */
     var fuelcard: Boolean? = null
+
     /* Indicates whether the payment method can be onboarded/modified. Implict `true` means no. Otherwise yes.
 Most payment method kinds are no implicit, i.e., `implicit=false`.
 This field is optional and if not present should be assumed to indicate `implicit=false`.
  */
     var implicit: Boolean? = null
+
     /* localized name */
     var name: String? = null
+
     /* indicates if the payment method kind requires two factors later on */
     var twoFactor: Boolean? = null
+
     /* PACE resource name(s) to payment method vendors */
     var vendorPRNs: List<String>? = null
-
 }

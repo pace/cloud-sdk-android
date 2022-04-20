@@ -3,12 +3,33 @@ package cloud.pace.sdk.app.view.mainscreen.listscreen
 import android.location.Location
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.Divider
+import androidx.compose.material.DrawerValue
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
+import androidx.compose.material.Text
+import androidx.compose.material.rememberDrawerState
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -63,7 +84,7 @@ fun ListScreen(gasStationList: List<GasStation>, location: LiveData<Location>, p
                 ) {
                     if (isPermissionGranted == false) {
                         Snackbar {
-                            Text(text = "Functions that require access to the fine location of this device do not work currently. You must first grant the permission if you want to use these functions!")
+                            Text("Functions that require access to the fine location of this device do not work currently. You must first grant the permission if you want to use these functions!")
                         }
                     }
                     LoadListData(gasStationList, newLocation)
@@ -122,7 +143,8 @@ fun ListScreenDrawer() {
                 modifier = Modifier
                     .size(180.dp, 50.dp),
                 value = textValue,
-                onValueChange = { textValue = it })
+                onValueChange = { textValue = it }
+            )
 
             OutlinedButton(
                 modifier = Modifier
@@ -167,7 +189,7 @@ fun LoadListData(gasStationList: List<GasStation>, location: Location?) {
     )
 }
 
-//Shape of the Drawer
+// Shape of the Drawer
 fun customShape() = object : Shape {
     override fun createOutline(size: androidx.compose.ui.geometry.Size, layoutDirection: LayoutDirection, density: Density): Outline {
         val cR = CornerRadius(30f, 30f)

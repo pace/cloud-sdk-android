@@ -6,15 +6,13 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
-import kotlin.String
-
 public data class SetSecureDataRequest(
-  /**
-   * The key under which the secure data should be stored.
-   */
-  public val key: String,
-  /**
-   * The secure value to be stored.
-   */
-  public val `value`: String
+    /**
+     * The key under which the secure data should be stored.
+     */
+    public val key: String,
+    /**
+     * The secure value to be stored.
+     */
+    public val `value`: String
 )

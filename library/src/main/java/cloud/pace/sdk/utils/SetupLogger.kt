@@ -32,7 +32,7 @@ object SetupLogger {
         if (missingValues.isEmpty())
             Timber.i(
                 "PACECloudSDK setup successful. You are currently running the SDK as follows:\nAPI key is set\nRedirect scheme: ${
-                    redirectScheme ?: "disabled"
+                redirectScheme ?: "disabled"
                 }\nEnviromment: ${environment?.name}"
             )
         else

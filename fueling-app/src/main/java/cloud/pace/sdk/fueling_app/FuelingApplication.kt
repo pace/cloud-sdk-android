@@ -19,7 +19,8 @@ class FuelingApplication : Application() {
 
         // Setup the PACE Cloud SDK before calling any methods of the SDK
         PACECloudSDK.setup(
-            this, Configuration(
+            this,
+            Configuration(
                 clientAppName = "PACECloudSDKFuelingExample",
                 clientAppVersion = BuildConfig.VERSION_NAME,
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),

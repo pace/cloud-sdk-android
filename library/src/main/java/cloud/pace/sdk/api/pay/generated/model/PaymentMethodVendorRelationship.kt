@@ -7,15 +7,8 @@
 
 package cloud.pace.sdk.api.pay.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
 
 @JsonApi(type = "paymentMethodVendorRelationship")
-class PaymentMethodVendorRelationship: Resource() {
-
-}
+class PaymentMethodVendorRelationship : Resource()

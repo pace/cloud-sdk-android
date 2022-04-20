@@ -4,8 +4,9 @@ import cloud.pace.sdk.poikit.poi.LocationPoint
 import cloud.pace.sdk.poikit.poi.download.TileInformation
 import com.google.android.gms.maps.model.LatLng
 import vector_tile.VectorTile
-import java.lang.Math.*
-import java.util.*
+import java.lang.Math.ceil
+import java.lang.Math.floor
+import java.lang.Math.pow
 
 /**
  * Math utilities for calculations related
@@ -34,10 +35,12 @@ object GeoMathUtils {
     }
 
     fun lat2y(lat: Double, zoom: Int): Double {
-        return (1.0 -
-            Math.log(
+        return (
+            1.0 -
+                Math.log(
                 Math.tan(lat * Math.PI / 180.0) + 1.0 / Math.cos(lat * Math.PI / 180.0)
-            ) / Math.PI) / 2.0 * pow(
+            ) / Math.PI
+            ) / 2.0 * pow(
             2.0,
             zoom.toDouble()
         )

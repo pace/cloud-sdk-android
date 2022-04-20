@@ -7,43 +7,49 @@
 
 package cloud.pace.sdk.api.pay.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
 
 @JsonApi(type = "transactionCreate")
 class TransactionCreate : Resource() {
 
     /* Payment token value */
     lateinit var paymentToken: String
+
     /* PACE resource name - referring to the transaction purpose */
     lateinit var purposePRN: String
+
     /* PACE resource name - referring to the transaction purpose with provider details */
     lateinit var providerPRN: String
     var vat: VAT? = null
+
     /* Currency as specified in ISO-4217. */
     var currency: String? = null
     var fuel: Fuel? = null
+
     /* Fuel amount */
     var fuelAmount: Double? = null
+
     /* Product name */
     var fuelProductName: String? = null
+
     /* PACE resource name - referring to the transaction issuer */
     var issuerPRN: String? = null
+
     /* PACE resource name - referring to the transaction's merchant */
     var merchantPRN: String? = null
+
     /* Current mileage in meters */
     var mileage: Int? = null
+
     /* Number plate of the car */
     var numberPlate: String? = null
     var priceExcludingVAT: Double? = null
     var priceIncludingVAT: Double? = null
+
     /* The given productFlow (e.g. preAuth, postPay) */
     var productFlow: String? = null
+
     /* Vehicle identification number */
     var vin: String? = null
 
@@ -52,5 +58,4 @@ class TransactionCreate : Resource() {
         var amount: Double? = null
         var rate: Double? = null
     }
-
 }

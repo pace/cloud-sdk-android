@@ -8,27 +8,24 @@
 package cloud.pace.sdk.api.poi.generated.request.poi
 
 import cloud.pace.sdk.api.poi.POIAPI
-import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.poi.generated.model.POIType
+import cloud.pace.sdk.api.poi.generated.model.POIs
+import cloud.pace.sdk.api.poi.generated.model.ReferenceStatus
 import cloud.pace.sdk.api.utils.EnumConverterFactory
 import cloud.pace.sdk.api.utils.InterceptorUtils
-import cloud.pace.sdk.utils.toIso8601
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.http.*
-import java.io.File
-import java.util.*
+import retrofit2.http.GET
+import retrofit2.http.HeaderMap
+import retrofit2.http.Query
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 object GetPoisAPI {
@@ -50,7 +47,15 @@ object GetPoisAPI {
         ): Call<POIs>
     }
 
-    fun POIAPI.POIAPI.getPois(pagenumber: Int? = null, pagesize: Int? = null, filterpoiType: POIType? = null, filterappId: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<POIs> {
+    fun POIAPI.POIAPI.getPois(
+        pagenumber: Int? = null,
+        pagesize: Int? = null,
+        filterpoiType: POIType? = null,
+        filterappId: String? = null,
+        readTimeout: Long? = null,
+        additionalHeaders: Map<String, String>? = null,
+        additionalParameters: Map<String, String>? = null
+    ): Call<POIs> {
         val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
         val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
@@ -66,9 +71,10 @@ object GetPoisAPI {
                 .addConverterFactory(
                     JsonApiConverterFactory.create(
                         Moshi.Builder()
-                            .add(ResourceAdapterFactory.builder()
-                                .add(ReferenceStatus::class.java)
-                                .build()
+                            .add(
+                                ResourceAdapterFactory.builder()
+                                    .add(ReferenceStatus::class.java)
+                                    .build()
                             )
                             .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
                             .add(KotlinJsonAdapterFactory())
@@ -86,6 +92,12 @@ object GetPoisAPI {
                 .build()
                 .create(GetPoisService::class.java)
 
-        return service.getPois(headers, pagenumber, pagesize, filterpoiType, filterappId)
+        return service.getPois(
+            headers,
+            pagenumber,
+            pagesize,
+            filterpoiType,
+            filterappId
+        )
     }
 }

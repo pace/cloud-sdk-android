@@ -7,13 +7,5 @@
 
 package cloud.pace.sdk.api.poi.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
-
 /* Fuel type for cars, based on the EU fuel marking */
 typealias Fuel = String

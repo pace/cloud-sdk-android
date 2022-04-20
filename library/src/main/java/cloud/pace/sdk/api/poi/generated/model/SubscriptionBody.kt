@@ -9,15 +9,12 @@ package cloud.pace.sdk.api.poi.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
+import java.util.Date
 
 class SubscriptionBody {
 
     var attributes: Attributes? = null
+
     /* POI Subscription ID */
     var id: String? = null
     var type: Type? = null
@@ -31,16 +28,21 @@ class SubscriptionBody {
     class Attributes {
 
         lateinit var observedPois: List<String>
+
         /* PRN describing the push token. E.g. FCM token. */
         lateinit var pushToken: String
+
         /* Optional conditions to reduce the number of notifications to the device. For a notification to be fired, all conditions need to be true.
     The example reads as `fuelPrice < 1.3 && fuelType == "diesel"`. For or conditions use multiple subscriptions.
      */
         var conditions: Conditions? = null
+
         /* Time of subscription creation (iso8601 without time zone) */
         var createdAt: Date? = null
+
         /* Time when the subscription will expire, must not be more then 60 days in the future (iso8601 without time zone) */
         var expiresAt: Date? = null
+
         /* Time of LocationBasedApp last update (iso8601 without time zone) */
         var updatedAt: Date? = null
 
@@ -51,6 +53,7 @@ class SubscriptionBody {
 
             /* Condition on the fuelPrice of a gas station. */
             var fuelPrice: FuelPrice? = null
+
             /* Condition on the fuelType of a gas station */
             var fuelType: FuelType? = null
 

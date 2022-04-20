@@ -8,27 +8,21 @@
 package cloud.pace.sdk.api.poi.generated.request.sources
 
 import cloud.pace.sdk.api.poi.POIAPI
-import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.poi.generated.model.Source
+import cloud.pace.sdk.api.poi.generated.model.SourceBody
 import cloud.pace.sdk.api.utils.EnumConverterFactory
 import cloud.pace.sdk.api.utils.InterceptorUtils
-import cloud.pace.sdk.utils.toIso8601
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
-import java.io.File
-import java.util.*
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 object CreateSourceAPI {
@@ -49,7 +43,12 @@ object CreateSourceAPI {
         var data: SourceBody? = null
     }
 
-    fun POIAPI.SourcesAPI.createSource(body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<Source> {
+    fun POIAPI.SourcesAPI.createSource(
+        body: Body,
+        readTimeout: Long? = null,
+        additionalHeaders: Map<String, String>? = null,
+        additionalParameters: Map<String, String>? = null
+    ): Call<Source> {
         val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
         val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
@@ -65,8 +64,9 @@ object CreateSourceAPI {
                 .addConverterFactory(
                     JsonApiConverterFactory.create(
                         Moshi.Builder()
-                            .add(ResourceAdapterFactory.builder()
-                                .build()
+                            .add(
+                                ResourceAdapterFactory.builder()
+                                    .build()
                             )
                             .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
                             .add(KotlinJsonAdapterFactory())
@@ -84,6 +84,9 @@ object CreateSourceAPI {
                 .build()
                 .create(CreateSourceService::class.java)
 
-        return service.createSource(headers, body)
+        return service.createSource(
+            headers,
+            body
+        )
     }
 }

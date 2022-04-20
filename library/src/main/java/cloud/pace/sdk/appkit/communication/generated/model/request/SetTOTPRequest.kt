@@ -6,28 +6,25 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
-import kotlin.Int
-import kotlin.String
-
 public data class SetTOTPRequest(
-  /**
-   * A Base 32 encoded string.
-   */
-  public val secret: String,
-  /**
-   * The time in seconds a generated TOTP hash is valid for.
-   */
-  public val period: Int,
-  /**
-   * The required length of the generated TOTP.
-   */
-  public val digits: Int,
-  /**
-   * Algorithm to use for HMAC, accepted values: `SHA1`, `SHA256`, `SHA512`.
-   */
-  public val algorithm: String,
-  /**
-   * The key under which the TOTP secret data should be stored.
-   */
-  public val key: String
+    /**
+     * A Base 32 encoded string.
+     */
+    public val secret: String,
+    /**
+     * The time in seconds a generated TOTP hash is valid for.
+     */
+    public val period: Int,
+    /**
+     * The required length of the generated TOTP.
+     */
+    public val digits: Int,
+    /**
+     * Algorithm to use for HMAC, accepted values: `SHA1`, `SHA256`, `SHA512`.
+     */
+    public val algorithm: String,
+    /**
+     * The key under which the TOTP secret data should be stored.
+     */
+    public val key: String
 )

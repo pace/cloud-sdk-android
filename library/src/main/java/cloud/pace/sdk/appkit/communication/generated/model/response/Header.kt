@@ -6,19 +6,17 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
-import kotlin.String
-
 public data class Header(
-  /**
-   * Ephemeral public key bytes.
-   */
-  public val ephemeralPublicKey: String,
-  /**
-   * Hash of the X.509 encoded public key bytes of the merchant’s certificate.
-   */
-  public val publicKeyHash: String,
-  /**
-   * Transaction identifier, generated on the device.
-   */
-  public val transactionId: String
+    /**
+     * Ephemeral public key bytes.
+     */
+    public val ephemeralPublicKey: String,
+    /**
+     * Hash of the X.509 encoded public key bytes of the merchant’s certificate.
+     */
+    public val publicKeyHash: String,
+    /**
+     * Transaction identifier, generated on the device.
+     */
+    public val transactionId: String
 )

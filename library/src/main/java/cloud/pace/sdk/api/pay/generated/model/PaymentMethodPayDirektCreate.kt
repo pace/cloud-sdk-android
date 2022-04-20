@@ -9,20 +9,20 @@ package cloud.pace.sdk.api.pay.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
 
 @JsonApi(type = "paymentMethodPayDirektCreate")
 class PaymentMethodPayDirektCreate : Resource() {
 
     lateinit var kind: Kind
+
     /* URL that the user is redirected to after successfully creating the payment method in the backend. */
     lateinit var successURL: String
+
     /* URL that the user is redirected to after creating the payment method in the backend fails. */
     lateinit var failureURL: String
+
     /* URL that the user is redirected to after creating the payment method in the backend was canceled by the user. */
     lateinit var canceledURL: String
 
@@ -31,5 +31,4 @@ class PaymentMethodPayDirektCreate : Resource() {
         @Json(name = "paydirekt")
         PAYDIREKT("paydirekt")
     }
-
 }

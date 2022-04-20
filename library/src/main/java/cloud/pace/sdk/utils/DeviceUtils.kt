@@ -47,7 +47,6 @@ object DeviceUtils {
     /**
      * Returns the device model version formatted the following way:
      * `PRODUCT or DEVICE`
-    q
      * Example output:
      *
      * - OnePlus3

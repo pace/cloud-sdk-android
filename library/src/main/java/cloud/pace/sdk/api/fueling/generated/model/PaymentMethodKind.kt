@@ -7,30 +7,30 @@
 
 package cloud.pace.sdk.api.fueling.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
 
 @JsonApi(type = "paymentMethodKind")
 class PaymentMethodKind : Resource() {
 
     /* data privacy information */
     var dataPrivacy: DataPrivacy? = null
+
     /* Indicates whether the payment method is a fuel card. Fuelcard `no` means no. */
     var fuelcard: Boolean? = null
+
     /* Indicates whether the payment method can be onboarded/modified. Implict `true` means no. Otherwise yes.
 Most payment method kinds are no implicit, i.e., `implicit=false`.
 This field is optional and if not present should be assumed to indicate `implicit=false`.
  */
     var implicit: Boolean? = null
+
     /* localized name */
     var name: String? = null
+
     /* indicates if the payment method kind requires two factors later on */
     var twoFactor: Boolean? = null
+
     /* PACE resource name(s) to payment method vendors */
     var vendorPRNs: List<String>? = null
     var vendors: List<Vendors>? = null
@@ -40,6 +40,7 @@ This field is optional and if not present should be assumed to indicate `implici
 
         /* Localized hint that data privacy terms apply. The hint comes formatted in multiple ways, which are all equally valid if given. Additional formats might be added in the future. */
         var hint: Hint? = null
+
         /* Localized data privacy terms. The terms come formatted in multiple ways, which are all equally valid if given. Additional formats might be added in the future. */
         var terms: Terms? = null
 
@@ -68,6 +69,7 @@ This field is optional and if not present should be assumed to indicate `implici
         class Logo {
 
             var href: String? = null
+
             /* variants of the vendor's logo */
             var variants: List<Variants>? = null
 
@@ -77,5 +79,4 @@ This field is optional and if not present should be assumed to indicate `implici
             }
         }
     }
-
 }

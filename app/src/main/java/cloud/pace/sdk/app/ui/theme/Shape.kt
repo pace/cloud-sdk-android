@@ -11,4 +11,3 @@ val Shapes = Shapes(
 )
 
 val ButtonCornerShape = RoundedCornerShape(40)
-

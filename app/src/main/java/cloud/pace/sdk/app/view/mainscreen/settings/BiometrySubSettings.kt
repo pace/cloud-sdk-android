@@ -2,15 +2,33 @@ package cloud.pace.sdk.app.view.mainscreen.settings
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -19,8 +37,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cloud.pace.sdk.app.*
+import cloud.pace.sdk.app.BiometrySubSettingsActivity
+import cloud.pace.sdk.app.biometryStatus
+import cloud.pace.sdk.app.isPasswordSet
+import cloud.pace.sdk.app.isPinOrPasswordSet
+import cloud.pace.sdk.app.isPinSet
 import cloud.pace.sdk.app.ui.theme.ButtonCornerShape
+import cloud.pace.sdk.app.userInfo
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
@@ -51,7 +74,7 @@ fun BiometrySubSettingView(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        //userEmailDisplay row:
+        // userEmailDisplay row:
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -75,7 +98,7 @@ fun BiometrySubSettingView(
             color = Color.Black,
             thickness = 3.dp,
         )
-        //biometry status row:
+        // biometry status row:
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -98,7 +121,7 @@ fun BiometrySubSettingView(
             thickness = 1.dp,
             modifier = Modifier.padding(8.dp, 0.dp)
         )
-        //isPinSetStatus row:
+        // isPinSetStatus row:
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -120,7 +143,7 @@ fun BiometrySubSettingView(
             thickness = 1.dp,
             modifier = Modifier.padding(8.dp, 0.dp)
         )
-        //isPasswordSet row:
+        // isPasswordSet row:
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -141,7 +164,7 @@ fun BiometrySubSettingView(
             thickness = 1.dp,
             modifier = Modifier.padding(8.dp, 0.dp)
         )
-        //isPinOrPasswordSet row:
+        // isPinOrPasswordSet row:
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -245,7 +268,7 @@ fun BiometrySubSettingView(
                         Text(
                             text = "Enabling biometric authentication!",
                             fontWeight = FontWeight.Bold,
-                            )
+                        )
                     },
                     text = {
                         Column {
@@ -593,8 +616,3 @@ fun CustomButton(text: String, onClick: () -> Unit) {
         )
     }
 }
-
-
-
-
-

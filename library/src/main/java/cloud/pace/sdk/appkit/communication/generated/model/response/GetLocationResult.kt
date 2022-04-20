@@ -6,46 +6,42 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
-import kotlin.Double
-import kotlin.Int
-import kotlin.String
-
 public data class GetLocationResponse(
-  public val lat: Double,
-  public val lon: Double,
-  public val accuracy: Double?,
-  public val bearing: Double?
+    public val lat: Double,
+    public val lon: Double,
+    public val accuracy: Double?,
+    public val bearing: Double?
 ) : ResponseBody()
 
 public data class GetLocationError(
-  public val message: String? = null
+    public val message: String? = null
 ) : ResponseBody()
 
 public class GetLocationResult private constructor(
-  status: Int,
-  body: ResponseBody?
+    status: Int,
+    body: ResponseBody?
 ) : Result(status, body) {
-  public constructor(success: Success) : this(200, success.response)
+    public constructor(success: Success) : this(200, success.response)
 
-  public constructor(failure: Failure) : this(failure.statusCode.code, failure.response)
+    public constructor(failure: Failure) : this(failure.statusCode.code, failure.response)
 
-  public class Success(
-    public val response: GetLocationResponse
-  )
+    public class Success(
+        public val response: GetLocationResponse
+    )
 
-  public class Failure(
-    public val statusCode: StatusCode,
-    public val response: GetLocationError
-  ) {
-    public enum class StatusCode(
-      public val code: Int
+    public class Failure(
+        public val statusCode: StatusCode,
+        public val response: GetLocationError
     ) {
-      BadRequest(400),
-      Forbidden(403),
-      NotFound(404),
-      RequestTimeout(408),
-      InternalServerError(500),
-      ;
+        public enum class StatusCode(
+            public val code: Int
+        ) {
+            BadRequest(400),
+            Forbidden(403),
+            NotFound(404),
+            RequestTimeout(408),
+            InternalServerError(500),
+            ;
+        }
     }
-  }
 }

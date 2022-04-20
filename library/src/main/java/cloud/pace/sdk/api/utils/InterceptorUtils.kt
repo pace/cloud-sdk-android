@@ -12,11 +12,13 @@ import cloud.pace.sdk.utils.requestId
 import cloud.pace.sdk.utils.resume
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
-import net.openid.appauth.AuthorizationException.GeneralErrors.*
+import net.openid.appauth.AuthorizationException.GeneralErrors.JSON_DESERIALIZATION_ERROR
+import net.openid.appauth.AuthorizationException.GeneralErrors.NETWORK_ERROR
+import net.openid.appauth.AuthorizationException.GeneralErrors.SERVER_ERROR
 import okhttp3.Interceptor
 import timber.log.Timber
 import java.net.HttpURLConnection
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 object InterceptorUtils {

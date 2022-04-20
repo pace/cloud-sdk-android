@@ -6,25 +6,24 @@
 //
 package cloud.pace.sdk.appkit.communication.generated
 
-import kotlin.String
-import kotlin.collections.List
-
 /**
  * Contains metadata of the generated API version.
  */
 public object Metadata {
-  /**
-   * The version of the generated API.
-   */
-  public const val version: String = "v1"
+    /**
+     * The version of the generated API.
+     */
+    public const val version: String = "v1"
 
-  /**
-   * A list of all supported operations.
-   */
-  public val operations: List<String> = listOf("/introspect", "/close", "/logout",
-      "/getBiometricStatus", "/setTOTP", "/getTOTP", "/setSecureData", "/getSecureData", "/disable",
-      "/openURLInNewTab", "/verifyLocation", "/getAccessToken", "/imageData",
-      "/applePayAvailabilityCheck", "/applePayRequest", "/back", "/appInterceptableLink",
-      "/setUserProperty", "/logEvent", "/getConfig", "/getTraceId", "/getLocation", "/appRedirect",
-      "/isBiometricAuthEnabled", "/isSignedIn", "/isRemoteConfigAvailable", "/shareText")
+    /**
+     * A list of all supported operations.
+     */
+    public val operations: List<String> = listOf(
+        "/introspect", "/close", "/logout",
+        "/getBiometricStatus", "/setTOTP", "/getTOTP", "/setSecureData", "/getSecureData", "/disable",
+        "/openURLInNewTab", "/verifyLocation", "/getAccessToken", "/imageData",
+        "/applePayAvailabilityCheck", "/applePayRequest", "/back", "/appInterceptableLink",
+        "/setUserProperty", "/logEvent", "/getConfig", "/getTraceId", "/getLocation", "/appRedirect",
+        "/isBiometricAuthEnabled", "/isSignedIn", "/isRemoteConfigAvailable", "/shareText"
+    )
 }

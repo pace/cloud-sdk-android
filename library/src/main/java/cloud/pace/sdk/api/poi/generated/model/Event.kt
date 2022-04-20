@@ -7,13 +7,9 @@
 
 package cloud.pace.sdk.api.poi.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
+import java.util.Date
 
 @JsonApi(type = "event")
 class Event : Resource() {
@@ -21,7 +17,7 @@ class Event : Resource() {
     var createdAt: Date? = null
     var eventAt: Date? = null
     var fields: List<FieldData>? = null
+
     /* Tracks who did last change */
     var userId: String? = null
-
 }

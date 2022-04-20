@@ -1,7 +1,6 @@
 package cloud.pace.sdk.utils
 
 import cloud.pace.sdk.idkit.model.CustomOIDConfiguration
-import net.openid.appauth.ResponseTypeValues
 
 data class Configuration @JvmOverloads constructor(
     var clientAppName: String,

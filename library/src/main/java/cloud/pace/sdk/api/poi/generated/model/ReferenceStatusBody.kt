@@ -9,17 +9,15 @@ package cloud.pace.sdk.api.poi.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
+import java.util.Date
 
 class ReferenceStatusBody {
 
     var attributes: Attributes? = null
+
     /* Service Provider PRN */
     var id: String? = null
+
     /* Type */
     var type: Type? = null
 
@@ -34,6 +32,7 @@ class ReferenceStatusBody {
 
         /* Availability status of the referenced resource */
         var status: Status? = null
+
         /* Time of status last update (iso8601) */
         var updatedAt: Date? = null
 
@@ -42,6 +41,7 @@ class ReferenceStatusBody {
             @SerializedName("online")
             @Json(name = "online")
             ONLINE("online"),
+
             @SerializedName("offline")
             @Json(name = "offline")
             OFFLINE("offline")

@@ -1,7 +1,11 @@
+import org.jetbrains.gradle.ext.settings
+import org.jetbrains.gradle.ext.taskTriggers
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     plugins {
         id(Libs.KTLINT_GRADLE_PLUGIN) version Versions.KTLINT_GRADLE_PLUGIN
+        id(Libs.JETBRAINS_IDEA_GRADLE_PLUGIN) version Versions.JETBRAINS_IDEA_GRADLE_PLUGIN
     }
 
     repositories {
@@ -42,11 +46,15 @@ allprojects {
 
 subprojects {
     apply(plugin = Libs.KTLINT_GRADLE_PLUGIN)
+}
 
-    // Adds pre-commit git hook to run ktlintFormat on changed files to .git/hooks/pre-commit. Only copies hook for assembleDebug and assembleRelease and not for testing assemble tasks.
-    // Also runs ktlintApplyToIdea to generate Kotlin style files in the project .idea/ folder.
-    tasks.getByPath("$path:assembleDebug").dependsOn(":addKtlintFormatGitPreCommitHook", ":ktlintApplyToIdea")
-    tasks.getByPath("$path:assembleRelease").dependsOn(":addKtlintFormatGitPreCommitHook", ":ktlintApplyToIdea")
+idea.project.settings {
+    taskTriggers {
+        // This tasks will be triggered after each Gradle sync:
+        // Adds pre-commit git hook to run ktlintFormat on changed files to .git/hooks/pre-commit
+        // Also runs ktlintApplyToIdea to generate Kotlin style files in the project .idea/ folder
+        afterSync(tasks.getByName("addKtlintFormatGitPreCommitHook"), tasks.getByName("ktlintApplyToIdea"))
+    }
 }
 
 nexusStaging {

@@ -7,19 +7,15 @@
 
 package cloud.pace.sdk.api.fueling.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
 
 @JsonApi(type = "transaction")
 class Transaction : Resource() {
 
     var vat: VAT? = null
     var authorizedAmount: Double? = null
+
     /* Currency as specified in ISO-4217. */
     var currency: String? = null
     var fuelAmount: Double? = null
@@ -36,5 +32,4 @@ class Transaction : Resource() {
         var amount: Double? = null
         var rate: Double? = null
     }
-
 }

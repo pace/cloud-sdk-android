@@ -6,11 +6,9 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
-import kotlin.String
-
 public data class GetConfigRequest(
-  /**
-   * The key for the config value
-   */
-  public val key: String
+    /**
+     * The key for the config value
+     */
+    public val key: String
 )

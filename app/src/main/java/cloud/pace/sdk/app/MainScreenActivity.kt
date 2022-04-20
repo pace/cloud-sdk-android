@@ -10,7 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.MutableLiveData
@@ -143,8 +147,7 @@ class MainScreenActivity : AppCompatActivity() {
                     navController
                 )
             }
-        )
-        { innerPadding ->
+        ) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding))
             BottomBarControl(navController)
         }
@@ -193,4 +196,3 @@ class MainScreenActivity : AppCompatActivity() {
         }
     }
 }
-

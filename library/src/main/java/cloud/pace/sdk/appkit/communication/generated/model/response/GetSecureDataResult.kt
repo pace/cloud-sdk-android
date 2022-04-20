@@ -6,43 +6,40 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
-import kotlin.Int
-import kotlin.String
-
 public data class GetSecureDataResponse(
-  public val `value`: String
+    public val `value`: String
 ) : ResponseBody()
 
 public data class GetSecureDataError(
-  public val message: String? = null
+    public val message: String? = null
 ) : ResponseBody()
 
 public class GetSecureDataResult private constructor(
-  status: Int,
-  body: ResponseBody?
+    status: Int,
+    body: ResponseBody?
 ) : Result(status, body) {
-  public constructor(success: Success) : this(200, success.response)
+    public constructor(success: Success) : this(200, success.response)
 
-  public constructor(failure: Failure) : this(failure.statusCode.code, failure.response)
+    public constructor(failure: Failure) : this(failure.statusCode.code, failure.response)
 
-  public class Success(
-    public val response: GetSecureDataResponse
-  )
+    public class Success(
+        public val response: GetSecureDataResponse
+    )
 
-  public class Failure(
-    public val statusCode: StatusCode,
-    public val response: GetSecureDataError
-  ) {
-    public enum class StatusCode(
-      public val code: Int
+    public class Failure(
+        public val statusCode: StatusCode,
+        public val response: GetSecureDataError
     ) {
-      BadRequest(400),
-      Unauthorized(401),
-      NotFound(404),
-      MethodNotAllowed(405),
-      RequestTimeout(408),
-      InternalServerError(500),
-      ;
+        public enum class StatusCode(
+            public val code: Int
+        ) {
+            BadRequest(400),
+            Unauthorized(401),
+            NotFound(404),
+            MethodNotAllowed(405),
+            RequestTimeout(408),
+            InternalServerError(500),
+            ;
+        }
     }
-  }
 }

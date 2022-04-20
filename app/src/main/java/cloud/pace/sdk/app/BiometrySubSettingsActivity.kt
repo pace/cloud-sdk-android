@@ -59,7 +59,6 @@ class BiometrySubSettingsActivity : AppCompatActivity() {
                             is Failure -> Toast.makeText(this@BiometrySubSettingsActivity, it.throwable.toString(), Toast.LENGTH_LONG).show()
                         }
                     }
-
                 },
                 setPinWithOTPAction = { pin, otp ->
                     IDKit.setPINWithOTP(pin, otp) {
@@ -145,4 +144,3 @@ class BiometrySubSettingsActivity : AppCompatActivity() {
         }
     }
 }
-

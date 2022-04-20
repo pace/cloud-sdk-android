@@ -6,16 +6,13 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
-import kotlin.Double
-import kotlin.String
-
 public data class GetTOTPRequest(
-  /**
-   * This time is used in conjunction with the saved period to generate the TOTP.
-   */
-  public val serverTime: Double,
-  /**
-   * The TOTP secret data key used to generate a TOTP.
-   */
-  public val key: String
+    /**
+     * This time is used in conjunction with the saved period to generate the TOTP.
+     */
+    public val serverTime: Double,
+    /**
+     * The TOTP secret data key used to generate a TOTP.
+     */
+    public val key: String
 )

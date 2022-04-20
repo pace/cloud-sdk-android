@@ -9,16 +9,13 @@ package cloud.pace.sdk.api.pay.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
+import java.util.Date
 
 class PaymentMethodDKVCreateBody {
 
     lateinit var type: Type
     var attributes: Attributes? = null
+
     /* The ID of this payment method. */
     var id: String? = null
 
@@ -31,13 +28,17 @@ class PaymentMethodDKVCreateBody {
     class Attributes {
 
         lateinit var kind: Kind
+
         /* Identifier or PAN (Primary Account Number) representing the DKV Card. The identifier is payment provider specific and provided by the payment provider.
      */
         var pan: String? = null
+
         /* The date the card is expiring */
         var expiry: Date? = null
+
         /* Indicates whether this payment method should be managed by the creating client, i.e., no other client can modify or delete this method. */
         var managed: Boolean? = null
+
         /* Track 2 data of payment card. */
         var track2: String? = null
 

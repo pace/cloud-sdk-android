@@ -25,13 +25,22 @@ import cloud.pace.sdk.appkit.utils.BiometricUtils
 import cloud.pace.sdk.appkit.utils.EncryptionUtils
 import cloud.pace.sdk.appkit.utils.EncryptionUtils.generateOTP
 import cloud.pace.sdk.idkit.authorization.AuthorizationManager
-import cloud.pace.sdk.idkit.model.*
+import cloud.pace.sdk.idkit.model.BiometricAuthenticationNotSet
+import cloud.pace.sdk.idkit.model.BiometricAuthenticationNotSupported
+import cloud.pace.sdk.idkit.model.InternalError
+import cloud.pace.sdk.idkit.model.InvalidSession
+import cloud.pace.sdk.idkit.model.PINNotSecure
 import cloud.pace.sdk.poikit.utils.ApiException
-import cloud.pace.sdk.utils.*
+import cloud.pace.sdk.utils.CloudSDKKoinComponent
+import cloud.pace.sdk.utils.Completion
+import cloud.pace.sdk.utils.Failure
+import cloud.pace.sdk.utils.Success
+import cloud.pace.sdk.utils.enqueue
+import cloud.pace.sdk.utils.requestId
 import retrofit2.Call
 import timber.log.Timber
 import java.net.HttpURLConnection
-import java.util.*
+import java.util.UUID
 
 internal class CredentialsManager(
     private val sharedPreferencesModel: SharedPreferencesModel,
@@ -131,7 +140,8 @@ internal class CredentialsManager(
             if (setAuthorizationHeader()) {
                 val totpSecret = sharedPreferencesModel.getTotpSecret()
                 if (totpSecret != null) {
-                    BiometricUtils.requestAuthentication(fragment, title, subTitle, cancelText, isDeviceCredentialsAllowed,
+                    BiometricUtils.requestAuthentication(
+                        fragment, title, subTitle, cancelText, isDeviceCredentialsAllowed,
                         onSuccess = { updateUserPIN(pin, totpSecret, completion) },
                         onFailure = { errorCode, errString -> completion(Failure(Throwable("Error code = $errorCode error message = $errString"))) }
                     )
@@ -159,7 +169,8 @@ internal class CredentialsManager(
             if (setAuthorizationHeader()) {
                 val totpSecret = sharedPreferencesModel.getTotpSecret()
                 if (totpSecret != null) {
-                    BiometricUtils.requestAuthentication(activity, title, subTitle, cancelText, isDeviceCredentialsAllowed,
+                    BiometricUtils.requestAuthentication(
+                        activity, title, subTitle, cancelText, isDeviceCredentialsAllowed,
                         onSuccess = { updateUserPIN(pin, totpSecret, completion) },
                         onFailure = { errorCode, errString -> completion(Failure(Throwable("Error code = $errorCode error message = $errString"))) }
                     )

@@ -26,6 +26,7 @@ object Versions {
     const val GOOGLE_PROTOBUF_JAVALITE = "3.19.1"
     const val GSON = "2.8.9"
     const val HILT = "2.38.1"
+    const val JETBRAINS_IDEA_GRADLE_PLUGIN = "1.1.4"
     const val JETPACK_COMPOSE = "1.1.1"
     const val JETPACK_COMPOSE_CONSTRAINT_LAYOUT = "1.0.0-beta02"
     const val KOIN = "3.1.3"

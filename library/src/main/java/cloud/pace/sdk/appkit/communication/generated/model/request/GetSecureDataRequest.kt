@@ -6,11 +6,9 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
-import kotlin.String
-
 public data class GetSecureDataRequest(
-  /**
-   * The key of the requested secure data value.
-   */
-  public val key: String
+    /**
+     * The key of the requested secure data value.
+     */
+    public val key: String
 )

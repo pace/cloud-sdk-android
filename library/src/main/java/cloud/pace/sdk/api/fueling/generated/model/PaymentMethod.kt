@@ -9,11 +9,8 @@ package cloud.pace.sdk.api.fueling.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
 
 @JsonApi(type = "paymentMethod")
 class PaymentMethod : Resource() {
@@ -23,16 +20,20 @@ class PaymentMethod : Resource() {
     /* Customer chosen alias for the payment method */
     var alias: String? = null
     var identificationString: String? = null
+
     /* one of sepa, creditcard, paypal, paydirekt, dkv, applepay, ... */
     var kind: String? = null
     var mandatoryAuthorisationAttributes: List<MandatoryAuthorisationAttributes>? = null
+
     /* The desired status for a payment method is `verified`, this means the method is ready to use.
 A payment method that has the status `created` has yet to be verified. This is the case for payment methods,
 which have an asynchronous verification process, e.g., paydirekt (waiting for an email).
  */
     var status: Status? = null
+
     /* indicates if the payment method kind requires two factors later on */
     var twoFactor: Boolean? = null
+
     /* PACE resource name(s) to payment method vendor */
     var vendorPRN: String? = null
 
@@ -44,12 +45,15 @@ which have an asynchronous verification process, e.g., paydirekt (waiting for an
         @SerializedName("created")
         @Json(name = "created")
         CREATED("created"),
+
         @SerializedName("verified")
         @Json(name = "verified")
         VERIFIED("verified"),
+
         @SerializedName("pending")
         @Json(name = "pending")
         PENDING("pending"),
+
         @SerializedName("unacceptable")
         @Json(name = "unacceptable")
         UNACCEPTABLE("unacceptable")
@@ -62,7 +66,6 @@ which have an asynchronous verification process, e.g., paydirekt (waiting for an
         var name: String? = null
         var regex: String? = null
     }
-
 
     class Meta {
 

@@ -7,7 +7,12 @@ import cloud.pace.sdk.poikit.POIKit
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.toLocationPoint
 import cloud.pace.sdk.poikit.utils.distanceTo
-import cloud.pace.sdk.utils.*
+import cloud.pace.sdk.utils.Failure
+import cloud.pace.sdk.utils.LocationProvider
+import cloud.pace.sdk.utils.Success
+import cloud.pace.sdk.utils.SystemManager
+import cloud.pace.sdk.utils.onBackgroundThread
+import cloud.pace.sdk.utils.resumeIfActive
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
@@ -114,7 +119,6 @@ class GeoAPIManagerImpl(
                                 }
                             }
                             completion(Result.success(cofuStations))
-
                         }
                         is Failure -> completion(Result.failure(gasStations.throwable))
                     }

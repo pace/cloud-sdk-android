@@ -9,15 +9,12 @@ package cloud.pace.sdk.api.poi.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
+import java.util.Date
 
 class POIBody {
 
     var attributes: Attributes? = null
+
     /* POI ID */
     var id: String? = null
     var relationships: Relationships? = null
@@ -29,12 +26,15 @@ class POIBody {
         var boundary: CommonGeoJSONPolygon? = null
         var countryId: CommonCountryId? = null
         var createdAt: Date? = null
+
         /* a JSON field containing POI specific data */
         var data: List<FieldData>? = null
         var lastSeenAt: Date? = null
+
         /* a JSON field containing information about data field origin and update time */
         var metadata: List<FieldMetaData>? = null
         var position: CommonGeoJSONPoint? = null
+
         /* References are PRNs to external and internal resources that are represented by this poi */
         var references: List<String>? = null
         var updatedAt: Date? = null

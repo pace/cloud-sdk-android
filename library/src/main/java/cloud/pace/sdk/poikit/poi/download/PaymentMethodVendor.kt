@@ -23,5 +23,3 @@ data class PaymentMethodVendorVariants(
 data class Dark(
     var href: String? = null
 )
-
-

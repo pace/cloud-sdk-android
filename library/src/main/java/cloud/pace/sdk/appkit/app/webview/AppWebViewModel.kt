@@ -18,8 +18,90 @@ import cloud.pace.sdk.appkit.communication.InvalidTokenReason
 import cloud.pace.sdk.appkit.communication.LogoutResponse
 import cloud.pace.sdk.appkit.communication.generated.Communication
 import cloud.pace.sdk.appkit.communication.generated.Metadata
-import cloud.pace.sdk.appkit.communication.generated.model.request.*
-import cloud.pace.sdk.appkit.communication.generated.model.response.*
+import cloud.pace.sdk.appkit.communication.generated.model.request.AppRedirectRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.ApplePayAvailabilityCheckRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.ApplePayRequestRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.DisableRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.GetAccessTokenRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.GetConfigRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.GetSecureDataRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.GetTOTPRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.ImageDataRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.LogEventRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.OpenURLInNewTabRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.SetSecureDataRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.SetTOTPRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.SetUserPropertyRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.ShareTextRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.VerifyLocationRequest
+import cloud.pace.sdk.appkit.communication.generated.model.response.AppInterceptableLinkError
+import cloud.pace.sdk.appkit.communication.generated.model.response.AppInterceptableLinkResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.AppInterceptableLinkResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.AppRedirectError
+import cloud.pace.sdk.appkit.communication.generated.model.response.AppRedirectResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.ApplePayAvailabilityCheckError
+import cloud.pace.sdk.appkit.communication.generated.model.response.ApplePayAvailabilityCheckResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.ApplePayRequestError
+import cloud.pace.sdk.appkit.communication.generated.model.response.ApplePayRequestResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.BackError
+import cloud.pace.sdk.appkit.communication.generated.model.response.BackResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.CloseError
+import cloud.pace.sdk.appkit.communication.generated.model.response.CloseResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.DisableError
+import cloud.pace.sdk.appkit.communication.generated.model.response.DisableResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetAccessTokenError
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetAccessTokenResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetAccessTokenResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetBiometricStatusError
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetBiometricStatusResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetBiometricStatusResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetConfigError
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetConfigResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetConfigResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetLocationError
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetLocationResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetLocationResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetSecureDataError
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetSecureDataResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetSecureDataResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetTOTPError
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetTOTPResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetTOTPResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetTraceIdError
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetTraceIdResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetTraceIdResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.ImageDataError
+import cloud.pace.sdk.appkit.communication.generated.model.response.ImageDataResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.IntrospectError
+import cloud.pace.sdk.appkit.communication.generated.model.response.IntrospectResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.IntrospectResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.IsBiometricAuthEnabledError
+import cloud.pace.sdk.appkit.communication.generated.model.response.IsBiometricAuthEnabledResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.IsBiometricAuthEnabledResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.IsRemoteConfigAvailableError
+import cloud.pace.sdk.appkit.communication.generated.model.response.IsRemoteConfigAvailableResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.IsRemoteConfigAvailableResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.IsSignedInError
+import cloud.pace.sdk.appkit.communication.generated.model.response.IsSignedInResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.IsSignedInResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.LogEventError
+import cloud.pace.sdk.appkit.communication.generated.model.response.LogEventResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.LogoutError
+import cloud.pace.sdk.appkit.communication.generated.model.response.LogoutResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.OpenURLInNewTabError
+import cloud.pace.sdk.appkit.communication.generated.model.response.OpenURLInNewTabResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.Result
+import cloud.pace.sdk.appkit.communication.generated.model.response.SetSecureDataError
+import cloud.pace.sdk.appkit.communication.generated.model.response.SetSecureDataResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.SetTOTPError
+import cloud.pace.sdk.appkit.communication.generated.model.response.SetTOTPResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.SetUserPropertyError
+import cloud.pace.sdk.appkit.communication.generated.model.response.SetUserPropertyResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.ShareTextError
+import cloud.pace.sdk.appkit.communication.generated.model.response.ShareTextResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.VerifyLocationError
+import cloud.pace.sdk.appkit.communication.generated.model.response.VerifyLocationResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.VerifyLocationResult
 import cloud.pace.sdk.appkit.pay.PayAuthenticationManager
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getDisableTimePreferenceKey
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getSecureDataPreferenceKey
@@ -28,13 +110,22 @@ import cloud.pace.sdk.appkit.persistence.TotpSecret
 import cloud.pace.sdk.appkit.utils.EncryptionUtils
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.OperationCanceled
-import cloud.pace.sdk.utils.*
+import cloud.pace.sdk.utils.DeviceUtils
+import cloud.pace.sdk.utils.Event
+import cloud.pace.sdk.utils.Failure
+import cloud.pace.sdk.utils.LocationProvider
+import cloud.pace.sdk.utils.NoLocationFound
+import cloud.pace.sdk.utils.PermissionDenied
+import cloud.pace.sdk.utils.Success
+import cloud.pace.sdk.utils.onMainThread
+import cloud.pace.sdk.utils.resumeIfActive
+import cloud.pace.sdk.utils.suspendCoroutineWithTimeout
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
 import timber.log.Timber
-import java.util.*
+import java.util.Date
 
 abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback, Communication {
 
@@ -206,41 +297,45 @@ class AppWebViewModelImpl(
                     }
 
                     if (totpSecret != null) {
-                        biometricRequest.postValue(Event(BiometricRequest(
-                            R.string.payment_biometric_prompt_title,
-                            onSuccess = {
-                                try {
-                                    val decryptedSecret = EncryptionUtils.decrypt(totpSecret.encryptedSecret)
-                                    val otp = EncryptionUtils.generateOTP(
-                                        decryptedSecret,
-                                        totpSecret.digits,
-                                        totpSecret.period,
-                                        totpSecret.algorithm,
-                                        Date((getTOTPRequest.serverTime * 1000.0).toLong())
-                                    )
-                                    continuation.resumeIfActive(GetTOTPResult(GetTOTPResult.Success(GetTOTPResponse(otp, BiometryMethod.OTHER.value))))
-                                } catch (e: Exception) {
-                                    continuation.resumeIfActive(
-                                        GetTOTPResult(
-                                            GetTOTPResult.Failure(
-                                                GetTOTPResult.Failure.StatusCode.InternalServerError,
-                                                GetTOTPError("Could not decrypt the encrypted TOTP secret.")
+                        biometricRequest.postValue(
+                            Event(
+                                BiometricRequest(
+                                    R.string.payment_biometric_prompt_title,
+                                    onSuccess = {
+                                        try {
+                                            val decryptedSecret = EncryptionUtils.decrypt(totpSecret.encryptedSecret)
+                                            val otp = EncryptionUtils.generateOTP(
+                                                decryptedSecret,
+                                                totpSecret.digits,
+                                                totpSecret.period,
+                                                totpSecret.algorithm,
+                                                Date((getTOTPRequest.serverTime * 1000.0).toLong())
+                                            )
+                                            continuation.resumeIfActive(GetTOTPResult(GetTOTPResult.Success(GetTOTPResponse(otp, BiometryMethod.OTHER.value))))
+                                        } catch (e: Exception) {
+                                            continuation.resumeIfActive(
+                                                GetTOTPResult(
+                                                    GetTOTPResult.Failure(
+                                                        GetTOTPResult.Failure.StatusCode.InternalServerError,
+                                                        GetTOTPError("Could not decrypt the encrypted TOTP secret.")
+                                                    )
+                                                )
+                                            )
+                                        }
+                                    },
+                                    onFailure = { errorCode, errString ->
+                                        continuation.resumeIfActive(
+                                            GetTOTPResult(
+                                                GetTOTPResult.Failure(
+                                                    GetTOTPResult.Failure.StatusCode.Unauthorized,
+                                                    GetTOTPError("Biometric authentication failed: errorCode was $errorCode, errString was $errString")
+                                                )
                                             )
                                         )
-                                    )
-                                }
-                            },
-                            onFailure = { errorCode, errString ->
-                                continuation.resumeIfActive(
-                                    GetTOTPResult(
-                                        GetTOTPResult.Failure(
-                                            GetTOTPResult.Failure.StatusCode.Unauthorized,
-                                            GetTOTPError("Biometric authentication failed: errorCode was $errorCode, errString was $errString")
-                                        )
-                                    )
+                                    }
                                 )
-                            }
-                        )))
+                            )
+                        )
                     } else {
                         continuation.resumeIfActive(
                             GetTOTPResult(
@@ -297,34 +392,38 @@ class AppWebViewModelImpl(
                     val preferenceKey = getSecureDataPreferenceKey(host, getSecureDataRequest.key)
                     val encryptedValue = sharedPreferencesModel.getString(preferenceKey)
                     if (encryptedValue != null) {
-                        biometricRequest.postValue(Event(BiometricRequest(
-                            R.string.appkit_secureData_authentication_confirmation,
-                            onSuccess = {
-                                try {
-                                    val value = EncryptionUtils.decrypt(encryptedValue)
-                                    continuation.resumeIfActive(GetSecureDataResult(GetSecureDataResult.Success(GetSecureDataResponse(value))))
-                                } catch (e: Exception) {
-                                    continuation.resumeIfActive(
-                                        GetSecureDataResult(
-                                            GetSecureDataResult.Failure(
-                                                GetSecureDataResult.Failure.StatusCode.InternalServerError,
-                                                GetSecureDataError("Could not decrypt the encrypted secure data value.")
+                        biometricRequest.postValue(
+                            Event(
+                                BiometricRequest(
+                                    R.string.appkit_secureData_authentication_confirmation,
+                                    onSuccess = {
+                                        try {
+                                            val value = EncryptionUtils.decrypt(encryptedValue)
+                                            continuation.resumeIfActive(GetSecureDataResult(GetSecureDataResult.Success(GetSecureDataResponse(value))))
+                                        } catch (e: Exception) {
+                                            continuation.resumeIfActive(
+                                                GetSecureDataResult(
+                                                    GetSecureDataResult.Failure(
+                                                        GetSecureDataResult.Failure.StatusCode.InternalServerError,
+                                                        GetSecureDataError("Could not decrypt the encrypted secure data value.")
+                                                    )
+                                                )
+                                            )
+                                        }
+                                    },
+                                    onFailure = { errorCode, errString ->
+                                        continuation.resumeIfActive(
+                                            GetSecureDataResult(
+                                                GetSecureDataResult.Failure(
+                                                    GetSecureDataResult.Failure.StatusCode.Unauthorized,
+                                                    GetSecureDataError("Biometric authentication failed: errorCode was $errorCode, errString was $errString")
+                                                )
                                             )
                                         )
-                                    )
-                                }
-                            },
-                            onFailure = { errorCode, errString ->
-                                continuation.resumeIfActive(
-                                    GetSecureDataResult(
-                                        GetSecureDataResult.Failure(
-                                            GetSecureDataResult.Failure.StatusCode.Unauthorized,
-                                            GetSecureDataError("Biometric authentication failed: errorCode was $errorCode, errString was $errString")
-                                        )
-                                    )
+                                    }
                                 )
-                            }
-                        )))
+                            )
+                        )
                     } else {
                         continuation.resumeIfActive(
                             GetSecureDataResult(
@@ -392,7 +491,7 @@ class AppWebViewModelImpl(
                     appModel.openUrlInNewTab(openURLInNewTabRequest)
                     OpenURLInNewTabResult(OpenURLInNewTabResult.Success())
                 } else {
-                    appModel.onCustomSchemeError(context, "${redirectScheme}://redirect")
+                    appModel.onCustomSchemeError(context, "$redirectScheme://redirect")
                     loadUrl.postValue(Event(openURLInNewTabRequest.cancelUrl))
                     OpenURLInNewTabResult(
                         OpenURLInNewTabResult.Failure(
