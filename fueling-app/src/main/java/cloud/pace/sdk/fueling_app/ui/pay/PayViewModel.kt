@@ -1,6 +1,11 @@
 package cloud.pace.sdk.fueling_app.ui.pay
 
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
+import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import cloud.pace.sdk.api.fueling.generated.model.PumpResponse
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModel
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
@@ -16,7 +21,7 @@ import cloud.pace.sdk.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.net.HttpURLConnection
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -129,21 +134,23 @@ class PayViewModel @Inject constructor(
     private fun authorizeWithBiometry() {
         val totpSecret = sharedPreferencesModel.getTotpSecret()
         if (totpSecret != null) {
-            biometricRequest.value = Event(AppWebViewModel.BiometricRequest(
-                R.string.payment_biometric_prompt_title,
-                onSuccess = {
-                    try {
-                        val decryptedSecret = EncryptionUtils.decrypt(totpSecret.encryptedSecret)
-                        val otp = EncryptionUtils.generateOTP(decryptedSecret, totpSecret.digits, totpSecret.period, totpSecret.algorithm)
-                        this.otp.value = Result.Success(otp)
-                    } catch (e: Exception) {
+            biometricRequest.value = Event(
+                AppWebViewModel.BiometricRequest(
+                    R.string.payment_biometric_prompt_title,
+                    onSuccess = {
+                        try {
+                            val decryptedSecret = EncryptionUtils.decrypt(totpSecret.encryptedSecret)
+                            val otp = EncryptionUtils.generateOTP(decryptedSecret, totpSecret.digits, totpSecret.period, totpSecret.algorithm)
+                            this.otp.value = Result.Success(otp)
+                        } catch (e: Exception) {
+                            checkPinOrPassword()
+                        }
+                    },
+                    onFailure = { _, _ ->
                         checkPinOrPassword()
                     }
-                },
-                onFailure = { _, _ ->
-                    checkPinOrPassword()
-                }
-            ))
+                )
+            )
         }
     }
 

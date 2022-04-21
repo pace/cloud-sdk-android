@@ -9,39 +9,41 @@ package cloud.pace.sdk.api.user.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
 
 class OAuth2TokenExchange {
 
     /* This parameter is required for clients using form parameters for authentication.
  */
     lateinit var clientId: String
+
     /* This parameter is required for clients using form parameters for authentication
 and using a client secret as a credential.
  */
     lateinit var clientSecret: String
+
     /* The value of the parameter must be `urn:ietf:params:oauth:grant-type:token-exchange`.
  */
     lateinit var grantType: GrantType
+
     /* A security token that represents the identity of the party on behalf of whom the request is being made.
 It is required if you are exchanging an existing token for a new one.
  */
     lateinit var subjectToken: String
+
     /* Identifies the issuer of the subject_token. The same as the tokens `iss` value. Usually a URL.
  */
     lateinit var subjectIssuer: String
+
     /* This parameter represents the type of token the client wants to exchange for.
 Currently only oauth and OpenID Connect token types are supported specifically `urn:ietf:params:oauth:token-type:access_token`.
  */
     lateinit var subjectTokenType: SubjectTokenType
+
     /* This parameter specifies the target client you want the new token minted for. This will be part
 of the token in the `aud` field. If left blank it will be the same as the provided `client_id`.
  */
     var audience: String? = null
+
     /* This parameter represents the target set of OAuth and OpenID Connect scopes the client is requesting.
 This parameter ensures to the client that the token is only provided in case the requested scopes
 are part of it. More scopes may be returned.

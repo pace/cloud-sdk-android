@@ -7,20 +7,17 @@
 
 package cloud.pace.sdk.api.pay.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
 
 @JsonApi(type = "paymentMethodVendor")
 class PaymentMethodVendor : Resource() {
 
     var logo: Logo? = null
+
     /* Human-readable version of the vendor name. Should be used for display. */
     var name: String? = null
+
     /* Short and lowercased version. Should NOT be used for display. */
     var slug: String? = null
 
@@ -39,5 +36,4 @@ class PaymentMethodVendor : Resource() {
             }
         }
     }
-
 }

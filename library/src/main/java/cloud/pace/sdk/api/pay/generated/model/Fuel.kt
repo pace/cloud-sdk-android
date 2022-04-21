@@ -9,22 +9,21 @@ package cloud.pace.sdk.api.pay.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
 
 class Fuel {
 
     /* Fuel amount in provided unit */
     var amount: Double? = null
+
     /* Price per unit (with three decimal places) */
     var pricePerUnit: Double? = null
+
     /* Product Name of the current fuel.productName */
     var productName: String? = null
+
     /* Number of the pump used for fueling, i.e., the actual number that is being displayed to the customer */
     var pumpNumber: Int? = null
+
     /* Unit */
     var unit: Unit? = null
 
@@ -33,6 +32,7 @@ class Fuel {
         @SerializedName("liter")
         @Json(name = "liter")
         LITER("liter"),
+
         @SerializedName("gallon")
         @Json(name = "gallon")
         GALLON("gallon")

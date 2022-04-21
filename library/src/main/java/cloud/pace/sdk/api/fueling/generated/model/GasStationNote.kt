@@ -7,13 +7,8 @@
 
 package cloud.pace.sdk.api.fueling.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
 
 @JsonApi(type = "gasStationNote")
 class GasStationNote : Resource() {
@@ -21,5 +16,4 @@ class GasStationNote : Resource() {
     var info: String? = null
     var name: String? = null
     var text: String? = null
-
 }

@@ -12,8 +12,8 @@ import cloud.pace.sdk.utils.CompletableFutureCompat
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
 import org.junit.Test
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import java.util.concurrent.TimeUnit
 
 class AppWebViewClientTest {

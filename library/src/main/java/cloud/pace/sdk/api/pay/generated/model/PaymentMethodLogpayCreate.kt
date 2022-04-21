@@ -9,23 +9,25 @@ package cloud.pace.sdk.api.pay.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
+import java.util.Date
 
 @JsonApi(type = "paymentMethodLogpayCreate")
 class PaymentMethodLogpayCreate : Resource() {
 
     lateinit var kind: Kind
+
     /* Identifier or PAN (Primary Account Number) representing the Logpay Card. The identifier is payment provider specific and provided by the payment provider.
  */
     var pan: String? = null
+
     /* The date the card is expiring */
     var expiry: Date? = null
+
     /* Indicates whether this payment method should be managed by the creating client, i.e., no other client can modify or delete this method. */
     var managed: Boolean? = null
+
     /* Personal identification number is a security code for verifying the user's identity. */
     var pin: String? = null
 
@@ -34,5 +36,4 @@ class PaymentMethodLogpayCreate : Resource() {
         @Json(name = "logpay")
         LOGPAY("logpay")
     }
-
 }

@@ -9,37 +9,40 @@ package cloud.pace.sdk.api.poi.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
 
 enum class FieldName(val value: String) {
     @SerializedName("name")
     @Json(name = "name")
     NAME("name"),
+
     @SerializedName("brand")
     @Json(name = "brand")
     BRAND("brand"),
+
     @SerializedName("street")
     @Json(name = "street")
     STREET("street"),
+
     @SerializedName("houseNumber")
     @Json(name = "houseNumber")
     HOUSENUMBER("houseNumber"),
+
     @SerializedName("postCode")
     @Json(name = "postCode")
     POSTCODE("postCode"),
+
     @SerializedName("place")
     @Json(name = "place")
     PLACE("place"),
+
     @SerializedName("holidayIdentifier")
     @Json(name = "holidayIdentifier")
     HOLIDAYIDENTIFIER("holidayIdentifier"),
+
     @SerializedName("operatingHours")
     @Json(name = "operatingHours")
     OPERATINGHOURS("operatingHours"),
+
     @SerializedName("fuelPrices")
     @Json(name = "fuelPrices")
     FUELPRICES("fuelPrices")

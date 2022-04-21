@@ -10,7 +10,11 @@ import cloud.pace.sdk.poikit.utils.GeoMathUtils.toRadian
 import cloud.pace.sdk.poikit.utils.POIKitConfig
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.parcel.Parcelize
-import kotlin.math.*
+import kotlin.math.asin
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 /**
  * Representation of a lat/lon location on earth.
@@ -60,9 +64,11 @@ data class LocationPoint(val lat: Double, val lon: Double) : Parcelable {
     fun getDistanceInMetersTo(lp: LocationPoint): Double {
         val hp = Math.PI / 180.0
         val aa =
-            0.5 - cos((lp.lat - this.lat) * hp) / 2.0 + cos(this.lat * hp) * cos(lp.lat * hp) * (1.0 - cos(
-                (lp.lon - this.lon) * hp
-            )) / 2.0
+            0.5 - cos((lp.lat - this.lat) * hp) / 2.0 + cos(this.lat * hp) * cos(lp.lat * hp) * (
+                1.0 - cos(
+                    (lp.lon - this.lon) * hp
+                )
+                ) / 2.0
         return 2.0 * POIKitConfig.EARTH_RADIUS_KM * 1000.0 * asin(sqrt(aa))
     }
 

@@ -12,7 +12,8 @@ class CloudSDKApplication : Application() {
         super.onCreate()
 
         PACECloudSDK.setup(
-            this, Configuration(
+            this,
+            Configuration(
                 clientAppName = "PACECloudSDKExample",
                 clientAppVersion = BuildConfig.VERSION_NAME,
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),

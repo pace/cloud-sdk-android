@@ -13,7 +13,7 @@ import moe.banana.jsonapi2.HasMany
 import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
+import java.util.Date
 
 @JsonApi(type = "paymentMethod")
 class PaymentMethod : Resource() {
@@ -23,25 +23,33 @@ class PaymentMethod : Resource() {
 
     /* Customer chosen alias for the payment method */
     var alias: String? = null
+
     /* URL for the user to call in order to approve this payment method. */
     var approvalURL: String? = null
+
     /* Expiry date of the payment method. If empty or not present the payment method does not have an expiry date. */
     var expiry: Date? = null
     var identificationString: String? = null
+
     /* Implicit (`true`) payment methods are read-only and cannot be deleted, e.g., ApplePay */
     var implicit: Boolean? = null
+
     /* one of sepa, creditcard, paypal, paydirekt, dkv, applepay, ... */
     var kind: String? = null
+
     /* Managed (`true`) payment methods are read-only and cannot be deleted other than by the client (oauth/oidc) that created them. */
     var managed: Boolean? = null
     var mandatoryAuthorisationAttributes: List<MandatoryAuthorisationAttributes>? = null
+
     /* The desired status for a payment method is `verified`, this means the method is ready to use.
 A payment method that has the status `created` has yet to be verified. This is the case for payment methods,
 which have an asynchronous verification process, e.g., paydirekt (waiting for an email).
  */
     var status: Status? = null
+
     /* indicates if the payment method kind requires two factors later on */
     var twoFactor: Boolean? = null
+
     /* PACE resource name(s) to payment method vendor */
     var vendorPRN: String? = null
 
@@ -53,12 +61,15 @@ which have an asynchronous verification process, e.g., paydirekt (waiting for an
         @SerializedName("created")
         @Json(name = "created")
         CREATED("created"),
+
         @SerializedName("verified")
         @Json(name = "verified")
         VERIFIED("verified"),
+
         @SerializedName("pending")
         @Json(name = "pending")
         PENDING("pending"),
+
         @SerializedName("unacceptable")
         @Json(name = "unacceptable")
         UNACCEPTABLE("unacceptable")
@@ -81,7 +92,6 @@ which have an asynchronous verification process, e.g., paydirekt (waiting for an
     private var paymentTokens: HasMany<PaymentToken> = HasMany()
     fun getPaymentTokens() = paymentTokens.get(document)
 
-
     class Links {
 
         var authorize: Authorize? = null
@@ -99,6 +109,7 @@ which have an asynchronous verification process, e.g., paydirekt (waiting for an
                     @SerializedName("token-provided")
                     @Json(name = "token-provided")
                     TOKENPROVIDED("token-provided"),
+
                     @SerializedName("method-onboarded")
                     @Json(name = "method-onboarded")
                     METHODONBOARDED("method-onboarded")
@@ -112,5 +123,4 @@ which have an asynchronous verification process, e.g., paydirekt (waiting for an
         /* Merchant name if the request was made in a way that a merchant name can be determined. For example if requesting payment methods for a specific gas station, it is the merchant name at that gas station. */
         var merchantName: String? = null
     }
-
 }

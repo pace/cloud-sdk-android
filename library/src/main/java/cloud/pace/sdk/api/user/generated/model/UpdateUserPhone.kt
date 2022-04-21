@@ -7,18 +7,12 @@
 
 package cloud.pace.sdk.api.user.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
 
 @JsonApi(type = "updateUserPhone")
 class UpdateUserPhone : Resource() {
 
     /* complete phone number of the user */
     lateinit var phoneNumber: String
-
 }

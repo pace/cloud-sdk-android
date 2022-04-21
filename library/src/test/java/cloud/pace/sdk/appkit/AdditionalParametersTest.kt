@@ -52,7 +52,8 @@ class AdditionalParametersTest {
         }
 
         PACECloudSDK.setup(
-            mockContext, Configuration(
+            mockContext,
+            Configuration(
                 clientAppName = clientAppName,
                 clientAppVersion = "1",
                 clientAppBuild = "1",

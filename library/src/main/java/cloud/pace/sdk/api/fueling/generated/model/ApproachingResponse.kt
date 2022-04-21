@@ -7,13 +7,10 @@
 
 package cloud.pace.sdk.api.fueling.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
 import moe.banana.jsonapi2.HasMany
 import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
 
 @JsonApi(type = "approachingResponse")
 class ApproachingResponse : Resource() {
@@ -35,5 +32,4 @@ class ApproachingResponse : Resource() {
 
     private var unsupportedPaymentMethods: HasMany<PaymentMethod> = HasMany()
     fun getUnsupportedPaymentMethods() = unsupportedPaymentMethods.get(document)
-
 }

@@ -6,12 +6,9 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
-import kotlin.String
-import kotlin.collections.List
-
 public data class ApplePayAvailabilityCheckRequest(
-  /**
-   * The supported payment networks.
-   */
-  public val supportedNetworks: List<String>
+    /**
+     * The supported payment networks.
+     */
+    public val supportedNetworks: List<String>
 )

@@ -219,7 +219,11 @@ publishing {
 
             pom {
                 name.set("PACE Cloud SDK Android")
-                description.set("PACE Cloud SDK is a client SDK that allows your app to easily connect to PACE\'s Connected Fueling. The SDK consists of the IDKit to manage the OpenID (OID) authorization and general session flow with its token handling. It also consists of the AppKit, with which you can fetch and display location based apps, apps by URL or ID. Furthermore it contains the POIKit, which allows you to fetch Point of Interests (e.g. gas stations), request routes and search for locations.")
+                description.set(
+                    "PACE Cloud SDK is a client SDK that allows your app to easily connect to PACE\'s Connected Fueling. The SDK consists of the IDKit to manage the OpenID (OID) authorization and " +
+                        "general session flow with its token handling. It also consists of the AppKit, with which you can fetch and display location based apps, apps by URL or ID. Furthermore " +
+                        "it contains the POIKit, which allows you to fetch Point of Interests (e.g. gas stations), request routes and search for locations."
+                )
                 url.set("https://github.com/pace/cloud-sdk-android")
                 licenses {
                     license {
@@ -267,7 +271,11 @@ publishing {
 
             pom {
                 name.set("PACE Cloud SDK Android")
-                description.set("PACE Cloud SDK is a client SDK that allows your app to easily connect to PACE\'s Connected Fueling. The SDK consists of the IDKit to manage the OpenID (OID) authorization and general session flow with its token handling. It also consists of the AppKit, with which you can fetch and display location based apps, apps by URL or ID. Furthermore it contains the POIKit, which allows you to fetch Point of Interests (e.g. gas stations), request routes and search for locations.")
+                description.set(
+                    "PACE Cloud SDK is a client SDK that allows your app to easily connect to PACE\'s Connected Fueling. The SDK consists of the IDKit to manage the OpenID (OID) authorization and " +
+                        "general session flow with its token handling. It also consists of the AppKit, with which you can fetch and display location based apps, apps by URL or ID. Furthermore " +
+                        "it contains the POIKit, which allows you to fetch Point of Interests (e.g. gas stations), request routes and search for locations."
+                )
                 url.set("https://github.com/pace/cloud-sdk-android")
                 licenses {
                     license {

@@ -9,16 +9,12 @@ package cloud.pace.sdk.api.pay.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
 
 class PaymentMethodRMCCreateBody {
 
     lateinit var type: Type
     var attributes: Attributes? = null
+
     /* The ID of this payment method. */
     var id: String? = null
 
@@ -31,11 +27,14 @@ class PaymentMethodRMCCreateBody {
     class Attributes {
 
         lateinit var kind: Kind
+
         /* Identifier representing the RMC Card number. The identifier is payment provider specific and provided by the payment provider.
      */
         var cardNumber: String? = null
+
         /* Indicates whether this payment method should be managed by the creating client, i.e., no other client can modify or delete this method. */
         var managed: Boolean? = null
+
         /* Personal identification number is a security code for verifying the user's identity. */
         var pin: String? = null
 

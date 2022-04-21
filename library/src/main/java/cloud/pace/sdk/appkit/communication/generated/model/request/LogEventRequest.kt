@@ -6,17 +6,13 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
-import kotlin.Any
-import kotlin.String
-import kotlin.collections.Map
-
 public data class LogEventRequest(
-  /**
-   * The key of the event
-   */
-  public val key: String,
-  /**
-   * Dictionary of additional event parameters
-   */
-  public val parameters: Map<String, Any>?
+    /**
+     * The key of the event
+     */
+    public val key: String,
+    /**
+     * Dictionary of additional event parameters
+     */
+    public val parameters: Map<String, Any>?
 )

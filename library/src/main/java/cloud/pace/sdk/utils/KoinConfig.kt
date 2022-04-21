@@ -6,7 +6,12 @@ import androidx.room.Room
 import cloud.pace.sdk.appkit.AppManager
 import cloud.pace.sdk.appkit.app.AppFragmentViewModel
 import cloud.pace.sdk.appkit.app.AppFragmentViewModelImpl
-import cloud.pace.sdk.appkit.app.api.*
+import cloud.pace.sdk.appkit.app.api.AppAPI
+import cloud.pace.sdk.appkit.app.api.AppAPIImpl
+import cloud.pace.sdk.appkit.app.api.AppRepository
+import cloud.pace.sdk.appkit.app.api.AppRepositoryImpl
+import cloud.pace.sdk.appkit.app.api.UriManager
+import cloud.pace.sdk.appkit.app.api.UriManagerImpl
 import cloud.pace.sdk.appkit.app.drawer.AppDrawerViewModel
 import cloud.pace.sdk.appkit.app.drawer.AppDrawerViewModelImpl
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModel
@@ -50,45 +55,47 @@ object KoinConfig {
     internal fun setupCloudSDK(context: Context, environment: Environment, apiKey: String) {
         cloudSDKKoinApp = koinApplication {
             androidContext(context)
-            modules(module {
-                factory<LocationProvider> { LocationProviderImpl(get(), get()) }
-                single {
-                    Room.databaseBuilder(get(), POIKitDatabase::class.java, POIKitDatabase.DATABASE_NAME)
-                        .addMigrations(
-                            POIKitDatabase.migration1to2,
-                            POIKitDatabase.migration2to3,
-                            POIKitDatabase.migration3to4,
-                            POIKitDatabase.migration4to5,
-                            POIKitDatabase.migration5to6,
-                            POIKitDatabase.migration6to7
-                        )
-                        .build()
+            modules(
+                module {
+                    factory<LocationProvider> { LocationProviderImpl(get(), get()) }
+                    single {
+                        Room.databaseBuilder(get(), POIKitDatabase::class.java, POIKitDatabase.DATABASE_NAME)
+                            .addMigrations(
+                                POIKitDatabase.migration1to2,
+                                POIKitDatabase.migration2to3,
+                                POIKitDatabase.migration3to4,
+                                POIKitDatabase.migration4to5,
+                                POIKitDatabase.migration5to6,
+                                POIKitDatabase.migration6to7
+                            )
+                            .build()
+                    }
+                    single { TileDownloader(environment) }
+                    single { NavigationApiClient(environment, apiKey) }
+                    single { AddressSearchClient(environment, apiKey) }
+                    single { GeoAPIClient(environment, get()) }
+                    single { PriceHistoryClient(environment) }
+                    single<SystemManager> { SystemManagerImpl(get()) }
+                    single<SharedPreferencesModel> { SharedPreferencesImpl(PreferenceManager.getDefaultSharedPreferences(get())) }
+                    single<CacheModel> { CacheModelImpl() }
+                    single<AppRepository> { AppRepositoryImpl(get(), get(), get(), get(), get()) }
+                    single<NetworkChangeListener> { NetworkChangeListenerImpl(get()) }
+                    single<AppEventManager> { AppEventManagerImpl() }
+                    single<PayAuthenticationManager> { PayAuthenticationManagerImpl(get()) }
+                    single<UriManager> { UriManagerImpl() }
+                    single<AppAPI> { AppAPIImpl(get()) }
+                    single { LocationServices.getGeofencingClient(get<Context>()) }
+                    single<AppModel> { AppModelImpl(get()) }
+                    single { AppManager(DefaultDispatcherProvider()) }
+                    single<GeoAPIManager>(createdAtStart = true) { GeoAPIManagerImpl(get(), get(), get()) }
+                    single { AuthorizationService(get()) }
+                    single { AuthorizationManager(get(), get(), get()) }
+                    single { CredentialsManager(get(), get(), get()) }
+                    viewModel<AppFragmentViewModel> { AppFragmentViewModelImpl(get()) }
+                    viewModel<AppWebViewModel> { (context: Context) -> AppWebViewModelImpl(context, get(), get(), get(), get(), get()) }
+                    viewModel<AppDrawerViewModel> { AppDrawerViewModelImpl(get()) }
                 }
-                single { TileDownloader(environment) }
-                single { NavigationApiClient(environment, apiKey) }
-                single { AddressSearchClient(environment, apiKey) }
-                single { GeoAPIClient(environment, get()) }
-                single { PriceHistoryClient(environment) }
-                single<SystemManager> { SystemManagerImpl(get()) }
-                single<SharedPreferencesModel> { SharedPreferencesImpl(PreferenceManager.getDefaultSharedPreferences(get())) }
-                single<CacheModel> { CacheModelImpl() }
-                single<AppRepository> { AppRepositoryImpl(get(), get(), get(), get(), get()) }
-                single<NetworkChangeListener> { NetworkChangeListenerImpl(get()) }
-                single<AppEventManager> { AppEventManagerImpl() }
-                single<PayAuthenticationManager> { PayAuthenticationManagerImpl(get()) }
-                single<UriManager> { UriManagerImpl() }
-                single<AppAPI> { AppAPIImpl(get()) }
-                single { LocationServices.getGeofencingClient(get<Context>()) }
-                single<AppModel> { AppModelImpl(get()) }
-                single { AppManager(DefaultDispatcherProvider()) }
-                single<GeoAPIManager>(createdAtStart = true) { GeoAPIManagerImpl(get(), get(), get()) }
-                single { AuthorizationService(get()) }
-                single { AuthorizationManager(get(), get(), get()) }
-                single { CredentialsManager(get(), get(), get()) }
-                viewModel<AppFragmentViewModel> { AppFragmentViewModelImpl(get()) }
-                viewModel<AppWebViewModel> { (context: Context) -> AppWebViewModelImpl(context, get(), get(), get(), get(), get()) }
-                viewModel<AppDrawerViewModel> { AppDrawerViewModelImpl(get()) }
-            })
+            )
         }
     }
 

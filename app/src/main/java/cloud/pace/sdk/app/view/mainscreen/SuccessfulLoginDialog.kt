@@ -15,7 +15,7 @@ import cloud.pace.sdk.app.MainScreenActivity
  */
 
 @Composable
-fun SuccessfulLoginDialog(activity: MainScreenActivity, enableBioAuth: () -> Unit){
+fun SuccessfulLoginDialog(activity: MainScreenActivity, enableBioAuth: () -> Unit) {
     val openDialog = remember { mutableStateOf(true) }
     if (openDialog.value) {
         AlertDialog(

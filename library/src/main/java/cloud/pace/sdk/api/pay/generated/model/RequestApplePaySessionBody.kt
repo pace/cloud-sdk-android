@@ -9,16 +9,12 @@ package cloud.pace.sdk.api.pay.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
 
 class RequestApplePaySessionBody {
 
     lateinit var type: Type
     lateinit var attributes: Attributes
+
     /* Unique ID of the new apple pay session. */
     var id: String? = null
 

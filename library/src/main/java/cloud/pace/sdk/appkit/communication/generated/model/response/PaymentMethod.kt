@@ -6,19 +6,17 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
-import kotlin.String
-
 public data class PaymentMethod(
-  /**
-   * The name of the payment method.
-   */
-  public val displayName: String?,
-  /**
-   * The corresponding payment network of the payment method.
-   */
-  public val network: String?,
-  /**
-   * The type of the payment method.
-   */
-  public val type: String
+    /**
+     * The name of the payment method.
+     */
+    public val displayName: String?,
+    /**
+     * The corresponding payment network of the payment method.
+     */
+    public val network: String?,
+    /**
+     * The type of the payment method.
+     */
+    public val type: String
 )

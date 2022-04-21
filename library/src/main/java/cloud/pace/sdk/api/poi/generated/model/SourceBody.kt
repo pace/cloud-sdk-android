@@ -9,17 +9,15 @@ package cloud.pace.sdk.api.poi.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
+import java.util.Date
 
 class SourceBody {
 
     var attributes: Attributes? = null
+
     /* Source ID */
     var id: String? = null
+
     /* Type */
     var type: Type? = null
 
@@ -35,11 +33,14 @@ class SourceBody {
         /* list of ISO-3166-1 ALPHA-2 encoded countries */
         var countries: List<String>? = null
         var createdAt: Date? = null
+
         /* timestamp of last import from source */
         var lastDataAt: Date? = null
+
         /* source name, unique */
         var name: String? = null
         var poiType: POIType? = null
+
         /* JSON field describing the structure of the updates sent by the data source */
         var schema: List<FieldName>? = null
         var updatedAt: Date? = null

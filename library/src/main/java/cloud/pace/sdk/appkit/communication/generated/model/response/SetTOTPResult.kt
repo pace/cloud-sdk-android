@@ -6,36 +6,33 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
-import kotlin.Int
-import kotlin.String
-
 public data class SetTOTPError(
-  public val message: String? = null
+    public val message: String? = null
 ) : ResponseBody()
 
 public class SetTOTPResult private constructor(
-  status: Int,
-  body: ResponseBody?
+    status: Int,
+    body: ResponseBody?
 ) : Result(status, body) {
-  public constructor(success: Success) : this(200, null)
+    public constructor(success: Success) : this(200, null)
 
-  public constructor(failure: Failure) : this(failure.statusCode.code, failure.response)
+    public constructor(failure: Failure) : this(failure.statusCode.code, failure.response)
 
-  public class Success
+    public class Success
 
-  public class Failure(
-    public val statusCode: StatusCode,
-    public val response: SetTOTPError
-  ) {
-    public enum class StatusCode(
-      public val code: Int
+    public class Failure(
+        public val statusCode: StatusCode,
+        public val response: SetTOTPError
     ) {
-      BadRequest(400),
-      Unauthorized(401),
-      MethodNotAllowed(405),
-      RequestTimeout(408),
-      InternalServerError(500),
-      ;
+        public enum class StatusCode(
+            public val code: Int
+        ) {
+            BadRequest(400),
+            Unauthorized(401),
+            MethodNotAllowed(405),
+            RequestTimeout(408),
+            InternalServerError(500),
+            ;
+        }
     }
-  }
 }

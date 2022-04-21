@@ -12,7 +12,7 @@ import cloud.pace.sdk.fueling_app.util.Constants.DEFAULT_PRE_AUTH_AMOUNT
 import cloud.pace.sdk.fueling_app.util.Constants.DEFAULT_PRE_AUTH_CURRENCY
 import cloud.pace.sdk.utils.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
+import java.util.Currency
 
 /**
  * This fragment is displayed only if the fueling process is pre auth. Here the user can set his maximum amount he wants to spend for fueling.
@@ -31,7 +31,8 @@ class AmountFragment : Fragment(R.layout.fragment_amount) {
             findNavController().popBackStack()
         }
 
-        binding.pumpNumber.text = getString(R.string.pre_auth_amount_pump_number, args.pumpResponse.identifier)
+        binding.pumpNumber.text =
+            getString(R.string.pre_auth_amount_pump_number, args.pumpResponse.identifier)
 
         binding.chipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
             if (checkedIds.isEmpty()) {
@@ -44,7 +45,8 @@ class AmountFragment : Fragment(R.layout.fragment_amount) {
 
         binding.amount.addTextChangedListener(
             onTextChanged = { text, _, _, _ ->
-                binding.continueButton.isEnabled = isInputValid(text?.toString()) || binding.chipGroup.checkedChipIds.isNotEmpty()
+                binding.continueButton.isEnabled =
+                    isInputValid(text?.toString()) || binding.chipGroup.checkedChipIds.isNotEmpty()
             },
             afterTextChanged = {
                 if (isInputValid(it?.toString())) {
@@ -55,7 +57,8 @@ class AmountFragment : Fragment(R.layout.fragment_amount) {
             }
         )
 
-        binding.currency.text = args.gasStation.currency?.let { Currency.getInstance(it).symbol } ?: DEFAULT_PRE_AUTH_CURRENCY
+        binding.currency.text = args.gasStation.currency?.let { Currency.getInstance(it).symbol }
+            ?: DEFAULT_PRE_AUTH_CURRENCY
 
         binding.continueButton.setOnClickListener {
             it.isEnabled = false
@@ -73,7 +76,8 @@ class AmountFragment : Fragment(R.layout.fragment_amount) {
                     args.gasStation,
                     args.paymentMethod,
                     args.pump,
-                    args.pumpResponse.apply { priceIncludingVAT = amount })
+                    args.pumpResponse.apply { priceIncludingVAT = amount }
+                )
             )
         }
     }

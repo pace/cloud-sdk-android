@@ -9,21 +9,19 @@ package cloud.pace.sdk.api.user.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
 
 class OAuth2Token {
 
     lateinit var accessToken: String
+
     /* The type of the token issued as described. */
     lateinit var issuedTokenType: IssuedTokenType
+
     /* The type of the token issued as described in
 https://datatracker.ietf.org/doc/html/rfc6749#section-7.1.  Value is case insensitive.
  */
     lateinit var tokenType: String
+
     /* The lifetime in seconds of the access token.  For
 example, the value "3600" denotes that the access token will
 expire in one hour from the time the response was generated.

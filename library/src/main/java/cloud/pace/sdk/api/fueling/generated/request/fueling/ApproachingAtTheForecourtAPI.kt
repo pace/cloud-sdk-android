@@ -8,27 +8,30 @@
 package cloud.pace.sdk.api.fueling.generated.request.fueling
 
 import cloud.pace.sdk.api.fueling.FuelingAPI
-import cloud.pace.sdk.api.fueling.generated.model.*
+import cloud.pace.sdk.api.fueling.generated.model.ApproachingResponse
+import cloud.pace.sdk.api.fueling.generated.model.FuelPrice
+import cloud.pace.sdk.api.fueling.generated.model.GasStation
+import cloud.pace.sdk.api.fueling.generated.model.GasStationNote
+import cloud.pace.sdk.api.fueling.generated.model.PaymentMethod
+import cloud.pace.sdk.api.fueling.generated.model.PaymentMethodKind
+import cloud.pace.sdk.api.fueling.generated.model.Pump
+import cloud.pace.sdk.api.fueling.generated.model.Transaction
 import cloud.pace.sdk.api.utils.EnumConverterFactory
 import cloud.pace.sdk.api.utils.InterceptorUtils
-import cloud.pace.sdk.utils.toIso8601
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.http.*
-import java.io.File
-import java.util.*
+import retrofit2.http.HeaderMap
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 object ApproachingAtTheForecourtAPI {
@@ -60,7 +63,13 @@ Other than authorization, the most common error states encountered should be:
         ): Call<ApproachingResponse>
     }
 
-    fun FuelingAPI.FuelingAPI.approachingAtTheForecourt(gasStationId: String, compileopeningHours: Boolean? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ApproachingResponse> {
+    fun FuelingAPI.FuelingAPI.approachingAtTheForecourt(
+        gasStationId: String,
+        compileopeningHours: Boolean? = null,
+        readTimeout: Long? = null,
+        additionalHeaders: Map<String, String>? = null,
+        additionalParameters: Map<String, String>? = null
+    ): Call<ApproachingResponse> {
         val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
         val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
@@ -76,15 +85,16 @@ Other than authorization, the most common error states encountered should be:
                 .addConverterFactory(
                     JsonApiConverterFactory.create(
                         Moshi.Builder()
-                            .add(ResourceAdapterFactory.builder()
-                                .add(GasStation::class.java)
-                                .add(GasStationNote::class.java)
-                                .add(FuelPrice::class.java)
-                                .add(Pump::class.java)
-                                .add(PaymentMethod::class.java)
-                                .add(PaymentMethodKind::class.java)
-                                .add(Transaction::class.java)
-                                .build()
+                            .add(
+                                ResourceAdapterFactory.builder()
+                                    .add(GasStation::class.java)
+                                    .add(GasStationNote::class.java)
+                                    .add(FuelPrice::class.java)
+                                    .add(Pump::class.java)
+                                    .add(PaymentMethod::class.java)
+                                    .add(PaymentMethodKind::class.java)
+                                    .add(Transaction::class.java)
+                                    .build()
                             )
                             .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
                             .add(KotlinJsonAdapterFactory())
@@ -102,6 +112,10 @@ Other than authorization, the most common error states encountered should be:
                 .build()
                 .create(ApproachingAtTheForecourtService::class.java)
 
-        return service.approachingAtTheForecourt(headers, gasStationId, compileopeningHours)
+        return service.approachingAtTheForecourt(
+            headers,
+            gasStationId,
+            compileopeningHours
+        )
     }
 }

@@ -403,7 +403,7 @@ class LocationProviderImpl(
 
         // Discard old locations
         if (systemManager.getCurrentTimeMillis() - location.time >= MAX_LOCATION_AGE) {
-            Timber.w("Discard old location: location.time (${location.time} ms) >= MAX_LOCATION_AGE (${MAX_LOCATION_AGE} ms)")
+            Timber.w("Discard old location: location.time (${location.time} ms) >= MAX_LOCATION_AGE ($MAX_LOCATION_AGE ms)")
             return null
         }
 

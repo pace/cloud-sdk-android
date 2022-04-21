@@ -9,16 +9,14 @@ package cloud.pace.sdk.api.pay.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
 
 @JsonApi(type = "paymentMethodCreditCardCreate")
 class PaymentMethodCreditCardCreate : Resource() {
 
     lateinit var kind: Kind
+
     /* Token representing the credit card information. The token is payment provider specific and provided by the payment provider.
 Example: In-Browser, the Payment Provider Credit Card Widget will return a token after adding a credit card. This token should be
 used here.
@@ -30,5 +28,4 @@ used here.
         @Json(name = "creditcard")
         CREDITCARD("creditcard")
     }
-
 }

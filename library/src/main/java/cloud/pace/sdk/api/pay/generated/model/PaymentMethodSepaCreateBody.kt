@@ -9,16 +9,12 @@ package cloud.pace.sdk.api.pay.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
 
 class PaymentMethodSepaCreateBody {
 
     lateinit var type: Type
     var attributes: Attributes? = null
+
     /* The ID of this payment method. */
     var id: String? = null
 
@@ -31,20 +27,27 @@ class PaymentMethodSepaCreateBody {
     class Attributes {
 
         lateinit var kind: Kind
+
         /* International Bank Account Number (as defined in ISO 13616:2007), blanks are stripped */
         lateinit var iban: String
+
         /* Residential address of the company or individual. Mailing may used in cases, where the payment provider has issues
     processing the payment.
      */
         lateinit var address: Address
+
         /* Legal name of the company in (case of a company account, firstName and lastName are ignored in that case) */
         var company: String? = null
+
         /* Email address */
         var email: String? = null
+
         /* Legal name of account owner (in case of an individual person) */
         var firstName: String? = null
+
         /* Legal first name of account owner (in case of an individual person) */
         var lastName: String? = null
+
         /* Legal title of account owner. */
         var title: String? = null
 
@@ -63,6 +66,7 @@ class PaymentMethodSepaCreateBody {
             lateinit var houseNo: String
             lateinit var postalCode: String
             lateinit var city: String
+
             /* Country code in as specified in ISO 3166-1. */
             lateinit var countryCode: String
         }

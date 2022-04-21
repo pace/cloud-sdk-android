@@ -1,7 +1,13 @@
 package cloud.pace.sdk.app.view.mainscreen.listscreen
 
 import android.location.Location
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -11,8 +17,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cloud.pace.sdk.poikit.poi.*
-import java.util.*
+import cloud.pace.sdk.poikit.poi.Address
+import cloud.pace.sdk.poikit.poi.Amenity
+import cloud.pace.sdk.poikit.poi.Day
+import cloud.pace.sdk.poikit.poi.Food
+import cloud.pace.sdk.poikit.poi.FuelType
+import cloud.pace.sdk.poikit.poi.GasStation
+import cloud.pace.sdk.poikit.poi.OpeningHour
+import cloud.pace.sdk.poikit.poi.OpeningHours
+import cloud.pace.sdk.poikit.poi.OpeningRule
+import cloud.pace.sdk.poikit.poi.PaymentMethod
+import cloud.pace.sdk.poikit.poi.Price
+import cloud.pace.sdk.poikit.poi.PriceSuggestion
+import cloud.pace.sdk.poikit.poi.Service
+import cloud.pace.sdk.poikit.poi.toLocationPoint
+import java.util.Date
 
 /**
  * Template of items inside the gasStation list, to be shown on the listScreen
@@ -96,61 +115,55 @@ fun getDistanceText(distance: Double?): String {
 @Preview
 @Composable
 fun ListItemPreview() {
-    ListScreenListItem(GasStation("poiId", arrayListOf()).apply {
-        id = "poiId"
-        name = "HEM Tankstelle am Südend"
-        address = Address("c=DE;l=Karlsruhe;pc=76131;s=Haid-und-Neu-Straße;hn=18")
-        openingHours = listOf(
-            OpeningHours(listOf(Day.FRIDAY, Day.MONDAY, Day.THURSDAY, Day.TUESDAY, Day.WEDNESDAY), listOf(OpeningHour("8", "22")), OpeningRule.OPEN),
-            OpeningHours(listOf(Day.SUNDAY), listOf(OpeningHour("0", "0")), OpeningRule.CLOSED),
-            OpeningHours(listOf(Day.SATURDAY), listOf(OpeningHour("10", "20")), OpeningRule.OPEN)
-        )
-        prices = mutableListOf(
-            Price(FuelType.E5, "Super", 1.389),
-            Price(FuelType.E10, "Super E10", 1.349),
-            Price(FuelType.DIESEL, "Diesel", 1.289)
-        )
-        currency = "EUR"
-        isConnectedFuelingAvailable = true
-        cofuPaymentMethods = mutableListOf("paypal")
-        paymentMethods = mutableListOf(
-            PaymentMethod.AMERICAN_EXPRESS,
-            PaymentMethod.CASH,
-            PaymentMethod.ESSO_CARD,
-            PaymentMethod.GIROCARD,
-            PaymentMethod.MAESTRO,
-            PaymentMethod.MASTER_CARD,
-            PaymentMethod.UTA,
-            PaymentMethod.VISA
-        )
-        amenities = mutableListOf(
-            Amenity.ATM,
-            Amenity.DISABILITY_FRIENDLY,
-            Amenity.TOILET
-        )
-        foods = mutableListOf(
-            Food.BAKERY
-        )
-        services = mutableListOf(
-            Service.CAR_WASH,
-            Service.FREE_WIFI,
-            Service.TYRE_AIR
-        )
-        updatedAt = Date(1575651009687)
-        latitude = 82.0
-        longitude = 73.0
-        priceSuggestion = PriceSuggestion.HIGH
-    },
+    ListScreenListItem(
+        GasStation("poiId", arrayListOf()).apply {
+            id = "poiId"
+            name = "HEM Tankstelle am Südend"
+            address = Address("c=DE;l=Karlsruhe;pc=76131;s=Haid-und-Neu-Straße;hn=18")
+            openingHours = listOf(
+                OpeningHours(listOf(Day.FRIDAY, Day.MONDAY, Day.THURSDAY, Day.TUESDAY, Day.WEDNESDAY), listOf(OpeningHour("8", "22")), OpeningRule.OPEN),
+                OpeningHours(listOf(Day.SUNDAY), listOf(OpeningHour("0", "0")), OpeningRule.CLOSED),
+                OpeningHours(listOf(Day.SATURDAY), listOf(OpeningHour("10", "20")), OpeningRule.OPEN)
+            )
+            prices = mutableListOf(
+                Price(FuelType.E5, "Super", 1.389),
+                Price(FuelType.E10, "Super E10", 1.349),
+                Price(FuelType.DIESEL, "Diesel", 1.289)
+            )
+            currency = "EUR"
+            isConnectedFuelingAvailable = true
+            cofuPaymentMethods = mutableListOf("paypal")
+            paymentMethods = mutableListOf(
+                PaymentMethod.AMERICAN_EXPRESS,
+                PaymentMethod.CASH,
+                PaymentMethod.ESSO_CARD,
+                PaymentMethod.GIROCARD,
+                PaymentMethod.MAESTRO,
+                PaymentMethod.MASTER_CARD,
+                PaymentMethod.UTA,
+                PaymentMethod.VISA
+            )
+            amenities = mutableListOf(
+                Amenity.ATM,
+                Amenity.DISABILITY_FRIENDLY,
+                Amenity.TOILET
+            )
+            foods = mutableListOf(
+                Food.BAKERY
+            )
+            services = mutableListOf(
+                Service.CAR_WASH,
+                Service.FREE_WIFI,
+                Service.TYRE_AIR
+            )
+            updatedAt = Date(1575651009687)
+            latitude = 82.0
+            longitude = 73.0
+            priceSuggestion = PriceSuggestion.HIGH
+        },
         Location("").apply {
             latitude = 43.0
             longitude = 8.0
         }
     )
 }
-
-
-
-
-
-
-

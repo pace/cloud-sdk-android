@@ -9,34 +9,37 @@ package cloud.pace.sdk.api.fueling.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
 
 @JsonApi(type = "pump")
 class Pump : Resource() {
 
     var vat: VAT? = null
+
     /* Currency as specified in ISO-4217. */
     var currency: String? = null
+
     /* Fuel amount in liters */
     var fuelAmount: Double? = null
     var fuelType: String? = null
+
     /* The fueling process that has to be followed
 * `postPay` the pump is *free* and needs to be [paid](#operation/ProcessPayment) after fueling
 * `preAuth` the pump is *locked* and has to be [unlocked](#operation/ProcessPayment)
 * `preAuthWithFuelType` the pump is *locked* and has to be [unlocked](#operation/ProcessPayment), the `carFuelType` is required
  */
     var fuelingProcess: FuelingProcess? = null
+
     /* Pump identifier */
     var identifier: String? = null
     var priceIncludingVAT: Double? = null
+
     /* Fuel price in CUR/liter */
     var pricePerUnit: Double? = null
     var priceWithoutVAT: Double? = null
     var productName: String? = null
+
     /* Current pump status.
 * `free` the pump is free, fueling possible (nozzle not lifted), possible transitions *inUse*, *locked*, *outOfOrder*. Note: A transition from *free* to *locked* may implies the pump was pre-authorization was canceled.
 * `inUse` the pump is fueling, possible transitions *readyToPay*, *locked*, *outOfOrder*
@@ -47,6 +50,7 @@ class Pump : Resource() {
  */
     var status: Status? = null
     var transaction: Transaction? = null
+
     /* Provided if the user pre-authorized the pump */
     var transactionId: String? = null
 
@@ -59,9 +63,11 @@ class Pump : Resource() {
         @SerializedName("postPay")
         @Json(name = "postPay")
         POSTPAY("postPay"),
+
         @SerializedName("preAuth")
         @Json(name = "preAuth")
         PREAUTH("preAuth"),
+
         @SerializedName("preAuthWithFuelType")
         @Json(name = "preAuthWithFuelType")
         PREAUTHWITHFUELTYPE("preAuthWithFuelType")
@@ -79,18 +85,23 @@ class Pump : Resource() {
         @SerializedName("free")
         @Json(name = "free")
         FREE("free"),
+
         @SerializedName("inUse")
         @Json(name = "inUse")
         INUSE("inUse"),
+
         @SerializedName("readyToPay")
         @Json(name = "readyToPay")
         READYTOPAY("readyToPay"),
+
         @SerializedName("locked")
         @Json(name = "locked")
         LOCKED("locked"),
+
         @SerializedName("inTransaction")
         @Json(name = "inTransaction")
         INTRANSACTION("inTransaction"),
+
         @SerializedName("outOfOrder")
         @Json(name = "outOfOrder")
         OUTOFORDER("outOfOrder")
@@ -101,5 +112,4 @@ class Pump : Resource() {
         var amount: Double? = null
         var rate: Double? = null
     }
-
 }

@@ -7,18 +7,11 @@
 
 package cloud.pace.sdk.api.user.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
-
 class PinOrPassword {
 
     /* indicates if password is set and validated */
     var password: Boolean? = null
+
     /* indicates if PIN is set and validated */
     var pin: Boolean? = null
 }

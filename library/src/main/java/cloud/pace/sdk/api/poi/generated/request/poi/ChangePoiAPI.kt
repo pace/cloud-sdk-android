@@ -8,27 +8,21 @@
 package cloud.pace.sdk.api.poi.generated.request.poi
 
 import cloud.pace.sdk.api.poi.POIAPI
-import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.poi.generated.model.POI
+import cloud.pace.sdk.api.poi.generated.model.POIBody
 import cloud.pace.sdk.api.utils.EnumConverterFactory
 import cloud.pace.sdk.api.utils.InterceptorUtils
-import cloud.pace.sdk.utils.toIso8601
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
-import java.io.File
-import java.util.*
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 object ChangePoiAPI {
@@ -40,7 +34,7 @@ object ChangePoiAPI {
         fun changePoi(
             @HeaderMap headers: Map<String, String>,
             /* ID of the POI */
-            @Path("poiId") poiId: String? = null, 
+            @Path("poiId") poiId: String? = null,
             @retrofit2.http.Body body: Body
         ): Call<POI>
     }
@@ -51,7 +45,13 @@ object ChangePoiAPI {
         var data: POIBody? = null
     }
 
-    fun POIAPI.POIAPI.changePoi(poiId: String? = null, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<POI> {
+    fun POIAPI.POIAPI.changePoi(
+        poiId: String? = null,
+        body: Body,
+        readTimeout: Long? = null,
+        additionalHeaders: Map<String, String>? = null,
+        additionalParameters: Map<String, String>? = null
+    ): Call<POI> {
         val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
         val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
@@ -67,8 +67,9 @@ object ChangePoiAPI {
                 .addConverterFactory(
                     JsonApiConverterFactory.create(
                         Moshi.Builder()
-                            .add(ResourceAdapterFactory.builder()
-                                .build()
+                            .add(
+                                ResourceAdapterFactory.builder()
+                                    .build()
                             )
                             .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
                             .add(KotlinJsonAdapterFactory())
@@ -86,6 +87,10 @@ object ChangePoiAPI {
                 .build()
                 .create(ChangePoiService::class.java)
 
-        return service.changePoi(headers, poiId, body)
+        return service.changePoi(
+            headers,
+            poiId,
+            body
+        )
     }
 }

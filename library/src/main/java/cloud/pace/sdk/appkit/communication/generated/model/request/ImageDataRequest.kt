@@ -6,11 +6,9 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
-import kotlin.String
-
 public data class ImageDataRequest(
-  /**
-   * The base64 encoded version of the image.
-   */
-  public val image: String
+    /**
+     * The base64 encoded version of the image.
+     */
+    public val image: String
 )

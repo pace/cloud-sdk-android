@@ -7,14 +7,6 @@
 
 package cloud.pace.sdk.api.pay.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
-
 class ReadOnlyLocation {
 
     var address: Address? = null
@@ -25,6 +17,7 @@ class ReadOnlyLocation {
     class Address {
 
         var city: String? = null
+
         /* Country code in as specified in ISO 3166-1. */
         var countryCode: String? = null
         var houseNo: String? = null

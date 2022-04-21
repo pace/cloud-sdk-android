@@ -10,10 +10,8 @@ package cloud.pace.sdk.api.poi.generated.model
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
 
 @JsonApi(type = "gasStation")
 class GasStation : Resource() {
@@ -31,6 +29,7 @@ class GasStation : Resource() {
     var paymentMethods: List<String>? = null
     var postalServices: List<String>? = null
     var priceFormat: String? = null
+
     /* References are PRNs to external and internal resources that are represented by this poi */
     var references: List<String>? = null
     var services: List<String>? = null
@@ -40,6 +39,7 @@ class GasStation : Resource() {
     class Address {
 
         var city: String? = null
+
         /* Country code in as specified in ISO 3166-1. */
         var countryCode: String? = null
         var houseNo: String? = null
@@ -60,9 +60,11 @@ class GasStation : Resource() {
             @SerializedName("m")
             @Json(name = "m")
             M("m"),
+
             @SerializedName("f")
             @Json(name = "f")
             F("f"),
+
             @SerializedName("o")
             @Json(name = "o")
             O("o")
@@ -86,6 +88,4 @@ class GasStation : Resource() {
 
     private var sucessorOf: HasMany<GasStation> = HasMany()
     fun getSucessorOf() = sucessorOf.get(document)
-
-
 }

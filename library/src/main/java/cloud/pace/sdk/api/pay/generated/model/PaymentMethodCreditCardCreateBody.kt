@@ -9,16 +9,12 @@ package cloud.pace.sdk.api.pay.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
 
 class PaymentMethodCreditCardCreateBody {
 
     lateinit var type: Type
     var attributes: Attributes? = null
+
     /* The ID of this payment method. */
     var id: String? = null
 
@@ -31,6 +27,7 @@ class PaymentMethodCreditCardCreateBody {
     class Attributes {
 
         lateinit var kind: Kind
+
         /* Token representing the credit card information. The token is payment provider specific and provided by the payment provider.
     Example: In-Browser, the Payment Provider Credit Card Widget will return a token after adding a credit card. This token should be
     used here.

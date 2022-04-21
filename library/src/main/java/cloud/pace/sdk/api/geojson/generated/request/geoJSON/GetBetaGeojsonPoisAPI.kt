@@ -23,7 +23,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.HeaderMap
 import retrofit2.http.Query
-import java.util.*
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 object GetBetaGeojsonPoisAPI {
@@ -34,33 +34,33 @@ object GetBetaGeojsonPoisAPI {
         @GET("beta/geojson/pois")
         fun getBetaGeojsonPois(
             @HeaderMap headers: Map<String, String>,
-            /** Comma separated list of fields. Selects additional fields to be returned. The requested fields will be shown in the `properties` attribute of each `GeoJsonFeature`.
-            Possible values are:
+            /* Comma separated list of fields. Selects additional fields to be returned. The requested fields will be shown in the `properties` attribute of each `GeoJsonFeature`.
+             Possible values are:
              * type
              * address
              * stationName
              * brand
              * dkvStationID */
             @Query("fields[gasStation]") fieldsgasStation: String? = null,
-            /** Only show POIs of the given type */
+            /* Only show POIs of the given type */
             @Query("filter[poiType]") filterpoiType: FilterpoiType? = null,
-            /** Filter results based on available online payment methods. Use a comma separated list to get stations for multiple payment method. */
+            /* Filter results based on available online payment methods. Use a comma separated list to get stations for multiple payment method. */
             @Query("filter[onlinePaymentMethod]") filteronlinePaymentMethod: String? = null,
-            /** Filter results based on merchant name. Value has to be the same as provided in the merchant field. */
+            /* Filter results based on merchant name. Value has to be the same as provided in the merchant field. */
             @Query("filter[merchant]") filtermerchant: String? = null,
-            /** Select a country to query. If this parameter is not provided data of all countries is returned. Country code in ISO 3166-1 alpha-2 format */
+            /* Select a country to query. If this parameter is not provided data of all countries is returned. Country code in ISO 3166-1 alpha-2 format */
             @Query("filter[country]") filtercountry: String? = null,
-            /** If set, the request will only return POIs which have PACE Connected Fueling activated.
+            /* If set, the request will only return POIs which have PACE Connected Fueling activated.
             To activate the filter, use one of the following values (all other values will result in the filter being ignored):
-             * true
-             * yes
-             * y
-             * 1
-             * on
-             */
+            * true
+            * yes
+            * y
+            * 1
+            * on
+            */
             @Query("filter[connectedFueling]") filterconnectedFueling: String? = null,
-            /** If set, the request will only return POIs that allow the payment method dkvAppAndGo.
-            To activate the filter, use one of the following values (all other values will result in the filter being ignored):
+            /* If set, the request will only return POIs that allow the payment method dkvAppAndGo.
+             To activate the filter, use one of the following values (all other values will result in the filter being ignored):
              * true
              * yes
              * y
@@ -82,7 +82,18 @@ object GetBetaGeojsonPoisAPI {
         SPEEDCAMERA("SpeedCamera")
     }
 
-    fun GeoJSONAPI.GeoJSONAPI.getBetaGeojsonPois(fieldsgasStation: String? = null, filterpoiType: FilterpoiType? = null, filteronlinePaymentMethod: String? = null, filtermerchant: String? = null, filtercountry: String? = null, filterconnectedFueling: String? = null, filterdkvAppAndGo: String? = null, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<GeoJson> {
+    fun GeoJSONAPI.GeoJSONAPI.getBetaGeojsonPois(
+        fieldsgasStation: String? = null,
+        filterpoiType: FilterpoiType? = null,
+        filteronlinePaymentMethod: String? = null,
+        filtermerchant: String? = null,
+        filtercountry: String? = null,
+        filterconnectedFueling: String? = null,
+        filterdkvAppAndGo: String? = null,
+        readTimeout: Long? = null,
+        additionalHeaders: Map<String, String>? = null,
+        additionalParameters: Map<String, String>? = null
+    ): Call<GeoJson> {
         val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
         val headers = InterceptorUtils.getHeaders(false, "application/json", "application/json", additionalHeaders)
 
@@ -106,6 +117,15 @@ object GetBetaGeojsonPoisAPI {
                 .build()
                 .create(GetBetaGeojsonPoisService::class.java)
 
-        return service.getBetaGeojsonPois(headers, fieldsgasStation, filterpoiType, filteronlinePaymentMethod, filtermerchant, filtercountry, filterconnectedFueling, filterdkvAppAndGo)
+        return service.getBetaGeojsonPois(
+            headers,
+            fieldsgasStation,
+            filterpoiType,
+            filteronlinePaymentMethod,
+            filtermerchant,
+            filtercountry,
+            filterconnectedFueling,
+            filterdkvAppAndGo
+        )
     }
 }

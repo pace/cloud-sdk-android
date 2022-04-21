@@ -6,34 +6,31 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
-import kotlin.Int
-import kotlin.String
-
 public data class BackError(
-  public val message: String? = null
+    public val message: String? = null
 ) : ResponseBody()
 
 public class BackResult private constructor(
-  status: Int,
-  body: ResponseBody?
+    status: Int,
+    body: ResponseBody?
 ) : Result(status, body) {
-  public constructor(success: Success) : this(204, null)
+    public constructor(success: Success) : this(204, null)
 
-  public constructor(failure: Failure) : this(failure.statusCode.code, failure.response)
+    public constructor(failure: Failure) : this(failure.statusCode.code, failure.response)
 
-  public class Success
+    public class Success
 
-  public class Failure(
-    public val statusCode: StatusCode,
-    public val response: BackError
-  ) {
-    public enum class StatusCode(
-      public val code: Int
+    public class Failure(
+        public val statusCode: StatusCode,
+        public val response: BackError
     ) {
-      BadRequest(400),
-      RequestTimeout(408),
-      InternalServerError(500),
-      ;
+        public enum class StatusCode(
+            public val code: Int
+        ) {
+            BadRequest(400),
+            RequestTimeout(408),
+            InternalServerError(500),
+            ;
+        }
     }
-  }
 }

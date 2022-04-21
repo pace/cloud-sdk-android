@@ -9,16 +9,12 @@ package cloud.pace.sdk.api.pay.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
-import java.util.*
 
 class PaymentMethodPayPalCreateBody {
 
     lateinit var type: Type
     var attributes: Attributes? = null
+
     /* The ID of this payment method. */
     var id: String? = null
 
@@ -31,10 +27,13 @@ class PaymentMethodPayPalCreateBody {
     class Attributes {
 
         lateinit var kind: Kind
+
         /* URL that the user is redirected to after successfully creating the payment method in the backend. Must be provided if the backend should create the Billing Agreement. */
         lateinit var successURL: String
+
         /* URL that the user is redirected to after creating the payment method in the backend failes. Must be provided if the backend should create the Billing Agreement. */
         lateinit var failureURL: String
+
         /* URL that the user is redirected to after creating the payment method in the backend was canceled by the user. Must be provided if the backend should create the Billing Agreement. */
         lateinit var canceledURL: String
 

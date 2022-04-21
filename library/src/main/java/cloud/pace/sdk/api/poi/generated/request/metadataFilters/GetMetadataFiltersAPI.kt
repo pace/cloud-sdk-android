@@ -8,27 +8,22 @@
 package cloud.pace.sdk.api.poi.generated.request.metadataFilters
 
 import cloud.pace.sdk.api.poi.POIAPI
-import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.poi.generated.model.Categories
 import cloud.pace.sdk.api.utils.EnumConverterFactory
 import cloud.pace.sdk.api.utils.InterceptorUtils
-import cloud.pace.sdk.utils.toIso8601
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.http.*
-import java.io.File
-import java.util.*
+import retrofit2.http.GET
+import retrofit2.http.HeaderMap
+import retrofit2.http.Query
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 object GetMetadataFiltersAPI {
@@ -51,7 +46,13 @@ For the latitude and longitude values used in the request, returns the available
         ): Call<Categories>
     }
 
-    fun POIAPI.MetadataFiltersAPI.getMetadataFilters(latitude: Float, longitude: Float, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<Categories> {
+    fun POIAPI.MetadataFiltersAPI.getMetadataFilters(
+        latitude: Float,
+        longitude: Float,
+        readTimeout: Long? = null,
+        additionalHeaders: Map<String, String>? = null,
+        additionalParameters: Map<String, String>? = null
+    ): Call<Categories> {
         val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
         val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
@@ -67,8 +68,9 @@ For the latitude and longitude values used in the request, returns the available
                 .addConverterFactory(
                     JsonApiConverterFactory.create(
                         Moshi.Builder()
-                            .add(ResourceAdapterFactory.builder()
-                                .build()
+                            .add(
+                                ResourceAdapterFactory.builder()
+                                    .build()
                             )
                             .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
                             .add(KotlinJsonAdapterFactory())
@@ -86,6 +88,10 @@ For the latitude and longitude values used in the request, returns the available
                 .build()
                 .create(GetMetadataFiltersService::class.java)
 
-        return service.getMetadataFilters(headers, latitude, longitude)
+        return service.getMetadataFilters(
+            headers,
+            latitude,
+            longitude
+        )
     }
 }

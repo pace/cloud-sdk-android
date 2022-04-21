@@ -8,7 +8,11 @@ import cloud.pace.sdk.appkit.app.drawer.AppDrawerViewModel
 import cloud.pace.sdk.appkit.app.drawer.AppDrawerViewModelImpl
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.utils.TestAppEventManager
-import org.junit.*
+import org.junit.After
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -37,10 +41,12 @@ class AppDrawerViewModelTest {
     fun init() {
         startKoin {
             androidContext(mockContext)
-            modules(module {
-                single { eventManager }
-                viewModel<AppDrawerViewModel> { viewModel }
-            })
+            modules(
+                module {
+                    single { eventManager }
+                    viewModel<AppDrawerViewModel> { viewModel }
+                }
+            )
         }
     }
 

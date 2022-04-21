@@ -17,7 +17,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.HeaderMap
 import retrofit2.http.POST
 import retrofit2.http.Path
-import java.util.*
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 object ProcessPreAuthPaymentAPI {
@@ -45,7 +45,13 @@ You can optionally provide:
         ): Call<ResponseBody>
     }
 
-    fun FuelingAPI.FuelingAPI.processPreAuthPayment(gasStationId: String, body: TransactionRequest, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<ResponseBody> {
+    fun FuelingAPI.FuelingAPI.processPreAuthPayment(
+        gasStationId: String,
+        body: TransactionRequest,
+        readTimeout: Long? = null,
+        additionalHeaders: Map<String, String>? = null,
+        additionalParameters: Map<String, String>? = null
+    ): Call<ResponseBody> {
         val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
         val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
@@ -81,6 +87,10 @@ You can optionally provide:
                 .build()
                 .create(ProcessPaymentPreAuthService::class.java)
 
-        return service.processPreAuthPayment(headers, gasStationId, body)
+        return service.processPreAuthPayment(
+            headers,
+            gasStationId,
+            body
+        )
     }
 }

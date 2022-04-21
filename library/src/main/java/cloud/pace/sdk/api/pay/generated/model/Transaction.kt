@@ -7,13 +7,9 @@
 
 package cloud.pace.sdk.api.pay.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
-import java.util.*
+import java.util.Date
 
 @JsonApi(type = "transaction")
 class Transaction : Resource() {
@@ -21,39 +17,53 @@ class Transaction : Resource() {
     var links: TransactionLinks? = null
 
     var vat: VAT? = null
+
     /* Initial creation date of the transaction (https://tools.ietf.org/html/rfc3339#section-5.6).
  */
     var createdAt: Date? = null
+
     /* Currency as specified in ISO-4217. */
     var currency: String? = null
+
     /* Amount that was discounted. Only if any discounts were applied earlier. */
     var discountAmount: Double? = null
     var fuel: Fuel? = null
+
     /* PACE resource name */
     var issuerPRN: String? = null
     var location: ReadOnlyLocation? = null
+
     /* Current mileage in meters */
     var mileage: Int? = null
+
     /* Number plate of the car */
     var numberPlate: String? = null
+
     /* ID of the paymentMethod */
     var paymentMethodId: String? = null
+
     /* Payment Method Kind as name. */
     var paymentMethodKind: String? = null
+
     /* Payment token value */
     var paymentToken: String? = null
     var priceIncludingVAT: Double? = null
     var priceWithoutVAT: Double? = null
+
     /* The given productFlow (e.g. preAuth, postPay) */
     var productFlow: String? = null
+
     /* PACE resource name - referring to the transaction purpose with provider details. */
     var providerPRN: String? = null
+
     /* PACE resource name */
     var purposePRN: String? = null
     var references: List<String>? = null
+
     /* Date of the last update (https://tools.ietf.org/html/rfc3339#section-5.6).
  */
     var updatedAt: Date? = null
+
     /* Vehicle identification number */
     var vin: String? = null
 
@@ -62,5 +72,4 @@ class Transaction : Resource() {
         var amount: Double? = null
         var rate: Double? = null
     }
-
 }

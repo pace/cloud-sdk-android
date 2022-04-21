@@ -6,19 +6,17 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
-import kotlin.String
-
 public data class Total(
-  /**
-   * The description of the summary.
-   */
-  public val label: String,
-  /**
-   * The amount of the summary.
-   */
-  public val amount: String,
-  /**
-   * The type of the summary.
-   */
-  public val type: String
+    /**
+     * The description of the summary.
+     */
+    public val label: String,
+    /**
+     * The amount of the summary.
+     */
+    public val amount: String,
+    /**
+     * The type of the summary.
+     */
+    public val type: String
 )

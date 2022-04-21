@@ -8,27 +8,21 @@
 package cloud.pace.sdk.api.pay.generated.request.paymentMethods
 
 import cloud.pace.sdk.api.pay.PayAPI
-import cloud.pace.sdk.api.pay.generated.model.*
+import cloud.pace.sdk.api.pay.generated.model.PaymentMethod
+import cloud.pace.sdk.api.pay.generated.model.PaymentMethodBody
 import cloud.pace.sdk.api.utils.EnumConverterFactory
 import cloud.pace.sdk.api.utils.InterceptorUtils
-import cloud.pace.sdk.utils.toIso8601
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.Resource
 import moe.banana.jsonapi2.ResourceAdapterFactory
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
-import java.io.File
-import java.util.*
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 object PatchPaymentMethodAPI {
@@ -41,7 +35,7 @@ object PatchPaymentMethodAPI {
         fun patchPaymentMethod(
             @HeaderMap headers: Map<String, String>,
             /* ID of the paymentMethod */
-            @Path("paymentMethodId") paymentMethodId: String, 
+            @Path("paymentMethodId") paymentMethodId: String,
             @retrofit2.http.Body body: Body
         ): Call<PaymentMethod>
     }
@@ -53,7 +47,13 @@ object PatchPaymentMethodAPI {
         var data: PaymentMethodBody? = null
     }
 
-    fun PayAPI.PaymentMethodsAPI.patchPaymentMethod(paymentMethodId: String, body: Body, readTimeout: Long? = null, additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<PaymentMethod> {
+    fun PayAPI.PaymentMethodsAPI.patchPaymentMethod(
+        paymentMethodId: String,
+        body: Body,
+        readTimeout: Long? = null,
+        additionalHeaders: Map<String, String>? = null,
+        additionalParameters: Map<String, String>? = null
+    ): Call<PaymentMethod> {
         val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
         val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
@@ -69,8 +69,9 @@ object PatchPaymentMethodAPI {
                 .addConverterFactory(
                     JsonApiConverterFactory.create(
                         Moshi.Builder()
-                            .add(ResourceAdapterFactory.builder()
-                                .build()
+                            .add(
+                                ResourceAdapterFactory.builder()
+                                    .build()
                             )
                             .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
                             .add(KotlinJsonAdapterFactory())
@@ -88,6 +89,10 @@ object PatchPaymentMethodAPI {
                 .build()
                 .create(PatchPaymentMethodService::class.java)
 
-        return service.patchPaymentMethod(headers, paymentMethodId, body)
+        return service.patchPaymentMethod(
+            headers,
+            paymentMethodId,
+            body
+        )
     }
 }
