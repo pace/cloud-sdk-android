@@ -1,3 +1,15 @@
+13.3.2 Release notes (2022-04-29)
+=============================================================
+
+### Fixes
+
+* Use Gson instead of Moshi for CMSApi
+
+### Internal
+
+* Reformat code and optimize imports of all files
+* Add pre-commit git hook to format generated code
+
 13.3.1 Release notes (2022-04-20)
 =============================================================
 
