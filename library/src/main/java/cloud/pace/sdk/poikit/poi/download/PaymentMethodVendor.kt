@@ -1,13 +1,13 @@
 package cloud.pace.sdk.poikit.poi.download
 
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 data class PaymentMethodVendor(
     var id: String? = null,
     var slug: String? = null,
     var name: String? = null,
     var logo: PaymentMethodVendorLogo? = null,
-    @Json(name = "payment-method-kindId")
+    @SerializedName("payment-method-kindId")
     var paymentMethodKindId: String? = null
 )
 
