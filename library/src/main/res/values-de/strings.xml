@@ -6,4 +6,6 @@
     <string name="appkit_secureData_authentication_confirmation">Jetzt autorisieren, um auf gesicherte Daten zuzugreifen</string>
     <string name="payment_biometric_prompt_title">Jetzt bezahlen</string>
     <string name="common_cancel">Abbrechen</string>
+    <string name="default_drawer_first_line">Zahle direkt an der Zapfsäule</string>
+    <string name="default_drawer_second_line">Connected Fueling</string>
 </resources>

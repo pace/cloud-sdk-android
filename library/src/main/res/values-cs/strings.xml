@@ -6,4 +6,6 @@
     <string name="appkit_secureData_authentication_confirmation">Autorizace přístupu k zabezpečeným datům</string>
     <string name="payment_biometric_prompt_title">Zaplaťte nyní</string>
     <string name="common_cancel">Zrušit</string>
+    <string name="default_drawer_first_line">Platba přímo na pumpě</string>
+    <string name="default_drawer_second_line">Connected Fueling</string>
 </resources>
