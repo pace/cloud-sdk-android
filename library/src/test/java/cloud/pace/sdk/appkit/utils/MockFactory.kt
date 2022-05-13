@@ -19,9 +19,19 @@ import cloud.pace.sdk.appkit.model.Car
 import cloud.pace.sdk.appkit.persistence.CacheModel
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.persistence.TotpSecret
-import cloud.pace.sdk.poikit.geo.*
+import cloud.pace.sdk.poikit.geo.CofuGasStation
+import cloud.pace.sdk.poikit.geo.GeoAPIFeature
+import cloud.pace.sdk.poikit.geo.GeoAPIManager
+import cloud.pace.sdk.poikit.geo.GeoAPIResponse
+import cloud.pace.sdk.poikit.geo.GeoGasStation
 import cloud.pace.sdk.poikit.poi.GasStation
-import cloud.pace.sdk.utils.*
+import cloud.pace.sdk.utils.Completion
+import cloud.pace.sdk.utils.Failure
+import cloud.pace.sdk.utils.LocationProvider
+import cloud.pace.sdk.utils.LocationState
+import cloud.pace.sdk.utils.NoLocationFound
+import cloud.pace.sdk.utils.Success
+import cloud.pace.sdk.utils.SystemManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import org.mockito.Mockito.mock
 
@@ -71,6 +81,8 @@ open class TestAppRepository : AppRepository {
     override suspend fun getUrlByAppId(appId: String): Completion<String?> {
         return Success(null)
     }
+
+    override fun getFuelingUrl(poiId: String, completion: (String) -> Unit) {}
 }
 
 open class TestSharedPreferencesModel : SharedPreferencesModel {
@@ -112,11 +124,19 @@ open class TestSharedPreferencesModel : SharedPreferencesModel {
 
 open class TestUriUtils(private val id: String? = null, private val startUrl: String = "") : UriManager {
 
-    override fun getStartUrls(baseUrl: String, manifestUrl: String, sdkStartUrl: String?, references: List<String>?): Map<String?, String> {
+    override fun getStartUrls(baseUrl: String, references: List<String>?): Map<String?, String> {
         return mapOf(id to startUrl)
     }
 
-    override fun buildUrl(baseUrl: String, path: String): String {
+    override fun getStartUrl(baseUrl: String, reference: String?): String {
+        return startUrl
+    }
+
+    override fun appendPath(baseUrl: String, path: String): String {
+        return ""
+    }
+
+    override fun appendQueryParameter(baseUrl: String, key: String, value: String): String {
         return ""
     }
 }
@@ -198,7 +218,7 @@ open class TestCacheModel : CacheModel {
 open class TestGeoAPIManager(private val isPoiInRange: Boolean = false) : GeoAPIManager {
 
     override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {}
-    override fun features(poiId: String, latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {}
+    override fun features(latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {}
     override fun cofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit) {}
     override fun cofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit) {}
     override suspend fun isPoiInRange(poiId: String, location: Location?) = isPoiInRange

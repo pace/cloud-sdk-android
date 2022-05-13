@@ -161,14 +161,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openFuelingApp(context: Context, id: String? = null, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        if (id == null) {
-            appManager.openAppActivity(context, URL.fueling, enableBackToFinish, callback)
-            return
-        }
-
-        fetchAppsByUrl(URL.fueling, id) {
-            (it as? Success)?.result?.firstOrNull()?.url?.let { url -> appManager.openAppActivity(context, url, enableBackToFinish, callback) }
-        }
+        appManager.openFuelingApp(context, id, enableBackToFinish, callback)
     }
 
     /**

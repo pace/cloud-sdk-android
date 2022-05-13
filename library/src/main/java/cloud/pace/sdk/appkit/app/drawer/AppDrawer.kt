@@ -9,7 +9,11 @@ import android.graphics.drawable.GradientDrawable
 import android.transition.Slide
 import android.transition.TransitionManager
 import android.util.AttributeSet
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
@@ -19,6 +23,7 @@ import cloud.pace.sdk.databinding.AppDrawerBinding
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Event
 import cloud.pace.sdk.utils.dp
+import cloud.pace.sdk.utils.isNotNullOrEmpty
 import org.koin.core.component.inject
 
 class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs), CloudSDKKoinComponent {
@@ -37,14 +42,26 @@ class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
     var title: String = ""
         set(value) {
             field = value
-            binding.titleView.text = value
+
+            if (value.isNotEmpty()) {
+                binding.titleView.text = value
+            } else {
+                binding.titleView.setText(R.string.default_drawer_first_line)
+            }
+
             requestLayout()
         }
 
     var subtitle: String? = null
         set(value) {
             field = value
-            binding.subtitleView.text = value
+
+            if (value.isNotNullOrEmpty()) {
+                binding.subtitleView.text = value
+            } else {
+                binding.subtitleView.setText(R.string.default_drawer_second_line)
+            }
+
             requestLayout()
         }
 
@@ -56,7 +73,7 @@ class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
         }
 
     @ColorInt
-    var iconTint: Int = context.getColor(R.color.highlight)
+    var iconTint: Int = context.getColor(R.color.drawer_default_icon_background)
         set(value) {
             field = value
             binding.iconButton.backgroundTintList = ColorStateList.valueOf(value)
@@ -64,7 +81,7 @@ class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
         }
 
     @ColorInt
-    var backgroundTint: Int = context.getColor(R.color.background_dark)
+    var backgroundTint: Int = context.getColor(R.color.pace_blue)
         set(value) {
             field = value
             binding.expandedBackground.backgroundTintList = ColorStateList.valueOf(value)
@@ -114,8 +131,8 @@ class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
                 title = getString(R.styleable.AppDrawer_title) ?: ""
                 subtitle = getString(R.styleable.AppDrawer_subtitle)
                 icon = getResourceId(R.styleable.AppDrawer_icon, R.drawable.ic_default)
-                iconTint = context.getColor(getResourceId(R.styleable.AppDrawer_iconTint, R.color.highlight))
-                backgroundTint = context.getColor(R.color.highlight)
+                iconTint = context.getColor(getResourceId(R.styleable.AppDrawer_iconTint, R.color.drawer_default_icon_background))
+                backgroundTint = context.getColor(R.color.pace_blue)
             } finally {
                 recycle()
             }

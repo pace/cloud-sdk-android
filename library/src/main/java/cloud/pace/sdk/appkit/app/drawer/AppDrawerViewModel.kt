@@ -63,27 +63,20 @@ class AppDrawerViewModelImpl(private val eventManager: AppEventManager) : AppDra
 
         app.iconBackgroundColor?.let {
             try {
-                val backgroundColor = Color.parseColor(it)
-                iconBackground.value = backgroundColor
+                iconBackground.value = Color.parseColor(it)
             } catch (e: IllegalArgumentException) {
             }
         }
 
         app.logo?.let { logo.value = it }
 
-        var textBackgroundColorInt: Int? = null
-        var textColorInt: Int? = null
-
         if (app.textBackgroundColor != null && app.textColor != null) {
             try {
-                textBackgroundColorInt = Color.parseColor(app.textBackgroundColor)
-                textColorInt = Color.parseColor(app.textColor)
+                background.value = Color.parseColor(app.textBackgroundColor)
+                textColor.value = Color.parseColor(app.textColor)
             } catch (e: IllegalArgumentException) {
             }
         }
-
-        background.value = textBackgroundColorInt ?: if (darkBackground) Color.BLACK else Color.WHITE
-        textColor.value = textColorInt ?: if (darkBackground) Color.WHITE else Color.BLACK
     }
 
     override fun onCreate() {

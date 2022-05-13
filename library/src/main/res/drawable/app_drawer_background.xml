@@ -4,9 +4,8 @@
     <size
         android:width="@dimen/app_drawer_height"
         android:height="@dimen/app_drawer_height" />
-    <solid android:color="@color/background_dark" />
+    <solid android:color="@color/drawer_default_icon_background" />
     <corners
         android:bottomLeftRadius="@dimen/app_drawer_icon_radius"
         android:topLeftRadius="@dimen/app_drawer_icon_radius" />
 </shape>
-

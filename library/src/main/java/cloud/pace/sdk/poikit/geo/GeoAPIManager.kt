@@ -20,7 +20,7 @@ import timber.log.Timber
 interface GeoAPIManager {
 
     fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit)
-    fun features(poiId: String, latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit)
+    fun features(latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit)
     fun cofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit)
     fun cofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit)
     suspend fun isPoiInRange(poiId: String, location: Location? = null): Boolean
@@ -83,7 +83,7 @@ class GeoAPIManagerImpl(
         }
     }
 
-    override fun features(poiId: String, latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {
+    override fun features(latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {
         if (isAppsCacheValid(latitude, longitude)) {
             completion(Result.success(appsCache?.features ?: emptyList()))
         } else {
@@ -153,13 +153,19 @@ class GeoAPIManagerImpl(
             ?.filter {
                 it.isInRange(latitude, longitude, PACECloudSDK.configuration.appsDistanceThresholdInMeters)
             }
-            ?.mapNotNull {
-                (it.properties["apps"] as? List<*>)
-                    ?.mapNotNull { app ->
-                        ((app as? Map<*, *>)?.get("url") as? String)
-                    }?.let { urls ->
-                        GeoGasStation(it.id, urls)
+            ?.map {
+                val appUrls = mutableMapOf<String, MutableSet<String>>()
+                (it.properties[APPS_KEY] as? List<*>)?.forEach { app ->
+                    val map = app as? Map<*, *>
+                    if (map != null) {
+                        val type = map[TYPE_KEY] as? String
+                        val url = map[URL_KEY] as? String
+                        if (type != null && url != null) {
+                            appUrls[type] = appUrls[type]?.apply { add(url) } ?: mutableSetOf(url)
+                        }
                     }
+                }
+                GeoGasStation(it.id, appUrls)
             } ?: emptyList()
     }
 
@@ -196,7 +202,7 @@ class GeoAPIManagerImpl(
                     points.mapNotNull { point ->
                         val lat = point.coordinates.lastOrNull()
                         val lng = point.coordinates.firstOrNull()
-                        val status = (it.properties["connectedFuelingStatus"] as? String)?.let { status ->
+                        val status = (it.properties[CONNECTED_FUELING_STATUS_KEY] as? String)?.let { status ->
                             ConnectedFuelingStatus.values().associateBy(ConnectedFuelingStatus::value)[status]
                         }
                         if (lat != null && lng != null) {
@@ -218,7 +224,7 @@ class GeoAPIManagerImpl(
     private suspend fun isPoiInRange(poiId: String, latitude: Double, longitude: Double): Boolean {
         return try {
             suspendCancellableCoroutine { continuation ->
-                features(poiId, latitude, longitude) { response ->
+                features(latitude, longitude) { response ->
                     response.onSuccess { geoAPIFeatures ->
                         val isPoiInRange = geoAPIFeatures
                             .firstOrNull { it.id == poiId }
@@ -255,6 +261,12 @@ class GeoAPIManagerImpl(
     data class CofuGasStationsCache(val cofuGasStations: List<CofuGasStation>, val time: Long)
 
     companion object {
+        const val FUELING_TYPE = "fueling"
+        const val APPS_KEY = "apps"
+        const val TYPE_KEY = "type"
+        const val URL_KEY = "url"
+        const val CONNECTED_FUELING_STATUS_KEY = "connectedFuelingStatus"
+
         private const val CACHE_MAX_AGE = 60 * 60 * 1000 // 60 min
         private const val CACHE_RADIUS = 30 * 1000 // 30 km
         private const val IS_POI_IN_RANGE_DISTANCE_THRESHOLD = 500 // meters

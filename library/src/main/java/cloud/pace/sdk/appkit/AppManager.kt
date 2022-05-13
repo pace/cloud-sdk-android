@@ -20,7 +20,19 @@ import cloud.pace.sdk.appkit.model.Car
 import cloud.pace.sdk.appkit.network.NetworkChangeListener
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getDisableTimePreferenceKey
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
-import cloud.pace.sdk.utils.*
+import cloud.pace.sdk.utils.CloudSDKKoinComponent
+import cloud.pace.sdk.utils.Completion
+import cloud.pace.sdk.utils.DispatcherProvider
+import cloud.pace.sdk.utils.Failure
+import cloud.pace.sdk.utils.InvalidSpeed
+import cloud.pace.sdk.utils.LocationProvider
+import cloud.pace.sdk.utils.NetworkError
+import cloud.pace.sdk.utils.RunningCheck
+import cloud.pace.sdk.utils.Success
+import cloud.pace.sdk.utils.Theme
+import cloud.pace.sdk.utils.URL.fueling
+import cloud.pace.sdk.utils.dp
+import cloud.pace.sdk.utils.equalsTo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,7 +41,7 @@ import timber.log.Timber
 import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URL
-import java.util.*
+import java.util.Date
 
 internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSDKKoinComponent {
 
@@ -218,6 +230,16 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
     internal fun openAppActivity(context: Context, app: App, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
         callback.onOpen(app)
         startAppActivity(context, app.url, enableBackToFinish, callback)
+    }
+
+    internal fun openFuelingApp(context: Context, id: String? = null, enableBackToFinish: Boolean = true, callback: AppCallbackImpl) {
+        if (id == null) {
+            openAppActivity(context, fueling, enableBackToFinish, callback)
+        } else {
+            appRepository.getFuelingUrl(id) {
+                openAppActivity(context, it, enableBackToFinish, callback)
+            }
+        }
     }
 
     private fun startAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
