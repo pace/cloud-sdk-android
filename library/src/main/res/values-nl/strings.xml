@@ -6,4 +6,6 @@
     <string name="appkit_secureData_authentication_confirmation">Machtigen voor toegang tot beveiligde gegevens</string>
     <string name="payment_biometric_prompt_title">Betaal nu</string>
     <string name="common_cancel">Annuleren</string>
+    <string name="default_drawer_first_line">Betaal direct aan de pomp</string>
+    <string name="default_drawer_second_line">Connected Fueling</string>
 </resources>

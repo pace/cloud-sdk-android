@@ -6,4 +6,6 @@
     <string name="appkit_secureData_authentication_confirmation">Разрешить доступ к защищенным данным</string>
     <string name="payment_biometric_prompt_title">Оплатить сейчас</string>
     <string name="common_cancel">Отмена</string>
+    <string name="default_drawer_first_line">Платите непосредственно на насосе</string>
+    <string name="default_drawer_second_line">Connected Fueling</string>
 </resources>

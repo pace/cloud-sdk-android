@@ -6,4 +6,6 @@
     <string name="appkit_secureData_authentication_confirmation">Autorizarea accesului la date securizate</string>
     <string name="payment_biometric_prompt_title">Plătiți acum</string>
     <string name="common_cancel">Anulează</string>
+    <string name="default_drawer_first_line">Plătiți direct la pompă</string>
+    <string name="default_drawer_second_line">Connected Fueling</string>
 </resources>
