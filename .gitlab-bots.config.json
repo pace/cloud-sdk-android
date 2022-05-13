@@ -1,5 +1,5 @@
 {
-    "label": {
+    "labels": {
         "required": ["stream::mobile", "Concerns:Android", "P:PACECloudSDK"]
     }
 }
