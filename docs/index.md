@@ -189,6 +189,9 @@ The `PACECloudSDK.setup()` has been simplified:
 The `connectedFuelingStatus` property of the `CofuGasStation` is now nullable so that the Cofu gas station is not skipped in the cache loading if this property is absent in the API response.
 If you use the `CofuGasStation` object, keep in mind that the `connectedFuelingStatus` property can now be `null`.
 
+### From 13.x.x to 14.x.x
+The `GasStations` properties `paymentMethods`, `amenities`, `foods`, `loyaltyPrograms`, `postalServices`, `services`, `shopGoods` and `fuelType` will now be from type string instead of enums. The client app has to then manage these values itself.
+
 ## IDKit
 **IDKit** manages the OpenID (OID) authorization and the general session flow with its token handling via **PACE ID**.
 

@@ -1,6 +1,5 @@
 package cloud.pace.sdk.poikit.utils
 
-import cloud.pace.sdk.poikit.poi.FuelType
 import cloud.pace.sdk.poikit.poi.Price
 
 /**
@@ -25,9 +24,9 @@ object PriceListParser {
                 }
             }
 
-            FuelType.fromValue(productType ?: "")?.let {
+            productType?.let {
                 // TODO: remove this hack when backend changed
-                val fuelType = if (it == FuelType.DIESEL_GTL) FuelType.DIESEL_PREMIUM else it
+                val fuelType = if (it == "dieselGtl") "dieselPremium" else it
 
                 prices.add(Price(fuelType, productName, price))
             }

@@ -18,18 +18,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cloud.pace.sdk.poikit.poi.Address
-import cloud.pace.sdk.poikit.poi.Amenity
 import cloud.pace.sdk.poikit.poi.Day
-import cloud.pace.sdk.poikit.poi.Food
-import cloud.pace.sdk.poikit.poi.FuelType
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.OpeningHour
 import cloud.pace.sdk.poikit.poi.OpeningHours
 import cloud.pace.sdk.poikit.poi.OpeningRule
-import cloud.pace.sdk.poikit.poi.PaymentMethod
 import cloud.pace.sdk.poikit.poi.Price
 import cloud.pace.sdk.poikit.poi.PriceSuggestion
-import cloud.pace.sdk.poikit.poi.Service
 import cloud.pace.sdk.poikit.poi.toLocationPoint
 import java.util.Date
 
@@ -126,35 +121,35 @@ fun ListItemPreview() {
                 OpeningHours(listOf(Day.SATURDAY), listOf(OpeningHour("10", "20")), OpeningRule.OPEN)
             )
             prices = mutableListOf(
-                Price(FuelType.E5, "Super", 1.389),
-                Price(FuelType.E10, "Super E10", 1.349),
-                Price(FuelType.DIESEL, "Diesel", 1.289)
+                Price("ron95e5", "Super", 1.389),
+                Price("ron95e10", "Super E10", 1.349),
+                Price("diesel", "Diesel", 1.289)
             )
             currency = "EUR"
             isConnectedFuelingAvailable = true
             cofuPaymentMethods = mutableListOf("paypal")
             paymentMethods = mutableListOf(
-                PaymentMethod.AMERICAN_EXPRESS,
-                PaymentMethod.CASH,
-                PaymentMethod.ESSO_CARD,
-                PaymentMethod.GIROCARD,
-                PaymentMethod.MAESTRO,
-                PaymentMethod.MASTER_CARD,
-                PaymentMethod.UTA,
-                PaymentMethod.VISA
+                "americanExpress",
+                "cash",
+                "essoCard",
+                "girocard",
+                "maestro",
+                "masterCard",
+                "uta",
+                "visa"
             )
             amenities = mutableListOf(
-                Amenity.ATM,
-                Amenity.DISABILITY_FRIENDLY,
-                Amenity.TOILET
+                "atm",
+                "disabilityFriendly",
+                "toilet"
             )
             foods = mutableListOf(
-                Food.BAKERY
+                "bakery"
             )
             services = mutableListOf(
-                Service.CAR_WASH,
-                Service.FREE_WIFI,
-                Service.TYRE_AIR
+                "carWash",
+                "freeWifi",
+                "tyreAir"
             )
             updatedAt = Date(1575651009687)
             latitude = 82.0

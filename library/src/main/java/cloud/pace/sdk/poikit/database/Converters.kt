@@ -10,21 +10,6 @@ class Converters {
     private val gson = Gson()
 
     /**
-     * PaymentMethods
-     */
-    private val typePaymentMethods = object : TypeToken<MutableList<PaymentMethod>>() {}.type
-
-    @TypeConverter
-    fun fromPaymentMethods(list: MutableList<PaymentMethod>): String {
-        return gson.toJson(list, typePaymentMethods)
-    }
-
-    @TypeConverter
-    fun toPaymentMethods(json: String): MutableList<PaymentMethod> {
-        return gson.fromJson(json, typePaymentMethods) ?: mutableListOf()
-    }
-
-    /**
      * OpeningHours
      */
     private val typeOpeningHours = object : TypeToken<List<OpeningHours>>() {}.type
@@ -77,96 +62,6 @@ class Converters {
     @TypeConverter
     fun toDate(timestamp: Long): Date {
         return Date(timestamp)
-    }
-
-    /**
-     * Amenity
-     */
-    private val typeAmenity = object : TypeToken<MutableList<Amenity>>() {}.type
-
-    @TypeConverter
-    fun fromAmenity(list: MutableList<Amenity>): String {
-        return gson.toJson(list, typeAmenity)
-    }
-
-    @TypeConverter
-    fun toAmenity(json: String): MutableList<Amenity> {
-        return gson.fromJson(json, typeAmenity) ?: mutableListOf()
-    }
-
-    /**
-     * LoyaltyProgram
-     */
-    private val typeLoyaltyProgram = object : TypeToken<MutableList<LoyaltyProgram>>() {}.type
-
-    @TypeConverter
-    fun fromLoyaltyProgram(list: MutableList<LoyaltyProgram>): String {
-        return gson.toJson(list, typeLoyaltyProgram)
-    }
-
-    @TypeConverter
-    fun toLoyaltyProgram(json: String): MutableList<LoyaltyProgram> {
-        return gson.fromJson(json, typeLoyaltyProgram) ?: mutableListOf()
-    }
-
-    /**
-     * PostalService
-     */
-    private val typePostalService = object : TypeToken<MutableList<PostalService>>() {}.type
-
-    @TypeConverter
-    fun fromPostalService(list: MutableList<PostalService>): String {
-        return gson.toJson(list, typePostalService)
-    }
-
-    @TypeConverter
-    fun toPostalService(json: String): MutableList<PostalService> {
-        return gson.fromJson(json, typePostalService) ?: mutableListOf()
-    }
-
-    /**
-     * Service
-     */
-    private val typeService = object : TypeToken<MutableList<Service>>() {}.type
-
-    @TypeConverter
-    fun fromService(list: MutableList<Service>): String {
-        return gson.toJson(list, typeService)
-    }
-
-    @TypeConverter
-    fun toService(json: String): MutableList<Service> {
-        return gson.fromJson(json, typeService) ?: mutableListOf()
-    }
-
-    /**
-     * ShopGood
-     */
-    private val typeShopGood = object : TypeToken<MutableList<ShopGood>>() {}.type
-
-    @TypeConverter
-    fun fromShopGood(list: MutableList<ShopGood>): String {
-        return gson.toJson(list, typeShopGood)
-    }
-
-    @TypeConverter
-    fun toShopGood(json: String): MutableList<ShopGood> {
-        return gson.fromJson(json, typeShopGood) ?: mutableListOf()
-    }
-
-    /**
-     * Food
-     */
-    private val typeFood = object : TypeToken<MutableList<Food>>() {}.type
-
-    @TypeConverter
-    fun fromFood(list: MutableList<Food>): String {
-        return gson.toJson(list, typeFood)
-    }
-
-    @TypeConverter
-    fun toFood(json: String): MutableList<Food> {
-        return gson.fromJson(json, typeFood) ?: mutableListOf()
     }
 
     /**
