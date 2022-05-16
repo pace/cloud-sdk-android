@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="text_light">@android:color/white</color>
-    <color name="accent">#00CCF0</color>
-    <color name="highlight_dark">#3C474C</color>
-    <color name="highlight">#75848C</color>
+    <color name="drawer_default_text">#121414</color>
+    <color name="drawer_default_icon_background">#222424</color>
     <color name="background_dark">#121313</color>
     <color name="pace_blue">#00CCF0</color>
     <color name="pace_blue_selected">#00ABC9</color>

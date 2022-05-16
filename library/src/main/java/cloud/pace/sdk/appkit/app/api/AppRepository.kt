@@ -8,8 +8,24 @@ import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.persistence.CacheModel
 import cloud.pace.sdk.poikit.geo.GeoAPIManager
-import cloud.pace.sdk.utils.*
-import kotlinx.coroutines.*
+import cloud.pace.sdk.poikit.geo.GeoAPIManagerImpl
+import cloud.pace.sdk.poikit.geo.GeoAPIManagerImpl.Companion.FUELING_TYPE
+import cloud.pace.sdk.poikit.geo.GeoAPIManagerImpl.Companion.URL_KEY
+import cloud.pace.sdk.utils.Completion
+import cloud.pace.sdk.utils.Failure
+import cloud.pace.sdk.utils.IconUtils
+import cloud.pace.sdk.utils.Success
+import cloud.pace.sdk.utils.URL
+import cloud.pace.sdk.utils.dp
+import cloud.pace.sdk.utils.resumeIfActive
+import cloud.pace.sdk.utils.resumeWithExceptionIfActive
+import cloud.pace.sdk.utils.suspendCoroutineWithTimeout
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 
 interface AppRepository {
@@ -18,6 +34,7 @@ interface AppRepository {
     suspend fun getAllApps(): Completion<List<App>>
     suspend fun getAppsByUrl(url: String, references: List<String>): Completion<List<App>>
     suspend fun getUrlByAppId(appId: String): Completion<String?>
+    fun getFuelingUrl(poiId: String, completion: (String) -> Unit)
 }
 
 class AppRepositoryImpl(
@@ -34,11 +51,11 @@ class AppRepositoryImpl(
                 geoApiManager.apps(latitude, longitude) { response ->
                     response.onSuccess {
                         val result = it.flatMap { geoGasStation ->
-                            geoGasStation.appUrls.map { url ->
+                            geoGasStation.appUrls[FUELING_TYPE]?.map { url ->
                                 CoroutineScope(Dispatchers.IO).async {
                                     castLocationBasedApp(url, listOf(geoGasStation.id))
                                 }
-                            }
+                            } ?: emptyList()
                         }
                         continuation.resumeIfActive(Success(result))
                     }
@@ -114,27 +131,44 @@ class AppRepositoryImpl(
         }
     }
 
+    override fun getFuelingUrl(poiId: String, completion: (String) -> Unit) {
+        geoApiManager.cofuGasStations { result ->
+            result.onSuccess { stations ->
+                val cofuGasStation = stations.find { station -> station.id == poiId }
+                val apps = cofuGasStation?.properties?.get(GeoAPIManagerImpl.APPS_KEY) as? List<*>
+                val fuelingApp = apps?.find { (it as? Map<*, *>)?.get(GeoAPIManagerImpl.TYPE_KEY) as? String == FUELING_TYPE } as? Map<*, *>
+                val fuelingUrl = fuelingApp?.get(URL_KEY) as? String ?: URL.fueling
+
+                completion(uriUtil.getStartUrl(fuelingUrl, poiId))
+            }
+
+            result.onFailure {
+                completion(uriUtil.getStartUrl(URL.fueling, poiId))
+            }
+        }
+    }
+
     private suspend fun castLocationBasedApp(appUrl: String?, references: List<String>?): List<App> {
         appUrl ?: return emptyList()
 
-        val manifest = loadManifest(appUrl) ?: return emptyList()
-        val icons = manifest.icons
+        val manifest = loadManifest(appUrl)
+        val icons = manifest?.icons
         val iconUrl = if (icons.isNullOrEmpty()) null else getIconPath(appUrl, icons)
         val logo = if (iconUrl == null) null else loadIcon(iconUrl)
 
         return uriUtil
-            .getStartUrls(appUrl, appUrl, manifest.sdkStartUrl, references)
+            .getStartUrls(appUrl, references)
             .map {
                 App(
-                    name = manifest.name ?: "",
-                    shortName = manifest.shortName ?: "",
-                    description = manifest.description,
+                    name = manifest?.name ?: "",
+                    shortName = manifest?.shortName ?: "",
+                    description = manifest?.description,
                     url = it.value,
                     logo = logo,
-                    iconBackgroundColor = manifest.backgroundColor,
-                    textColor = manifest.textColor,
-                    textBackgroundColor = manifest.themeColor,
-                    display = manifest.display,
+                    iconBackgroundColor = manifest?.backgroundColor,
+                    textColor = manifest?.textColor,
+                    textBackgroundColor = manifest?.themeColor,
+                    display = manifest?.display,
                     poiId = it.key
                 )
             }
@@ -172,6 +206,6 @@ class AppRepositoryImpl(
         val buttonWidth = context.resources.getDimension(R.dimen.app_drawer_height).dp.toDouble()
         val preferredIcon = IconUtils.getBestMatchingIcon(buttonWidth, icons) ?: return null
 
-        return uriUtil.buildUrl(url, preferredIcon.src)
+        return uriUtil.appendPath(url, preferredIcon.src)
     }
 }

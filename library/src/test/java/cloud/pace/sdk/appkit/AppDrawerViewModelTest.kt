@@ -2,7 +2,6 @@ package cloud.pace.sdk.appkit
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Color
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import cloud.pace.sdk.appkit.app.drawer.AppDrawerViewModel
 import cloud.pace.sdk.appkit.app.drawer.AppDrawerViewModelImpl
@@ -60,8 +59,8 @@ class AppDrawerViewModelTest {
 
         Assert.assertEquals(app.name, viewModel.title.value)
         Assert.assertEquals(app.description, viewModel.subtitle.value)
-        Assert.assertEquals(Color.WHITE, viewModel.background.value)
-        Assert.assertEquals(Color.BLACK, viewModel.textColor.value)
+        Assert.assertNull(viewModel.background.value)
+        Assert.assertNull(viewModel.textColor.value)
         Assert.assertNull(viewModel.iconBackground.value)
         Assert.assertNull(viewModel.logo.value)
     }
@@ -72,15 +71,6 @@ class AppDrawerViewModelTest {
         viewModel.init(app, true)
 
         Assert.assertEquals(app.logo, viewModel.logo.value)
-    }
-
-    @Test
-    fun `set app with dark theme`() {
-        val app = App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null)
-        viewModel.init(app, true)
-
-        Assert.assertEquals(Color.BLACK, viewModel.background.value)
-        Assert.assertEquals(Color.WHITE, viewModel.textColor.value)
     }
 
     @Test

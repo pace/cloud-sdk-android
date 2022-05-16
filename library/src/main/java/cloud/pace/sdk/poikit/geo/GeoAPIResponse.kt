@@ -26,7 +26,7 @@ data class GeometryCollection(val geometries: List<Geometry>) : Geometry(GEOMETR
 
 data class GeoGasStation(
     val id: String,
-    val appUrls: List<String>
+    val appUrls: Map<String, Collection<String>>
 )
 
 data class CofuGasStation @JvmOverloads constructor(

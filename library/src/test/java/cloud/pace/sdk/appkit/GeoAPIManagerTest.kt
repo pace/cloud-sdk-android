@@ -3,15 +3,25 @@ package cloud.pace.sdk.appkit
 import android.location.Location
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.utils.TestAppAPI
-import cloud.pace.sdk.poikit.geo.*
-import cloud.pace.sdk.utils.*
-import junit.framework.Assert.*
+import cloud.pace.sdk.poikit.geo.GeoAPIFeature
+import cloud.pace.sdk.poikit.geo.GeoAPIManagerImpl
+import cloud.pace.sdk.poikit.geo.GeoAPIResponse
+import cloud.pace.sdk.poikit.geo.GeoGasStation
+import cloud.pace.sdk.poikit.geo.Polygon
+import cloud.pace.sdk.utils.CompletableFutureCompat
+import cloud.pace.sdk.utils.Configuration
+import cloud.pace.sdk.utils.Environment
+import cloud.pace.sdk.utils.LocationProvider
+import cloud.pace.sdk.utils.SystemManager
+import junit.framework.Assert.assertEquals
+import junit.framework.Assert.assertFalse
+import junit.framework.Assert.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
-import java.util.*
+import org.mockito.Mockito.mock
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 class GeoAPIManagerTest {
@@ -130,7 +140,7 @@ class GeoAPIManagerTest {
 
         val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
         val geoAPIFeature = CompletableFutureCompat<List<GeoAPIFeature>>()
-        geoApiManager.features(id, 49.012713, 8.427777) {
+        geoApiManager.features(49.012713, 8.427777) {
             it.onSuccess { geoAPIFeature.complete(it) }
             it.onFailure { throw it }
         }
@@ -142,7 +152,6 @@ class GeoAPIManagerTest {
 
     @Test
     fun `cache returns failure when fetching features`() {
-        val id = "e3211b77-03f0-4d49-83aa-4adaa46d95ae"
         val exception = Exception("What a terrible failure")
 
         val appApi = object : TestAppAPI() {
@@ -153,7 +162,7 @@ class GeoAPIManagerTest {
 
         val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
         val exceptionFuture = CompletableFutureCompat<Throwable?>()
-        geoApiManager.features(id, 49.012713, 8.427777) {
+        geoApiManager.features(49.012713, 8.427777) {
             it.onSuccess { exceptionFuture.complete(null) }
             it.onFailure { exceptionFuture.complete(it) }
         }

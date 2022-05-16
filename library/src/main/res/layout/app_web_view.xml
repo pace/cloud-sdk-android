@@ -22,7 +22,7 @@
             android:layout_height="32dp"
             android:layout_gravity="center"
             android:indeterminate="true"
-            android:indeterminateTint="@color/accent"
+            android:indeterminateTint="@color/pace_blue"
             android:indeterminateTintMode="src_atop" />
 
     </FrameLayout>
