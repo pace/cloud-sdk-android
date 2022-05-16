@@ -1,3 +1,21 @@
+14.0.0 Release notes (2022-05-16)
+=============================================================
+
+### Breaking Changes
+
+* Remove enums in GasStation model
+
+### Fixes
+
+* Fix typo in GitLab bot config
+
+### Internal
+
+* Refactor URL and manifest handling to use fueling URL from GeoJSON
+* Update string resources
+* Add label config for PACEBot
+* Remove GitLab issue templates
+
 13.3.3 Release notes (2022-05-05)
 =============================================================
 
