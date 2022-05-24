@@ -7,4 +7,21 @@
 
 package cloud.pace.sdk.api.poi.generated.model
 
-typealias RegionalPrices = List<RegionalPrice>
+import moe.banana.jsonapi2.JsonApi
+import moe.banana.jsonapi2.Resource
+
+@JsonApi(type = "regionalPrices")
+class RegionalPrices : Resource() {
+
+    /* Average price for this fuel type */
+    var average: Double? = null
+
+    /* Currency as specified in ISO-4217. */
+    var currency: String? = null
+
+    /* Price value indicator below which a price is considered cheap */
+    var lower: Double? = null
+
+    /* Price value indicator after which a price is considered expensive */
+    var upper: Double? = null
+}

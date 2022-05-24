@@ -36,17 +36,17 @@ object UpdateAppPOIsRelationshipsAPI {
             @HeaderMap headers: Map<String, String>,
             /* ID of the App */
             @Path("appID") appID: String? = null,
-            @retrofit2.http.Body body: AppPOIsRelationships
-        ): Call<AppPOIsRelationships>
+            @retrofit2.http.Body body: List<AppPOIsRelationships>
+        ): Call<List<AppPOIsRelationships>>
     }
 
     fun POIAPI.AppsAPI.updateAppPOIsRelationships(
         appID: String? = null,
-        body: AppPOIsRelationships,
+        body: List<AppPOIsRelationships>,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ): Call<AppPOIsRelationships> {
+    ): Call<List<AppPOIsRelationships>> {
         val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
         val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 

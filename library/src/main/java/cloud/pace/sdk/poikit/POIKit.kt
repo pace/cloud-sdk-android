@@ -131,7 +131,7 @@ object POIKit : CloudSDKKoinComponent, DefaultLifecycleObserver {
         }
     }
 
-    fun getRegionalPrice(latitude: Double, longitude: Double, completion: (Completion<RegionalPrices>) -> Unit) {
+    fun getRegionalPrice(latitude: Double, longitude: Double, completion: (Completion<List<RegionalPrices>>) -> Unit) {
         API.prices.getRegionalPrices(latitude.toFloat(), longitude.toFloat()).handleCallback(completion)
     }
 
