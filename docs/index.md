@@ -14,6 +14,8 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [10.x.x -> 11.x.x](#from-10xx-to-11xx)
         + [11.x.x -> 12.x.x](#from-11xx-to-12xx)
         + [12.x.x -> 13.x.x](#from-12xx-to-13xx)
+        + [13.x.x -> 14.x.x](#from-13xx-to-14xx)
+        + [14.x.x -> 15.x.x](#from-14xx-to-15xx)
     * [IDKit](#idkit)
         + [Setup](#setup-1)
         + [Discover configuration](#discover-configuration)
@@ -191,6 +193,12 @@ If you use the `CofuGasStation` object, keep in mind that the `connectedFuelingS
 
 ### From 13.x.x to 14.x.x
 The `GasStations` properties `paymentMethods`, `amenities`, `foods`, `loyaltyPrograms`, `postalServices`, `services`, `shopGoods` and `fuelType` will now be from type string instead of enums. The client app has to then manage these values itself.
+
+### From 14.x.x to 15.x.x
+
+The `POIKit.getRegionalPrice(...)` function now returns `List<RegionalPrices>` instead of the `RegionalPrices` typealias, which was `List<RegionalPrice>` before.
+This means that the only difference now is that the `RegionalPrice` model is called `RegionalPrices` and the `RegionalPrices` typealias no longer exists.
+The properties of the new `RegionalPrices` model are the same as those of the old `RegionalPrice` model.
 
 ## IDKit
 **IDKit** manages the OpenID (OID) authorization and the general session flow with its token handling via **PACE ID**.

@@ -39,7 +39,7 @@ object GetRegionalPricesAPI {
             @Query("filter[latitude]") filterlatitude: Float,
             /* Longitude in degrees */
             @Query("filter[longitude]") filterlongitude: Float
-        ): Call<RegionalPrices>
+        ): Call<List<RegionalPrices>>
     }
 
     fun POIAPI.PricesAPI.getRegionalPrices(
@@ -48,7 +48,7 @@ object GetRegionalPricesAPI {
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ): Call<RegionalPrices> {
+    ): Call<List<RegionalPrices>> {
         val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
         val headers = InterceptorUtils.getHeaders(false, "application/json", "application/json", additionalHeaders)
 

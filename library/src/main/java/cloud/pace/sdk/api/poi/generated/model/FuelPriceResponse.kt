@@ -7,7 +7,11 @@
 
 package cloud.pace.sdk.api.poi.generated.model
 
-class FuelPriceResponse {
+import moe.banana.jsonapi2.JsonApi
+import moe.banana.jsonapi2.Resource
+
+@JsonApi(type = "fuelPriceResponse")
+class FuelPriceResponse : Resource() {
 
     var data: FuelPrice? = null
 }

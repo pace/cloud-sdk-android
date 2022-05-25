@@ -7,4 +7,8 @@
 
 package cloud.pace.sdk.api.poi.generated.model
 
-typealias AppPOIsRelationships = List<AppPOIsRelationship>
+import moe.banana.jsonapi2.JsonApi
+import moe.banana.jsonapi2.Resource
+
+@JsonApi(type = "appPOIsRelationships")
+class AppPOIsRelationships : Resource()

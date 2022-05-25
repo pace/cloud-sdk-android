@@ -36,7 +36,7 @@ object GetAppPOIsRelationshipsAPI {
             @HeaderMap headers: Map<String, String>,
             /* ID of the App */
             @Path("appID") appID: String? = null
-        ): Call<AppPOIsRelationships>
+        ): Call<List<AppPOIsRelationships>>
     }
 
     fun POIAPI.AppsAPI.getAppPOIsRelationships(
@@ -44,7 +44,7 @@ object GetAppPOIsRelationshipsAPI {
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ): Call<AppPOIsRelationships> {
+    ): Call<List<AppPOIsRelationships>> {
         val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
         val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
 
