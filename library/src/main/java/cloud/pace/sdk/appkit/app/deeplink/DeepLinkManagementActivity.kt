@@ -9,6 +9,7 @@ import androidx.browser.customtabs.CustomTabsService
 import cloud.pace.sdk.appkit.app.AppFragmentViewModelImpl
 import cloud.pace.sdk.utils.ErrorLevel
 import cloud.pace.sdk.utils.ErrorListener
+import timber.log.Timber
 
 class DeepLinkManagementActivity : Activity() {
 
@@ -17,7 +18,13 @@ class DeepLinkManagementActivity : Activity() {
     override fun onResume() {
         super.onResume()
 
-        if (!isProcessStarted) {
+        /*
+        * Check if the REDIRECT flag was set by the RedirectUriReceiverActivity,
+        * because it can also be the first run of this activity if it was previously killed by the system
+        * before the redirect from the RedirectUriReceiverActivity happened.
+        */
+        val isRedirect = intent.getBooleanExtra(REDIRECT, false)
+        if (!isRedirect && !isProcessStarted) {
             /*
             * If this is the first run of the activity, start the intent (WebViewActivity or custom tab).
             * Note that we do not finish the activity at this point, in order to remain on the back
@@ -31,10 +38,12 @@ class DeepLinkManagementActivity : Activity() {
                 try {
                     val intent = if (integrated) {
                         // Create WebViewActivity intent to open URL in WebView
+                        Timber.d("Open WebViewActivity with the following start URL: $url")
                         ErrorListener.reportBreadcrumb(TAG, "Open URL in WebView of WebViewActivity", mapOf("integrated" to integrated, "isProcessStarted" to isProcessStarted))
                         Intent(this, WebViewActivity::class.java)
                     } else {
                         // Create custom tab intent to open URL in custom tab activity
+                        Timber.d("Open custom tab with the following start URL: $url")
                         ErrorListener.reportBreadcrumb(TAG, "Open URL in custom tab activity", mapOf("integrated" to integrated, "isProcessStarted" to isProcessStarted))
                         CustomTabsIntent.Builder().build().intent.apply {
                             if (isChromeCustomTabsSupported()) {
@@ -51,7 +60,11 @@ class DeepLinkManagementActivity : Activity() {
                     setCanceled()
                 }
             } else {
-                ErrorListener.reportError(NullPointerException("The start URL cannot be null."))
+                ErrorListener.reportBreadcrumb(
+                    TAG,
+                    "The start URL is null. This can also happen if the user has cancelled the flow and the activity was previously killed by the system.",
+                    mapOf("isProcessStarted" to isProcessStarted, "URL" to url)
+                )
                 setCanceled()
             }
         } else {
@@ -63,6 +76,7 @@ class DeepLinkManagementActivity : Activity() {
             * pressing the back button or closes the custom tab.
             */
             val redirectUri = intent.data?.getQueryParameter(TO)
+            Timber.d("Intent contains the following URI: ${intent.data?.toString()}")
             ErrorListener.reportBreadcrumb(TAG, "It is the subsequent run of the activity", mapOf("isProcessStarted" to isProcessStarted, "Intent data" to intent.data?.toString()))
 
             if (redirectUri != null) {
@@ -103,6 +117,7 @@ class DeepLinkManagementActivity : Activity() {
     companion object {
         const val URL = "url"
         const val INTEGRATED = "integrated"
+        const val REDIRECT = "redirect"
         const val TO = "to"
         private const val TAG = "DeepLinkManagementActivity"
     }
