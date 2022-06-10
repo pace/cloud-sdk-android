@@ -9,7 +9,7 @@ This framework combines multiple functionalities provided by `PACE` i.e. authori
 
 ## Documentation
 
-The complete documentation can be found on [pace.github.io/cloud-sdk-android](https://pace.github.io/cloud-sdk-android).
+The documentation can be found on [PACE Developer Documentation](https://docs.pace.cloud/en/integrating/mobile-app).
 
 ## Contribution
 
