@@ -8,6 +8,9 @@
 package cloud.pace.sdk.api.pay.generated.request.paymentTokens
 
 import cloud.pace.sdk.api.pay.PayAPI
+import cloud.pace.sdk.api.pay.generated.model.PaymentMethod
+import cloud.pace.sdk.api.pay.generated.model.PaymentMethodKind
+import cloud.pace.sdk.api.pay.generated.model.PaymentMethodVendor
 import cloud.pace.sdk.api.pay.generated.model.PaymentToken
 import cloud.pace.sdk.api.utils.EnumConverterFactory
 import cloud.pace.sdk.api.utils.InterceptorUtils
@@ -61,6 +64,10 @@ object GetPaymentTokenAPI {
                         Moshi.Builder()
                             .add(
                                 ResourceAdapterFactory.builder()
+                                    .add(PaymentMethodKind::class.java)
+                                    .add(PaymentMethod::class.java)
+                                    .add(PaymentToken::class.java)
+                                    .add(PaymentMethodVendor::class.java)
                                     .build()
                             )
                             .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())

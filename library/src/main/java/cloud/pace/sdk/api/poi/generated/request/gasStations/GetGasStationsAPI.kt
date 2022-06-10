@@ -9,6 +9,7 @@ package cloud.pace.sdk.api.poi.generated.request.gasStations
 
 import cloud.pace.sdk.api.poi.POIAPI
 import cloud.pace.sdk.api.poi.generated.model.FuelPrice
+import cloud.pace.sdk.api.poi.generated.model.GasStation
 import cloud.pace.sdk.api.poi.generated.model.GasStations
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
 import cloud.pace.sdk.api.poi.generated.model.ReferenceStatus
@@ -120,8 +121,9 @@ To search inside a bounding box provide the following query parameter:
                         Moshi.Builder()
                             .add(
                                 ResourceAdapterFactory.builder()
-                                    .add(FuelPrice::class.java)
+                                    .add(GasStation::class.java)
                                     .add(LocationBasedApp::class.java)
+                                    .add(FuelPrice::class.java)
                                     .add(ReferenceStatus::class.java)
                                     .build()
                             )
