@@ -70,8 +70,9 @@ object GetGasStationAPI {
                         Moshi.Builder()
                             .add(
                                 ResourceAdapterFactory.builder()
-                                    .add(FuelPrice::class.java)
+                                    .add(GasStation::class.java)
                                     .add(LocationBasedApp::class.java)
+                                    .add(FuelPrice::class.java)
                                     .add(ReferenceStatus::class.java)
                                     .build()
                             )

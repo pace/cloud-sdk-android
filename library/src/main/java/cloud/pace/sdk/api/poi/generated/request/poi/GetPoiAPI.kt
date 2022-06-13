@@ -8,6 +8,9 @@
 package cloud.pace.sdk.api.poi.generated.request.poi
 
 import cloud.pace.sdk.api.poi.POIAPI
+import cloud.pace.sdk.api.poi.generated.model.FuelPrice
+import cloud.pace.sdk.api.poi.generated.model.GasStation
+import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
 import cloud.pace.sdk.api.poi.generated.model.POI
 import cloud.pace.sdk.api.poi.generated.model.ReferenceStatus
 import cloud.pace.sdk.api.utils.EnumConverterFactory
@@ -63,6 +66,9 @@ object GetPoiAPI {
                         Moshi.Builder()
                             .add(
                                 ResourceAdapterFactory.builder()
+                                    .add(GasStation::class.java)
+                                    .add(FuelPrice::class.java)
+                                    .add(LocationBasedApp::class.java)
                                     .add(ReferenceStatus::class.java)
                                     .build()
                             )

@@ -8,6 +8,7 @@
 package cloud.pace.sdk.api.pay.generated.request.paymentMethods
 
 import cloud.pace.sdk.api.pay.PayAPI
+import cloud.pace.sdk.api.pay.generated.model.PaymentMethod
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethodKind
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethodVendor
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethods
@@ -61,8 +62,9 @@ object GetPaymentMethodsAPI {
                             .add(
                                 ResourceAdapterFactory.builder()
                                     .add(PaymentMethodKind::class.java)
-                                    .add(PaymentMethodVendor::class.java)
+                                    .add(PaymentMethod::class.java)
                                     .add(PaymentToken::class.java)
+                                    .add(PaymentMethodVendor::class.java)
                                     .build()
                             )
                             .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())

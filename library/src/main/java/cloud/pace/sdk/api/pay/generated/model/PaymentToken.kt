@@ -30,6 +30,6 @@ class PaymentToken : Resource() {
     /* paymentToken value. Format might change (externally provided - by payment provider) */
     var value: String? = null
 
-    private var paymentMethod: HasOne<PaymentMethodRelationship> = HasOne()
+    private var paymentMethod: HasOne<PaymentMethod> = HasOne()
     fun getPaymentMethod() = paymentMethod.get(document)
 }
