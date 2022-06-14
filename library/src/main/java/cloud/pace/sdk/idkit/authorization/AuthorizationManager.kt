@@ -16,18 +16,44 @@ import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.SESSION
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.authorization.integrated.AuthorizationWebViewActivity
-import cloud.pace.sdk.idkit.model.*
+import cloud.pace.sdk.idkit.model.FailedRetrievingConfigurationWhileDiscovering
+import cloud.pace.sdk.idkit.model.FailedRetrievingSessionWhileAuthorizing
+import cloud.pace.sdk.idkit.model.FailedRetrievingSessionWhileEnding
+import cloud.pace.sdk.idkit.model.InternalError
+import cloud.pace.sdk.idkit.model.InvalidSession
+import cloud.pace.sdk.idkit.model.OIDConfiguration
+import cloud.pace.sdk.idkit.model.OperationCanceled
+import cloud.pace.sdk.idkit.model.ServiceConfiguration
 import cloud.pace.sdk.idkit.userinfo.UserInfoApiClient
 import cloud.pace.sdk.idkit.userinfo.UserInfoResponse
-import cloud.pace.sdk.utils.*
-import net.openid.appauth.*
+import cloud.pace.sdk.utils.Canceled
+import cloud.pace.sdk.utils.CloudSDKKoinComponent
+import cloud.pace.sdk.utils.Completion
+import cloud.pace.sdk.utils.Failure
+import cloud.pace.sdk.utils.Ok
+import cloud.pace.sdk.utils.SetupLogger
+import cloud.pace.sdk.utils.Success
+import cloud.pace.sdk.utils.getResultFor
+import net.openid.appauth.AuthState
+import net.openid.appauth.AuthorizationException
+import net.openid.appauth.AuthorizationRequest
+import net.openid.appauth.AuthorizationResponse
+import net.openid.appauth.AuthorizationService
+import net.openid.appauth.AuthorizationServiceConfiguration
+import net.openid.appauth.ClientAuthentication
+import net.openid.appauth.ClientSecretBasic
+import net.openid.appauth.EndSessionRequest
+import net.openid.appauth.EndSessionResponse
+import net.openid.appauth.TokenRequest
+import net.openid.appauth.TokenResponse
 import org.json.JSONException
 import timber.log.Timber
 
 internal class AuthorizationManager(
     private val context: Context,
     private val authorizationService: AuthorizationService,
-    private val sharedPreferencesModel: SharedPreferencesModel
+    private val sharedPreferencesModel: SharedPreferencesModel,
+    private val userInfoApi: UserInfoApiClient
 ) : CloudSDKKoinComponent, DefaultLifecycleObserver {
 
     private lateinit var configuration: OIDConfiguration
@@ -266,16 +292,8 @@ internal class AuthorizationManager(
 
     internal fun cachedToken() = if (::session.isInitialized) session.accessToken else null
 
-    internal fun userInfo(accessToken: String, completion: (Completion<UserInfoResponse>) -> Unit) {
-        configuration.userInfoEndpoint.let {
-            if (it != null) {
-                UserInfoApiClient(it, accessToken).getUserInfo(completion)
-            } else {
-                val throwable = UserEndpointNotDefined
-                Timber.e(throwable)
-                completion(Failure(throwable))
-            }
-        }
+    internal fun userInfo(additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null, completion: (Completion<UserInfoResponse>) -> Unit) {
+        userInfoApi.getUserInfo(additionalHeaders, additionalParameters, completion)
     }
 
     private fun getMergedParameters(idKitParams: Map<String, String>): Map<String, String> {

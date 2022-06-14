@@ -88,13 +88,14 @@ class BiometrySubSettingsActivity : AppCompatActivity() {
         }
 
         if (IDKit.isAuthorizationValid()) {
-            IDKit.refreshToken { completion ->
-                showUserEmail(completion)
-            }
+            showUserEmail()
         } else {
             lifecycleScope.launch {
                 IDKit.authorize(this@BiometrySubSettingsActivity) { completion ->
-                    showUserEmail(completion)
+                    when (completion) {
+                        is Success -> showUserEmail()
+                        is Failure -> userInfo.value = "Refresh error: ${completion.throwable.message}"
+                    }
                 }
             }
         }
@@ -133,14 +134,12 @@ class BiometrySubSettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun showUserEmail(completion: Completion<String?>) {
-        when (completion) {
-            is Success -> completion.result?.let { token ->
-                IDKit.userInfo(token) { response ->
-                    (response as? Success)?.result?.let { userInfo.value = it.email.toString() }
-                }
+    private fun showUserEmail() {
+        IDKit.userInfo { response ->
+            when (response) {
+                is Success -> userInfo.value = response.result.email.toString()
+                is Failure -> userInfo.value = "Refresh error: ${response.throwable.message}"
             }
-            is Failure -> userInfo.value = "Refresh error: ${completion.throwable.message}"
         }
     }
 }

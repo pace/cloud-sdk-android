@@ -198,6 +198,10 @@ The `GasStations` properties `paymentMethods`, `amenities`, `foods`, `loyaltyPro
 
 - The `POIKit.getRegionalPrice(...)` function now returns `List<RegionalPrices>` instead of the `RegionalPrices` typealias, which was `List<RegionalPrice>` before. This means that the only difference now is that the `RegionalPrice` model is called `RegionalPrices` and the `RegionalPrices` typealias no longer exists. The properties of the new `RegionalPrices` model are the same as those of the old `RegionalPrice` model.
 - The [POI GeoJSON API](https://api.pace.cloud/schema/2021-2/_poi-geojson.html) has been removed because it is an internal API. If you still need this API, please write us on GitHub: https://github.com/pace/cloud-sdk-android.
+- The user info request has been revised:
+  - You don't have to pass an access token to the `IDKit.userInfo` method anymore, because it is automatically added to the request by the IDKit.
+  - You can now add optional additional headers and optional additional parameters to the user info request, just like with the other API requests.
+  - The properties of the `UserInfoResponse` model have changed to `subject`, `zoneInfo`, `emailVerified`, `createdAt`, `locale` and `email`. The old properties are outdated.
 
 ## IDKit
 **IDKit** manages the OpenID (OID) authorization and the general session flow with its token handling via **PACE ID**.

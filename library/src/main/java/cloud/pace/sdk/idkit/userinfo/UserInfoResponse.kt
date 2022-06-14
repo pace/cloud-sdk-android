@@ -1,14 +1,16 @@
 package cloud.pace.sdk.idkit.userinfo
 
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 data class UserInfoResponse(
-    val id: String?,
-    @Json(name = "first_name")
-    val firstName: String?,
-    @Json(name = "last_name")
-    val lastName: String?,
-    @Json(name = "is_email_verified")
-    val isEmailVerified: Boolean?,
-    val email: String?
+    @SerializedName("sub")
+    val subject: String? = null,
+    @SerializedName("zoneinfo")
+    val zoneInfo: String? = null,
+    @SerializedName("email_verified")
+    val emailVerified: Boolean? = null,
+    @SerializedName("created_at")
+    val createdAt: Long? = null,
+    val locale: String? = null,
+    val email: String? = null
 )

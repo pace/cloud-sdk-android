@@ -3,11 +3,11 @@ package cloud.pace.sdk.utils
 import android.content.res.Resources
 import android.util.TypedValue
 import cloud.pace.sdk.PACECloudSDK
-import cloud.pace.sdk.idkit.model.OIDConfiguration
-import net.openid.appauth.ResponseTypeValues
 import java.security.SecureRandom
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 /**
  * Converts integer to density-independent pixels (dp).
@@ -62,83 +62,6 @@ fun String.Companion.randomHexString(length: Int): String {
 
 fun <T> List<T>.equalsTo(other: List<T>): Boolean {
     return size == other.size && containsAll(other)
-}
-
-fun Environment.getOIDConfiguration(
-    clientId: String,
-    clientSecret: String? = null,
-    scopes: List<String>? = null,
-    redirectUri: String,
-    responseType: String = ResponseTypeValues.CODE,
-    additionalParameters: Map<String, String>? = null,
-    authorizationEndpoint: String? = null,
-    endSessionEndpoint: String? = null,
-    tokenEndpoint: String? = null,
-    userInfoEndpoint: String? = null,
-    integrated: Boolean = false
-): OIDConfiguration {
-    return when (this) {
-        Environment.DEVELOPMENT -> {
-            OIDConfiguration.development(
-                clientId,
-                clientSecret,
-                scopes,
-                redirectUri,
-                responseType,
-                additionalParameters,
-                authorizationEndpoint,
-                endSessionEndpoint,
-                tokenEndpoint,
-                userInfoEndpoint,
-                integrated
-            )
-        }
-        Environment.SANDBOX -> {
-            OIDConfiguration.sandbox(
-                clientId,
-                clientSecret,
-                scopes,
-                redirectUri,
-                responseType,
-                additionalParameters,
-                authorizationEndpoint,
-                endSessionEndpoint,
-                tokenEndpoint,
-                userInfoEndpoint,
-                integrated
-            )
-        }
-        Environment.STAGING -> {
-            OIDConfiguration.staging(
-                clientId,
-                clientSecret,
-                scopes,
-                redirectUri,
-                responseType,
-                additionalParameters,
-                authorizationEndpoint,
-                endSessionEndpoint,
-                tokenEndpoint,
-                userInfoEndpoint,
-                integrated
-            )
-        }
-        Environment.PRODUCTION -> {
-            OIDConfiguration.production(
-                clientId,
-                clientSecret,
-                scopes,
-                redirectUri,
-                responseType,
-                additionalParameters,
-                authorizationEndpoint,
-                endSessionEndpoint,
-                tokenEndpoint,
-                userInfoEndpoint,
-                integrated
-            )
-        }
-    }
 }
 
 val PACECloudSDK.environment: Environment
