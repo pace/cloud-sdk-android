@@ -1,5 +1,6 @@
 package cloud.pace.sdk.idkit.model
 
+import cloud.pace.sdk.utils.Environment
 import net.openid.appauth.ResponseTypeValues
 
 data class CustomOIDConfiguration @JvmOverloads constructor(
@@ -15,3 +16,59 @@ data class CustomOIDConfiguration @JvmOverloads constructor(
     var additionalParameters: Map<String, String>? = null,
     val integrated: Boolean = false
 )
+
+fun CustomOIDConfiguration.oidConfiguration(environment: Environment) =
+    when (environment) {
+        Environment.PRODUCTION -> OIDConfiguration(
+            authorizationEndpoint = authorizationEndpoint ?: "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/auth",
+            endSessionEndpoint = endSessionEndpoint ?: "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/logout",
+            tokenEndpoint = tokenEndpoint ?: "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/token",
+            userInfoEndpoint = userInfoEndpoint ?: "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/userinfo",
+            clientId = clientId,
+            clientSecret = clientSecret,
+            scopes = scopes,
+            redirectUri = redirectUri,
+            responseType = responseType,
+            additionalParameters = additionalParameters,
+            integrated = integrated
+        )
+        Environment.SANDBOX -> OIDConfiguration(
+            authorizationEndpoint = authorizationEndpoint ?: "https://id.sandbox.pace.cloud/auth/realms/pace/protocol/openid-connect/auth",
+            endSessionEndpoint = endSessionEndpoint ?: "https://id.sandbox.pace.cloud/auth/realms/pace/protocol/openid-connect/logout",
+            tokenEndpoint = tokenEndpoint ?: "https://id.sandbox.pace.cloud/auth/realms/pace/protocol/openid-connect/token",
+            userInfoEndpoint = userInfoEndpoint ?: "https://id.sandbox.pace.cloud/auth/realms/pace/protocol/openid-connect/userinfo",
+            clientId = clientId,
+            clientSecret = clientSecret,
+            scopes = scopes,
+            redirectUri = redirectUri,
+            responseType = responseType,
+            additionalParameters = additionalParameters,
+            integrated = integrated
+        )
+        Environment.DEVELOPMENT -> OIDConfiguration(
+            authorizationEndpoint = authorizationEndpoint ?: "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/auth",
+            endSessionEndpoint = endSessionEndpoint ?: "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/logout",
+            tokenEndpoint = tokenEndpoint ?: "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/token",
+            userInfoEndpoint = userInfoEndpoint ?: "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/userinfo",
+            clientId = clientId,
+            clientSecret = clientSecret,
+            scopes = scopes,
+            redirectUri = redirectUri,
+            responseType = responseType,
+            additionalParameters = additionalParameters,
+            integrated = integrated
+        )
+        Environment.STAGING -> OIDConfiguration(
+            authorizationEndpoint = authorizationEndpoint ?: "https://id.stage.pace.cloud/auth/realms/pace/protocol/openid-connect/auth",
+            endSessionEndpoint = endSessionEndpoint ?: "https://id.stage.pace.cloud/auth/realms/pace/protocol/openid-connect/logout",
+            tokenEndpoint = tokenEndpoint ?: "https://id.stage.pace.cloud/auth/realms/pace/protocol/openid-connect/token",
+            userInfoEndpoint = userInfoEndpoint ?: "https://id.stage.pace.cloud/auth/realms/pace/protocol/openid-connect/userinfo",
+            clientId = clientId,
+            clientSecret = clientSecret,
+            scopes = scopes,
+            redirectUri = redirectUri,
+            responseType = responseType,
+            additionalParameters = additionalParameters,
+            integrated = integrated
+        )
+    }

@@ -21,7 +21,11 @@ import cloud.pace.sdk.idkit.credentials.CredentialsManager
 import cloud.pace.sdk.idkit.model.OIDConfiguration
 import cloud.pace.sdk.idkit.model.ServiceConfiguration
 import cloud.pace.sdk.idkit.userinfo.UserInfoResponse
-import cloud.pace.sdk.utils.*
+import cloud.pace.sdk.utils.CloudSDKKoinComponent
+import cloud.pace.sdk.utils.Completion
+import cloud.pace.sdk.utils.DeviceUtils
+import cloud.pace.sdk.utils.SetupLogger
+import cloud.pace.sdk.utils.handleCallback
 import org.koin.core.component.inject
 
 object IDKit : CloudSDKKoinComponent {
@@ -244,11 +248,13 @@ object IDKit : CloudSDKKoinComponent {
     /**
      * Retrieves the currently authorized user's information.
      *
-     * @param accessToken The user's access token for which to retrieve the user info.
-     * @param completion The block to be called when the request is completed including either a valid `userInfo` or a [Throwable].
+     * @param additionalHeaders Optional additional headers to append to the user info request.
+     * @param additionalParameters Optional additional parameters to append to the user info request.
+     * @param completion The block to be called when the request is completed including either a valid [UserInfoResponse] or a [Throwable].
      */
-    fun userInfo(accessToken: String, completion: (Completion<UserInfoResponse>) -> Unit) {
-        authorizationManager.userInfo(accessToken, completion)
+    @JvmOverloads
+    fun userInfo(additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null, completion: (Completion<UserInfoResponse>) -> Unit) {
+        authorizationManager.userInfo(additionalHeaders, additionalParameters, completion)
     }
 
     /**

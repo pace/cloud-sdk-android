@@ -86,6 +86,8 @@ class MainScreenActivity : AppCompatActivity() {
             }
         }
 
+        IDKit.refreshToken()
+
         biometryStatus.value = IDKit.isBiometricAuthenticationEnabled()
 
         // Since target SDK 31 (Android 12) ACCESS_FINE_LOCATION must be requested with ACCESS_COARSE_LOCATION

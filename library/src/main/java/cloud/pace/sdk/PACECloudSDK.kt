@@ -6,10 +6,17 @@ import cloud.pace.sdk.api.API
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.CustomOIDConfiguration
-import cloud.pace.sdk.utils.*
+import cloud.pace.sdk.idkit.model.oidConfiguration
+import cloud.pace.sdk.utils.Configuration
+import cloud.pace.sdk.utils.DeviceUtils
+import cloud.pace.sdk.utils.Environment
+import cloud.pace.sdk.utils.ErrorListener
+import cloud.pace.sdk.utils.KoinConfig
+import cloud.pace.sdk.utils.SetupLogger
 import timber.log.Timber
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 object PACECloudSDK {
 
@@ -96,24 +103,11 @@ object PACECloudSDK {
             Timber.plant(Timber.DebugTree())
         }
 
-        KoinConfig.setupCloudSDK(context, configuration.environment, configuration.apiKey)
-        configuration.oidConfiguration?.let {
-            IDKit.setup(
-                context,
-                configuration.environment.getOIDConfiguration(
-                    it.clientId,
-                    it.clientSecret,
-                    it.scopes,
-                    it.redirectUri,
-                    it.responseType,
-                    it.additionalParameters,
-                    it.authorizationEndpoint,
-                    it.endSessionEndpoint,
-                    it.tokenEndpoint,
-                    it.userInfoEndpoint,
-                    it.integrated
-                )
-            )
+        KoinConfig.setupCloudSDK(context, configuration)
+
+        val oidConfiguration = configuration.oidConfiguration
+        if (oidConfiguration != null) {
+            IDKit.setup(context, oidConfiguration.oidConfiguration(configuration.environment))
         }
 
         API.setup(configuration.environment.apiUrl, configuration.apiKey)

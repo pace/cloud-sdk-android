@@ -30,6 +30,8 @@ import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.idkit.authorization.AuthorizationManager
 import cloud.pace.sdk.idkit.credentials.CredentialsManager
+import cloud.pace.sdk.idkit.model.oidConfiguration
+import cloud.pace.sdk.idkit.userinfo.UserInfoApiClient
 import cloud.pace.sdk.poikit.database.POIKitDatabase
 import cloud.pace.sdk.poikit.geo.GeoAPIClient
 import cloud.pace.sdk.poikit.geo.GeoAPIManager
@@ -52,7 +54,7 @@ object KoinConfig {
     internal lateinit var cloudSDKKoinApp: KoinApplication
 
     @Synchronized
-    internal fun setupCloudSDK(context: Context, environment: Environment, apiKey: String) {
+    internal fun setupCloudSDK(context: Context, configuration: Configuration) {
         cloudSDKKoinApp = koinApplication {
             androidContext(context)
             modules(
@@ -70,11 +72,12 @@ object KoinConfig {
                             )
                             .build()
                     }
-                    single { TileDownloader(environment) }
-                    single { NavigationApiClient(environment, apiKey) }
-                    single { AddressSearchClient(environment, apiKey) }
-                    single { GeoAPIClient(environment, get()) }
-                    single { PriceHistoryClient(environment) }
+                    single { TileDownloader(configuration.environment) }
+                    single { NavigationApiClient(configuration.environment, configuration.apiKey) }
+                    single { AddressSearchClient(configuration.environment, configuration.apiKey) }
+                    single { GeoAPIClient(configuration.environment, get()) }
+                    single { PriceHistoryClient(configuration.environment) }
+                    single { UserInfoApiClient(configuration.oidConfiguration?.oidConfiguration(configuration.environment)?.userInfoEndpoint) }
                     single<SystemManager> { SystemManagerImpl(get()) }
                     single<SharedPreferencesModel> { SharedPreferencesImpl(PreferenceManager.getDefaultSharedPreferences(get())) }
                     single<CacheModel> { CacheModelImpl() }
@@ -89,7 +92,7 @@ object KoinConfig {
                     single { AppManager(DefaultDispatcherProvider()) }
                     single<GeoAPIManager>(createdAtStart = true) { GeoAPIManagerImpl(get(), get(), get()) }
                     single { AuthorizationService(get()) }
-                    single { AuthorizationManager(get(), get(), get()) }
+                    single { AuthorizationManager(get(), get(), get(), get()) }
                     single { CredentialsManager(get(), get(), get()) }
                     viewModel<AppFragmentViewModel> { AppFragmentViewModelImpl(get()) }
                     viewModel<AppWebViewModel> { (context: Context) -> AppWebViewModelImpl(context, get(), get(), get(), get(), get()) }
