@@ -1,3 +1,23 @@
+15.0.0 Release notes (2022-06-15)
+=============================================================
+
+### Breaking Changes
+
+* Revise user info request and response model
+* Remove the internal POI GeoJSON API files
+* Regenerate API files to fix problems with wrong return types
+
+### Fixes
+
+* Improve the handling of process kills during the creation of a payment method within the custom tab
+* Correctly generate relationships and resources of API files
+
+### Internal
+
+* Remove bot configs
+* Update documentation link
+* Exclude unused 'Errors' classes from generated API code
+
 14.0.0 Release notes (2022-05-16)
 =============================================================
 
