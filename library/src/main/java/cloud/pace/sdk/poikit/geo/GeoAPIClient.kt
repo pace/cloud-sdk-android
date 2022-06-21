@@ -28,8 +28,7 @@ interface GeoAPI {
 }
 
 class GeoAPIClient(environment: Environment, private val context: Context) {
-
-    private val service = create(environment.apiUrl)
+    private val service = create(environment.cdnUrl)
 
     fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
         service.getGeoApiApps(
