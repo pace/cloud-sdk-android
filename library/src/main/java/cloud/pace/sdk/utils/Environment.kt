@@ -13,7 +13,8 @@ enum class Environment(
     @Deprecated("Use URL.fueling instead", ReplaceWith("URL.fueling"))
     val fuelingUrl: String,
     @Deprecated("Use URL.dashboard instead", ReplaceWith("URL.dashboard"))
-    val dashboardUrl: String
+    val dashboardUrl: String,
+    val cdnUrl: String
 ) {
 
     DEVELOPMENT(
@@ -24,7 +25,8 @@ enum class Environment(
         "https://pay.dev.pace.cloud",
         "https://pay.dev.pace.cloud/transactions",
         "https://dev.fuel.site",
-        "https://my.dev.fuel.site"
+        "https://my.dev.fuel.site",
+        "https://cdn.dev.pace.cloud"
     ),
     STAGING(
         "https://id.stage.pace.cloud",
@@ -34,7 +36,8 @@ enum class Environment(
         "https://pay.stage.pace.cloud",
         "https://pay.stage.pace.cloud/transactions",
         "https://stage.fuel.site",
-        "https://my.stage.fuel.site"
+        "https://my.stage.fuel.site",
+        "https://cdn.stage.pace.cloud"
     ),
     PRODUCTION(
         "https://id.pace.cloud",
@@ -44,7 +47,8 @@ enum class Environment(
         "https://pay.pace.cloud",
         "https://pay.pace.cloud/transactions",
         "https://fuel.site",
-        "https://my.fuel.site"
+        "https://my.fuel.site",
+        "https://cdn.pace.cloud"
     ),
     SANDBOX(
         "https://id.sandbox.pace.cloud",
@@ -54,6 +58,7 @@ enum class Environment(
         "https://pay.sandbox.pace.cloud",
         "https://pay.sandbox.pace.cloud/transactions",
         "https://sandbox.fuel.site",
-        "https://my.sandbox.fuel.site"
+        "https://my.sandbox.fuel.site",
+        "https://cdn.sandbox.pace.cloud"
     )
 }
