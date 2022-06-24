@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import androidx.room.Room
 import cloud.pace.sdk.appkit.AppManager
-import cloud.pace.sdk.appkit.app.AppFragmentViewModel
-import cloud.pace.sdk.appkit.app.AppFragmentViewModelImpl
+import cloud.pace.sdk.appkit.app.AppActivityViewModel
+import cloud.pace.sdk.appkit.app.AppActivityViewModelImpl
 import cloud.pace.sdk.appkit.app.api.AppAPI
 import cloud.pace.sdk.appkit.app.api.AppAPIImpl
 import cloud.pace.sdk.appkit.app.api.AppRepository
@@ -94,7 +94,7 @@ object KoinConfig {
                     single { AuthorizationService(get()) }
                     single { AuthorizationManager(get(), get(), get(), get()) }
                     single { CredentialsManager(get(), get(), get()) }
-                    viewModel<AppFragmentViewModel> { AppFragmentViewModelImpl(get()) }
+                    viewModel<AppActivityViewModel> { AppActivityViewModelImpl(get()) }
                     viewModel<AppWebViewModel> { (context: Context) -> AppWebViewModelImpl(context, get(), get(), get(), get(), get()) }
                     viewModel<AppDrawerViewModel> { AppDrawerViewModelImpl(get()) }
                 }
