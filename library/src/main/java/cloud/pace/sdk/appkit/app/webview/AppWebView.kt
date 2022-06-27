@@ -8,12 +8,10 @@ import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
 import android.webkit.WebView.setWebContentsDebuggingEnabled
 import android.widget.RelativeLayout
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.generated.CommunicationManager
-import cloud.pace.sdk.appkit.utils.BiometricUtils
 import cloud.pace.sdk.databinding.AppWebViewBinding
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Event
@@ -25,7 +23,6 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
     private val binding = AppWebViewBinding.inflate(LayoutInflater.from(context), this, true)
     private val webViewModel: AppWebViewModel by inject { parametersOf(context) }
     private val communicationManager: CommunicationManager
-    private var fragment: Fragment? = null
     private val loadingIndicatorRunnable = Runnable {
         binding.loadingIndicator.visibility = View.VISIBLE
     }
@@ -69,13 +66,6 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         }
     }
 
-    private val biometricRequestObserver = Observer<Event<AppWebViewModel.BiometricRequest>> {
-        val callback = it.getContentIfNotHandled() ?: return@Observer
-        fragment?.let {
-            BiometricUtils.requestAuthentication(it, resources.getString(callback.title), onSuccess = callback.onSuccess, onFailure = callback.onFailure)
-        }
-    }
-
     private val goBackObserver = Observer<Event<Unit>> {
         it.getContentIfNotHandled()?.let {
             if (binding.webView.canGoBack()) {
@@ -109,12 +99,10 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
     }
 
     /**
-     * Initializes [AppWebView] with [AppWebViewClient] and loads the [url] in the WebView with the passed [fragment][parent] as parent.
+     * Initializes [AppWebView] with [AppWebViewClient] and loads the [url] in the WebView.
      */
-    fun init(parent: Fragment, url: String) {
+    fun init(url: String) {
         setWebContentsDebuggingEnabled(true)
-
-        fragment = parent
         webViewModel.init(url)
     }
 
@@ -148,7 +136,6 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         webViewModel.loadUrl.observe(lifecycleOwner, loadUrlObserver)
         webViewModel.isInErrorState.observe(lifecycleOwner, isInErrorStateObserver)
         webViewModel.showLoadingIndicator.observe(lifecycleOwner, showLoadingIndicatorObserver)
-        webViewModel.biometricRequest.observe(lifecycleOwner, biometricRequestObserver)
         webViewModel.goBack.observe(lifecycleOwner, goBackObserver)
     }
 

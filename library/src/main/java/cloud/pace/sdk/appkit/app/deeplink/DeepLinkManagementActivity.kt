@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.browser.customtabs.CustomTabsService
-import cloud.pace.sdk.appkit.app.AppFragmentViewModelImpl
 import cloud.pace.sdk.utils.ErrorLevel
 import cloud.pace.sdk.utils.ErrorListener
 import timber.log.Timber
@@ -47,7 +46,7 @@ class DeepLinkManagementActivity : Activity() {
                         ErrorListener.reportBreadcrumb(TAG, "Open URL in custom tab activity", mapOf("integrated" to integrated, "isProcessStarted" to isProcessStarted))
                         CustomTabsIntent.Builder().build().intent.apply {
                             if (isChromeCustomTabsSupported()) {
-                                setPackage(AppFragmentViewModelImpl.CHROME_PACKAGE_NAME)
+                                setPackage(CHROME_PACKAGE_NAME)
                             }
                         }
                     }
@@ -91,7 +90,7 @@ class DeepLinkManagementActivity : Activity() {
 
     private fun isChromeCustomTabsSupported(): Boolean {
         val serviceIntent = Intent(CustomTabsService.ACTION_CUSTOM_TABS_CONNECTION)
-        serviceIntent.setPackage(AppFragmentViewModelImpl.CHROME_PACKAGE_NAME)
+        serviceIntent.setPackage(CHROME_PACKAGE_NAME)
         val resolveInfos = packageManager.queryIntentServices(serviceIntent, 0)
         return resolveInfos.isNotEmpty()
     }
@@ -119,6 +118,7 @@ class DeepLinkManagementActivity : Activity() {
         const val INTEGRATED = "integrated"
         const val REDIRECT = "redirect"
         const val TO = "to"
+        const val CHROME_PACKAGE_NAME = "com.android.chrome"
         private const val TAG = "DeepLinkManagementActivity"
     }
 }

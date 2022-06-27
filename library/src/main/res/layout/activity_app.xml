@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     tools:context=".appkit.app.AppActivity">
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
+    <cloud.pace.sdk.appkit.app.webview.AppWebView
+        android:id="@+id/appWebView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

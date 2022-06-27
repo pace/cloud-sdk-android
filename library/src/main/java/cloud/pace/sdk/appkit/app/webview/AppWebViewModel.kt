@@ -134,7 +134,6 @@ abstract class AppWebViewModel : ViewModel(), AppWebViewClient.WebClientCallback
     abstract val loadUrl: LiveData<Event<String>>
     abstract val isInErrorState: LiveData<Event<Boolean>>
     abstract val showLoadingIndicator: LiveData<Event<Boolean>>
-    abstract val biometricRequest: LiveData<Event<BiometricRequest>>
     abstract val goBack: LiveData<Event<Unit>>
 
     abstract fun init(url: String)
@@ -163,7 +162,6 @@ class AppWebViewModelImpl(
     override val loadUrl = MutableLiveData<Event<String>>()
     override val isInErrorState = MutableLiveData<Event<Boolean>>()
     override val showLoadingIndicator = MutableLiveData<Event<Boolean>>()
-    override val biometricRequest = MutableLiveData<Event<BiometricRequest>>()
     override val goBack = MutableLiveData<Event<Unit>>()
 
     override fun init(url: String) {
@@ -297,43 +295,41 @@ class AppWebViewModelImpl(
                     }
 
                     if (totpSecret != null) {
-                        biometricRequest.postValue(
-                            Event(
-                                BiometricRequest(
-                                    R.string.payment_biometric_prompt_title,
-                                    onSuccess = {
-                                        try {
-                                            val decryptedSecret = EncryptionUtils.decrypt(totpSecret.encryptedSecret)
-                                            val otp = EncryptionUtils.generateOTP(
-                                                decryptedSecret,
-                                                totpSecret.digits,
-                                                totpSecret.period,
-                                                totpSecret.algorithm,
-                                                Date((getTOTPRequest.serverTime * 1000.0).toLong())
-                                            )
-                                            continuation.resumeIfActive(GetTOTPResult(GetTOTPResult.Success(GetTOTPResponse(otp, BiometryMethod.OTHER.value))))
-                                        } catch (e: Exception) {
-                                            continuation.resumeIfActive(
-                                                GetTOTPResult(
-                                                    GetTOTPResult.Failure(
-                                                        GetTOTPResult.Failure.StatusCode.InternalServerError,
-                                                        GetTOTPError("Could not decrypt the encrypted TOTP secret.")
-                                                    )
-                                                )
-                                            )
-                                        }
-                                    },
-                                    onFailure = { errorCode, errString ->
+                        appModel.setBiometricRequest(
+                            BiometricRequest(
+                                R.string.payment_biometric_prompt_title,
+                                onSuccess = {
+                                    try {
+                                        val decryptedSecret = EncryptionUtils.decrypt(totpSecret.encryptedSecret)
+                                        val otp = EncryptionUtils.generateOTP(
+                                            decryptedSecret,
+                                            totpSecret.digits,
+                                            totpSecret.period,
+                                            totpSecret.algorithm,
+                                            Date((getTOTPRequest.serverTime * 1000.0).toLong())
+                                        )
+                                        continuation.resumeIfActive(GetTOTPResult(GetTOTPResult.Success(GetTOTPResponse(otp, BiometryMethod.OTHER.value))))
+                                    } catch (e: Exception) {
                                         continuation.resumeIfActive(
                                             GetTOTPResult(
                                                 GetTOTPResult.Failure(
-                                                    GetTOTPResult.Failure.StatusCode.Unauthorized,
-                                                    GetTOTPError("Biometric authentication failed: errorCode was $errorCode, errString was $errString")
+                                                    GetTOTPResult.Failure.StatusCode.InternalServerError,
+                                                    GetTOTPError("Could not decrypt the encrypted TOTP secret.")
                                                 )
                                             )
                                         )
                                     }
-                                )
+                                },
+                                onFailure = { errorCode, errString ->
+                                    continuation.resumeIfActive(
+                                        GetTOTPResult(
+                                            GetTOTPResult.Failure(
+                                                GetTOTPResult.Failure.StatusCode.Unauthorized,
+                                                GetTOTPError("Biometric authentication failed: errorCode was $errorCode, errString was $errString")
+                                            )
+                                        )
+                                    )
+                                }
                             )
                         )
                     } else {
@@ -392,36 +388,34 @@ class AppWebViewModelImpl(
                     val preferenceKey = getSecureDataPreferenceKey(host, getSecureDataRequest.key)
                     val encryptedValue = sharedPreferencesModel.getString(preferenceKey)
                     if (encryptedValue != null) {
-                        biometricRequest.postValue(
-                            Event(
-                                BiometricRequest(
-                                    R.string.appkit_secureData_authentication_confirmation,
-                                    onSuccess = {
-                                        try {
-                                            val value = EncryptionUtils.decrypt(encryptedValue)
-                                            continuation.resumeIfActive(GetSecureDataResult(GetSecureDataResult.Success(GetSecureDataResponse(value))))
-                                        } catch (e: Exception) {
-                                            continuation.resumeIfActive(
-                                                GetSecureDataResult(
-                                                    GetSecureDataResult.Failure(
-                                                        GetSecureDataResult.Failure.StatusCode.InternalServerError,
-                                                        GetSecureDataError("Could not decrypt the encrypted secure data value.")
-                                                    )
-                                                )
-                                            )
-                                        }
-                                    },
-                                    onFailure = { errorCode, errString ->
+                        appModel.setBiometricRequest(
+                            BiometricRequest(
+                                R.string.appkit_secureData_authentication_confirmation,
+                                onSuccess = {
+                                    try {
+                                        val value = EncryptionUtils.decrypt(encryptedValue)
+                                        continuation.resumeIfActive(GetSecureDataResult(GetSecureDataResult.Success(GetSecureDataResponse(value))))
+                                    } catch (e: Exception) {
                                         continuation.resumeIfActive(
                                             GetSecureDataResult(
                                                 GetSecureDataResult.Failure(
-                                                    GetSecureDataResult.Failure.StatusCode.Unauthorized,
-                                                    GetSecureDataError("Biometric authentication failed: errorCode was $errorCode, errString was $errString")
+                                                    GetSecureDataResult.Failure.StatusCode.InternalServerError,
+                                                    GetSecureDataError("Could not decrypt the encrypted secure data value.")
                                                 )
                                             )
                                         )
                                     }
-                                )
+                                },
+                                onFailure = { errorCode, errString ->
+                                    continuation.resumeIfActive(
+                                        GetSecureDataResult(
+                                            GetSecureDataResult.Failure(
+                                                GetSecureDataResult.Failure.StatusCode.Unauthorized,
+                                                GetSecureDataError("Biometric authentication failed: errorCode was $errorCode, errString was $errString")
+                                            )
+                                        )
+                                    )
+                                }
                             )
                         )
                     } else {

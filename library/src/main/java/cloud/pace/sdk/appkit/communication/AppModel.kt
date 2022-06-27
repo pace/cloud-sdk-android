@@ -3,18 +3,26 @@ package cloud.pace.sdk.appkit.communication
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.*
+import android.content.Intent.EXTRA_SUBJECT
+import android.content.Intent.EXTRA_TEXT
+import android.content.Intent.EXTRA_TITLE
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.Intent.createChooser
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import cloud.pace.sdk.appkit.app.webview.AppWebViewModel
 import cloud.pace.sdk.appkit.communication.generated.model.request.OpenURLInNewTabRequest
 import cloud.pace.sdk.appkit.utils.TokenValidator
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.InternalError
-import cloud.pace.sdk.utils.*
+import cloud.pace.sdk.utils.Completion
+import cloud.pace.sdk.utils.Failure
+import cloud.pace.sdk.utils.Success
+import cloud.pace.sdk.utils.onMainThread
 import net.openid.appauth.AuthorizationException
 import timber.log.Timber
 import java.io.File
@@ -27,10 +35,12 @@ interface AppModel {
     var callback: AppCallbackImpl?
     val close: LiveData<Unit>
     val openUrlInNewTab: LiveData<OpenURLInNewTabRequest>
-    val authorize: LiveData<Event<Result<Completion<String?>>>>
-    val endSession: LiveData<Event<Result<LogoutResponse>>>
+    val biometricRequest: LiveData<AppWebViewModel.BiometricRequest>
+    val authorize: LiveData<Result<Completion<String?>>>
+    val endSession: LiveData<Result<LogoutResponse>>
 
     fun reset()
+    fun setBiometricRequest(request: AppWebViewModel.BiometricRequest)
     fun authorize(onResult: (Completion<String?>) -> Unit)
     fun endSession(onResult: (LogoutResponse) -> Unit)
     fun close()
@@ -59,23 +69,33 @@ class AppModelImpl(private val context: Context) : AppModel {
     override var callback: AppCallbackImpl? = null
     override var close = MutableLiveData<Unit>()
     override var openUrlInNewTab = MutableLiveData<OpenURLInNewTabRequest>()
-    override val authorize = MutableLiveData<Event<AppModel.Result<Completion<String?>>>>()
-    override val endSession = MutableLiveData<Event<AppModel.Result<LogoutResponse>>>()
+    override var biometricRequest = MutableLiveData<AppWebViewModel.BiometricRequest>()
+    override var authorize = MutableLiveData<AppModel.Result<Completion<String?>>>()
+    override var endSession = MutableLiveData<AppModel.Result<LogoutResponse>>()
 
     override fun reset() {
         close = MutableLiveData()
         openUrlInNewTab = MutableLiveData()
+        biometricRequest = MutableLiveData()
+        authorize = MutableLiveData()
+        endSession = MutableLiveData()
+    }
+
+    override fun setBiometricRequest(request: AppWebViewModel.BiometricRequest) {
+        onMainThread {
+            biometricRequest.value = request
+        }
     }
 
     override fun authorize(onResult: (Completion<String?>) -> Unit) {
         onMainThread {
-            authorize.value = Event(AppModel.Result(onResult))
+            authorize.value = AppModel.Result(onResult)
         }
     }
 
     override fun endSession(onResult: (LogoutResponse) -> Unit) {
         onMainThread {
-            endSession.value = Event(AppModel.Result(onResult))
+            endSession.value = AppModel.Result(onResult)
         }
     }
 

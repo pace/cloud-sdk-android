@@ -9,8 +9,20 @@ import cloud.pace.sdk.appkit.app.webview.AppWebViewModel
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModelImpl
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.communication.AppModelImpl
-import cloud.pace.sdk.appkit.communication.generated.model.request.*
-import cloud.pace.sdk.appkit.communication.generated.model.response.*
+import cloud.pace.sdk.appkit.communication.generated.model.request.DisableRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.GetSecureDataRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.GetTOTPRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.LogEventRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.SetSecureDataRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.SetTOTPRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.SetUserPropertyRequest
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetBiometricStatusResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetBiometricStatusResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetSecureDataResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetSecureDataResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetTOTPError
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetTOTPResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.GetTOTPResult
 import cloud.pace.sdk.appkit.pay.PayAuthenticationManager
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getTotpSecretPreferenceKey
@@ -21,7 +33,6 @@ import cloud.pace.sdk.appkit.utils.EncryptionUtils
 import cloud.pace.sdk.appkit.utils.TestAppEventManager
 import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.Environment
-import cloud.pace.sdk.utils.Event
 import cloud.pace.sdk.utils.LocationProvider
 import io.mockk.every
 import io.mockk.mockkObject
@@ -33,7 +44,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.*
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
@@ -152,11 +166,10 @@ class AppWebViewModelTest {
         val digits = 14
         val algorithm = "SHA1"
 
-        val observer: Observer<Event<AppWebViewModel.BiometricRequest>> = Observer {
-            val event = it.getContentIfNotHandled() ?: return@Observer
-            event.onSuccess()
+        val observer: Observer<AppWebViewModel.BiometricRequest> = Observer {
+            it.onSuccess()
         }
-        viewModel.biometricRequest.observeForever(observer)
+        appModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
         `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, payHost, key))).thenReturn(secret)
@@ -169,7 +182,7 @@ class AppWebViewModelTest {
         assertEquals(200, result.status)
         assertEquals(GetTOTPResult.Success(GetTOTPResponse("00000865350714", AppWebViewModel.BiometryMethod.OTHER.value)).response, result.body)
 
-        viewModel.biometricRequest.removeObserver(observer)
+        appModel.biometricRequest.removeObserver(observer)
     }
 
     @Test
@@ -182,11 +195,10 @@ class AppWebViewModelTest {
         val errorCode = 500
         val errString = "What a terrible failure!"
 
-        val observer: Observer<Event<AppWebViewModel.BiometricRequest>> = Observer {
-            val event = it.getContentIfNotHandled() ?: return@Observer
-            event.onFailure(errorCode, errString)
+        val observer: Observer<AppWebViewModel.BiometricRequest> = Observer {
+            it.onFailure(errorCode, errString)
         }
-        viewModel.biometricRequest.observeForever(observer)
+        appModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
         `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, payHost, key))).thenReturn(secret)
@@ -202,16 +214,15 @@ class AppWebViewModelTest {
             result.body
         )
 
-        viewModel.biometricRequest.removeObserver(observer)
+        appModel.biometricRequest.removeObserver(observer)
     }
 
     @Test
     fun `secret exists but biometry not available`() = runBlocking {
-        val observer: Observer<Event<AppWebViewModel.BiometricRequest>> = Observer {
-            val event = it.getContentIfNotHandled() ?: return@Observer
-            event.onSuccess()
+        val observer: Observer<AppWebViewModel.BiometricRequest> = Observer {
+            it.onSuccess()
         }
-        viewModel.biometricRequest.observeForever(observer)
+        appModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(false)
 
@@ -222,7 +233,7 @@ class AppWebViewModelTest {
             result.body
         )
 
-        viewModel.biometricRequest.removeObserver(observer)
+        appModel.biometricRequest.removeObserver(observer)
     }
 
     @Test
@@ -232,11 +243,10 @@ class AppWebViewModelTest {
         val digits = 14
         val algorithm = "SHA1"
 
-        val observer: Observer<Event<AppWebViewModel.BiometricRequest>> = Observer {
-            val event = it.getContentIfNotHandled() ?: return@Observer
-            event.onSuccess()
+        val observer: Observer<AppWebViewModel.BiometricRequest> = Observer {
+            it.onSuccess()
         }
-        viewModel.biometricRequest.observeForever(observer)
+        appModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
         `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, payHost, key))).thenReturn(null)
@@ -252,7 +262,7 @@ class AppWebViewModelTest {
             result.body
         )
 
-        viewModel.biometricRequest.removeObserver(observer)
+        appModel.biometricRequest.removeObserver(observer)
     }
 
     @Test
@@ -271,11 +281,10 @@ class AppWebViewModelTest {
         val key = "fueling-app"
         val value = "encryptedValue"
 
-        val observer: Observer<Event<AppWebViewModel.BiometricRequest>> = Observer {
-            val event = it.getContentIfNotHandled() ?: return@Observer
-            event.onSuccess()
+        val observer: Observer<AppWebViewModel.BiometricRequest> = Observer {
+            it.onSuccess()
         }
-        viewModel.biometricRequest.observeForever(observer)
+        appModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
         `when`(sharedPreferencesModel.getString(SharedPreferencesImpl.getSecureDataPreferenceKey(payHost, key))).thenReturn(value)
@@ -284,7 +293,7 @@ class AppWebViewModelTest {
         assertEquals(200, result.status)
         assertEquals(GetSecureDataResult.Success(GetSecureDataResponse(value)).response, result.body)
 
-        viewModel.biometricRequest.removeObserver(observer)
+        appModel.biometricRequest.removeObserver(observer)
     }
 
     @Test
