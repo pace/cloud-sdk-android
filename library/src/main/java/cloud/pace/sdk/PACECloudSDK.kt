@@ -110,7 +110,7 @@ object PACECloudSDK {
             IDKit.setup(context, oidConfiguration.oidConfiguration(configuration.environment))
         }
 
-        API.setup(configuration.environment.apiUrl, configuration.apiKey)
+        API.setup(configuration.environment, configuration.apiKey)
 
         AppKit.locationAccuracy = configuration.locationAccuracy
         AppKit.updateUserAgent()
