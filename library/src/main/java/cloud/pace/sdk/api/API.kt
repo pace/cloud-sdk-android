@@ -5,13 +5,15 @@ import cloud.pace.sdk.utils.Environment
 
 object API {
 
-    var baseUrl: String = Environment.PRODUCTION.apiUrl
+    var environment: Environment = Environment.PRODUCTION
+    val baseUrl: String
+        get() = environment.apiUrl
     var apiKey: String = ""
     var additionalHeaders: Map<String, String> = emptyMap()
         private set
 
-    fun setup(baseUrl: String, apiKey: String, additionalHeaders: Map<String, String> = emptyMap()) {
-        API.baseUrl = baseUrl
+    fun setup(environment: Environment, apiKey: String, additionalHeaders: Map<String, String> = emptyMap()) {
+        API.environment = environment
         API.apiKey = apiKey
         API.additionalHeaders = additionalHeaders
     }
