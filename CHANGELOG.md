@@ -1,3 +1,15 @@
+15.0.1 Release notes (2022-06-30)
+=============================================================
+
+### Fixes
+
+* Remove AppFragment memory leak in AppActivity
+
+### Internal
+
+* Introduce environment-based CDN base url for payment method vendors request
+* Change GeoAPIClient to use cdn url
+
 15.0.0 Release notes (2022-06-15)
 =============================================================
 
