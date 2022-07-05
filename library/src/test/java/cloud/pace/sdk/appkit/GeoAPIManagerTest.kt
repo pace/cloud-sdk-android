@@ -2,29 +2,40 @@ package cloud.pace.sdk.appkit
 
 import android.location.Location
 import cloud.pace.sdk.PACECloudSDK
+import cloud.pace.sdk.appkit.app.api.AppAPI
+import cloud.pace.sdk.appkit.app.api.AppAPIImpl
 import cloud.pace.sdk.appkit.utils.TestAppAPI
+import cloud.pace.sdk.poikit.geo.GeoAPIClient
 import cloud.pace.sdk.poikit.geo.GeoAPIFeature
+import cloud.pace.sdk.poikit.geo.GeoAPIManager
 import cloud.pace.sdk.poikit.geo.GeoAPIManagerImpl
 import cloud.pace.sdk.poikit.geo.GeoAPIResponse
-import cloud.pace.sdk.poikit.geo.GeoGasStation
 import cloud.pace.sdk.poikit.geo.Polygon
-import cloud.pace.sdk.utils.CompletableFutureCompat
+import cloud.pace.sdk.poikit.poi.download.TileDownloader
 import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.Environment
+import cloud.pace.sdk.utils.KoinConfig
 import cloud.pace.sdk.utils.LocationProvider
 import cloud.pace.sdk.utils.SystemManager
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
+import org.koin.test.KoinTest
+import org.koin.test.inject
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import retrofit2.Response
 import java.util.UUID
-import java.util.concurrent.TimeUnit
 
-class GeoAPIManagerTest {
+class GeoAPIManagerTest : KoinTest {
 
     private val polygon = listOf(
         listOf(8.427429, 49.01304015764206),
@@ -52,122 +63,140 @@ class GeoAPIManagerTest {
     }
 
     @Test
-    fun `app is available because location distance is smaller than 150 meters`() {
+    fun `geo json is request once at init`() = runBlocking {
+        val appApi = mockk<AppAPI>()
+        GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
+
+        coVerify(exactly = 1) { appApi.getGeoApiApps() }
+    }
+
+    @Test
+    fun `only one api request is made if geo api manager is requested multiple times simultaneously`() = runBlocking {
+        val geoAPIClient = mockk<GeoAPIClient>().also {
+            coEvery { it.getGeoApiApps() } returns Response.success(createGeoAPIResponse(listOf(polygon)))
+        }
+
+        val module = module {
+            single<TileDownloader> {
+                mockk(relaxed = true)
+            }
+
+            single {
+                geoAPIClient
+            }
+
+            single<AppAPI> {
+                AppAPIImpl(get())
+            }
+
+            single<GeoAPIManager> {
+                GeoAPIManagerImpl(get(), mock(SystemManager::class.java), mock(LocationProvider::class.java))
+            }
+        }
+
+        KoinConfig.setupForTests(mockk(), module)
+        startKoin {
+            modules(module)
+        }
+
+        // Multiple calls to GeoAPIManager (init of caches) simultaneously
+        val geoApiManager by inject<GeoAPIManager>()
+        geoApiManager.apps(49.012713, 8.427777).getOrThrow()
+        geoApiManager.cofuGasStations { }
+        geoApiManager.cofuGasStations(Location("").apply { latitude = 50.012714; longitude = 9.427778 }, 10000) {}
+
+        coVerify(exactly = 1) { geoAPIClient.getGeoApiApps() }
+    }
+
+    @Test
+    fun `app is available because location distance is smaller than 150 meters`() = runBlocking {
         val appApi = object : TestAppAPI() {
-            override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
-                completion(Result.success(createGeoAPIResponse(listOf(polygon))))
+            override suspend fun getGeoApiApps(): Result<GeoAPIResponse> {
+                return Result.success(createGeoAPIResponse(listOf(polygon)))
             }
         }
 
         val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
-        val gasStationFuture = CompletableFutureCompat<List<GeoGasStation>>()
-        geoApiManager.apps(49.012713, 8.427777) {
-            it.onSuccess { gasStationFuture.complete(it) }
-            it.onFailure { throw it }
-        }
+        val apps = geoApiManager.apps(49.012713, 8.427777).getOrThrow()
 
-        val gasStation = gasStationFuture.get(2, TimeUnit.SECONDS)
-        assertEquals(1, gasStation.size)
+        assertEquals(1, apps.size)
     }
 
     @Test
-    fun `app is not available because location distance is greater than 150 meters`() {
+    fun `app is not available because location distance is greater than 150 meters`() = runBlocking {
         val appApi = object : TestAppAPI() {
-            override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
-                completion(Result.success(createGeoAPIResponse(listOf(polygon))))
+            override suspend fun getGeoApiApps(): Result<GeoAPIResponse> {
+                return Result.success(createGeoAPIResponse(listOf(polygon)))
             }
         }
 
         val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
-        val gasStationFuture = CompletableFutureCompat<List<GeoGasStation>>()
-        geoApiManager.apps(49.0599842, 8.374426) {
-            it.onSuccess { gasStationFuture.complete(it) }
-            it.onFailure { throw it }
-        }
+        val apps = geoApiManager.apps(49.0599842, 8.374426).getOrThrow()
 
-        val gasStation = gasStationFuture.get(2, TimeUnit.SECONDS)
-        assertEquals(0, gasStation.size)
+        assertEquals(0, apps.size)
     }
 
     @Test
-    fun `app is not available in 2000 polygons`() {
+    fun `app is not available in 2000 polygons`() = runBlocking {
         val appApi = object : TestAppAPI() {
-            override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
-                completion(Result.success(get2000PolygonsResponse()))
+            override suspend fun getGeoApiApps(): Result<GeoAPIResponse> {
+                return Result.success(get2000PolygonsResponse())
             }
         }
 
         val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
-        val gasStationFuture = CompletableFutureCompat<List<GeoGasStation>>()
-        geoApiManager.apps(49.405779, 8.6485949) {
-            it.onSuccess { gasStationFuture.complete(it) }
-            it.onFailure { throw it }
-        }
+        val apps = geoApiManager.apps(49.405779, 8.6485949).getOrThrow()
 
-        val gasStation = gasStationFuture.get(2, TimeUnit.SECONDS)
-        assertEquals(0, gasStation.size)
+        assertEquals(0, apps.size)
     }
 
     @Test
-    fun `cache returns failure when fetching apps`() {
-        val exception = Exception("What a terrible failure")
+    fun `cache returns failure when fetching apps`() = runBlocking {
+        val expected = Exception("What a terrible failure")
 
         val appApi = object : TestAppAPI() {
-            override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
-                completion(Result.failure(exception))
+            override suspend fun getGeoApiApps(): Result<GeoAPIResponse> {
+                return Result.failure(expected)
             }
         }
 
         val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
-        val exceptionFuture = CompletableFutureCompat<Throwable?>()
-        geoApiManager.apps(49.012722, 8.427326) {
-            it.onSuccess { exceptionFuture.complete(null) }
-            it.onFailure { exceptionFuture.complete(it) }
-        }
+        val exception = geoApiManager.apps(49.012722, 8.427326).exceptionOrNull()
 
-        assertEquals(exception, exceptionFuture.get(2, TimeUnit.SECONDS))
+        assertEquals(expected, exception)
     }
 
     @Test
-    fun `cache successfully returns features`() {
+    fun `cache successfully returns features`() = runBlocking {
         val id = "e3211b77-03f0-4d49-83aa-4adaa46d95ae"
 
         val appApi = object : TestAppAPI() {
-            override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
-                completion(Result.success(createGeoAPIResponse(listOf(polygon), id)))
+            override suspend fun getGeoApiApps(): Result<GeoAPIResponse> {
+                return Result.success(createGeoAPIResponse(listOf(polygon), id))
             }
         }
 
         val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
-        val geoAPIFeature = CompletableFutureCompat<List<GeoAPIFeature>>()
-        geoApiManager.features(49.012713, 8.427777) {
-            it.onSuccess { geoAPIFeature.complete(it) }
-            it.onFailure { throw it }
-        }
+        val features = geoApiManager.features(49.012713, 8.427777).getOrThrow()
 
-        val features = geoAPIFeature.get(2, TimeUnit.SECONDS)
         assertEquals(1, features.size)
         assertEquals(id, features.first().id)
     }
 
     @Test
-    fun `cache returns failure when fetching features`() {
-        val exception = Exception("What a terrible failure")
+    fun `cache returns failure when fetching features`() = runBlocking {
+        val expected = Exception("What a terrible failure")
 
         val appApi = object : TestAppAPI() {
-            override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
-                completion(Result.failure(exception))
+            override suspend fun getGeoApiApps(): Result<GeoAPIResponse> {
+                return Result.failure(expected)
             }
         }
 
         val geoApiManager = GeoAPIManagerImpl(appApi, mock(SystemManager::class.java), mock(LocationProvider::class.java))
-        val exceptionFuture = CompletableFutureCompat<Throwable?>()
-        geoApiManager.features(49.012713, 8.427777) {
-            it.onSuccess { exceptionFuture.complete(null) }
-            it.onFailure { exceptionFuture.complete(it) }
-        }
+        val exception = geoApiManager.features(49.012713, 8.427777).exceptionOrNull()
 
-        assertEquals(exception, exceptionFuture.get(2, TimeUnit.SECONDS))
+        assertEquals(expected, exception)
     }
 
     @Test
@@ -178,8 +207,8 @@ class GeoAPIManagerTest {
         `when`(location.longitude).then { 8.427326 }
 
         val appApi = object : TestAppAPI() {
-            override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
-                completion(Result.success(createGeoAPIResponse(listOf(polygon), id)))
+            override suspend fun getGeoApiApps(): Result<GeoAPIResponse> {
+                return Result.success(createGeoAPIResponse(listOf(polygon), id))
             }
         }
 
@@ -197,8 +226,8 @@ class GeoAPIManagerTest {
         `when`(location.longitude).then { 8.427326 }
 
         val appApi = object : TestAppAPI() {
-            override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
-                completion(Result.success(createGeoAPIResponse(listOf(polygon), id2)))
+            override suspend fun getGeoApiApps(): Result<GeoAPIResponse> {
+                return Result.success(createGeoAPIResponse(listOf(polygon), id2))
             }
         }
 

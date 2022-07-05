@@ -46,32 +46,22 @@ class AppRepositoryImpl(
 ) : AppRepository {
 
     override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
-        return try {
-            val deferred = suspendCancellableCoroutine<Completion<List<Deferred<List<App>>>>> { continuation ->
-                geoApiManager.apps(latitude, longitude) { response ->
-                    response.onSuccess {
-                        val result = it.flatMap { geoGasStation ->
-                            geoGasStation.appUrls[FUELING_TYPE]?.map { url ->
-                                CoroutineScope(Dispatchers.IO).async {
-                                    castLocationBasedApp(url, listOf(geoGasStation.id))
-                                }
-                            } ?: emptyList()
-                        }
-                        continuation.resumeIfActive(Success(result))
-                    }
-
-                    response.onFailure {
-                        continuation.resumeIfActive(Failure(it))
-                    }
-                }
+        try {
+            val apps = geoApiManager.apps(latitude, longitude).getOrElse {
+                return Failure(it)
             }
 
-            when (deferred) {
-                is Success -> Success(deferred.result.awaitAll().flatten())
-                is Failure -> Failure(deferred.throwable)
+            val deferred = apps.flatMap { geoGasStation ->
+                geoGasStation.appUrls[FUELING_TYPE]?.map { url ->
+                    CoroutineScope(Dispatchers.IO).async {
+                        castLocationBasedApp(url, listOf(geoGasStation.id))
+                    }
+                } ?: emptyList()
             }
+
+            return Success(deferred.awaitAll().flatten())
         } catch (e: Exception) {
-            Failure(e)
+            return Failure(e)
         }
     }
 

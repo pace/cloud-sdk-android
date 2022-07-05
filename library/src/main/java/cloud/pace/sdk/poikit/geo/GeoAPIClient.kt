@@ -4,13 +4,12 @@ import android.content.Context
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.utils.InterceptorUtils
 import cloud.pace.sdk.utils.Environment
-import cloud.pace.sdk.utils.handleCallback
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.Cache
 import okhttp3.OkHttpClient
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
@@ -21,20 +20,21 @@ import java.util.concurrent.TimeUnit
 interface GeoAPI {
 
     @GET("geo/2021-1/apps/{apiName}.geojson")
-    fun getGeoApiApps(
+    suspend fun getGeoApiApps(
         @Path("apiName") apiName: String,
         @HeaderMap headers: Map<String, String>,
-    ): Call<GeoAPIResponse>
+    ): Response<GeoAPIResponse>
 }
 
 class GeoAPIClient(environment: Environment, private val context: Context) {
+
     private val service = create(environment.cdnUrl)
 
-    fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
-        service.getGeoApiApps(
+    suspend fun getGeoApiApps(): Response<GeoAPIResponse> {
+        return service.getGeoApiApps(
             PACECloudSDK.configuration.geoAppsScope,
             InterceptorUtils.getHeaders(false, "application/geo+json", "application/geo+json")
-        ).handleCallback(completion)
+        )
     }
 
     private fun create(baseUrl: String, readTimeout: Long? = null): GeoAPI {

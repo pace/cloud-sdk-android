@@ -11,16 +11,18 @@ import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.LocationProvider
 import cloud.pace.sdk.utils.Success
 import cloud.pace.sdk.utils.SystemManager
-import cloud.pace.sdk.utils.onBackgroundThread
-import cloud.pace.sdk.utils.resumeIfActive
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 interface GeoAPIManager {
 
-    fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit)
-    fun features(latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit)
+    suspend fun apps(latitude: Double, longitude: Double): Result<List<GeoGasStation>>
+    suspend fun features(latitude: Double, longitude: Double): Result<List<GeoAPIFeature>>
     fun cofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit)
     fun cofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit)
     suspend fun isPoiInRange(poiId: String, location: Location? = null): Boolean
@@ -36,58 +38,57 @@ class GeoAPIManagerImpl(
     private var cofuGasStationsCache: CofuGasStationsCache? = null
 
     init {
-        loadCofuGasStationsCache { result ->
-            result.onSuccess {
-                Timber.d("Successfully loaded initial CoFu gas stations cache")
-            }
-            result.onFailure { throwable ->
-                Timber.e(throwable, "Failed loading initial CoFu gas stations cache")
-            }
-        }
+        CoroutineScope(Dispatchers.Default).launch {
+            try {
+                // Execute GeoJson and location requests and cache building concurrently
+                val deferredResponse = async(Dispatchers.IO) { appApi.getGeoApiApps() }
+                val deferredLocation = async(Dispatchers.IO) { locationProvider.currentLocation(false) }
 
-        onBackgroundThread {
-            when (val completion = locationProvider.currentLocation(false)) {
-                is Success -> {
-                    val location = completion.result
-                    if (location != null) {
-                        loadAppsCache(location.latitude, location.longitude) { result ->
-                            result.onSuccess {
-                                Timber.d("Successfully loaded initial apps cache")
-                            }
-                            result.onFailure { throwable ->
-                                Timber.e(throwable, "Failed loading initial apps cache")
-                            }
+                val response = deferredResponse.await().getOrThrow() // Throw (handled) exception if GeoJson request fails
+                loadCofuGasStationsCache(response)
+                Timber.i("Successfully loaded initial CoFu gas stations cache")
+
+                when (val locationResult = deferredLocation.await()) {
+                    is Success -> {
+                        val location = locationResult.result
+                        if (location != null) {
+                            loadAppsCache(location.latitude, location.longitude, response)
+                            Timber.i("Successfully loaded initial apps cache")
+                        } else {
+                            Timber.w("Could not load initial apps cache because the location was null")
                         }
-                    } else {
-                        Timber.e("Failed loading initial apps cache because location is null")
                     }
+                    is Failure -> Timber.e(locationResult.throwable, "Could not load initial apps cache")
                 }
-                is Failure -> Timber.e(completion.throwable, "Failed loading initial apps cache")
+            } catch (e: Exception) {
+                Timber.e(e, "Failed loading initial GeoJson cache")
             }
         }
     }
 
-    override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {
+    override suspend fun apps(latitude: Double, longitude: Double): Result<List<GeoGasStation>> {
         if (isAppsCacheValid(latitude, longitude)) {
-            completion(Result.success(getApps(latitude, longitude)))
+            return Result.success(getApps(latitude, longitude))
         } else {
-            loadAppsCache(latitude, longitude) {
-                it.onSuccess {
-                    completion(Result.success(getApps(latitude, longitude)))
-                }
-
-                it.onFailure { throwable ->
-                    completion(Result.failure(throwable))
-                }
+            val response = appApi.getGeoApiApps().getOrElse {
+                return Result.failure(it)
             }
+            loadAppsCache(latitude, longitude, response)
+
+            return Result.success(getApps(latitude, longitude))
         }
     }
 
-    override fun features(latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {
+    override suspend fun features(latitude: Double, longitude: Double): Result<List<GeoAPIFeature>> {
         if (isAppsCacheValid(latitude, longitude)) {
-            completion(Result.success(appsCache?.features ?: emptyList()))
+            return Result.success(appsCache?.features ?: emptyList())
         } else {
-            loadAppsCache(latitude, longitude, completion)
+            val response = appApi.getGeoApiApps().getOrElse {
+                return Result.failure(it)
+            }
+            val newCache = loadAppsCache(latitude, longitude, response)
+
+            return Result.success(newCache.features)
         }
     }
 
@@ -96,16 +97,33 @@ class GeoAPIManagerImpl(
         if (cache != null && systemManager.getCurrentTimeMillis() - cache.time <= CACHE_MAX_AGE) {
             completion(Result.success(cache.cofuGasStations))
         } else {
-            loadCofuGasStationsCache(completion)
+            CoroutineScope(Dispatchers.Default).launch {
+                val response = withContext(Dispatchers.IO) {
+                    appApi.getGeoApiApps()
+                }
+
+                response.onSuccess {
+                    val newCache = loadCofuGasStationsCache(it)
+                    withContext(Dispatchers.Main) {
+                        completion(Result.success(newCache.cofuGasStations))
+                    }
+                }
+
+                response.onFailure {
+                    withContext(Dispatchers.Main) {
+                        completion(Result.failure(it))
+                    }
+                }
+            }
         }
     }
 
     override fun cofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit) {
-        cofuGasStations { result ->
-            val targetLocation = LatLng(location.latitude, location.longitude)
-            result.onSuccess { cofuGasStations ->
-                val cofuGasStationsInRange = cofuGasStations.filter { station -> station.coordinate.distanceTo(targetLocation) < radius }
-                val locations = cofuGasStationsInRange.map { station -> station.id to station.coordinate.toLocationPoint() }.toMap()
+        cofuGasStations { response ->
+            response.onSuccess {
+                val targetLocation = LatLng(location.latitude, location.longitude)
+                val cofuGasStationsInRange = it.filter { station -> station.coordinate.distanceTo(targetLocation) < radius }
+                val locations = cofuGasStationsInRange.associate { station -> station.id to station.coordinate.toLocationPoint() }
 
                 POIKit.requestGasStations(locations) { gasStations ->
                     when (gasStations) {
@@ -125,7 +143,7 @@ class GeoAPIManagerImpl(
                 }
             }
 
-            result.onFailure {
+            response.onFailure {
                 completion(Result.failure(it))
             }
         }
@@ -169,78 +187,49 @@ class GeoAPIManagerImpl(
             } ?: emptyList()
     }
 
-    private fun loadAppsCache(latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {
-        appApi.getGeoApiApps { result ->
-            result.onSuccess { response ->
-                val center = LatLng(latitude, longitude)
-                val time = systemManager.getCurrentTimeMillis()
-                val features = response.features.filter {
-                    it.coordinates().all { coordinate ->
-                        isInRadius(coordinate.latitude, coordinate.longitude, center)
-                    }
-                }
-
-                appsCache = AppsCache(features, time, center)
-
-                completion(Result.success(features))
+    private fun loadAppsCache(latitude: Double, longitude: Double, response: GeoAPIResponse): AppsCache {
+        val center = LatLng(latitude, longitude)
+        val time = systemManager.getCurrentTimeMillis()
+        val features = response.features.filter {
+            it.coordinates().all { coordinate ->
+                isInRadius(coordinate.latitude, coordinate.longitude, center)
             }
-            result.onFailure { completion(Result.failure(it)) }
         }
+
+        return AppsCache(features, time, center).also { appsCache = it }
     }
 
-    private fun loadCofuGasStationsCache(completion: (Result<List<CofuGasStation>>) -> Unit) {
-        appApi.getGeoApiApps { result ->
-            result.onSuccess { response ->
-                val time = systemManager.getCurrentTimeMillis()
-                val cofuGasStations = response.features.map {
-                    val points = when (it.geometry) {
-                        is GeometryCollection -> it.geometry.geometries.filterIsInstance<Point>()
-                        is Point -> listOf(it.geometry)
-                        else -> emptyList()
-                    }
-
-                    points.mapNotNull { point ->
-                        val lat = point.coordinates.lastOrNull()
-                        val lng = point.coordinates.firstOrNull()
-                        val status = (it.properties[CONNECTED_FUELING_STATUS_KEY] as? String)?.let { status ->
-                            ConnectedFuelingStatus.values().associateBy(ConnectedFuelingStatus::value)[status]
-                        }
-                        if (lat != null && lng != null) {
-                            CofuGasStation(it.id, LatLng(lat, lng), status, it.properties)
-                        } else {
-                            null
-                        }
-                    }
-                }.flatten()
-
-                cofuGasStationsCache = CofuGasStationsCache(cofuGasStations, time)
-
-                completion(Result.success(cofuGasStations))
+    private fun loadCofuGasStationsCache(response: GeoAPIResponse): CofuGasStationsCache {
+        val time = systemManager.getCurrentTimeMillis()
+        val cofuGasStations = response.features.map {
+            val points = when (it.geometry) {
+                is GeometryCollection -> it.geometry.geometries.filterIsInstance<Point>()
+                is Point -> listOf(it.geometry)
+                else -> emptyList()
             }
-            result.onFailure { completion(Result.failure(it)) }
-        }
+
+            points.mapNotNull { point ->
+                val lat = point.coordinates.lastOrNull()
+                val lng = point.coordinates.firstOrNull()
+                val status = (it.properties[CONNECTED_FUELING_STATUS_KEY] as? String)?.let { status ->
+                    ConnectedFuelingStatus.values().associateBy(ConnectedFuelingStatus::value)[status]
+                }
+                if (lat != null && lng != null) {
+                    CofuGasStation(it.id, LatLng(lat, lng), status, it.properties)
+                } else {
+                    null
+                }
+            }
+        }.flatten()
+
+        return CofuGasStationsCache(cofuGasStations, time).also { cofuGasStationsCache = it }
     }
 
     private suspend fun isPoiInRange(poiId: String, latitude: Double, longitude: Double): Boolean {
-        return try {
-            suspendCancellableCoroutine { continuation ->
-                features(latitude, longitude) { response ->
-                    response.onSuccess { geoAPIFeatures ->
-                        val isPoiInRange = geoAPIFeatures
-                            .firstOrNull { it.id == poiId }
-                            ?.isInRange(latitude, longitude, IS_POI_IN_RANGE_DISTANCE_THRESHOLD) ?: false
-
-                        continuation.resumeIfActive(isPoiInRange)
-                    }
-
-                    response.onFailure {
-                        continuation.resumeIfActive(false)
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            false
-        }
+        return features(latitude, longitude)
+            .getOrNull()
+            ?.firstOrNull { it.id == poiId }
+            ?.isInRange(latitude, longitude, IS_POI_IN_RANGE_DISTANCE_THRESHOLD) ?: false
     }
 
     private fun isAppsCacheValid(latitude: Double, longitude: Double): Boolean {

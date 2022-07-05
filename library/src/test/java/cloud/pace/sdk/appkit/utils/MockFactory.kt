@@ -33,6 +33,7 @@ import cloud.pace.sdk.utils.NoLocationFound
 import cloud.pace.sdk.utils.Success
 import cloud.pace.sdk.utils.SystemManager
 import com.google.android.gms.location.FusedLocationProviderClient
+import io.mockk.mockk
 import org.mockito.Mockito.mock
 
 open class TestLocationProvider(
@@ -204,7 +205,7 @@ open class TestWebClientCallback : AppWebViewClient.WebClientCallback {
 
 open class TestAppAPI : AppAPI {
 
-    override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {}
+    override suspend fun getGeoApiApps(): Result<GeoAPIResponse> = mockk()
     override fun getAllApps(completion: (Result<LocationBasedApps>) -> Unit) {}
     override fun getAppByAppId(appId: String, completion: (Result<LocationBasedApp>) -> Unit) {}
 }
@@ -217,8 +218,8 @@ open class TestCacheModel : CacheModel {
 
 open class TestGeoAPIManager(private val isPoiInRange: Boolean = false) : GeoAPIManager {
 
-    override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {}
-    override fun features(latitude: Double, longitude: Double, completion: (Result<List<GeoAPIFeature>>) -> Unit) {}
+    override suspend fun apps(latitude: Double, longitude: Double): Result<List<GeoGasStation>> = mockk()
+    override suspend fun features(latitude: Double, longitude: Double): Result<List<GeoAPIFeature>> = mockk()
     override fun cofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit) {}
     override fun cofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit) {}
     override suspend fun isPoiInRange(poiId: String, location: Location?) = isPoiInRange
