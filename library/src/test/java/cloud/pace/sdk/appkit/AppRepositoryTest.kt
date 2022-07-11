@@ -72,11 +72,11 @@ class AppRepositoryTest {
     }
 
     private val geoApiManager = object : TestGeoAPIManager() {
-        override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {
-            if (latitude == locationWithApp.latitude && longitude == locationWithApp.longitude) {
-                completion(Result.success(listOf(GeoGasStation(id, mapOf(FUELING_TYPE to listOf(urlLocationBasedApp))))))
+        override suspend fun apps(latitude: Double, longitude: Double): Result<List<GeoGasStation>> {
+            return if (latitude == locationWithApp.latitude && longitude == locationWithApp.longitude) {
+                Result.success(listOf(GeoGasStation(id, mapOf(FUELING_TYPE to listOf(urlLocationBasedApp)))))
             } else {
-                completion(Result.success(emptyList()))
+                Result.success(emptyList())
             }
         }
     }
@@ -123,8 +123,8 @@ class AppRepositoryTest {
     @Test
     fun `pass error when something failed`() = runBlocking {
         val geoApiManager = object : TestGeoAPIManager() {
-            override fun apps(latitude: Double, longitude: Double, completion: (Result<List<GeoGasStation>>) -> Unit) {
-                completion(Result.failure(RuntimeException()))
+            override suspend fun apps(latitude: Double, longitude: Double): Result<List<GeoGasStation>> {
+                return Result.failure(RuntimeException())
             }
         }
         val appRepository = AppRepositoryImpl(context, cache, appApi, uriUtil, geoApiManager)

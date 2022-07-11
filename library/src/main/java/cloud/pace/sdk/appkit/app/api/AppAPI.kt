@@ -9,21 +9,39 @@ import cloud.pace.sdk.api.poi.generated.request.apps.GetAppsAPI.getApps
 import cloud.pace.sdk.poikit.geo.GeoAPIClient
 import cloud.pace.sdk.poikit.geo.GeoAPIResponse
 import cloud.pace.sdk.poikit.utils.ApiException
+import cloud.pace.sdk.poikit.utils.ControlledRunner
 import cloud.pace.sdk.utils.enqueue
 import cloud.pace.sdk.utils.requestId
 import retrofit2.Call
+import timber.log.Timber
 
 interface AppAPI {
 
-    fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit)
+    suspend fun getGeoApiApps(): Result<GeoAPIResponse>
     fun getAllApps(completion: (Result<LocationBasedApps>) -> Unit)
     fun getAppByAppId(appId: String, completion: (Result<LocationBasedApp>) -> Unit)
 }
 
 class AppAPIImpl(private val geoApiClient: GeoAPIClient) : AppAPI {
 
-    override fun getGeoApiApps(completion: (Result<GeoAPIResponse>) -> Unit) {
-        geoApiClient.getGeoApiApps(completion)
+    private val controlledRunner: ControlledRunner<Result<GeoAPIResponse>> by lazy { ControlledRunner() }
+
+    override suspend fun getGeoApiApps(): Result<GeoAPIResponse> {
+        return try {
+            controlledRunner.joinPreviousOrRun {
+                val response = geoApiClient.getGeoApiApps()
+                val body = response.body()
+
+                if (response.isSuccessful && body != null) {
+                    Result.success(body)
+                } else {
+                    Result.failure(ApiException(response.code(), response.message(), response.requestId))
+                }
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "GeoJson request failed")
+            Result.failure(e)
+        }
     }
 
     override fun getAllApps(completion: (Result<LocationBasedApps>) -> Unit) {
