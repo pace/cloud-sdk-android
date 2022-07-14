@@ -1,3 +1,10 @@
+15.0.2 Release notes (2022-07-14)
+=============================================================
+
+### Fixes
+
+* Make sure that the GeoJson is only requested once during the init of the caches
+
 15.0.1 Release notes (2022-06-30)
 =============================================================
 
