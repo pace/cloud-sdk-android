@@ -24,7 +24,6 @@ import cloud.pace.sdk.poikit.poi.OpeningHour
 import cloud.pace.sdk.poikit.poi.OpeningHours
 import cloud.pace.sdk.poikit.poi.OpeningRule
 import cloud.pace.sdk.poikit.poi.Price
-import cloud.pace.sdk.poikit.poi.PriceSuggestion
 import cloud.pace.sdk.poikit.poi.toLocationPoint
 import java.util.Date
 
@@ -154,7 +153,6 @@ fun ListItemPreview() {
             updatedAt = Date(1575651009687)
             latitude = 82.0
             longitude = 73.0
-            priceSuggestion = PriceSuggestion.HIGH
         },
         Location("").apply {
             latitude = 43.0

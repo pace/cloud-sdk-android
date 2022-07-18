@@ -58,7 +58,6 @@ class ProgressButton : AppCompatButton {
 
             mLoadingProgress!!.layoutParams = layoutParams
 
-            // TODO: This is not working in a LinearLayout...
             (parent as ViewGroup).addView(mLoadingProgress)
         }
     }

@@ -29,10 +29,6 @@ import java.util.*
 open class GasStation(id: String, geometry: ArrayList<Geometry.CommandGeo>) :
     PointOfInterest(id, geometry) {
 
-    // TODO: Only for testing. Replace with real price suggestion API data.
-    @Ignore
-    var priceSuggestion: PriceSuggestion? = PriceSuggestion.UNSET
-
     @Ignore
     override val poiLayer = POILayer.GAS_STATION
 
@@ -278,13 +274,4 @@ enum class Day {
             }
         }
     }
-}
-
-enum class PriceSuggestion {
-    LOW,
-    MEDIUM,
-    HIGH,
-    UNSET,
-    NO_DATA,
-    CLOSED
 }
