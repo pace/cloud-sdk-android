@@ -25,7 +25,6 @@ object PriceListParser {
             }
 
             productType?.let {
-                // TODO: remove this hack when backend changed
                 val fuelType = if (it == "dieselGtl") "dieselPremium" else it
 
                 prices.add(Price(fuelType, productName, price))
