@@ -8,6 +8,7 @@ class LocationPermissionItemViewModel(parent: OnboardingViewModel) :
     override val imageRes = R.drawable.ic_location
     override val textRes = R.string.onboarding_step_permission
     override val titleRes = R.string.onboarding_step_permission_title
+    override val isFuelTypeSelection = false
 
     init {
 

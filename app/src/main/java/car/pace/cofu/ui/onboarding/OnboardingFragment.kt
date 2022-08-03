@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.biometric.BiometricManager
@@ -128,6 +129,10 @@ class OnboardingFragment : BaseOnboardingFragment(), FragmentResultable {
         if (setPaymentSelectedOnResume) {
             viewModel.onResponse(PaymentMethodSelectedEvent())
             setPaymentSelectedOnResume = false
+        }
+
+        viewModel.unselectedFuelType.observe(viewLifecycleOwner) {
+            Toast.makeText(context, getString(R.string.no_selected_fuel_type), Toast.LENGTH_SHORT).show()
         }
     }
 

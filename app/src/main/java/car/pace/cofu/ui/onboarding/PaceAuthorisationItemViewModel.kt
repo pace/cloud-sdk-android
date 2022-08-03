@@ -8,6 +8,7 @@ class PaceAuthorisationItemViewModel(parent: OnboardingViewModel) :
     override val imageRes = R.drawable.ic_scan
     override val textRes = R.string.onboarding_step_authorisation
     override val titleRes = R.string.onboarding_step_authorisation_title
+    override val isFuelTypeSelection = false
 
     private var skipIfRedundant = false
 

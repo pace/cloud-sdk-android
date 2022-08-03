@@ -14,6 +14,7 @@ class PaymentMethodItemViewModel(parent: OnboardingViewModel) :
     override val imageRes = R.drawable.ic_payment
     override val textRes = R.string.onboarding_step_payment_method
     override val titleRes = R.string.onboarding_step_payment_method_title
+    override val isFuelTypeSelection = false
 
     private fun setupButton() {
         buttons.clear()

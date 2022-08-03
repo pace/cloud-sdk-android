@@ -1,7 +1,6 @@
 package car.pace.cofu.ui.onboarding
 
 import car.pace.cofu.R
-import car.pace.cofu.repository.FuelType
 
 class FuelTypeSelectionViewModel(parent: OnboardingViewModel) :
     OnboardingItemViewModel(parent) {
@@ -11,22 +10,23 @@ class FuelTypeSelectionViewModel(parent: OnboardingViewModel) :
     override val imageRes get() = if (isSmallDevice) 0 else R.drawable.ic_fuel
     override val textRes = R.string.onboarding_step_fuel_type
     override val titleRes = R.string.onboarding_step_fuel_type_title
+    override val isFuelTypeSelection: Boolean = true
 
     init {
-
-        FuelType.values().forEach { fuelType ->
-            buttons.add(
-                OnboardingButtonViewModel(
-                    parent = this,
-                    textRes = fuelType.stringRes,
-                    onClick = {
-                        parent.userDataRepository.fuelType = fuelType
+        buttons.add(
+            OnboardingButtonViewModel(
+                parent = this,
+                textRes = R.string.onboarding_continue,
+                onClick = {
+                    if (parent.fuelType != null) {
+                        parent.userDataRepository.fuelType = parent.fuelType
                         parent.next()
+                    } else {
+                        parent.unselectedFuelType.postValue(Unit)
                     }
-                )
+                }
             )
-        }
-
+        )
     }
 
     override fun onInit(skipIfRedundant: Boolean) {
