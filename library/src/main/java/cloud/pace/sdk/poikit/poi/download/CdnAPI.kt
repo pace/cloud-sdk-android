@@ -17,16 +17,18 @@ object CdnAPI {
         fun getPaymentMethodVendors(@HeaderMap headers: Map<String, String>): Call<List<PaymentMethodVendor>>
     }
 
-    private val service: GetPaymentMethodVendorsService by lazy {
-        Retrofit.Builder()
-            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor()).build())
-            .baseUrl(API.environment.cdnUrl)
-            .addConverterFactory(EnumConverterFactory())
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(GetPaymentMethodVendorsService::class.java)
-    }
+    fun CdnAPI.getPaymentMethodVendors(additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<List<PaymentMethodVendor>> {
+        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
+        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
+        val service: GetPaymentMethodVendorsService =
+            Retrofit.Builder()
+                .client(client.build())
+                .baseUrl(API.environment.cdnUrl)
+                .addConverterFactory(EnumConverterFactory())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(GetPaymentMethodVendorsService::class.java)
 
-    fun CdnAPI.getPaymentMethodVendors(additionalHeaders: Map<String, String>? = null) =
-        service.getPaymentMethodVendors(InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders))
+        return service.getPaymentMethodVendors(headers)
+    }
 }
