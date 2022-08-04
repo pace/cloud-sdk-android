@@ -16,6 +16,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [12.x.x -> 13.x.x](#from-12xx-to-13xx)
         + [13.x.x -> 14.x.x](#from-13xx-to-14xx)
         + [14.x.x -> 15.x.x](#from-14xx-to-15xx)
+        + [15.x.x -> 16.x.x](#from-15xx-to-16xx)
     * [IDKit](#idkit)
         + [Setup](#setup-1)
         + [Discover configuration](#discover-configuration)
@@ -202,6 +203,10 @@ The `GasStations` properties `paymentMethods`, `amenities`, `foods`, `loyaltyPro
   - You don't have to pass an access token to the `IDKit.userInfo` method anymore, because it is automatically added to the request by the IDKit.
   - You can now add optional additional headers and optional additional parameters to the user info request, just like with the other API requests.
   - The properties of the `UserInfoResponse` model have changed to `subject`, `zoneInfo`, `emailVerified`, `createdAt`, `locale` and `email`. The old properties are outdated.
+
+### From 15.x.x to 16.x.x
+
+- We've removed the `Environment.STAGE` environment completely. Please use `Environment.SANDBOX` during testing and `Environment.PRODUCTION` for everything else.
 
 ## IDKit
 **IDKit** manages the OpenID (OID) authorization and the general session flow with its token handling via **PACE ID**.

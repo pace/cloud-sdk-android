@@ -28,17 +28,6 @@ enum class Environment(
         "https://my.dev.fuel.site",
         "https://cdn.dev.pace.cloud"
     ),
-    STAGING(
-        "https://id.stage.pace.cloud",
-        "https://api.stage.pace.cloud",
-        "https://api.pace.cloud/photon/",
-        "https://api.pace.cloud/routing/",
-        "https://pay.stage.pace.cloud",
-        "https://pay.stage.pace.cloud/transactions",
-        "https://stage.fuel.site",
-        "https://my.stage.fuel.site",
-        "https://cdn.stage.pace.cloud"
-    ),
     PRODUCTION(
         "https://id.pace.cloud",
         "https://api.pace.cloud",
