@@ -1,3 +1,15 @@
+16.0.0 Release notes (2022-08-04)
+=============================================================
+
+### Breaking Changes
+
+* Cleanup todos in code
+* Remove the stage environment
+
+### Internal
+
+* Add migration guide for stage removal
+
 15.0.2 Release notes (2022-07-14)
 =============================================================
 
