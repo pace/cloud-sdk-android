@@ -58,17 +58,4 @@ fun CustomOIDConfiguration.oidConfiguration(environment: Environment) =
             additionalParameters = additionalParameters,
             integrated = integrated
         )
-        Environment.STAGING -> OIDConfiguration(
-            authorizationEndpoint = authorizationEndpoint ?: "https://id.stage.pace.cloud/auth/realms/pace/protocol/openid-connect/auth",
-            endSessionEndpoint = endSessionEndpoint ?: "https://id.stage.pace.cloud/auth/realms/pace/protocol/openid-connect/logout",
-            tokenEndpoint = tokenEndpoint ?: "https://id.stage.pace.cloud/auth/realms/pace/protocol/openid-connect/token",
-            userInfoEndpoint = userInfoEndpoint ?: "https://id.stage.pace.cloud/auth/realms/pace/protocol/openid-connect/userinfo",
-            clientId = clientId,
-            clientSecret = clientSecret,
-            scopes = scopes,
-            redirectUri = redirectUri,
-            responseType = responseType,
-            additionalParameters = additionalParameters,
-            integrated = integrated
-        )
     }
