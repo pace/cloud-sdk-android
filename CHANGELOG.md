@@ -1,3 +1,10 @@
+16.0.1 Release notes (2022-08-05)
+=============================================================
+
+### Internal
+
+* Add the ability to add additional query parameters to each payment method vendors request
+
 16.0.0 Release notes (2022-08-04)
 =============================================================
 
