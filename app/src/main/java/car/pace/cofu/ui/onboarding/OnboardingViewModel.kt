@@ -2,11 +2,13 @@ package car.pace.cofu.ui.onboarding
 
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
+import androidx.lifecycle.MutableLiveData
 import car.pace.cofu.core.events.DismissSnackbars
 import car.pace.cofu.core.events.FragmentEvent
 import car.pace.cofu.core.mvvm.BaseViewModel
 import car.pace.cofu.core.util.decrease
 import car.pace.cofu.core.util.increase
+import car.pace.cofu.repository.FuelType
 import car.pace.cofu.repository.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -31,6 +33,9 @@ class OnboardingViewModel @Inject constructor(internal val userDataRepository: U
             field = value
             fuelTypeSelectionItemViewModel.isSmallDevice = value
         }
+
+    var fuelType: FuelType? = null
+    var unselectedFuelType: MutableLiveData<Unit> = MutableLiveData()
 
     val fuelTypeSelectionItemViewModel = FuelTypeSelectionViewModel(this@OnboardingViewModel)
     val pagerItems = mutableListOf<OnboardingItemViewModel>().apply {

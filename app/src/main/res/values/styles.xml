@@ -197,4 +197,29 @@
         <item name="android:minHeight">@dimen/button_min_height_without_padding</item>
     </style>
 
+    <style name="OnboardingChip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/onboardingBackground</item>
+        <item name="chipSurfaceColor">@color/onboardingBackground</item>
+        <item name="rippleColor">@color/buttonRipple</item>
+        <item name="chipStrokeColor">@color/pace_blue</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipCornerRadius">8dp</item>
+        <item name="chipIconVisible">true</item>
+        <item name="chipIcon">@drawable/skeleton_round</item>
+        <item name="checkedIconVisible">true</item>
+        <item name="checkedIcon">@drawable/ic_onboarding_chip_selected</item>
+        <item name="android:layoutDirection">rtl</item>
+        <item name="android:scrollbars">none</item>
+        <item name="android:textColor">@color/textColorDefault</item>
+        <item name="android:textAppearance">@style/OnboardingChip.Text</item>
+        <item name="chipStartPadding">10dp</item>
+        <item name="chipEndPadding">20dp</item>
+        <item name="chipMinTouchTargetSize">44dp</item>
+        <item name="chipMinHeight">44dp</item>
+    </style>
+
+    <style name="OnboardingChip.Text" parent="TextAppearance.MaterialComponents.Chip">
+        <item name="android:textSize">18sp</item>
+    </style>
+
 </resources>

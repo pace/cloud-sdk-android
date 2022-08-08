@@ -10,6 +10,7 @@ class PaceIdItemViewModel(parent: OnboardingViewModel) :
     override val imageRes = R.drawable.ic_profile
     override val textRes = R.string.onboarding_step_pace_id
     override val titleRes = R.string.onboarding_step_pace_id_title
+    override val isFuelTypeSelection = false
 
     init {
         buttons.add(

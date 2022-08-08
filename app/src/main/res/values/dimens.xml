@@ -16,7 +16,7 @@
     <dimen name="drawerIconSize">8dp</dimen>
     <dimen name="nav_button_size">24dp</dimen>
     <!-- Corner Radius of the primary button -->
-    <dimen name="button_corner_radius">4dp</dimen>
+    <dimen name="button_corner_radius">8dp</dimen>
     <dimen name="button_small_corner_radius">8dp</dimen>
     <dimen name="button_width">240dp</dimen>
     <dimen name="button_primary_padding">8dp</dimen>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -31,27 +30,17 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/padding_large"
-                    android:background="@drawable/onboarding_icon_background"
-                    android:padding="@dimen/onboardingIconPadding"
-                    bind:visibleIfGreaterThan0="@{viewModel.imageRes}">
-
-                    <ImageView
-                        android:layout_width="@dimen/onboardingIconSize"
-                        android:layout_height="@dimen/onboardingIconSize"
-                        android:layout_gravity="center_horizontal"
-                        android:contentDescription="@null"
-                        app:tint="@color/onboardingIconTint"
-                        bind:imageRes="@{viewModel.imageRes}"
-                        tools:src="@drawable/ic_location" />
-
-                </FrameLayout>
+                <ImageView
+                    android:layout_width="@dimen/onboardingIconSize"
+                    android:layout_height="@dimen/onboardingIconSize"
+                    android:layout_gravity="center_horizontal"
+                    android:contentDescription="@null"
+                    bind:imageRes="@{viewModel.imageRes}"
+                    tools:src="@drawable/ic_location" />
 
                 <TextView
                     style="@style/Text.Onboarding.Title"
+                    android:layout_marginTop="16dp"
                     android:text="@{viewModel.titleRes}"
                     tools:text="@string/onboarding_step_permission_title" />
 
@@ -59,10 +48,64 @@
                     style="@style/Text.Onboarding"
                     android:text="@{viewModel.textRes}"
                     tools:text="@string/onboarding_step_permission" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/onboarding_chip_group"
+                    visible="@{viewModel.isFuelTypeSelection}"
+                    android:layout_width="183dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="30dp"
+                    android:clipToPadding="false"
+                    android:padding="10dp"
+                    bind:chipSpacing="10dp"
+                    bind:singleSelection="true"
+                    tools:layout_constraintBottom_toBottomOf="parent"
+                    tools:layout_constraintEnd_toEndOf="parent"
+                    tools:layout_constraintStart_toStartOf="parent">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/onboarding_diesel_button"
+                        style="@style/OnboardingChip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:onClick="@{()->viewModel.onDieselSelected()}"
+                        android:text="@string/fuel_type_diesel"
+                        tools:iconStartPadding="4dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/onboarding_super_button"
+                        style="@style/OnboardingChip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:onClick="@{()->viewModel.onSuperSelected()}"
+                        android:text="@string/fuel_type_super"
+                        tools:iconStartPadding="4dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/onboarding_super_e10_button"
+                        style="@style/OnboardingChip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:onClick="@{()->viewModel.onSuperE10Selected()}"
+                        android:text="@string/fuel_type_e10"
+                        tools:iconStartPadding="4dp" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/onboarding_super_plus_button"
+                        style="@style/OnboardingChip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:onClick="@{()->viewModel.onSuperPlusSelected()}"
+                        android:text="@string/fuel_type_super_plus"
+                        tools:iconStartPadding="4dp" />
+                </com.google.android.material.chip.ChipGroup>
             </LinearLayout>
 
         </ScrollView>
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/buttonLayout"

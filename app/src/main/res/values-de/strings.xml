@@ -91,5 +91,5 @@
     <string name="confirm_logout_cancel">Abbrechen</string>
     <string name="logout_complete_snackbar"></string>
     <string name="share_title">Teilen</string>
-
+    <string name="no_selected_fuel_type">Bitte wähle deinen Kraftstoff aus</string>
 </resources>

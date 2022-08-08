@@ -6,6 +6,7 @@ import androidx.databinding.ObservableArrayList
 import car.pace.cofu.R
 import car.pace.cofu.core.events.FragmentEvent
 import car.pace.cofu.core.mvvm.BaseItemViewModel
+import car.pace.cofu.repository.FuelType
 
 abstract class OnboardingItemViewModel(internal val parent: OnboardingViewModel) :
     BaseItemViewModel() {
@@ -14,6 +15,7 @@ abstract class OnboardingItemViewModel(internal val parent: OnboardingViewModel)
     abstract val imageRes: Int?
     abstract val textRes: Int
     abstract val titleRes: Int
+    abstract val isFuelTypeSelection: Boolean
 
     override val item: Any get() = textRes
 
@@ -36,6 +38,26 @@ abstract class OnboardingItemViewModel(internal val parent: OnboardingViewModel)
      * step can be skipped. Will be set to false when the user actively navigated back
      */
     abstract fun onInit(skipIfRedundant: Boolean)
+
+    /**
+     * called when radio buttons for fuel type selection are clicked
+     * updates current selected fuel type [OnboardingViewmodel.fuelType]
+     */
+    open fun onDieselSelected() {
+        parent.fuelType = FuelType.DIESEL
+    }
+
+    open fun onSuperSelected() {
+        parent.fuelType = FuelType.SUPER
+    }
+
+    open fun onSuperE10Selected() {
+        parent.fuelType = FuelType.E10
+    }
+
+    open fun onSuperPlusSelected() {
+        parent.fuelType = FuelType.SUPER_PLUS
+    }
 }
 
 open class OnboardingButtonViewModel(

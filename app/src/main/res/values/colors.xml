@@ -11,6 +11,7 @@
     <color name="colorAccentSelected">#1E1E1E</color>
     <color name="textColorDefault">@color/black</color>
     <color name="textColorDefaultTransparent">#33000000</color>
+    <color name="buttonRipple">#40000000</color>
 
     <!-- Onboarding -->
     <color name="onboardingBackground">#fbfeff</color>

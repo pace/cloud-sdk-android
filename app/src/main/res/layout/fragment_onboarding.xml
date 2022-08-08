@@ -14,8 +14,30 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipChildren="false"
-        android:background="@color/onboardingBackground">
+        android:background="@color/onboardingBackground"
+        android:clipChildren="false">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/Toolbar" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/toolbar"
+            android:layout_alignTop="@+id/toolbar"
+            android:layout_alignEnd="@+id/toolbar"
+            android:layout_alignBottom="@+id/toolbar">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:contentDescription="@string/app_name"
+                android:paddingTop="@dimen/medium_padding"
+                android:paddingBottom="@dimen/medium_padding"
+                android:src="@drawable/ic_logo_connected_fueling_big" />
+        </RelativeLayout>
 
         <car.pace.cofu.util.views.DisableSwipeViewPager
             android:id="@+id/viewPager"
@@ -39,16 +61,16 @@
             app:viewPager="@id/viewPager" />
 
         <ImageView
-            android:onClick="@{()->viewModel.previous()}"
-            app:visible="@{viewModel.showBackButton}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/base_padding"
-            android:layout_marginTop="@dimen/base_padding"
+            android:layout_marginTop="4dp"
             android:contentDescription="@string/onboarding_back"
             android:foreground="@drawable/round_ripple"
+            android:onClick="@{()->viewModel.previous()}"
             android:padding="@dimen/half_padding"
-            android:src="@drawable/ic_back" />
+            android:src="@drawable/ic_back"
+            app:visible="@{viewModel.showBackButton}" />
 
         <ProgressBar
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
