@@ -42,9 +42,8 @@ class MainViewModel @Inject constructor(
     }
 
     private fun loadUserName() {
-        val accessToken = IDKit.cachedToken() ?: return
         // no error handling, just show the app name in header as fallback when the call fails
-        IDKit.userInfo(accessToken) {
+        IDKit.userInfo {
             if (it is Success && it.result.email.isNotNullOrBlank()) {
                 menuHeader.set(it.result.email)
                 menuIconRes.set(R.drawable.ic_account)

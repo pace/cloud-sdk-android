@@ -55,7 +55,7 @@ class PetrolStationItemViewModel(
         }
 
     private val relevantPrice: Price?
-        get() = item.prices.firstOrNull { it.type.value == fuelTypeIdentifier }
+        get() = item.prices.firstOrNull { it.type == fuelTypeIdentifier }
 
 
     private fun calculatePrice(): String = relevantPrice
