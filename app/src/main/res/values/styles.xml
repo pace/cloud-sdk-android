@@ -20,6 +20,11 @@
     <style name="Theme.Licenses" parent="Theme.PaceCofuApp">
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">false</item>
+        <item name="toolbarStyle">@style/Toolbar</item>
+    </style>
+
+    <style name="ToolbarStyle">
+        <item name="android:textColorPrimary">@color/white</item>
     </style>
 
     <style name="FullScreenDialog" parent="Theme.PaceCofuApp">

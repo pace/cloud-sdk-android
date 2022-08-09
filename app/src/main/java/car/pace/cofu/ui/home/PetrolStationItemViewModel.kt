@@ -10,6 +10,7 @@ import car.pace.cofu.core.mvvm.BaseItemViewModel
 import car.pace.cofu.core.mvvm.BaseViewModel
 import car.pace.cofu.core.resources.ResourcesProvider
 import car.pace.cofu.core.util.formattedAsMeter
+import car.pace.cofu.repository.FuelType
 import cloud.pace.sdk.appkit.app.api.AppRepositoryImpl
 import cloud.pace.sdk.poikit.POIKit
 import cloud.pace.sdk.poikit.poi.GasStation
@@ -34,6 +35,7 @@ class PetrolStationItemViewModel(
         set(value) {
             field = value
             price.set(calculatePrice())
+            fuelType.set(resourcesProvider.getString(FuelType.byIdentifier(value ?: return)?.stringRes ?: return))
         }
 
     /**
@@ -43,6 +45,7 @@ class PetrolStationItemViewModel(
     var isCloseEnoughForFueling = ObservableBoolean(true)
 
     val price = ObservableField<String>()
+    val fuelType = ObservableField<String>()
 
     val address: String?
         get() = item.address?.let { address ->
