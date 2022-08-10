@@ -213,7 +213,7 @@
         <item name="chipIcon">@drawable/skeleton_round</item>
         <item name="checkedIconVisible">true</item>
         <item name="checkedIcon">@drawable/ic_onboarding_chip_selected</item>
-        <item name="android:layoutDirection">rtl</item>
+        <item name="android:layoutDirection">ltr</item>
         <item name="android:scrollbars">none</item>
         <item name="android:textColor">@color/textColorDefault</item>
         <item name="android:textAppearance">@style/OnboardingChip.Text</item>
