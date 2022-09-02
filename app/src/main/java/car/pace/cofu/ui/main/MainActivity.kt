@@ -72,6 +72,7 @@ class MainActivity : BaseMainActivity() {
             binding?.drawerLayout?.closeDrawer(GravityCompat.START)
         } else {
             binding?.drawerLayout?.openDrawer(GravityCompat.START)
+            viewModel.loadUserEmail()
         }
     }
 
@@ -97,7 +98,7 @@ class MainActivity : BaseMainActivity() {
             R.string.MENU_ITEMS_IMPRINT -> openWebView("impressum.html")
             R.string.MENU_ITEMS_PRIVACY -> openWebView("privacy.html")
             R.string.MENU_ITEMS_LICENCES -> showLicenseScreen()
-            R.string.MENU_ITEMS_FUEL_TYPE-> openFuelTypeSettings()
+            R.string.MENU_ITEMS_FUEL_TYPE -> openFuelTypeSettings()
             R.string.MENU_ITEMS_PAYMENT_METHODS -> AppKit.openPaymentApp(this)
             R.string.MENU_ITEMS_PAYMENT_HISTORY -> AppKit.openTransactions(this)
             R.string.MENU_ITEMS_LOGOUT -> showLogoutConfirmation()

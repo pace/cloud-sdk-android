@@ -10,7 +10,7 @@
             type="car.pace.cofu.ui.onboarding.OnboardingItemViewModel" />
     </data>
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="@dimen/view_padding"
@@ -18,11 +18,11 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/buttonLayout"
-            android:layout_alignParentTop="true"
+            android:layout_height="0dp"
             android:fillViewport="true"
-            android:overScrollMode="ifContentScrolls">
+            android:overScrollMode="ifContentScrolls"
+            bind:layout_constraintBottom_toTopOf="@id/onboarding_chip_group"
+            bind:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -48,75 +48,74 @@
                     style="@style/Text.Onboarding"
                     android:text="@{viewModel.textRes}"
                     tools:text="@string/ONBOARDING.PERMISSION.DESCRIPTION" />
-
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/onboarding_chip_group"
-                    visible="@{viewModel.isFuelTypeSelection}"
-                    android:layout_width="183dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="30dp"
-                    android:clipToPadding="false"
-                    android:padding="10dp"
-                    bind:chipSpacing="10dp"
-                    bind:singleSelection="true"
-                    tools:layout_constraintBottom_toBottomOf="parent"
-                    tools:layout_constraintEnd_toEndOf="parent"
-                    tools:layout_constraintStart_toStartOf="parent">
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/onboarding_diesel_button"
-                        style="@style/OnboardingChip"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:onClick="@{()->viewModel.onDieselSelected()}"
-                        android:text="@string/FUEL_TYPE.DIESEL"
-                        tools:iconStartPadding="4dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/onboarding_super_button"
-                        style="@style/OnboardingChip"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:onClick="@{()->viewModel.onSuperSelected()}"
-                        android:text="@string/FUEL_TYPE.SUPER"
-                        tools:iconStartPadding="4dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/onboarding_super_e10_button"
-                        style="@style/OnboardingChip"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:onClick="@{()->viewModel.onSuperE10Selected()}"
-                        android:text="@string/FUEL_TYPE.SUPER_E10"
-                        tools:iconStartPadding="4dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/onboarding_super_plus_button"
-                        style="@style/OnboardingChip"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:onClick="@{()->viewModel.onSuperPlusSelected()}"
-                        android:text="@string/FUEL_TYPE.SUPER_PLUS"
-                        tools:iconStartPadding="4dp" />
-                </com.google.android.material.chip.ChipGroup>
             </LinearLayout>
 
         </ScrollView>
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/onboarding_chip_group"
+            visible="@{viewModel.isFuelTypeSelection}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="30dp"
+            android:clipToPadding="false"
+            bind:chipSpacing="10dp"
+            bind:layout_constraintBottom_toTopOf="@id/buttonLayout"
+            bind:singleSelection="true"
+            tools:layout_constraintEnd_toEndOf="parent"
+            tools:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/onboarding_diesel_button"
+                style="@style/OnboardingChip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:onClick="@{()->viewModel.onDieselSelected()}"
+                android:text="@string/FUEL_TYPE.DIESEL"
+                tools:iconStartPadding="4dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/onboarding_super_button"
+                style="@style/OnboardingChip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:onClick="@{()->viewModel.onSuperSelected()}"
+                android:text="@string/FUEL_TYPE.SUPER"
+                tools:iconStartPadding="4dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/onboarding_super_e10_button"
+                style="@style/OnboardingChip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:onClick="@{()->viewModel.onSuperE10Selected()}"
+                android:text="@string/FUEL_TYPE.SUPER_E10"
+                tools:iconStartPadding="4dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/onboarding_super_plus_button"
+                style="@style/OnboardingChip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:onClick="@{()->viewModel.onSuperPlusSelected()}"
+                android:text="@string/FUEL_TYPE.SUPER_PLUS"
+                tools:iconStartPadding="4dp" />
+        </com.google.android.material.chip.ChipGroup>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/buttonLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/onboardingRecyclerMargin"
             android:orientation="vertical"
-            android:overScrollMode="never"
             bind:items="@{viewModel.buttons}"
+            bind:layout_constraintBottom_toBottomOf="parent"
             tools:itemCount="2"
             tools:layoutManager="LinearLayoutManager"
             tools:listitem="@layout/item_onboarding_button">
@@ -124,5 +123,5 @@
 
         </androidx.recyclerview.widget.RecyclerView>
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

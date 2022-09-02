@@ -20,11 +20,12 @@
     <style name="Theme.Licenses" parent="Theme.PaceCofuApp">
         <item name="windowActionBar">true</item>
         <item name="windowNoTitle">false</item>
+        <item name="actionBarTheme">@style/ActionBarTheme</item>
         <item name="toolbarStyle">@style/Toolbar</item>
     </style>
 
-    <style name="ToolbarStyle">
-        <item name="android:textColorPrimary">@color/white</item>
+    <style name="ActionBarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="colorControlNormal">@color/white</item>
     </style>
 
     <style name="FullScreenDialog" parent="Theme.PaceCofuApp">
@@ -107,7 +108,7 @@
         <item name="android:fontFamily">@font/montserrat_semibold</item>
     </style>
 
-    <style name="Toolbar">
+    <style name="Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="android:background">@color/colorPrimary</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

@@ -41,9 +41,8 @@
             android:paddingBottom="@dimen/base_padding"
             android:gravity="center_vertical"
             android:text="@{viewModel.text}"
-            app:drawableTint="@color/textColorDefault"
             bind:drawableStart="@{viewModel.iconRes}"
-            tools:drawableStart="@drawable/ic_info"
+            tools:drawableStart="@drawable/ic_imprint"
             tools:text="@tools:sample/cities" />
 
 

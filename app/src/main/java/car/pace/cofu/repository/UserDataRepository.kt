@@ -21,4 +21,9 @@ interface UserDataRepository {
      * Contains the currently selected fuel type, if there was any selected.
      */
     var fuelType: FuelType?
+
+    /**
+     * Contains users email address after successful sign in.
+     */
+    var email: String?
 }

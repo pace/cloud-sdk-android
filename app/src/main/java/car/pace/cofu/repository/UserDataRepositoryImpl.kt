@@ -29,6 +29,8 @@ class UserDataRepositoryImpl @Inject constructor(private val app: Application) :
             }
         }
 
+    override var email: String? = null
+
     override fun clear() {
         sharedPreferences.edit().clear().apply()
     }

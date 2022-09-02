@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:bind="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -9,6 +8,7 @@
         <variable
             name="viewModel"
             type="car.pace.cofu.ui.main.MainViewModel" />
+        />
     </data>
 
     <androidx.drawerlayout.widget.DrawerLayout
@@ -45,49 +45,69 @@
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:background="@color/drawerBackground">
 
-            <TextView
-                android:id="@+id/title"
-                style="@style/Text.Title"
+            <View
                 android:layout_width="match_parent"
+                android:layout_height="56dp"
                 android:background="?colorAccent"
-                android:drawablePadding="@dimen/sidebar_item_padding_horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:background="?colorAccent"
                 android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:maxLines="1"
-                android:paddingStart="@dimen/sidebar_item_padding_horizontal"
-                android:paddingTop="@dimen/view_padding"
-                android:paddingEnd="@dimen/sidebar_item_padding_horizontal"
-                android:paddingBottom="@dimen/view_padding"
-                android:text="@{viewModel.menuHeader}"
-                android:textColor="?colorOnPrimary"
-                app:autoSizeMinTextSize="@dimen/fontSizeMin"
-                app:autoSizeTextType="uniform"
-                app:drawableTint="?colorOnPrimary"
-                bind:drawableStart="@{viewModel.menuIconRes}"
-                tools:drawableStartCompat="@drawable/ic_account"
-                tools:text="maximilianmustermann@verylongtld.com" />
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:src="@drawable/ic_icon_menu_close"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/title"
-                android:clipChildren="false"
+                android:layout_height="wrap_content"
                 android:clipToPadding="false"
                 android:paddingTop="@dimen/big_padding"
                 android:paddingBottom="@dimen/view_padding"
                 app:items="@{viewModel.menuAllItems}"
+                app:layout_constraintTop_toBottomOf="@id/title"
                 tools:itemCount="4"
                 tools:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/item_menu" />
 
+            <TextView
+                android:id="@+id/user_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{viewModel.menuEmailText}"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@id/logout_clickable_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="user@email.com" />
 
-        </RelativeLayout>
+            <TextView
+                android:id="@+id/logout_clickable_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="64dp"
+                android:padding="8dp"
+                android:text="@string/MENU.ITEMS.LOGOUT"
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.drawerlayout.widget.DrawerLayout>
 

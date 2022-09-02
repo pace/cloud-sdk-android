@@ -28,25 +28,28 @@ class MainViewModel @Inject constructor(
 
     val menuHeader = ObservableField(resourcesProvider.getString(R.string.MENU_TITLE_PLACEHOLDER))
     val menuIconRes = ObservableInt(0)
+    val menuEmailText = ObservableField(userDataRepository.email ?: "")
 
     init {
         menuAllItems.add(MenuItemViewModel(this, R.string.MENU_ITEMS_FUEL_TYPE, R.drawable.ic_fuel_menu))
         menuAllItems.add(MenuItemViewModel(this, R.string.MENU_ITEMS_PAYMENT_METHODS, R.drawable.ic_payment_menu))
         menuAllItems.add(MenuItemViewModel(this, R.string.MENU_ITEMS_PAYMENT_HISTORY, R.drawable.ic_payment_history))
-        menuAllItems.add(MenuItemViewModel(this, R.string.MENU_ITEMS_IMPRINT, R.drawable.ic_info, true))
+        menuAllItems.add(MenuItemViewModel(this, R.string.MENU_ITEMS_IMPRINT, R.drawable.ic_imprint, true))
         menuAllItems.add(MenuItemViewModel(this, R.string.MENU_ITEMS_PRIVACY, R.drawable.ic_privacy))
-        menuAllItems.add(MenuItemViewModel(this, R.string.MENU_ITEMS_LICENCES, R.drawable.ic_licence))
-        menuAllItems.add(MenuItemViewModel(this, R.string.MENU_ITEMS_LOGOUT, R.drawable.ic_logout, true))
-
-        loadUserName()
+        menuAllItems.add(MenuItemViewModel(this, R.string.MENU_ITEMS_LICENCES, R.drawable.ic_licenses))
     }
 
-    private fun loadUserName() {
-        // no error handling, just show the app name in header as fallback when the call fails
-        IDKit.userInfo {
-            if (it is Success && it.result.email.isNotNullOrBlank()) {
-                menuHeader.set(it.result.email)
-                menuIconRes.set(R.drawable.ic_account)
+    fun loadUserEmail() {
+        if (userDataRepository.email.isNotNullOrBlank()) {
+            menuEmailText.set(userDataRepository.email ?: "")
+        } else {
+            IDKit.cachedToken()?.let {
+                IDKit.userInfo(additionalHeaders = mapOf("Authorization" to "Bearer $it")) {
+                    if (it is Success && it.result.email.isNotNullOrBlank()) {
+                        userDataRepository.email = it.result.email
+                        menuEmailText.set(it.result.email)
+                    }
+                }
             }
         }
     }
