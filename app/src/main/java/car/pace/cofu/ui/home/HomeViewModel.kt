@@ -36,8 +36,8 @@ class HomeViewModel @Inject constructor(
 
     val swipeRefreshLayoutRefreshing = ObservableBoolean(true)
     val showInfo = ObservableBoolean(true)
-    val infoTitle = ObservableInt(R.string.home_looking_for_location_title)
-    val infoText = ObservableInt(R.string.home_looking_for_location_text)
+    val infoTitle = ObservableInt(R.string.HOME_LOOKING_FOR_LOCATION_TITLE)
+    val infoText = ObservableInt(R.string.HOME_LOOKING_FOR_LOCATION_TEXT)
     val infoImageNoResults = ObservableBoolean(false)
 
     val items = ObservableArrayList<BaseItemViewModel>()
@@ -64,9 +64,9 @@ class HomeViewModel @Inject constructor(
 
     private fun loadPetrolStations() {
         val location = currentLocation ?: return
-        infoTitle.set(R.string.home_loading_stations_title)
+        infoTitle.set(R.string.DASHBOARD_LOADING_VIEW_TITLE)
         infoImageNoResults.set(false)
-        infoText.set(R.string.home_loading_stations_text)
+        infoText.set(R.string.DASHBOARD_LOADING_VIEW_DESCRIPTION)
         loadingCount += 1
         POIKit.requestCofuGasStations(location, 10000) {
             loadingCount -= 1
@@ -82,13 +82,13 @@ class HomeViewModel @Inject constructor(
         Log.w("ConnectedFueling", throwable)
         // do not show big error screen but just a snackbar when there were results previously
         if (items.size > 0) {
-            handleEvent(ShowSnack(resourceProvider.getString(R.string.home_error_loading_text)))
+            handleEvent(ShowSnack(resourceProvider.getString(R.string.HOME_LOADING_FAILED_TEXT)))
             return
         }
         showInfo.set(true)
-        infoTitle.set(R.string.home_error_loading_title)
+        infoTitle.set(R.string.HOME_LOADING_FAILED)
         infoImageNoResults.set(true)
-        infoText.set(R.string.home_error_loading_text)
+        infoText.set(R.string.HOME_LOADING_FAILED_TEXT)
     }
 
     private fun setPetrolStations(gasStations: List<GasStation>, location: Location) {
@@ -96,9 +96,9 @@ class HomeViewModel @Inject constructor(
 
         if (gasStations.isEmpty()) {
             showInfo.set(true)
-            infoTitle.set(R.string.home_no_stations_title)
+            infoTitle.set(R.string.DASHBOARD_EMPTY_VIEW_TITLE)
             infoImageNoResults.set(true)
-            infoText.set(R.string.home_no_stations_text)
+            infoText.set(R.string.DASHBOARD_EMPTY_VIEW_DESCRIPTION)
             return
         }
 
@@ -114,8 +114,8 @@ class HomeViewModel @Inject constructor(
 
         viewModels.forEachIndexed { index, viewModel ->
             when (index) {
-                0 -> items.add(SimpleTextItemViewModel(resourceProvider.getString(R.string.home_next_petrol_station)))
-                1 -> items.add(SimpleTextItemViewModel(resourceProvider.getString(R.string.home_more_petrol_stations)))
+                0 -> items.add(SimpleTextItemViewModel(resourceProvider.getString(R.string.DASHBOARD_SECTIONS_NEAREST_GAS_STATION)))
+                1 -> items.add(SimpleTextItemViewModel(resourceProvider.getString(R.string.DASHBOARD_SECTIONS_OTHER_GAS_STATIONS)))
             }
             items.add(viewModel)
         }

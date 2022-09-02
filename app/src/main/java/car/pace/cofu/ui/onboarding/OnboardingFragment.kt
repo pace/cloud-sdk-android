@@ -132,7 +132,7 @@ class OnboardingFragment : BaseOnboardingFragment(), FragmentResultable {
         }
 
         viewModel.unselectedFuelType.observe(viewLifecycleOwner) {
-            Toast.makeText(context, getString(R.string.no_selected_fuel_type), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.ONBOARDING_FUEL_TYPE_UNSELECTED_TEXT), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -151,8 +151,8 @@ class OnboardingFragment : BaseOnboardingFragment(), FragmentResultable {
         } else {
             handleEvent(
                 ShowSnack(
-                    messageRes = R.string.onboarding_network_error,
-                    actionText = getString(R.string.onboarding_retry),
+                    messageRes = R.string.ONBOARDING_NETWORK_ERROR,
+                    actionText = getString(R.string.COMMON_RETRY),
                     actionListener = ::selectPaymentMethod
                 )
             )
@@ -180,15 +180,15 @@ class OnboardingFragment : BaseOnboardingFragment(), FragmentResultable {
                 if (errorCode == BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED) {
                     showNoFingerprintsSavedDialog()
                 } else {
-                    val text = "${getString(R.string.onboarding_fingerprint_error)} $errString"
+                    val text = "${getString(R.string.ONBOARDING_FINGERPRINT_ERROR)} $errString"
                     handleEvent(ShowSnack(text))
                 }
             }
 
         }).authenticate(
             BiometricPrompt.PromptInfo.Builder()
-                .setTitle(getString(R.string.onboarding_authorisation_request_fingerprint))
-                .setNegativeButtonText(getString(R.string.onboarding_back))
+                .setTitle(getString(R.string.ONBOARDING_AUTHORIZATION_REQUEST_FINGERPRINT))
+                .setNegativeButtonText(getString(R.string.ONBOARDING_BACK))
                 .build()
         )
     }
@@ -251,25 +251,25 @@ class OnboardingFragment : BaseOnboardingFragment(), FragmentResultable {
         Log.w("OnboardingFragment", throwable)
         val event = when (throwable) {
             is InvalidSession -> ShowSnack(
-                messageRes = R.string.onboarding_invalid_session,
-                actionText = getString(R.string.onboarding_retry_login),
+                messageRes = R.string.ONBOARDING_INVALID_SESSION,
+                actionText = getString(R.string.ONBOARDING_RETRY_LOGIN),
                 actionListener = ::startPaceIdRegistration
             )
             is UnknownHostException, is SocketTimeoutException -> ShowSnack(
-                messageRes = R.string.onboarding_network_error,
-                actionText = getString(R.string.onboarding_retry),
+                messageRes = R.string.ONBOARDING_NETWORK_ERROR,
+                actionText = getString(R.string.COMMON_RETRY),
                 actionListener = retryAction
             )
-            else -> ShowSnack(getString(R.string.onboarding_unknown_error))
+            else -> ShowSnack(getString(R.string.ONBOARDING_UNKNOWN_ERROR))
         }
         handleEvent(event)
     }
 
     private fun showNoFingerprintsSavedDialog() {
         AlertDialog.Builder(requireContext())
-            .setTitle(R.string.onboarding_fingerprint_none_saved_title)
-            .setNegativeButton(R.string.onboarding_back) { dialog, _ -> dialog.dismiss() }
-            .setPositiveButton(R.string.onboarding_fingerprint_save) { _, _ ->
+            .setTitle(R.string.ONBOARDING_FINGERPRINT_NONE_SAVED_TITLE)
+            .setNegativeButton(R.string.ONBOARDING_BACK) { dialog, _ -> dialog.dismiss() }
+            .setPositiveButton(R.string.ONBOARDING_FINGERPRINT_SAVE) { _, _ ->
                 val intent = when {
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> Intent(Settings.ACTION_BIOMETRIC_ENROLL)
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.P -> Intent(Settings.ACTION_FINGERPRINT_ENROLL)
@@ -287,8 +287,8 @@ class OnboardingFragment : BaseOnboardingFragment(), FragmentResultable {
         } else if (!requireContext().isOnline) {
             handleEvent(
                 ShowSnack(
-                    messageRes = R.string.onboarding_network_error,
-                    actionText = getString(R.string.onboarding_retry),
+                    messageRes = R.string.ONBOARDING_NETWORK_ERROR,
+                    actionText = getString(R.string.COMMON_RETRY),
                     actionListener = ::startPaceIdRegistration
                 )
             )

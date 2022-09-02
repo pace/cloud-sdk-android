@@ -20,7 +20,7 @@ class ConfigurePinViewModel : BaseOnboardingBottomSheetViewModel() {
 
     override fun handleApiFailure(throwable: Throwable) {
         if (throwable is PINNotSecure) {
-            errorText.set(R.string.onboarding_error_pin_not_secure)
+            errorText.set(R.string.ONBOARDING_PIN_ERROR_NOT_SECURE)
             askForPin()
         } else {
             super.handleApiFailure(throwable)
@@ -32,8 +32,8 @@ class ConfigurePinViewModel : BaseOnboardingBottomSheetViewModel() {
         step = Step.ASK_FOR_PIN
         input.set("")
         inputType.set(InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD)
-        title.set(R.string.onboarding_choose_pin)
-        description.set(R.string.onboarding_choose_pin_description)
+        title.set(R.string.ONBOARDING_CREATE_PIN_TITLE)
+        description.set(R.string.ONBOARDING_CREATE_PIN_DESCRIPTION)
     }
 
     private fun askForPinConfirmation() {
@@ -41,8 +41,8 @@ class ConfigurePinViewModel : BaseOnboardingBottomSheetViewModel() {
         input.set("")
         errorText.set(0)
         inputType.set(InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD)
-        title.set(R.string.onboarding_confirm_pin)
-        description.set(R.string.onboarding_confirm_pin_description)
+        title.set(R.string.ONBOARDING_VERIFY_PIN_TITLE)
+        description.set(R.string.ONBOARDING_VERIFY_PIN_DESCRIPTION)
     }
 
     override fun askForOTP() {
@@ -68,7 +68,7 @@ class ConfigurePinViewModel : BaseOnboardingBottomSheetViewModel() {
             }
             Step.CONFIRM_PIN -> {
                 if (pin != inputText) {
-                    errorText.set(R.string.onboarding_error_pin_mismatch)
+                    errorText.set(R.string.ONBOARDING_PIN_ERROR_MISMATCH)
                     askForPin()
                 } else {
                     sendOTP()
@@ -90,7 +90,7 @@ class ConfigurePinViewModel : BaseOnboardingBottomSheetViewModel() {
             when (it) {
                 is Success -> when (it.result) {
                     true -> done()
-                    false -> errorText.set(R.string.onboarding_error_authorisation)
+                    false -> errorText.set(R.string.ONBOARDING_ERROR_AUTHORISATION)
                 }
                 is Failure -> handleApiFailure(it.throwable)
             }

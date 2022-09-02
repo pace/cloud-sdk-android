@@ -6,8 +6,8 @@ import car.pace.cofu.core.events.FragmentEvent
 class PaceAuthorisationItemViewModel(parent: OnboardingViewModel) :
     OnboardingItemViewModel(parent) {
     override val imageRes = R.drawable.ic_scan
-    override val textRes = R.string.onboarding_step_authorisation
-    override val titleRes = R.string.onboarding_step_authorisation_title
+    override val textRes = R.string.ONBOARDING_TWO_FACTOR_AUTHENTICATION_DESCRIPTION
+    override val titleRes = R.string.ONBOARDING_TWO_FACTOR_AUTHENTICATION_TITLE
     override val isFuelTypeSelection = false
 
     private var skipIfRedundant = false
@@ -36,7 +36,7 @@ class PaceAuthorisationItemViewModel(parent: OnboardingViewModel) :
             buttons.add(
                 OnboardingButtonViewModel(
                     parent = this,
-                    textRes = R.string.onboarding_authorisation_biometry,
+                    textRes = R.string.ONBOARDING_TWO_FACTOR_AUTHENTICATION_BIOMETRY,
                     onClick = {
                         parent.handleEvent(AuthorisationEvent(AuthorisationMethod.FINGERPRINT))
                     }
@@ -49,7 +49,7 @@ class PaceAuthorisationItemViewModel(parent: OnboardingViewModel) :
         buttons.add(
             OnboardingButtonViewModel(
                 parent = this,
-                textRes = if (pinAlreadySet) R.string.onboarding_authorisation_existing_pin else R.string.onboarding_authorisation_new_pin,
+                textRes = R.string.ONBOARDING_TWO_FACTOR_AUTHENTICATION_PIN,
                 onClick = {
                     parent.handleEvent(
                         AuthorisationEvent(

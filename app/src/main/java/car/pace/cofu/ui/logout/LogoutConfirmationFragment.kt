@@ -42,7 +42,7 @@ class LogoutConfirmationFragment : BaseLogoutConfirmationFragment() {
             IDKit.endSession(this@LogoutConfirmationFragment) {
                 when (it) {
                     is Success -> onLogoutSuccessful()
-                    is Failure -> handleEvent(ShowSnack(messageRes = R.string.onboarding_network_error))
+                    is Failure -> handleEvent(ShowSnack(messageRes = R.string.ONBOARDING_NETWORK_ERROR))
                 }
             }
         }

@@ -113,7 +113,7 @@ fun loadFromUrl(view: WebView, url: String?) {
         if (url.startsWith("http")) {
             view.loadUrl(url)
         } else {
-            val lang = view.context.getString(R.string.assets_directory_name)
+            val lang = view.context.getString(R.string.ASSETS_DIRECTORY_NAME)
             view.loadUrl("file:///android_asset/$lang/$url")
         }
     }

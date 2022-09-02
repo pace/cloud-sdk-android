@@ -30,7 +30,7 @@ abstract class BaseOnboardingBottomSheetFragment<E : BaseViewModel>(clazz: KClas
                 )
             }
             is BaseOnboardingBottomSheetViewModel.SendingOTPFailedEvent -> {
-                handleEvent(ShowSnack(messageRes = R.string.onboarding_network_error))
+                handleEvent(ShowSnack(messageRes = R.string.ONBOARDING_NETWORK_ERROR))
                 dismiss()
             }
             else -> super.onHandleFragmentEvent(event)

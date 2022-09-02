@@ -18,13 +18,13 @@
         <TextView
             style="@style/Text.Onboarding.Title"
             android:text="@{viewModel.title}"
-            tools:text="@string/location_dialog_permission_title" />
+            tools:text="@string/ALERT.LOCATION_PERMISSION.TITLE" />
 
         <TextView
             style="@style/Text.Onboarding"
             android:labelFor="@id/editText"
             android:text="@{viewModel.description}"
-            tools:text="@string/location_dialog_permission_text" />
+            tools:text="@string/ALERT.LOCATION_PERMISSION.DESCRIPTION" />
 
         <Button
             style="@style/Button.Primary"
@@ -32,7 +32,7 @@
             android:layout_marginBottom="@dimen/half_padding"
             android:onClick="@{()->viewModel.onButtonClick()}"
             android:text="@{viewModel.buttonText}"
-            tools:text="@string/location_dialog_permission_button" />
+            tools:text="@string/ONBOARDING.ACTIONS.SHARE_LOCATION" />
 
     </LinearLayout>
 

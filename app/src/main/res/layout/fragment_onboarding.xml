@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:contentDescription="@string/app_name"
+                android:contentDescription="@string/MENU.TITLE.PLACEHOLDER"
                 android:paddingTop="@dimen/medium_padding"
                 android:paddingBottom="@dimen/medium_padding"
                 android:src="@drawable/ic_logo_connected_fueling_big" />
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/base_padding"
             android:layout_marginTop="4dp"
-            android:contentDescription="@string/onboarding_back"
+            android:contentDescription="@string/ONBOARDING.BACK"
             android:foreground="@drawable/round_ripple"
             android:onClick="@{()->viewModel.previous()}"
             android:padding="@dimen/half_padding"

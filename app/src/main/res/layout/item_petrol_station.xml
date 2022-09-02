@@ -67,7 +67,7 @@
                 android:layout_gravity="end"
                 android:layout_marginTop="16dp"
                 android:onClick="@{()->viewModel.onCtaClick()}"
-                android:text="@string/home_fuel_up_here"
+                android:text="@string/DASHBOARD.ACTIONS.START_FUELING"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/navigationText"
                 bind:visible="@{viewModel.isCloseEnoughForFueling}" />
@@ -78,7 +78,7 @@
                 android:layout_gravity="end"
                 android:layout_marginTop="16dp"
                 android:onClick="@{()->viewModel.onCtaClick()}"
-                android:text="@string/home_navigate_there"
+                android:text="@string/DASHBOARD.ACTIONS.NAVIGATE"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/navigationText"
                 bind:visible="@{!viewModel.isCloseEnoughForFueling}"

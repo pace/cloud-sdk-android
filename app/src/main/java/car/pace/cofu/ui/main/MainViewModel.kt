@@ -26,17 +26,17 @@ class MainViewModel @Inject constructor(
 
     val menuAllItems = ObservableArrayList<BaseItemViewModel>()
 
-    val menuHeader = ObservableField(resourcesProvider.getString(R.string.app_name))
+    val menuHeader = ObservableField(resourcesProvider.getString(R.string.MENU_TITLE_PLACEHOLDER))
     val menuIconRes = ObservableInt(0)
 
     init {
-        menuAllItems.add(MenuItemViewModel(this, R.string.menu_item_fuel_type, R.drawable.ic_fuel_menu))
-        menuAllItems.add(MenuItemViewModel(this, R.string.menu_item_payment, R.drawable.ic_payment_menu))
-        menuAllItems.add(MenuItemViewModel(this, R.string.menu_item_history, R.drawable.ic_payment_history))
-        menuAllItems.add(MenuItemViewModel(this, R.string.menu_item_impressum, R.drawable.ic_info, true))
-        menuAllItems.add(MenuItemViewModel(this, R.string.menu_item_privacy, R.drawable.ic_privacy))
-        menuAllItems.add(MenuItemViewModel(this, R.string.menu_item_licenses, R.drawable.ic_licence))
-        menuAllItems.add(MenuItemViewModel(this, R.string.menu_item_logout, R.drawable.ic_logout, true))
+        menuAllItems.add(MenuItemViewModel(this, R.string.MENU_ITEMS_FUEL_TYPE, R.drawable.ic_fuel_menu))
+        menuAllItems.add(MenuItemViewModel(this, R.string.MENU_ITEMS_PAYMENT_METHODS, R.drawable.ic_payment_menu))
+        menuAllItems.add(MenuItemViewModel(this, R.string.MENU_ITEMS_PAYMENT_HISTORY, R.drawable.ic_payment_history))
+        menuAllItems.add(MenuItemViewModel(this, R.string.MENU_ITEMS_IMPRINT, R.drawable.ic_info, true))
+        menuAllItems.add(MenuItemViewModel(this, R.string.MENU_ITEMS_PRIVACY, R.drawable.ic_privacy))
+        menuAllItems.add(MenuItemViewModel(this, R.string.MENU_ITEMS_LICENCES, R.drawable.ic_licence))
+        menuAllItems.add(MenuItemViewModel(this, R.string.MENU_ITEMS_LOGOUT, R.drawable.ic_logout, true))
 
         loadUserName()
     }

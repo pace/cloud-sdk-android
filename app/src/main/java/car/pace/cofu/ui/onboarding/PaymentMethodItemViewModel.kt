@@ -12,8 +12,8 @@ import cloud.pace.sdk.utils.enqueue
 class PaymentMethodItemViewModel(parent: OnboardingViewModel) :
     OnboardingItemViewModel(parent) {
     override val imageRes = R.drawable.ic_payment
-    override val textRes = R.string.onboarding_step_payment_method
-    override val titleRes = R.string.onboarding_step_payment_method_title
+    override val textRes = R.string.ONBOARDING_PAYMENT_METHOD_DESCRIPTION
+    override val titleRes = R.string.ONBOARDING_PAYMENT_METHOD_TITLE
     override val isFuelTypeSelection = false
 
     private fun setupButton() {
@@ -22,7 +22,7 @@ class PaymentMethodItemViewModel(parent: OnboardingViewModel) :
         buttons.add(
             OnboardingButtonViewModel(
                 parent = this,
-                textRes = R.string.onboarding_select_payment_method,
+                textRes = R.string.ONBOARDING_ACTIONS_ADD_PAYMENT_METHOD,
                 onClick = {
                     parent.handleEvent(SelectPaymentMethodEvent())
                 }

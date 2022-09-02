@@ -21,7 +21,7 @@
             android:onClick="@{()->viewModel.onClick()}"
             android:text="@{viewModel.item.stringRes}"
             bind:visible="@{viewModel.isSelected}"
-            tools:text="@string/fuel_type_e10" />
+            tools:text="@string/FUEL_TYPE.SUPER_E10" />
 
         <com.google.android.material.button.MaterialButton
             style="@style/Button.Secondary"
@@ -30,7 +30,7 @@
             android:onClick="@{()->viewModel.onClick()}"
             android:text="@{viewModel.item.stringRes}"
             bind:visible="@{!viewModel.isSelected}"
-            tools:text="@string/fuel_type_e10"
+            tools:text="@string/FUEL_TYPE.SUPER_E10"
             tools:visibility="gone" />
 
     </FrameLayout>

@@ -42,12 +42,12 @@
                     style="@style/Text.Onboarding.Title"
                     android:layout_marginTop="16dp"
                     android:text="@{viewModel.titleRes}"
-                    tools:text="@string/onboarding_step_permission_title" />
+                    tools:text="@string/ONBOARDING.PERMISSION.TITLE" />
 
                 <TextView
                     style="@style/Text.Onboarding"
                     android:text="@{viewModel.textRes}"
-                    tools:text="@string/onboarding_step_permission" />
+                    tools:text="@string/ONBOARDING.PERMISSION.DESCRIPTION" />
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/onboarding_chip_group"
@@ -70,7 +70,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-light"
                         android:onClick="@{()->viewModel.onDieselSelected()}"
-                        android:text="@string/fuel_type_diesel"
+                        android:text="@string/FUEL_TYPE.DIESEL"
                         tools:iconStartPadding="4dp" />
 
                     <com.google.android.material.chip.Chip
@@ -80,7 +80,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-light"
                         android:onClick="@{()->viewModel.onSuperSelected()}"
-                        android:text="@string/fuel_type_super"
+                        android:text="@string/FUEL_TYPE.SUPER"
                         tools:iconStartPadding="4dp" />
 
                     <com.google.android.material.chip.Chip
@@ -90,7 +90,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-light"
                         android:onClick="@{()->viewModel.onSuperE10Selected()}"
-                        android:text="@string/fuel_type_e10"
+                        android:text="@string/FUEL_TYPE.SUPER_E10"
                         tools:iconStartPadding="4dp" />
 
                     <com.google.android.material.chip.Chip
@@ -100,7 +100,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-light"
                         android:onClick="@{()->viewModel.onSuperPlusSelected()}"
-                        android:text="@string/fuel_type_super_plus"
+                        android:text="@string/FUEL_TYPE.SUPER_PLUS"
                         tools:iconStartPadding="4dp" />
                 </com.google.android.material.chip.ChipGroup>
             </LinearLayout>

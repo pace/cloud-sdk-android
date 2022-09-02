@@ -23,7 +23,7 @@ class ConfigureBiometricAuthViewModel : BaseOnboardingBottomSheetViewModel() {
             when (it) {
                 is Success -> when (it.result) {
                     true -> done()
-                    false -> errorText.set(R.string.onboarding_error_authorisation)
+                    false -> errorText.set(R.string.ONBOARDING_ERROR_AUTHORISATION)
                 }
                 is Failure -> handleApiFailure(it.throwable)
             }

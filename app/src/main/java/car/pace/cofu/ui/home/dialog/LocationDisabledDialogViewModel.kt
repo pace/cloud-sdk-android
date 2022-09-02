@@ -5,9 +5,9 @@ import car.pace.cofu.R
 import car.pace.cofu.core.events.FragmentEvent
 
 class LocationDisabledDialogViewModel : BaseDialogViewModel() {
-    override val title = ObservableInt(R.string.location_dialog_disabled_title)
-    override val description = ObservableInt(R.string.location_dialog_disabled_text)
-    override val buttonText = ObservableInt(R.string.location_dialog_disabled_button)
+    override val title = ObservableInt(R.string.LOCATION_DIALOG_DISABLED_TITLE)
+    override val description = ObservableInt(R.string.LOCATION_DIALOG_DISABLED_TEXT)
+    override val buttonText = ObservableInt(R.string.ALERT_LOCATION_PERMISSION_ACTIONS_OPEN_SETTINGS)
 
     override fun onButtonClick() {
         handleEvent(OpenLocationSettingsEvent())

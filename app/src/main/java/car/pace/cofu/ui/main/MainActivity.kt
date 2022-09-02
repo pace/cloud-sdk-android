@@ -94,13 +94,13 @@ class MainActivity : BaseMainActivity() {
         hideDrawer()
 
         when (menuItemId) {
-            R.string.menu_item_impressum -> openWebView("impressum.html")
-            R.string.menu_item_privacy -> openWebView("privacy.html")
-            R.string.menu_item_licenses -> showLicenseScreen()
-            R.string.menu_item_fuel_type -> openFuelTypeSettings()
-            R.string.menu_item_payment -> AppKit.openPaymentApp(this)
-            R.string.menu_item_history -> AppKit.openTransactions(this)
-            R.string.menu_item_logout -> showLogoutConfirmation()
+            R.string.MENU_ITEMS_IMPRINT -> openWebView("impressum.html")
+            R.string.MENU_ITEMS_PRIVACY -> openWebView("privacy.html")
+            R.string.MENU_ITEMS_LICENCES -> showLicenseScreen()
+            R.string.MENU_ITEMS_FUEL_TYPE-> openFuelTypeSettings()
+            R.string.MENU_ITEMS_PAYMENT_METHODS -> AppKit.openPaymentApp(this)
+            R.string.MENU_ITEMS_PAYMENT_HISTORY -> AppKit.openTransactions(this)
+            R.string.MENU_ITEMS_LOGOUT -> showLogoutConfirmation()
         }
     }
 

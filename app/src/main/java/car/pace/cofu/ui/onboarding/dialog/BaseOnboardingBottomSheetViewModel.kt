@@ -37,10 +37,10 @@ abstract class BaseOnboardingBottomSheetViewModel : BaseViewModel() {
     internal open fun handleApiFailure(throwable: Throwable) {
         Log.w("ConfigureBiometricAuth", throwable)
         when (throwable) {
-            is InternalError -> errorText.set(R.string.onboarding_error_authorisation)
-            is UnknownHostException, is SocketTimeoutException -> errorText.set(R.string.onboarding_network_error)
-            is ApiException -> errorText.set(if(throwable.errorCode == 403) R.string.onboarding_error_authorisation else R.string.onboarding_unknown_error)
-            else -> errorText.set(R.string.onboarding_unknown_error)
+            is InternalError -> errorText.set(R.string.ONBOARDING_ERROR_AUTHORISATION)
+            is UnknownHostException, is SocketTimeoutException -> errorText.set(R.string.ONBOARDING_NETWORK_ERROR)
+            is ApiException -> errorText.set(if(throwable.errorCode == 403) R.string.ONBOARDING_ERROR_AUTHORISATION else R.string.ONBOARDING_NETWORK_ERROR)
+            else -> errorText.set(R.string.ONBOARDING_UNKNOWN_ERROR)
         }
 
     }
@@ -51,8 +51,8 @@ abstract class BaseOnboardingBottomSheetViewModel : BaseViewModel() {
      */
     internal open fun askForOTP() {
         inputType.set(InputType.TYPE_CLASS_NUMBER)
-        title.set(R.string.onboarding_enter_otp)
-        description.set(R.string.onboarding_enter_otp_description)
+        title.set(R.string.ONBOARDING_ENTER_ONE_TIME_PASSWORD_TITLE)
+        description.set(R.string.ONBOARDING_ENTER_ONE_TIME_PASSWORD_DESCRIPTION)
     }
 
     /**

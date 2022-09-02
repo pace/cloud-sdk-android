@@ -23,25 +23,25 @@
 
             <TextView
                 style="@style/Text.Onboarding.Title"
-                android:text="@string/confirm_logout_title" />
+                android:text="@string/DASHBOARD.LOGOUT.CONFIRM.TITLE" />
 
             <TextView
                 style="@style/Text.Onboarding"
-                android:text="@string/confirm_logout_description" />
+                android:text="@string/DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION" />
 
             <com.google.android.material.button.MaterialButton
                 style="@style/Button.Primary"
                 android:layout_width="match_parent"
                 android:layout_marginBottom="@dimen/tiny_padding"
                 android:onClick="@{()->viewModel.logout()}"
-                android:text="@string/confirm_logout" />
+                android:text="@string/DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT" />
 
             <com.google.android.material.button.MaterialButton
                 style="@style/Button.Secondary"
                 android:layout_width="match_parent"
                 android:layout_marginBottom="@dimen/tiny_padding"
                 android:onClick="@{()->viewModel.cancel()}"
-                android:text="@string/confirm_logout_cancel" />
+                android:text="@string/DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL" />
 
         </LinearLayout>
 

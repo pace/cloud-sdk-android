@@ -20,7 +20,7 @@
 
         <TextView
             style="@style/Text.Onboarding"
-            android:text="@string/fuel_type_selection" />
+            android:text="@string/FUEL_TYPE_SELECTION" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/buttonLayout"

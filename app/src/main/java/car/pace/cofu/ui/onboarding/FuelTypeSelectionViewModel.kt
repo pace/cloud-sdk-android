@@ -8,15 +8,15 @@ class FuelTypeSelectionViewModel(parent: OnboardingViewModel) :
     var isSmallDevice: Boolean = false
 
     override val imageRes get() = if (isSmallDevice) 0 else R.drawable.ic_fuel
-    override val textRes = R.string.onboarding_step_fuel_type
-    override val titleRes = R.string.onboarding_step_fuel_type_title
+    override val textRes = R.string.ONBOARDING_FUEL_TYPE_DESCRIPTION
+    override val titleRes = R.string.ONBOARDING_FUEL_TYPE_TITLE
     override val isFuelTypeSelection: Boolean = true
 
     init {
         buttons.add(
             OnboardingButtonViewModel(
                 parent = this,
-                textRes = R.string.onboarding_continue,
+                textRes = R.string.ONBOARDING_ACTIONS_NEXT,
                 onClick = {
                     if (parent.fuelType != null) {
                         parent.userDataRepository.fuelType = parent.fuelType

@@ -63,7 +63,7 @@ class PetrolStationItemViewModel(
 
     private fun calculatePrice(): String = relevantPrice
         ?.formatCurrency(item.currency)
-        ?: resourcesProvider.getString(R.string.home_price_not_available)
+        ?: resourcesProvider.getString(R.string.PRICE_NOT_AVAILABLE)
 
     init {
         updateLocation(location)
@@ -84,7 +84,7 @@ class PetrolStationItemViewModel(
 
     fun onPriceClick() {
         // since an empty price only displays as "n.v.", show an explanation text on click
-        if (relevantPrice == null) parent.handleEvent(ShowSnack(resourcesProvider.getString(R.string.home_price_not_available_description)))
+        if (relevantPrice == null) parent.handleEvent(ShowSnack(resourcesProvider.getString(R.string.HOME_PRICE_NOT_AVAILABLE_DESCRIPTION)))
     }
 
 

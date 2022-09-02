@@ -37,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:contentDescription="@string/app_name"
+                android:contentDescription="@string/MENU.TITLE.PLACEHOLDER"
                 android:paddingTop="@dimen/medium_padding"
                 android:paddingBottom="@dimen/medium_padding"
                 android:src="@drawable/ic_logo_connected_fueling_big" />
@@ -103,7 +103,7 @@
                 android:gravity="center"
                 android:text="@{viewModel.infoTitle}"
                 android:textSize="@dimen/fontSizeTitle"
-                tools:text="@string/home_loading_stations_title" />
+                tools:text="@string/DASHBOARD.LOADING_VIEW.TITLE" />
 
             <TextView
                 style="@style/Text"
@@ -111,7 +111,7 @@
                 android:gravity="center"
                 android:text="@{viewModel.infoText}"
                 android:textSize="@dimen/fontSizeBigger"
-                tools:text="@string/home_loading_stations_text" />
+                tools:text="@string/DASHBOARD.LOADING_VIEW.DESCRIPTION" />
 
         </LinearLayout>
 

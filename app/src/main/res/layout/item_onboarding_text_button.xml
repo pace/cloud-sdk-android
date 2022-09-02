@@ -23,7 +23,7 @@
             android:paddingStart="@dimen/base_padding"
             android:paddingEnd="@dimen/base_padding"
             android:text="@{viewModel.textRes}"
-            tools:text="@string/onboarding_choose_pin" />
+            tools:text="@string/ONBOARDING.CREATE_PIN.TITLE" />
 
     </FrameLayout>
 </layout>

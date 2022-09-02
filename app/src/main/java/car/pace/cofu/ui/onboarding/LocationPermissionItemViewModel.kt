@@ -6,8 +6,8 @@ import car.pace.cofu.core.events.FragmentEvent
 class LocationPermissionItemViewModel(parent: OnboardingViewModel) :
     OnboardingItemViewModel(parent) {
     override val imageRes = R.drawable.ic_location
-    override val textRes = R.string.onboarding_step_permission
-    override val titleRes = R.string.onboarding_step_permission_title
+    override val textRes = R.string.ONBOARDING_PERMISSION_DESCRIPTION
+    override val titleRes = R.string.ONBOARDING_PERMISSION_TITLE
     override val isFuelTypeSelection = false
 
     init {
@@ -15,7 +15,7 @@ class LocationPermissionItemViewModel(parent: OnboardingViewModel) :
         buttons.add(
             OnboardingButtonViewModel(
                 parent = this,
-                textRes = R.string.onboarding_step_permission_cta,
+                textRes = R.string.ONBOARDING_ACTIONS_SHARE_LOCATION,
                 onClick = {
                     parent.handleEvent(RequestLocationPermissionEvent())
                 }

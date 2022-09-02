@@ -23,7 +23,7 @@
             android:text="@{viewModel.textRes}"
             bind:icon="@{viewModel.imageRes}"
             tools:icon="@drawable/ic_location"
-            tools:text="@string/onboarding_authorisation_biometry" />
+            tools:text="@string/ONBOARDING.TWO_FACTOR_AUTHENTICATION.BIOMETRY" />
 
     </FrameLayout>
 </layout>

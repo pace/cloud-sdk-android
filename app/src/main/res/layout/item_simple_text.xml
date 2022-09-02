@@ -16,5 +16,5 @@
         android:layout_width="match_parent"
         android:paddingVertical="@dimen/base_padding"
         android:paddingHorizontal="@dimen/view_padding"
-        tools:text="@string/home_next_petrol_station" />
+        tools:text="@string/DASHBOARD.SECTIONS.NEAREST_GAS_STATION" />
 </layout>

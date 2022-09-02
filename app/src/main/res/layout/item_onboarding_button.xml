@@ -23,7 +23,7 @@
             android:onClick="@{()->viewModel.onClick()}"
             android:layout_marginBottom="@dimen/tiny_padding"
             android:text="@{viewModel.textRes}"
-            tools:text="@string/onboarding_continue" />
+            tools:text="@string/ONBOARDING.ACTIONS.NEXT" />
 
     </FrameLayout>
 </layout>

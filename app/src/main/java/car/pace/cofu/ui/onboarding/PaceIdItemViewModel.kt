@@ -8,15 +8,15 @@ import cloud.pace.sdk.idkit.IDKit
 class PaceIdItemViewModel(parent: OnboardingViewModel) :
     OnboardingItemViewModel(parent) {
     override val imageRes = R.drawable.ic_profile
-    override val textRes = R.string.onboarding_step_pace_id
-    override val titleRes = R.string.onboarding_step_pace_id_title
+    override val textRes = R.string.ONBOARDING_AUTHENTICATION_DESCRIPTION
+    override val titleRes = R.string.ONBOARDING_AUTHENTICATION_TITLE
     override val isFuelTypeSelection = false
 
     init {
         buttons.add(
             OnboardingButtonViewModel(
                 parent = this,
-                textRes = R.string.onboarding_log_in,
+                textRes = R.string.ONBOARDING_ACTIONS_AUTHENTICATE,
                 onClick = {
                     parent.handleEvent(StartPaceIdRegistration())
                 }
@@ -30,7 +30,7 @@ class PaceIdItemViewModel(parent: OnboardingViewModel) :
         when (response) {
             is PaceIdRegistrationSuccessful -> parent.next()
             is PaceIdRegistrationFailed -> {
-                parent.handleEvent(ShowSnack(messageRes = R.string.onboarding_log_in_unsuccessful))
+                parent.handleEvent(ShowSnack(messageRes = R.string.ONBOARDING_LOG_IN_UNSUCCESSFUL))
             }
         }
     }
