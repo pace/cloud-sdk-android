@@ -9,25 +9,14 @@ package cloud.pace.sdk.api.pay.generated.request.paymentTransactions
 
 import cloud.pace.sdk.api.pay.PayAPI
 import cloud.pace.sdk.api.pay.generated.model.Transaction
-import cloud.pace.sdk.api.utils.EnumConverterFactory
-import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.api.request.BaseRequest
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.ResourceAdapterFactory
-import okhttp3.OkHttpClient
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.HeaderMap
 import retrofit2.http.Path
 import retrofit2.http.Query
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
 object GetTransactionAPI {
 
@@ -58,52 +47,38 @@ before returning the result.
         LONGPOLLING("longPolling")
     }
 
+    open class Request : BaseRequest() {
+
+        fun getTransaction(
+            transactionId: String,
+            update: Update? = null,
+            readTimeout: Long? = null,
+            additionalHeaders: Map<String, String>? = null,
+            additionalParameters: Map<String, String>? = null
+        ): Call<Transaction> {
+            val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
+
+            return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout)
+                .create(GetTransactionService::class.java)
+                .getTransaction(
+                    headers,
+                    transactionId,
+                    update
+                )
+        }
+    }
+
     fun PayAPI.PaymentTransactionsAPI.getTransaction(
         transactionId: String,
         update: Update? = null,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ): Call<Transaction> {
-        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
-        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
-
-        if (readTimeout != null) {
-            client.readTimeout(readTimeout, TimeUnit.SECONDS)
-        }
-
-        val service: GetTransactionService =
-            Retrofit.Builder()
-                .client(client.build())
-                .baseUrl(PayAPI.baseUrl)
-                .addConverterFactory(EnumConverterFactory())
-                .addConverterFactory(
-                    JsonApiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(
-                                ResourceAdapterFactory.builder()
-                                    .build()
-                            )
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .addConverterFactory(
-                    MoshiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .build()
-                .create(GetTransactionService::class.java)
-
-        return service.getTransaction(
-            headers,
-            transactionId,
-            update
-        )
-    }
+    ) = Request().getTransaction(
+        transactionId,
+        update,
+        readTimeout,
+        additionalHeaders,
+        additionalParameters
+    )
 }

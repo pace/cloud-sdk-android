@@ -9,21 +9,10 @@ package cloud.pace.sdk.api.poi.generated.request.admin
 
 import cloud.pace.sdk.api.poi.POIAPI
 import cloud.pace.sdk.api.poi.generated.model.DedupeRequestBody
-import cloud.pace.sdk.api.utils.EnumConverterFactory
-import cloud.pace.sdk.api.utils.InterceptorUtils
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.ResourceAdapterFactory
-import okhttp3.OkHttpClient
+import cloud.pace.sdk.api.request.BaseRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
 object DeduplicatePoiAPI {
 
@@ -41,50 +30,34 @@ object DeduplicatePoiAPI {
         var data: DedupeRequestBody? = null
     }
 
+    open class Request : BaseRequest() {
+
+        fun deduplicatePoi(
+            body: Body,
+            readTimeout: Long? = null,
+            additionalHeaders: Map<String, String>? = null,
+            additionalParameters: Map<String, String>? = null
+        ): Call<ResponseBody> {
+            val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
+
+            return retrofit(POIAPI.baseUrl, additionalParameters, readTimeout)
+                .create(DeduplicatePoiService::class.java)
+                .deduplicatePoi(
+                    headers,
+                    body
+                )
+        }
+    }
+
     fun POIAPI.AdminAPI.deduplicatePoi(
         body: Body,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ): Call<ResponseBody> {
-        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
-        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
-
-        if (readTimeout != null) {
-            client.readTimeout(readTimeout, TimeUnit.SECONDS)
-        }
-
-        val service: DeduplicatePoiService =
-            Retrofit.Builder()
-                .client(client.build())
-                .baseUrl(POIAPI.baseUrl)
-                .addConverterFactory(EnumConverterFactory())
-                .addConverterFactory(
-                    JsonApiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(
-                                ResourceAdapterFactory.builder()
-                                    .build()
-                            )
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .addConverterFactory(
-                    MoshiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .build()
-                .create(DeduplicatePoiService::class.java)
-
-        return service.deduplicatePoi(
-            headers,
-            body
-        )
-    }
+    ) = Request().deduplicatePoi(
+        body,
+        readTimeout,
+        additionalHeaders,
+        additionalParameters
+    )
 }

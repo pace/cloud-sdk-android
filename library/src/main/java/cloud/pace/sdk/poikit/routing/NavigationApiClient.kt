@@ -2,10 +2,15 @@ package cloud.pace.sdk.poikit.routing
 
 import android.os.Parcelable
 import android.text.TextUtils
-import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.api.utils.RequestUtils
 import cloud.pace.sdk.poikit.poi.LocationPoint
 import cloud.pace.sdk.poikit.utils.ApiException
-import cloud.pace.sdk.utils.*
+import cloud.pace.sdk.utils.Completion
+import cloud.pace.sdk.utils.Environment
+import cloud.pace.sdk.utils.Failure
+import cloud.pace.sdk.utils.Success
+import cloud.pace.sdk.utils.enqueue
+import cloud.pace.sdk.utils.requestId
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
@@ -101,9 +106,9 @@ interface NavigationApi {
                             it.proceed(
                                 it.request()
                                     .newBuilder()
-                                    .header(InterceptorUtils.USER_AGENT_HEADER, InterceptorUtils.getUserAgent())
-                                    .header(InterceptorUtils.API_KEY_HEADER, apiKey)
-                                    .header(InterceptorUtils.UBER_TRACE_ID_HEADER, InterceptorUtils.getUberTraceId())
+                                    .header(RequestUtils.USER_AGENT_HEADER, RequestUtils.getUserAgent())
+                                    .header(RequestUtils.API_KEY_HEADER, apiKey)
+                                    .header(RequestUtils.UBER_TRACE_ID_HEADER, RequestUtils.getUberTraceId())
                                     .build()
                             )
                         }

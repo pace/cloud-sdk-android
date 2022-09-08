@@ -1,4 +1,4 @@
-package cloud.pace.sdk.api.utils
+package cloud.pace.sdk.api.converter
 
 import com.google.gson.annotations.SerializedName
 import retrofit2.Converter

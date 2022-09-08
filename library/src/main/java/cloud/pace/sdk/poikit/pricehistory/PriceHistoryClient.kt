@@ -1,7 +1,7 @@
 package cloud.pace.sdk.poikit.pricehistory
 
-import cloud.pace.sdk.api.utils.EnumConverterFactory
-import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.api.converter.EnumConverterFactory
+import cloud.pace.sdk.api.request.BaseRequest
 import cloud.pace.sdk.utils.Completion
 import cloud.pace.sdk.utils.Environment
 import cloud.pace.sdk.utils.handleCallback
@@ -9,7 +9,6 @@ import cloud.pace.sdk.utils.toIso8601
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -17,7 +16,7 @@ import retrofit2.http.GET
 import retrofit2.http.HeaderMap
 import retrofit2.http.Path
 import retrofit2.http.Query
-import java.util.*
+import java.util.Date
 
 interface PriceHistoryAPI {
 
@@ -60,13 +59,13 @@ interface PriceHistoryAPI {
     ): Call<List<PriceHistoryFuelType>>
 }
 
-class PriceHistoryClient(environment: Environment) {
+class PriceHistoryClient(environment: Environment) : BaseRequest() {
 
     private val service = create("${environment.apiUrl}/price-service/")
 
     fun getPricesByCountry(countryCode: String, since: Date, granularity: String, forecast: Boolean, completion: (Completion<List<PriceHistory>>) -> Unit) {
         service.getPricesByCountry(
-            InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json"),
+            headers(true, "application/vnd.api+json", "application/vnd.api+json"),
             countryCode,
             since.toIso8601(),
             granularity,
@@ -76,7 +75,7 @@ class PriceHistoryClient(environment: Environment) {
 
     fun getPricesByCountry(countryCode: String, fuelType: String, since: Date, granularity: String, forecast: Boolean, completion: (Completion<List<PriceHistoryFuelType>>) -> Unit) {
         service.getPricesByCountry(
-            InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json"),
+            headers(true, "application/vnd.api+json", "application/vnd.api+json"),
             countryCode,
             fuelType,
             since.toIso8601(),
@@ -87,7 +86,7 @@ class PriceHistoryClient(environment: Environment) {
 
     fun getPricesByStation(stationId: String, since: Date, granularity: String, forecast: Boolean, completion: (Completion<List<PriceHistory>>) -> Unit) {
         service.getPricesByStation(
-            InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json"),
+            headers(true, "application/vnd.api+json", "application/vnd.api+json"),
             stationId,
             since.toIso8601(),
             granularity,
@@ -97,7 +96,7 @@ class PriceHistoryClient(environment: Environment) {
 
     fun getPricesByStation(stationId: String, fuelType: String, since: Date, granularity: String, forecast: Boolean, completion: (Completion<List<PriceHistoryFuelType>>) -> Unit) {
         service.getPricesByStation(
-            InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json"),
+            headers(true, "application/vnd.api+json", "application/vnd.api+json"),
             stationId,
             fuelType,
             since.toIso8601(),
@@ -108,7 +107,7 @@ class PriceHistoryClient(environment: Environment) {
 
     private fun create(baseUrl: String): PriceHistoryAPI {
         return Retrofit.Builder()
-            .client(OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor()).build())
+            .client(okHttpClient())
             .baseUrl(baseUrl)
             .addConverterFactory(EnumConverterFactory())
             .addConverterFactory(

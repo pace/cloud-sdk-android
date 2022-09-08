@@ -14,24 +14,13 @@ import cloud.pace.sdk.api.pay.generated.model.PaymentMethodKind
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethodVendor
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethods
 import cloud.pace.sdk.api.pay.generated.model.PaymentToken
-import cloud.pace.sdk.api.utils.EnumConverterFactory
-import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.api.request.BaseRequest
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.ResourceAdapterFactory
-import okhttp3.OkHttpClient
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.HeaderMap
 import retrofit2.http.Query
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
 object GetPaymentMethodsIncludingCreditCheckAPI {
 
@@ -59,56 +48,39 @@ If the list is empty, you can ask the user to add a payment method to use PACE f
         VALID("valid")
     }
 
+    open class Request : BaseRequest() {
+
+        fun getPaymentMethodsIncludingCreditCheck(
+            filterstatus: Filterstatus,
+            filterpurpose: PRN? = null,
+            readTimeout: Long? = null,
+            additionalHeaders: Map<String, String>? = null,
+            additionalParameters: Map<String, String>? = null
+        ): Call<PaymentMethods> {
+            val resources = listOf(PaymentMethodKind::class.java, PaymentMethodVendor::class.java, PaymentMethod::class.java, PaymentToken::class.java)
+            val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
+
+            return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout, resources)
+                .create(GetPaymentMethodsIncludingCreditCheckService::class.java)
+                .getPaymentMethodsIncludingCreditCheck(
+                    headers,
+                    filterstatus,
+                    filterpurpose
+                )
+        }
+    }
+
     fun PayAPI.PaymentMethodsAPI.getPaymentMethodsIncludingCreditCheck(
         filterstatus: Filterstatus,
         filterpurpose: PRN? = null,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ): Call<PaymentMethods> {
-        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
-        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
-
-        if (readTimeout != null) {
-            client.readTimeout(readTimeout, TimeUnit.SECONDS)
-        }
-
-        val service: GetPaymentMethodsIncludingCreditCheckService =
-            Retrofit.Builder()
-                .client(client.build())
-                .baseUrl(PayAPI.baseUrl)
-                .addConverterFactory(EnumConverterFactory())
-                .addConverterFactory(
-                    JsonApiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(
-                                ResourceAdapterFactory.builder()
-                                    .add(PaymentMethodKind::class.java)
-                                    .add(PaymentMethod::class.java)
-                                    .add(PaymentToken::class.java)
-                                    .add(PaymentMethodVendor::class.java)
-                                    .build()
-                            )
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .addConverterFactory(
-                    MoshiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .build()
-                .create(GetPaymentMethodsIncludingCreditCheckService::class.java)
-
-        return service.getPaymentMethodsIncludingCreditCheck(
-            headers,
-            filterstatus,
-            filterpurpose
-        )
-    }
+    ) = Request().getPaymentMethodsIncludingCreditCheck(
+        filterstatus,
+        filterpurpose,
+        readTimeout,
+        additionalHeaders,
+        additionalParameters
+    )
 }

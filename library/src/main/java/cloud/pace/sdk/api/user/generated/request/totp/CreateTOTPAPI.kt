@@ -7,23 +7,12 @@
 
 package cloud.pace.sdk.api.user.generated.request.totp
 
+import cloud.pace.sdk.api.request.BaseRequest
 import cloud.pace.sdk.api.user.UserAPI
 import cloud.pace.sdk.api.user.generated.model.DeviceTOTP
 import cloud.pace.sdk.api.user.generated.model.DeviceTOTPBody
-import cloud.pace.sdk.api.utils.EnumConverterFactory
-import cloud.pace.sdk.api.utils.InterceptorUtils
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.ResourceAdapterFactory
-import okhttp3.OkHttpClient
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
 object CreateTOTPAPI {
 
@@ -45,50 +34,34 @@ object CreateTOTPAPI {
         var data: DeviceTOTPBody? = null
     }
 
+    open class Request : BaseRequest() {
+
+        fun createTOTP(
+            body: Body,
+            readTimeout: Long? = null,
+            additionalHeaders: Map<String, String>? = null,
+            additionalParameters: Map<String, String>? = null
+        ): Call<DeviceTOTP> {
+            val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
+
+            return retrofit(UserAPI.baseUrl, additionalParameters, readTimeout)
+                .create(CreateTOTPService::class.java)
+                .createTOTP(
+                    headers,
+                    body
+                )
+        }
+    }
+
     fun UserAPI.TOTPAPI.createTOTP(
         body: Body,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ): Call<DeviceTOTP> {
-        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
-        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
-
-        if (readTimeout != null) {
-            client.readTimeout(readTimeout, TimeUnit.SECONDS)
-        }
-
-        val service: CreateTOTPService =
-            Retrofit.Builder()
-                .client(client.build())
-                .baseUrl(UserAPI.baseUrl)
-                .addConverterFactory(EnumConverterFactory())
-                .addConverterFactory(
-                    JsonApiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(
-                                ResourceAdapterFactory.builder()
-                                    .build()
-                            )
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .addConverterFactory(
-                    MoshiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .build()
-                .create(CreateTOTPService::class.java)
-
-        return service.createTOTP(
-            headers,
-            body
-        )
-    }
+    ) = Request().createTOTP(
+        body,
+        readTimeout,
+        additionalHeaders,
+        additionalParameters
+    )
 }

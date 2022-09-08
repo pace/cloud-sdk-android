@@ -1,16 +1,15 @@
 package cloud.pace.sdk.poikit.poi.download
 
 import cloud.pace.sdk.api.API
-import cloud.pace.sdk.api.utils.EnumConverterFactory
-import cloud.pace.sdk.api.utils.InterceptorUtils
-import okhttp3.OkHttpClient
+import cloud.pace.sdk.api.converter.EnumConverterFactory
+import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.HeaderMap
 
-object CdnAPI {
+object CdnAPI : BaseRequest() {
 
     interface GetPaymentMethodVendorsService {
         @GET("pay/payment-method-vendors.json")
@@ -18,17 +17,15 @@ object CdnAPI {
     }
 
     fun CdnAPI.getPaymentMethodVendors(additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null): Call<List<PaymentMethodVendor>> {
-        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
-        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
-        val service: GetPaymentMethodVendorsService =
-            Retrofit.Builder()
-                .client(client.build())
-                .baseUrl(API.environment.cdnUrl)
-                .addConverterFactory(EnumConverterFactory())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(GetPaymentMethodVendorsService::class.java)
+        val headers = headers(true, "application/json", "application/json", additionalHeaders)
 
-        return service.getPaymentMethodVendors(headers)
+        return Retrofit.Builder()
+            .client(okHttpClient(additionalParameters))
+            .baseUrl(API.environment.cdnUrl)
+            .addConverterFactory(EnumConverterFactory())
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(GetPaymentMethodVendorsService::class.java)
+            .getPaymentMethodVendors(headers)
     }
 }

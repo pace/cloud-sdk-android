@@ -7,23 +7,12 @@
 
 package cloud.pace.sdk.api.user.generated.request.callbacks
 
+import cloud.pace.sdk.api.request.BaseRequest
 import cloud.pace.sdk.api.user.UserAPI
 import cloud.pace.sdk.api.user.generated.model.UserPINBody
-import cloud.pace.sdk.api.utils.EnumConverterFactory
-import cloud.pace.sdk.api.utils.InterceptorUtils
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.ResourceAdapterFactory
-import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
 object CallbackPasswordResetAPI {
 
@@ -69,50 +58,34 @@ user is deleted in order to prevent theft.
         var data: UserPINBody? = null
     }
 
+    open class Request : BaseRequest() {
+
+        fun callbackPasswordReset(
+            body: Body,
+            readTimeout: Long? = null,
+            additionalHeaders: Map<String, String>? = null,
+            additionalParameters: Map<String, String>? = null
+        ): Call<ResponseBody> {
+            val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
+
+            return retrofit(UserAPI.baseUrl, additionalParameters, readTimeout)
+                .create(CallbackPasswordResetService::class.java)
+                .callbackPasswordReset(
+                    headers,
+                    body
+                )
+        }
+    }
+
     fun UserAPI.CallbacksAPI.callbackPasswordReset(
         body: Body,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ): Call<ResponseBody> {
-        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
-        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
-
-        if (readTimeout != null) {
-            client.readTimeout(readTimeout, TimeUnit.SECONDS)
-        }
-
-        val service: CallbackPasswordResetService =
-            Retrofit.Builder()
-                .client(client.build())
-                .baseUrl(UserAPI.baseUrl)
-                .addConverterFactory(EnumConverterFactory())
-                .addConverterFactory(
-                    JsonApiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(
-                                ResourceAdapterFactory.builder()
-                                    .build()
-                            )
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .addConverterFactory(
-                    MoshiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .build()
-                .create(CallbackPasswordResetService::class.java)
-
-        return service.callbackPasswordReset(
-            headers,
-            body
-        )
-    }
+    ) = Request().callbackPasswordReset(
+        body,
+        readTimeout,
+        additionalHeaders,
+        additionalParameters
+    )
 }

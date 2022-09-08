@@ -11,7 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.R
-import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.api.utils.RequestUtils
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.communication.InvalidTokenReason
@@ -654,7 +654,7 @@ class AppWebViewModelImpl(
             GetTraceIdResult(GetTraceIdResult.Failure(GetTraceIdResult.Failure.StatusCode.RequestTimeout, GetTraceIdError("Timeout for getTraceId"))),
             GetTraceIdResult(GetTraceIdResult.Failure(GetTraceIdResult.Failure.StatusCode.InternalServerError, GetTraceIdError("An error occurred")))
         ) {
-            GetTraceIdResult(GetTraceIdResult.Success(GetTraceIdResponse(InterceptorUtils.getTraceId())))
+            GetTraceIdResult(GetTraceIdResult.Success(GetTraceIdResponse(RequestUtils.getTraceId())))
         }
     }
 

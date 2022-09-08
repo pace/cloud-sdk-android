@@ -9,25 +9,15 @@ package cloud.pace.sdk.api.poi.generated.request.apps
 
 import cloud.pace.sdk.api.poi.POIAPI
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApps
-import cloud.pace.sdk.api.utils.EnumConverterFactory
-import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.api.request.BaseRequest
 import cloud.pace.sdk.utils.toIso8601
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.ResourceAdapterFactory
-import okhttp3.OkHttpClient
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.HeaderMap
 import retrofit2.http.Query
 import java.util.Date
-import java.util.concurrent.TimeUnit
 
 object GetAppsAPI {
 
@@ -71,6 +61,33 @@ object GetAppsAPI {
         APPROACHING("approaching")
     }
 
+    open class Request : BaseRequest() {
+
+        fun getApps(
+            pagenumber: Int? = null,
+            pagesize: Int? = null,
+            filterappType: FilterappType? = null,
+            filtercache: Filtercache? = null,
+            filtersince: Date? = null,
+            readTimeout: Long? = null,
+            additionalHeaders: Map<String, String>? = null,
+            additionalParameters: Map<String, String>? = null
+        ): Call<LocationBasedApps> {
+            val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
+
+            return retrofit(POIAPI.baseUrl, additionalParameters, readTimeout)
+                .create(GetAppsService::class.java)
+                .getApps(
+                    headers,
+                    pagenumber,
+                    pagesize,
+                    filterappType,
+                    filtercache,
+                    filtersince?.toIso8601()?.dropLast(9)?.let { it + 'Z' }
+                )
+        }
+    }
+
     fun POIAPI.AppsAPI.getApps(
         pagenumber: Int? = null,
         pagesize: Int? = null,
@@ -80,49 +97,14 @@ object GetAppsAPI {
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ): Call<LocationBasedApps> {
-        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
-        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
-
-        if (readTimeout != null) {
-            client.readTimeout(readTimeout, TimeUnit.SECONDS)
-        }
-
-        val service: GetAppsService =
-            Retrofit.Builder()
-                .client(client.build())
-                .baseUrl(POIAPI.baseUrl)
-                .addConverterFactory(EnumConverterFactory())
-                .addConverterFactory(
-                    JsonApiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(
-                                ResourceAdapterFactory.builder()
-                                    .build()
-                            )
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .addConverterFactory(
-                    MoshiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .build()
-                .create(GetAppsService::class.java)
-
-        return service.getApps(
-            headers,
-            pagenumber,
-            pagesize,
-            filterappType,
-            filtercache,
-            filtersince?.toIso8601()?.dropLast(9)?.let { it + 'Z' }
-        )
-    }
+    ) = Request().getApps(
+        pagenumber,
+        pagesize,
+        filterappType,
+        filtercache,
+        filtersince,
+        readTimeout,
+        additionalHeaders,
+        additionalParameters
+    )
 }

@@ -2,20 +2,18 @@ package cloud.pace.sdk.poikit.geo
 
 import android.content.Context
 import cloud.pace.sdk.PACECloudSDK
-import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.api.request.BaseRequest
 import cloud.pace.sdk.utils.Environment
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.Cache
-import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.HeaderMap
 import retrofit2.http.Path
-import java.util.concurrent.TimeUnit
 
 interface GeoAPI {
 
@@ -26,24 +24,18 @@ interface GeoAPI {
     ): Response<GeoAPIResponse>
 }
 
-class GeoAPIClient(environment: Environment, private val context: Context) {
+class GeoAPIClient(environment: Environment, private val context: Context) : BaseRequest() {
 
     private val service = create(environment.cdnUrl)
 
     suspend fun getGeoApiApps(): Response<GeoAPIResponse> {
-        return service.getGeoApiApps(
-            PACECloudSDK.configuration.geoAppsScope,
-            InterceptorUtils.getHeaders(false, "application/geo+json", "application/geo+json")
-        )
+        return service.getGeoApiApps(PACECloudSDK.configuration.geoAppsScope, headers(false, "application/geo+json", "application/geo+json"))
     }
 
     private fun create(baseUrl: String, readTimeout: Long? = null): GeoAPI {
-        val client = OkHttpClient.Builder()
+        val client = okHttpClient(readTimeout = readTimeout)
+            .newBuilder()
             .cache(Cache(context.cacheDir, CACHE_SIZE))
-            .addInterceptor(InterceptorUtils.getInterceptor())
-
-        if (readTimeout != null)
-            client.readTimeout(readTimeout, TimeUnit.SECONDS)
 
         return Retrofit.Builder()
             .client(client.build())

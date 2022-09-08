@@ -1,6 +1,7 @@
 package cloud.pace.sdk.api
 
-import cloud.pace.sdk.api.utils.InterceptorUtils.AUTHORIZATION_HEADER
+import cloud.pace.sdk.api.utils.RequestUtils.AUTHORIZATION_HEADER
+import cloud.pace.sdk.api.utils.RequestUtils.BEARER
 import cloud.pace.sdk.utils.Environment
 
 object API {
@@ -34,7 +35,7 @@ object API {
         if (accessToken == null) {
             removeHeader(AUTHORIZATION_HEADER)
         } else {
-            addHeader(AUTHORIZATION_HEADER, "Bearer $accessToken")
+            addHeader(AUTHORIZATION_HEADER, "$BEARER $accessToken")
         }
     }
 }

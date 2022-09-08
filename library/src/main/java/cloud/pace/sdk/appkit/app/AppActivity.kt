@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.api.utils.RequestUtils
 import cloud.pace.sdk.appkit.app.deeplink.DeepLinkManagementActivity
 import cloud.pace.sdk.appkit.communication.LogoutResponse
 import cloud.pace.sdk.appkit.utils.BiometricUtils
@@ -118,7 +118,7 @@ class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
             }
         }
 
-        binding.appWebView.init(InterceptorUtils.getUrlWithQueryParams(url))
+        binding.appWebView.init(RequestUtils.getUrlWithQueryParams(url))
     }
 
     override fun onBackPressed() {

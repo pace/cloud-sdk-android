@@ -10,22 +10,11 @@ package cloud.pace.sdk.api.fueling.generated.request.fueling
 import cloud.pace.sdk.api.fueling.FuelingAPI
 import cloud.pace.sdk.api.fueling.generated.model.ProcessPaymentResponse
 import cloud.pace.sdk.api.fueling.generated.model.TransactionRequest
-import cloud.pace.sdk.api.utils.EnumConverterFactory
-import cloud.pace.sdk.api.utils.InterceptorUtils
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.ResourceAdapterFactory
-import okhttp3.OkHttpClient
+import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.HeaderMap
 import retrofit2.http.POST
 import retrofit2.http.Path
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
 object ProcessPaymentAPI {
 
@@ -52,52 +41,38 @@ You can optionally provide:
         ): Call<ProcessPaymentResponse>
     }
 
+    open class Request : BaseRequest() {
+
+        fun processPayment(
+            gasStationId: String,
+            body: TransactionRequest,
+            readTimeout: Long? = null,
+            additionalHeaders: Map<String, String>? = null,
+            additionalParameters: Map<String, String>? = null
+        ): Call<ProcessPaymentResponse> {
+            val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
+
+            return retrofit(FuelingAPI.baseUrl, additionalParameters, readTimeout)
+                .create(ProcessPaymentService::class.java)
+                .processPayment(
+                    headers,
+                    gasStationId,
+                    body
+                )
+        }
+    }
+
     fun FuelingAPI.FuelingAPI.processPayment(
         gasStationId: String,
         body: TransactionRequest,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ): Call<ProcessPaymentResponse> {
-        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
-        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
-
-        if (readTimeout != null) {
-            client.readTimeout(readTimeout, TimeUnit.SECONDS)
-        }
-
-        val service: ProcessPaymentService =
-            Retrofit.Builder()
-                .client(client.build())
-                .baseUrl(FuelingAPI.baseUrl)
-                .addConverterFactory(EnumConverterFactory())
-                .addConverterFactory(
-                    JsonApiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(
-                                ResourceAdapterFactory.builder()
-                                    .build()
-                            )
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .addConverterFactory(
-                    MoshiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .build()
-                .create(ProcessPaymentService::class.java)
-
-        return service.processPayment(
-            headers,
-            gasStationId,
-            body
-        )
-    }
+    ) = Request().processPayment(
+        gasStationId,
+        body,
+        readTimeout,
+        additionalHeaders,
+        additionalParameters
+    )
 }

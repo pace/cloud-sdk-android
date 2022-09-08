@@ -1,6 +1,6 @@
 package cloud.pace.sdk.utils
 
-import cloud.pace.sdk.api.utils.InterceptorUtils.REQUEST_ID_HEADER
+import cloud.pace.sdk.api.utils.RequestUtils.REQUEST_ID_HEADER
 import cloud.pace.sdk.poikit.utils.ApiException
 import retrofit2.Call
 import retrofit2.Callback

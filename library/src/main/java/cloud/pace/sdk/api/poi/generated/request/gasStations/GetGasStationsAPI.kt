@@ -13,24 +13,13 @@ import cloud.pace.sdk.api.poi.generated.model.GasStation
 import cloud.pace.sdk.api.poi.generated.model.GasStations
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
 import cloud.pace.sdk.api.poi.generated.model.ReferenceStatus
-import cloud.pace.sdk.api.utils.EnumConverterFactory
-import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.api.request.BaseRequest
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.ResourceAdapterFactory
-import okhttp3.OkHttpClient
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.HeaderMap
 import retrofit2.http.Query
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
 object GetGasStationsAPI {
 
@@ -88,6 +77,46 @@ To search inside a bounding box provide the following query parameter:
         FUELING("fueling")
     }
 
+    open class Request : BaseRequest() {
+
+        fun getGasStations(
+            pagenumber: Int? = null,
+            pagesize: Int? = null,
+            filterpoiType: FilterpoiType? = null,
+            filterappType: List<FilterappType>? = null,
+            filterlatitude: Float? = null,
+            filterlongitude: Float? = null,
+            filterradius: Float? = null,
+            filterboundingBox: List<Float>? = null,
+            compileopeningHours: Boolean? = null,
+            filtersource: String? = null,
+            filterpaymentMethod: String? = null,
+            readTimeout: Long? = null,
+            additionalHeaders: Map<String, String>? = null,
+            additionalParameters: Map<String, String>? = null
+        ): Call<GasStations> {
+            val resources = listOf(GasStation::class.java, LocationBasedApp::class.java, FuelPrice::class.java, ReferenceStatus::class.java)
+            val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
+
+            return retrofit(POIAPI.baseUrl, additionalParameters, readTimeout, resources)
+                .create(GetGasStationsService::class.java)
+                .getGasStations(
+                    headers,
+                    pagenumber,
+                    pagesize,
+                    filterpoiType,
+                    filterappType,
+                    filterlatitude,
+                    filterlongitude,
+                    filterradius,
+                    filterboundingBox,
+                    compileopeningHours,
+                    filtersource,
+                    filterpaymentMethod
+                )
+        }
+    }
+
     fun POIAPI.GasStationsAPI.getGasStations(
         pagenumber: Int? = null,
         pagesize: Int? = null,
@@ -103,59 +132,20 @@ To search inside a bounding box provide the following query parameter:
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ): Call<GasStations> {
-        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
-        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
-
-        if (readTimeout != null) {
-            client.readTimeout(readTimeout, TimeUnit.SECONDS)
-        }
-
-        val service: GetGasStationsService =
-            Retrofit.Builder()
-                .client(client.build())
-                .baseUrl(POIAPI.baseUrl)
-                .addConverterFactory(EnumConverterFactory())
-                .addConverterFactory(
-                    JsonApiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(
-                                ResourceAdapterFactory.builder()
-                                    .add(GasStation::class.java)
-                                    .add(LocationBasedApp::class.java)
-                                    .add(FuelPrice::class.java)
-                                    .add(ReferenceStatus::class.java)
-                                    .build()
-                            )
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .addConverterFactory(
-                    MoshiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .build()
-                .create(GetGasStationsService::class.java)
-
-        return service.getGasStations(
-            headers,
-            pagenumber,
-            pagesize,
-            filterpoiType,
-            filterappType,
-            filterlatitude,
-            filterlongitude,
-            filterradius,
-            filterboundingBox,
-            compileopeningHours,
-            filtersource,
-            filterpaymentMethod
-        )
-    }
+    ) = Request().getGasStations(
+        pagenumber,
+        pagesize,
+        filterpoiType,
+        filterappType,
+        filterlatitude,
+        filterlongitude,
+        filterradius,
+        filterboundingBox,
+        compileopeningHours,
+        filtersource,
+        filterpaymentMethod,
+        readTimeout,
+        additionalHeaders,
+        additionalParameters
+    )
 }

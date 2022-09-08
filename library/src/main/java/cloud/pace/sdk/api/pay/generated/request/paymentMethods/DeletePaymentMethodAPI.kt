@@ -8,23 +8,12 @@
 package cloud.pace.sdk.api.pay.generated.request.paymentMethods
 
 import cloud.pace.sdk.api.pay.PayAPI
-import cloud.pace.sdk.api.utils.EnumConverterFactory
-import cloud.pace.sdk.api.utils.InterceptorUtils
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.ResourceAdapterFactory
-import okhttp3.OkHttpClient
+import cloud.pace.sdk.api.request.BaseRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.DELETE
 import retrofit2.http.HeaderMap
 import retrofit2.http.Path
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
 object DeletePaymentMethodAPI {
 
@@ -38,50 +27,34 @@ object DeletePaymentMethodAPI {
         ): Call<ResponseBody>
     }
 
+    open class Request : BaseRequest() {
+
+        fun deletePaymentMethod(
+            paymentMethodId: String,
+            readTimeout: Long? = null,
+            additionalHeaders: Map<String, String>? = null,
+            additionalParameters: Map<String, String>? = null
+        ): Call<ResponseBody> {
+            val headers = headers(true, "application/json", "application/json", additionalHeaders)
+
+            return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout)
+                .create(DeletePaymentMethodService::class.java)
+                .deletePaymentMethod(
+                    headers,
+                    paymentMethodId
+                )
+        }
+    }
+
     fun PayAPI.PaymentMethodsAPI.deletePaymentMethod(
         paymentMethodId: String,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ): Call<ResponseBody> {
-        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
-        val headers = InterceptorUtils.getHeaders(true, "application/json", "application/json", additionalHeaders)
-
-        if (readTimeout != null) {
-            client.readTimeout(readTimeout, TimeUnit.SECONDS)
-        }
-
-        val service: DeletePaymentMethodService =
-            Retrofit.Builder()
-                .client(client.build())
-                .baseUrl(PayAPI.baseUrl)
-                .addConverterFactory(EnumConverterFactory())
-                .addConverterFactory(
-                    JsonApiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(
-                                ResourceAdapterFactory.builder()
-                                    .build()
-                            )
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .addConverterFactory(
-                    MoshiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .build()
-                .create(DeletePaymentMethodService::class.java)
-
-        return service.deletePaymentMethod(
-            headers,
-            paymentMethodId
-        )
-    }
+    ) = Request().deletePaymentMethod(
+        paymentMethodId,
+        readTimeout,
+        additionalHeaders,
+        additionalParameters
+    )
 }
