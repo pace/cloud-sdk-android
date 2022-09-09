@@ -22,6 +22,10 @@ class Transaction : Resource() {
  */
     var createdAt: Date? = null
 
+    /* Initial creation date of the transaction (local-time of the gas station/point of interest) (https://tools.ietf.org/html/rfc3339#section-5.6).
+ */
+    var createdAtLocaltime: Date? = null
+
     /* Currency as specified in ISO-4217. */
     var currency: String? = null
 

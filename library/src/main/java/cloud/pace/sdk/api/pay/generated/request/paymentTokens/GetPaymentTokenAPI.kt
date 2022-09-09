@@ -12,22 +12,11 @@ import cloud.pace.sdk.api.pay.generated.model.PaymentMethod
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethodKind
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethodVendor
 import cloud.pace.sdk.api.pay.generated.model.PaymentToken
-import cloud.pace.sdk.api.utils.EnumConverterFactory
-import cloud.pace.sdk.api.utils.InterceptorUtils
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.ResourceAdapterFactory
-import okhttp3.OkHttpClient
+import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.HeaderMap
 import retrofit2.http.Path
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
 object GetPaymentTokenAPI {
 
@@ -41,54 +30,35 @@ object GetPaymentTokenAPI {
         ): Call<PaymentToken>
     }
 
+    open class Request : BaseRequest() {
+
+        fun getPaymentToken(
+            paymentTokenId: String,
+            readTimeout: Long? = null,
+            additionalHeaders: Map<String, String>? = null,
+            additionalParameters: Map<String, String>? = null
+        ): Call<PaymentToken> {
+            val resources = listOf(PaymentMethodKind::class.java, PaymentMethodVendor::class.java, PaymentMethod::class.java, PaymentToken::class.java)
+            val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
+
+            return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout, resources)
+                .create(GetPaymentTokenService::class.java)
+                .getPaymentToken(
+                    headers,
+                    paymentTokenId
+                )
+        }
+    }
+
     fun PayAPI.PaymentTokensAPI.getPaymentToken(
         paymentTokenId: String,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ): Call<PaymentToken> {
-        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
-        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
-
-        if (readTimeout != null) {
-            client.readTimeout(readTimeout, TimeUnit.SECONDS)
-        }
-
-        val service: GetPaymentTokenService =
-            Retrofit.Builder()
-                .client(client.build())
-                .baseUrl(PayAPI.baseUrl)
-                .addConverterFactory(EnumConverterFactory())
-                .addConverterFactory(
-                    JsonApiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(
-                                ResourceAdapterFactory.builder()
-                                    .add(PaymentMethodKind::class.java)
-                                    .add(PaymentMethod::class.java)
-                                    .add(PaymentToken::class.java)
-                                    .add(PaymentMethodVendor::class.java)
-                                    .build()
-                            )
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .addConverterFactory(
-                    MoshiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .build()
-                .create(GetPaymentTokenService::class.java)
-
-        return service.getPaymentToken(
-            headers,
-            paymentTokenId
-        )
-    }
+    ) = Request().getPaymentToken(
+        paymentTokenId,
+        readTimeout,
+        additionalHeaders,
+        additionalParameters
+    )
 }

@@ -2,16 +2,21 @@ package cloud.pace.sdk.appkit.persistence
 
 import android.content.Context
 import android.net.Uri
-import cloud.pace.sdk.api.utils.InterceptorUtils
-import cloud.pace.sdk.api.utils.InterceptorUtils.UBER_TRACE_ID_HEADER
+import cloud.pace.sdk.api.utils.RequestUtils
+import cloud.pace.sdk.api.utils.RequestUtils.UBER_TRACE_ID_HEADER
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.poikit.utils.ApiException
 import cloud.pace.sdk.utils.requestId
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
-import okhttp3.*
+import okhttp3.Cache
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.Headers.Companion.toHeaders
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 import java.io.FileNotFoundException
@@ -19,7 +24,7 @@ import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URL
 import java.nio.charset.Charset
-import java.util.*
+import java.util.Locale
 
 interface CacheModel {
 
@@ -40,7 +45,7 @@ class CacheModelImpl : CacheModel {
     private fun fetch(context: Context, url: URL, userAgent: String?, completion: (Result<ByteArray>) -> Unit) {
         val headers = mutableMapOf<String, String>()
         headers[ACCEPT_LANGUAGE_KEY] = Locale.getDefault().language
-        headers[UBER_TRACE_ID_HEADER] = InterceptorUtils.getUberTraceId()
+        headers[UBER_TRACE_ID_HEADER] = RequestUtils.getUberTraceId()
         if (userAgent != null) {
             headers[USER_AGENT_KEY] = userAgent
         }

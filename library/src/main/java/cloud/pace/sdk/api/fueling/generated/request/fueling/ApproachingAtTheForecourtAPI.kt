@@ -16,23 +16,12 @@ import cloud.pace.sdk.api.fueling.generated.model.PaymentMethod
 import cloud.pace.sdk.api.fueling.generated.model.PaymentMethodKind
 import cloud.pace.sdk.api.fueling.generated.model.Pump
 import cloud.pace.sdk.api.fueling.generated.model.Transaction
-import cloud.pace.sdk.api.utils.EnumConverterFactory
-import cloud.pace.sdk.api.utils.InterceptorUtils
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.ResourceAdapterFactory
-import okhttp3.OkHttpClient
+import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.HeaderMap
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
 object ApproachingAtTheForecourtAPI {
 
@@ -63,59 +52,40 @@ Other than authorization, the most common error states encountered should be:
         ): Call<ApproachingResponse>
     }
 
+    open class Request : BaseRequest() {
+
+        fun approachingAtTheForecourt(
+            gasStationId: String,
+            compileopeningHours: Boolean? = null,
+            readTimeout: Long? = null,
+            additionalHeaders: Map<String, String>? = null,
+            additionalParameters: Map<String, String>? = null
+        ): Call<ApproachingResponse> {
+            val resources =
+                listOf(PaymentMethodKind::class.java, FuelPrice::class.java, PaymentMethod::class.java, GasStation::class.java, Pump::class.java, Transaction::class.java, GasStationNote::class.java)
+            val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
+
+            return retrofit(FuelingAPI.baseUrl, additionalParameters, readTimeout, resources)
+                .create(ApproachingAtTheForecourtService::class.java)
+                .approachingAtTheForecourt(
+                    headers,
+                    gasStationId,
+                    compileopeningHours
+                )
+        }
+    }
+
     fun FuelingAPI.FuelingAPI.approachingAtTheForecourt(
         gasStationId: String,
         compileopeningHours: Boolean? = null,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ): Call<ApproachingResponse> {
-        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
-        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
-
-        if (readTimeout != null) {
-            client.readTimeout(readTimeout, TimeUnit.SECONDS)
-        }
-
-        val service: ApproachingAtTheForecourtService =
-            Retrofit.Builder()
-                .client(client.build())
-                .baseUrl(FuelingAPI.baseUrl)
-                .addConverterFactory(EnumConverterFactory())
-                .addConverterFactory(
-                    JsonApiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(
-                                ResourceAdapterFactory.builder()
-                                    .add(Transaction::class.java)
-                                    .add(PaymentMethodKind::class.java)
-                                    .add(Pump::class.java)
-                                    .add(FuelPrice::class.java)
-                                    .add(GasStationNote::class.java)
-                                    .add(GasStation::class.java)
-                                    .add(PaymentMethod::class.java)
-                                    .build()
-                            )
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .addConverterFactory(
-                    MoshiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .build()
-                .create(ApproachingAtTheForecourtService::class.java)
-
-        return service.approachingAtTheForecourt(
-            headers,
-            gasStationId,
-            compileopeningHours
-        )
-    }
+    ) = Request().approachingAtTheForecourt(
+        gasStationId,
+        compileopeningHours,
+        readTimeout,
+        additionalHeaders,
+        additionalParameters
+    )
 }

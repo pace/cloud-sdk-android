@@ -9,24 +9,13 @@ package cloud.pace.sdk.api.poi.generated.request.apps
 
 import cloud.pace.sdk.api.poi.POIAPI
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppsWithRefs
-import cloud.pace.sdk.api.utils.EnumConverterFactory
-import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.api.request.BaseRequest
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.ResourceAdapterFactory
-import okhttp3.OkHttpClient
 import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.HeaderMap
 import retrofit2.http.Query
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
 object CheckForPaceAppAPI {
 
@@ -59,6 +48,29 @@ Please note that calling this API is very cheap and can be done regularly.
         FUELING("fueling")
     }
 
+    open class Request : BaseRequest() {
+
+        fun checkForPaceApp(
+            filterlatitude: Float,
+            filterlongitude: Float,
+            filterappType: FilterappType? = null,
+            readTimeout: Long? = null,
+            additionalHeaders: Map<String, String>? = null,
+            additionalParameters: Map<String, String>? = null
+        ): Call<LocationBasedAppsWithRefs> {
+            val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
+
+            return retrofit(POIAPI.baseUrl, additionalParameters, readTimeout)
+                .create(CheckForPaceAppService::class.java)
+                .checkForPaceApp(
+                    headers,
+                    filterlatitude,
+                    filterlongitude,
+                    filterappType
+                )
+        }
+    }
+
     fun POIAPI.AppsAPI.checkForPaceApp(
         filterlatitude: Float,
         filterlongitude: Float,
@@ -66,47 +78,12 @@ Please note that calling this API is very cheap and can be done regularly.
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ): Call<LocationBasedAppsWithRefs> {
-        val client = OkHttpClient.Builder().addInterceptor(InterceptorUtils.getInterceptor(additionalParameters))
-        val headers = InterceptorUtils.getHeaders(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
-
-        if (readTimeout != null) {
-            client.readTimeout(readTimeout, TimeUnit.SECONDS)
-        }
-
-        val service: CheckForPaceAppService =
-            Retrofit.Builder()
-                .client(client.build())
-                .baseUrl(POIAPI.baseUrl)
-                .addConverterFactory(EnumConverterFactory())
-                .addConverterFactory(
-                    JsonApiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(
-                                ResourceAdapterFactory.builder()
-                                    .build()
-                            )
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .addConverterFactory(
-                    MoshiConverterFactory.create(
-                        Moshi.Builder()
-                            .add(Date::class.java, Rfc3339DateJsonAdapter().nullSafe())
-                            .add(KotlinJsonAdapterFactory())
-                            .build()
-                    )
-                )
-                .build()
-                .create(CheckForPaceAppService::class.java)
-
-        return service.checkForPaceApp(
-            headers,
-            filterlatitude,
-            filterlongitude,
-            filterappType
-        )
-    }
+    ) = Request().checkForPaceApp(
+        filterlatitude,
+        filterlongitude,
+        filterappType,
+        readTimeout,
+        additionalHeaders,
+        additionalParameters
+    )
 }

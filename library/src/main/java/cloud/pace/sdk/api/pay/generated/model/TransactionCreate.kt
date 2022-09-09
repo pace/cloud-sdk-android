@@ -56,6 +56,9 @@ class TransactionCreate : Resource() {
     class VAT {
 
         var amount: Double? = null
+
+        /* *Important:* Vat rates have to be between 0.00 and 1.00 and not have a decimal precision beyoned 2, i.e., no rate of 0.119999999
+     */
         var rate: Double? = null
     }
 }

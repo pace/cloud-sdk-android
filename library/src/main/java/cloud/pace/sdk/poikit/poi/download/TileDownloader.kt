@@ -2,7 +2,7 @@ package cloud.pace.sdk.poikit.poi.download
 
 import TileQueryRequestOuterClass
 import TileQueryResponseOuterClass
-import cloud.pace.sdk.api.utils.InterceptorUtils
+import cloud.pace.sdk.api.utils.RequestUtils
 import cloud.pace.sdk.poikit.POIKit
 import cloud.pace.sdk.poikit.geo.ConnectedFuelingStatus
 import cloud.pace.sdk.poikit.poi.GasStation
@@ -19,15 +19,18 @@ import cloud.pace.sdk.utils.Environment
 import cloud.pace.sdk.utils.Success
 import cloud.pace.sdk.utils.requestId
 import com.google.protobuf.InvalidProtocolBufferException
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import timber.log.Timber
 import vector_tile.VectorTile
 import java.io.IOException
-import java.util.*
+import java.util.Date
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
 import kotlin.math.atan
 import kotlin.math.exp
 
@@ -38,8 +41,8 @@ class TileDownloader(environment: Environment) {
                 it.proceed(
                     it.request()
                         .newBuilder()
-                        .header(InterceptorUtils.USER_AGENT_HEADER, InterceptorUtils.getUserAgent())
-                        .header(InterceptorUtils.UBER_TRACE_ID_HEADER, InterceptorUtils.getUberTraceId())
+                        .header(RequestUtils.USER_AGENT_HEADER, RequestUtils.getUserAgent())
+                        .header(RequestUtils.UBER_TRACE_ID_HEADER, RequestUtils.getUberTraceId())
                         .build()
                 )
             }
