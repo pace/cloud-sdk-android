@@ -9,6 +9,7 @@ interface UriManager {
     fun getStartUrl(baseUrl: String, reference: String?): String
     fun appendPath(baseUrl: String, path: String): String
     fun appendQueryParameter(baseUrl: String, key: String, value: String): String
+    fun getIconUrl(baseUrl: String, url: String): String
 }
 
 class UriManagerImpl : UriManager {
@@ -38,6 +39,10 @@ class UriManagerImpl : UriManager {
 
     override fun appendQueryParameter(baseUrl: String, key: String, value: String) =
         Uri.parse(baseUrl).buildUpon().clearQuery().appendQueryParameter(key, value).build().toString()
+
+    override fun getIconUrl(baseUrl: String, url: String): String {
+        return if (Uri.parse(url).isAbsolute) url else appendPath(baseUrl, url)
+    }
 
     companion object {
         const val PARAM_R = "r"
