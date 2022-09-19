@@ -1,5 +1,6 @@
 package cloud.pace.sdk.poikit.search
 
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.utils.RequestUtils
 import cloud.pace.sdk.utils.Environment
 import io.reactivex.rxjava3.core.Observable
@@ -58,7 +59,7 @@ interface AddressSearchApi {
                             it.proceed(
                                 it.request()
                                     .newBuilder()
-                                    .header(RequestUtils.USER_AGENT_HEADER, RequestUtils.getUserAgent())
+                                    .header(RequestUtils.USER_AGENT_HEADER, PACECloudSDK.getBaseUserAgent())
                                     .header(RequestUtils.API_KEY_HEADER, apiKey)
                                     .header(RequestUtils.UBER_TRACE_ID_HEADER, RequestUtils.getUberTraceId())
                                     .build()

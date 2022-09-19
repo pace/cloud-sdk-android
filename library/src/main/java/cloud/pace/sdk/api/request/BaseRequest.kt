@@ -1,5 +1,6 @@
 package cloud.pace.sdk.api.request
 
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.converter.EnumConverterFactory
 import cloud.pace.sdk.api.interceptor.AuthenticationInterceptor
@@ -47,7 +48,7 @@ open class BaseRequest {
         headers[RequestUtils.CONTENT_TYPE_HEADER] = contentType
         headers[RequestUtils.API_KEY_HEADER] = API.apiKey
         headers[RequestUtils.UBER_TRACE_ID_HEADER] = RequestUtils.getUberTraceId()
-        headers[RequestUtils.USER_AGENT_HEADER] = RequestUtils.getUserAgent()
+        headers[RequestUtils.USER_AGENT_HEADER] = PACECloudSDK.getBaseUserAgent()
 
         // Additional headers of the request have priority over the globally set headers, so set them last to override any existing header
         if (!additionalHeaders.isNullOrEmpty()) {

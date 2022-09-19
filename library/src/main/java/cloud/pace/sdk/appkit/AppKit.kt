@@ -2,7 +2,6 @@ package cloud.pace.sdk.appkit
 
 import android.content.Context
 import androidx.constraintlayout.widget.ConstraintLayout
-import cloud.pace.sdk.BuildConfig
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.app.AppActivity
 import cloud.pace.sdk.appkit.app.drawer.AppDrawer
@@ -46,9 +45,7 @@ object AppKit : CloudSDKKoinComponent {
     internal fun updateUserAgent() {
         val config = PACECloudSDK.configuration
         userAgent = listOf(
-            "${config.clientAppName}/${config.clientAppVersion}_${config.clientAppBuild}",
-            "(${DeviceUtils.getDeviceName()} Android/${DeviceUtils.getAndroidVersion()})",
-            "PWA-SDK/${BuildConfig.VERSION_NAME}",
+            PACECloudSDK.getBaseUserAgent(),
             if (theme == Theme.LIGHT) "PWASDK-Theme/Light" else "PWASDK-Theme/Dark",
             "IdentityManagement/${config.authenticationMode.value}",
             config.extensions.joinToString(" ")
