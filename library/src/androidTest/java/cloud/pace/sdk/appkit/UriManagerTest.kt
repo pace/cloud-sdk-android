@@ -58,4 +58,22 @@ class UriManagerTest {
         val url = uriManager.getStartUrl(baseUrl, null)
         assertEquals(baseUrl, url)
     }
+
+    @Test
+    fun getIconUrlRelativePath() {
+        val baseUrl = "https://app.test.net"
+        val iconUrl = "notification_logo.png"
+
+        val url = uriManager.getIconUrl(baseUrl, iconUrl)
+        assertEquals("https://app.test.net/notification_logo.png", url)
+    }
+
+    @Test
+    fun getIconUrlAbsolutePath() {
+        val baseUrl = "https://app.test.net"
+        val iconUrl = "https://cdn.pace.cloud/brands/mybrand/notification_logo.png"
+
+        val url = uriManager.getIconUrl(baseUrl, iconUrl)
+        assertEquals(iconUrl, url)
+    }
 }

@@ -196,6 +196,6 @@ class AppRepositoryImpl(
         val buttonWidth = context.resources.getDimension(R.dimen.app_drawer_height).dp.toDouble()
         val preferredIcon = IconUtils.getBestMatchingIcon(buttonWidth, icons) ?: return null
 
-        return uriUtil.appendPath(url, preferredIcon.src)
+        return uriUtil.getIconUrl(url, preferredIcon.src)
     }
 }

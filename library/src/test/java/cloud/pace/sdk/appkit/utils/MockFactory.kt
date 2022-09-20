@@ -140,6 +140,10 @@ open class TestUriUtils(private val id: String? = null, private val startUrl: St
     override fun appendQueryParameter(baseUrl: String, key: String, value: String): String {
         return ""
     }
+
+    override fun getIconUrl(baseUrl: String, url: String): String {
+        return ""
+    }
 }
 
 open class TestAppEventManager : AppEventManager {
