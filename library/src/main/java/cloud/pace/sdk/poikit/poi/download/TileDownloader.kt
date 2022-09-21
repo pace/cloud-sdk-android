@@ -2,6 +2,7 @@ package cloud.pace.sdk.poikit.poi.download
 
 import TileQueryRequestOuterClass
 import TileQueryResponseOuterClass
+import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.utils.RequestUtils
 import cloud.pace.sdk.poikit.POIKit
 import cloud.pace.sdk.poikit.geo.ConnectedFuelingStatus
@@ -41,7 +42,7 @@ class TileDownloader(environment: Environment) {
                 it.proceed(
                     it.request()
                         .newBuilder()
-                        .header(RequestUtils.USER_AGENT_HEADER, RequestUtils.getUserAgent())
+                        .header(RequestUtils.USER_AGENT_HEADER, PACECloudSDK.getBaseUserAgent())
                         .header(RequestUtils.UBER_TRACE_ID_HEADER, RequestUtils.getUberTraceId())
                         .build()
                 )

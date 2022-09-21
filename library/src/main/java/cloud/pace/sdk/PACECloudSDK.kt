@@ -153,4 +153,22 @@ object PACECloudSDK {
             configuration.locationAccuracy = locationAccuracy
         }
     }
+
+    internal fun getBaseUserAgent(): String {
+        val clientAppName: String
+        val clientAppVersion: String
+        val clientAppBuild: String
+
+        if (::configuration.isInitialized) {
+            clientAppName = configuration.clientAppName
+            clientAppVersion = configuration.clientAppVersion
+            clientAppBuild = configuration.clientAppBuild
+        } else {
+            clientAppName = "PACECloudSDK"
+            clientAppVersion = BuildConfig.VERSION_NAME
+            clientAppBuild = BuildConfig.VERSION_CODE.toString()
+        }
+
+        return "$clientAppName/${clientAppVersion}_$clientAppBuild (${DeviceUtils.getDeviceName()} Android/${DeviceUtils.getAndroidVersion()}) Cloud-SDK/${BuildConfig.VERSION_NAME}"
+    }
 }

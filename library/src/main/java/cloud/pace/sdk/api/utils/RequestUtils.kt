@@ -1,10 +1,7 @@
 package cloud.pace.sdk.api.utils
 
 import android.net.Uri
-import android.os.Build
-import cloud.pace.sdk.BuildConfig
 import cloud.pace.sdk.PACECloudSDK
-import cloud.pace.sdk.utils.DeviceUtils
 import cloud.pace.sdk.utils.randomHexString
 import java.util.Locale
 import java.util.concurrent.TimeUnit
@@ -34,10 +31,6 @@ object RequestUtils {
         }
 
         return newUrl.build().toString()
-    }
-
-    fun getUserAgent(versionName: String = BuildConfig.VERSION_NAME, versionCode: Int = BuildConfig.VERSION_CODE): String {
-        return "PACECloudSDK/$versionName.$versionCode (${DeviceUtils.getDeviceName()}; Android/${Build.VERSION.RELEASE})"
     }
 
     internal fun getUberTraceId() = "${getTraceId()}:$TRACING_SPAN_ID:$TRACING_PARENT_SPAN_ID:$TRACING_FLAGS"
