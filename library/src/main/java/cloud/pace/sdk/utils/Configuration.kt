@@ -11,7 +11,7 @@ data class Configuration @JvmOverloads constructor(
     var authenticationMode: AuthenticationMode = AuthenticationMode.NATIVE,
     var environment: Environment = Environment.PRODUCTION,
     var extensions: List<String> = emptyList(),
-    var domainACL: List<String> = listOf("pace.cloud"),
+    var domainACL: List<String> = listOf("pace.cloud", "fuel.site"),
     var locationAccuracy: Int? = null,
     var speedThresholdInKmPerHour: Int = 50,
     var geoAppsScope: String = "pace-min",
