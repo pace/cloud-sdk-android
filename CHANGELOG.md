@@ -1,3 +1,13 @@
+16.0.2 Release notes (2022-10-11)
+=============================================================
+
+### Internal
+
+* Add fuel.site to list of trusted domains
+* Unified user agents from requests and the apps
+* Support absolute paths in manifest
+* Restructure generated API files so that the client can overwrite the request setup
+
 16.0.1 Release notes (2022-08-05)
 =============================================================
 
