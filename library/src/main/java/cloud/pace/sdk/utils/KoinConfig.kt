@@ -90,7 +90,7 @@ object KoinConfig {
                     single { LocationServices.getGeofencingClient(get<Context>()) }
                     single<AppModel> { AppModelImpl(get()) }
                     single { AppManager(DefaultDispatcherProvider()) }
-                    single<GeoAPIManager>(createdAtStart = true) { GeoAPIManagerImpl(get(), get(), get()) }
+                    single<GeoAPIManager> { GeoAPIManagerImpl(get(), get(), get()) }
                     single { AuthorizationService(get()) }
                     single { AuthorizationManager(get(), get(), get(), get()) }
                     single { CredentialsManager(get(), get(), get()) }
