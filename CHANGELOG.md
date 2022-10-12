@@ -1,3 +1,10 @@
+16.0.3 Release notes (2022-10-12)
+=============================================================
+
+### Internal
+
+* Remove createdAtStart = true flag in the GeoAPIManager Koin declaration to not make requests during SDK setup
+
 16.0.2 Release notes (2022-10-11)
 =============================================================
 
