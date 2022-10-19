@@ -27,7 +27,8 @@
             android:name=".appkit.app.deeplink.DeepLinkManagementActivity"
             android:exported="false"
             android:launchMode="singleTask"
-            android:screenOrientation="behind" />
+            android:screenOrientation="behind"
+            android:theme="@style/AppKitTheme" />
 
         <activity
             android:name=".appkit.app.deeplink.WebViewActivity"
@@ -39,7 +40,8 @@
         <activity
             android:name=".appkit.app.deeplink.RedirectUriReceiverActivity"
             android:exported="true"
-            android:screenOrientation="behind">
+            android:screenOrientation="behind"
+            android:theme="@style/AppKitTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
