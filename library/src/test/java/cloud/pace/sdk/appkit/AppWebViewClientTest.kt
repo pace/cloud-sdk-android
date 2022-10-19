@@ -1,5 +1,6 @@
 package cloud.pace.sdk.appkit
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.webkit.WebResourceError
@@ -9,16 +10,18 @@ import android.webkit.WebView
 import cloud.pace.sdk.appkit.app.webview.AppWebViewClient
 import cloud.pace.sdk.appkit.utils.TestWebClientCallback
 import cloud.pace.sdk.utils.CompletableFutureCompat
+import io.mockk.mockk
 import junit.framework.Assert.assertFalse
 import junit.framework.Assert.assertTrue
 import org.junit.Test
-import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
 import java.util.concurrent.TimeUnit
 
 class AppWebViewClientTest {
 
     private val startUrl = "https://app.test"
+    private val context = mockk<Context>(relaxed = true)
 
     @Test
     fun `intercept network error`() {
@@ -33,7 +36,7 @@ class AppWebViewClientTest {
             override fun onLoadingChanged(isLoading: Boolean) {}
         }
 
-        val webViewClient = AppWebViewClient(startUrl, callback)
+        val webViewClient = AppWebViewClient(startUrl, callback, context)
         createError(webViewClient, false)
 
         assertTrue(errorFuture.get())
@@ -53,7 +56,7 @@ class AppWebViewClientTest {
             override fun onLoadingChanged(isLoading: Boolean) {}
         }
 
-        val webViewClient = AppWebViewClient(startUrl, callback)
+        val webViewClient = AppWebViewClient(startUrl, callback, context)
         createError(webViewClient, true)
 
         assertTrue(errorFuture.get())
@@ -75,7 +78,7 @@ class AppWebViewClientTest {
             override fun onLoadingChanged(isLoading: Boolean) {}
         }
 
-        val webViewClient = AppWebViewClient(startUrl, callback)
+        val webViewClient = AppWebViewClient(startUrl, callback, context)
 
         createError(webViewClient, false)
         catchCallback = true
@@ -100,7 +103,7 @@ class AppWebViewClientTest {
             override fun onLoadingChanged(isLoading: Boolean) {}
         }
 
-        val webViewClient = AppWebViewClient(startUrl, callback)
+        val webViewClient = AppWebViewClient(startUrl, callback, context)
 
         createError(webViewClient, true)
         catchCallback = true
@@ -125,7 +128,7 @@ class AppWebViewClientTest {
             override fun onLoadingChanged(isLoading: Boolean) {}
         }
 
-        val webViewClient = AppWebViewClient(startUrl, callback)
+        val webViewClient = AppWebViewClient(startUrl, callback, context)
 
         createError(webViewClient, false)
         catchCallback = true
@@ -152,7 +155,7 @@ class AppWebViewClientTest {
             override fun onLoadingChanged(isLoading: Boolean) {}
         }
 
-        val webViewClient = AppWebViewClient(startUrl, callback)
+        val webViewClient = AppWebViewClient(startUrl, callback, context)
 
         createError(webViewClient, true)
         catchCallback = true

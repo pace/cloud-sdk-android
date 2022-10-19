@@ -1,13 +1,21 @@
 package cloud.pace.sdk.appkit.app.deeplink
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Message
-import android.util.Log
-import android.webkit.*
+import android.webkit.CookieManager
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import cloud.pace.sdk.appkit.AppKit
+import cloud.pace.sdk.appkit.app.webview.DefaultWebChromeClient
+import cloud.pace.sdk.appkit.app.webview.DefaultWebChromeClient.Companion.HTTPS_SCHEME
+import cloud.pace.sdk.appkit.app.webview.DefaultWebChromeClient.Companion.HTTP_SCHEME
+import cloud.pace.sdk.appkit.app.webview.DefaultWebChromeClient.Companion.MAILTO_SCHEME
+import cloud.pace.sdk.appkit.app.webview.DefaultWebChromeClient.Companion.SMS_SCHEME
+import cloud.pace.sdk.appkit.app.webview.DefaultWebChromeClient.Companion.TEL_SCHEME
 import cloud.pace.sdk.utils.DeviceUtils
 import cloud.pace.sdk.utils.ErrorListener
 import timber.log.Timber
@@ -39,36 +47,7 @@ class WebViewActivity : AppCompatActivity() {
                         return intercept(url?.let { Uri.parse(it) })
                     }
                 }
-                webChromeClient = object : WebChromeClient() {
-                    override fun onCreateWindow(view: WebView?, isDialog: Boolean, isUserGesture: Boolean, resultMsg: Message?): Boolean {
-                        if (isUserGesture) {
-                            // open blank links externally
-                            val data = view?.hitTestResult?.extra
-                            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(data))
-                            view?.context?.startActivity(browserIntent)
-                            return false
-                        }
-                        return false
-                    }
-
-                    override fun onGeolocationPermissionsShowPrompt(origin: String?, callback: GeolocationPermissions.Callback?) {
-                        callback?.invoke(origin, true, false) ?: super.onGeolocationPermissionsShowPrompt(origin, callback)
-                    }
-
-                    override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
-                        consoleMessage ?: return super.onConsoleMessage(consoleMessage)
-
-                        val logLevel = when (consoleMessage.messageLevel()) {
-                            ConsoleMessage.MessageLevel.LOG -> Log.INFO
-                            ConsoleMessage.MessageLevel.WARNING -> Log.WARN
-                            ConsoleMessage.MessageLevel.ERROR -> Log.ERROR
-                            ConsoleMessage.MessageLevel.DEBUG -> Log.DEBUG
-                            else -> Log.VERBOSE
-                        }
-                        Timber.log(logLevel, consoleMessage.message())
-                        return true
-                    }
-                }
+                webChromeClient = DefaultWebChromeClient(context)
                 loadUrl(uri.toString())
             }
 
@@ -87,22 +66,41 @@ class WebViewActivity : AppCompatActivity() {
 
         // Intercept redirect service deep link
         val paceRedirectScheme = DeviceUtils.getPACERedirectScheme(this)
-        return if (newUri?.scheme == paceRedirectScheme || newUri?.scheme == FALLBACK_REDIRECT_SCHEME) {
-            ErrorListener.reportBreadcrumb(
-                TAG,
-                "New URL is a redirect URL. Start RedirectUriReceiverActivity.",
-                mapOf("paceRedirectScheme" to paceRedirectScheme, "fallbackRedirectScheme" to FALLBACK_REDIRECT_SCHEME)
-            )
+        return when (newUri?.scheme) {
+            paceRedirectScheme, FALLBACK_REDIRECT_SCHEME -> {
+                ErrorListener.reportBreadcrumb(
+                    TAG,
+                    "New URL is a redirect URL. Start RedirectUriReceiverActivity.",
+                    mapOf("paceRedirectScheme" to paceRedirectScheme, "fallbackRedirectScheme" to FALLBACK_REDIRECT_SCHEME)
+                )
 
-            val newIntent = Intent(this, RedirectUriReceiverActivity::class.java)
-            newIntent.data = newUri
-            startActivity(newIntent)
-            true
-        } else {
-            if (newUri?.scheme != "https" && newUri?.scheme != "http") {
-                ErrorListener.reportError(IllegalArgumentException("The scheme ${newUri?.scheme} is not a valid scheme."))
+                val newIntent = Intent(this, RedirectUriReceiverActivity::class.java)
+                newIntent.data = newUri
+                startActivity(newIntent)
+                true
             }
-            false
+            MAILTO_SCHEME, SMS_SCHEME -> {
+                startActivityIfAvailable(Intent(Intent.ACTION_SENDTO, newUri))
+                true
+            }
+            TEL_SCHEME -> {
+                startActivityIfAvailable(Intent(Intent.ACTION_DIAL, newUri))
+                true
+            }
+            else -> {
+                if (newUri?.scheme != HTTPS_SCHEME && newUri?.scheme != HTTP_SCHEME) {
+                    ErrorListener.reportError(IllegalArgumentException("The scheme ${newUri?.scheme} is not a valid scheme."))
+                }
+                false
+            }
+        }
+    }
+
+    private fun startActivityIfAvailable(intent: Intent) {
+        try {
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Timber.e(e, "Could not found an activity to start the intent with action ${intent.action} and URI ${intent.data}")
         }
     }
 

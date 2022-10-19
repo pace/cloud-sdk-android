@@ -1,18 +1,23 @@
 package cloud.pace.sdk.appkit.app.webview
 
 import android.annotation.TargetApi
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.ACTION_VIEW
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
-import android.os.Message
-import android.util.Log
-import android.webkit.*
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebView
+import android.webkit.WebViewClient
+import cloud.pace.sdk.appkit.app.webview.DefaultWebChromeClient.Companion.MAILTO_SCHEME
+import cloud.pace.sdk.appkit.app.webview.DefaultWebChromeClient.Companion.SMS_SCHEME
+import cloud.pace.sdk.appkit.app.webview.DefaultWebChromeClient.Companion.TEL_SCHEME
 import timber.log.Timber
 
-class AppWebViewClient(var url: String, val callback: WebClientCallback, val context: Context? = null) : WebViewClient() {
+class AppWebViewClient(var url: String, val callback: WebClientCallback, val context: Context) : WebViewClient() {
 
     interface WebClientCallback {
 
@@ -43,7 +48,7 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
     private var wasInErrorState = false
     private var wasHttpError = false
 
-    val chromeClient = object : WebChromeClient() {
+    val chromeClient = object : DefaultWebChromeClient(context) {
         override fun onProgressChanged(view: WebView?, newProgress: Int) {
             if (newProgress == 100) {
                 if (wasInErrorState && !isInErrorState) {
@@ -51,35 +56,6 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
                     wasInErrorState = false
                 }
             }
-        }
-
-        override fun onCreateWindow(view: WebView?, isDialog: Boolean, isUserGesture: Boolean, resultMsg: Message?): Boolean {
-            if (isUserGesture) {
-                // open blank links externally
-                val data = view?.hitTestResult?.extra
-                val browserIntent = Intent(ACTION_VIEW, Uri.parse(data))
-                view?.context?.startActivity(browserIntent)
-                return false
-            }
-            return false
-        }
-
-        override fun onGeolocationPermissionsShowPrompt(origin: String?, callback: GeolocationPermissions.Callback?) {
-            callback?.invoke(origin, true, false) ?: super.onGeolocationPermissionsShowPrompt(origin, callback)
-        }
-
-        override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
-            consoleMessage ?: return super.onConsoleMessage(consoleMessage)
-
-            val logLevel = when (consoleMessage.messageLevel()) {
-                ConsoleMessage.MessageLevel.LOG -> Log.INFO
-                ConsoleMessage.MessageLevel.WARNING -> Log.WARN
-                ConsoleMessage.MessageLevel.ERROR -> Log.ERROR
-                ConsoleMessage.MessageLevel.DEBUG -> Log.DEBUG
-                else -> Log.VERBOSE
-            }
-            Timber.log(logLevel, consoleMessage.message())
-            return true
         }
     }
 
@@ -93,14 +69,12 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
 
     @TargetApi(Build.VERSION_CODES.N)
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-        val newUrl = request?.url?.toString()
-        return intercept(view, newUrl)
+        return intercept(view, request?.url)
     }
 
     @Suppress("DEPRECATION")
     override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-        val newUrl = url?.let { Uri.parse(it) }?.toString()
-        return intercept(view, newUrl)
+        return intercept(view, url?.let { Uri.parse(it) })
     }
 
     private fun injectFeatureFlags(view: WebView?) {
@@ -111,12 +85,19 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
         }
     }
 
-    private fun intercept(view: WebView?, url: String?): Boolean {
+    private fun intercept(view: WebView?, url: Uri?): Boolean {
         injectFeatureFlags(view)
 
-        this.url = url ?: return false
-        if (url == CLOSE_URI) {
+        this.url = url?.toString() ?: return false
+
+        if (url.toString() == CLOSE_URI) {
             callback.onClose()
+            return true
+        } else if (url.scheme == MAILTO_SCHEME || url.scheme == SMS_SCHEME) {
+            startActivityIfAvailable(Intent(Intent.ACTION_SENDTO, url))
+            return true
+        } else if (url.scheme == TEL_SCHEME) {
+            startActivityIfAvailable(Intent(Intent.ACTION_DIAL, url))
             return true
         }
 
@@ -161,6 +142,14 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
         isInErrorState = true
         wasInErrorState = true
         wasHttpError = isHttpError
+    }
+
+    private fun startActivityIfAvailable(intent: Intent) {
+        try {
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Timber.e(e, "Could not found an activity to start the intent with action ${intent.action} and URI ${intent.data}")
+        }
     }
 
     companion object {
