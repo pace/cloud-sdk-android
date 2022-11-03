@@ -1,7 +1,6 @@
 package cloud.pace.sdk.utils
 
 import android.content.Context
-import androidx.preference.PreferenceManager
 import androidx.room.Room
 import cloud.pace.sdk.appkit.AppManager
 import cloud.pace.sdk.appkit.app.AppActivityViewModel
@@ -81,7 +80,11 @@ object KoinConfig {
                     single { PriceHistoryClient(configuration.environment) }
                     single { UserInfoApiClient(configuration.oidConfiguration?.oidConfiguration(configuration.environment)?.userInfoEndpoint) }
                     single<SystemManager> { SystemManagerImpl(get()) }
-                    single<SharedPreferencesModel> { SharedPreferencesImpl(PreferenceManager.getDefaultSharedPreferences(get())) }
+                    single<SharedPreferencesModel> {
+                        val sharedPreferencesImpl = SharedPreferencesImpl(context)
+                        sharedPreferencesImpl.migrateScopedUserValues()
+                        sharedPreferencesImpl
+                    }
                     single<CacheModel> { CacheModelImpl() }
                     single<AppRepository> { AppRepositoryImpl(get(), get(), get(), get(), get()) }
                     single<NetworkChangeListener> { NetworkChangeListenerImpl(get()) }
