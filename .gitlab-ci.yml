@@ -29,7 +29,7 @@ commit_format:
   after_script:
     - echo "Ignore global after_script"
   script:
-    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@git.pace.cloud/pace/mobile/common.git tmp/common
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${GIT_BASE_URL}/pace/mobile/common.git tmp/common
     - python3 tmp/common/scripts/validate_commit.py --project-id $CI_PROJECT_ID --merge-request-iid $CI_MERGE_REQUEST_IID
   only:
     - merge_requests
