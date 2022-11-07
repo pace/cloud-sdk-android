@@ -29,6 +29,7 @@ import cloud.pace.sdk.appkit.persistence.CacheModelImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.idkit.authorization.AuthorizationManager
+import cloud.pace.sdk.idkit.browsermatcher.CustomBrowserMatcher
 import cloud.pace.sdk.idkit.credentials.CredentialsManager
 import cloud.pace.sdk.idkit.model.oidConfiguration
 import cloud.pace.sdk.idkit.userinfo.UserInfoApiClient
@@ -41,6 +42,7 @@ import cloud.pace.sdk.poikit.pricehistory.PriceHistoryClient
 import cloud.pace.sdk.poikit.routing.NavigationApiClient
 import cloud.pace.sdk.poikit.search.AddressSearchClient
 import com.google.android.gms.location.LocationServices
+import net.openid.appauth.AppAuthConfiguration
 import net.openid.appauth.AuthorizationService
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -91,7 +93,10 @@ object KoinConfig {
                     single<AppModel> { AppModelImpl(get()) }
                     single { AppManager(DefaultDispatcherProvider()) }
                     single<GeoAPIManager> { GeoAPIManagerImpl(get(), get(), get()) }
-                    single { AuthorizationService(get()) }
+                    single {
+                        val appAuthConfig = AppAuthConfiguration.Builder().setBrowserMatcher(CustomBrowserMatcher(get())).build()
+                        AuthorizationService(get(), appAuthConfig)
+                    }
                     single { AuthorizationManager(get(), get(), get(), get()) }
                     single { CredentialsManager(get(), get(), get()) }
                     viewModel<AppActivityViewModel> { AppActivityViewModelImpl(get()) }
