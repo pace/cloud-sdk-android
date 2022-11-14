@@ -1,4 +1,4 @@
-package cloud.pace.sdk.app.view.mainscreen.dashboardscreen
+package cloud.pace.sdk.app.ui.components.dashboardscreen
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -104,8 +104,7 @@ fun ManagePaymentMethodsButton(managePaymentMethodsButtonAction: () -> Unit) {
             .padding(6.dp)
             .height(50.dp)
             .width(300.dp),
-        border = BorderStroke(1.dp, Color.Black),
-
+        border = BorderStroke(1.dp, Color.Black)
     ) {
         Text(
             text = "Manage Payment Methods",

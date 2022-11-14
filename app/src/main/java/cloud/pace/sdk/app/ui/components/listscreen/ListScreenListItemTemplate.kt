@@ -1,4 +1,4 @@
-package cloud.pace.sdk.app.view.mainscreen.listscreen
+package cloud.pace.sdk.app.ui.components.listscreen
 
 import android.location.Location
 import androidx.compose.foundation.layout.Arrangement

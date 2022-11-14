@@ -8,4 +8,5 @@
     <string name="common_cancel">Cancel</string>
     <string name="default_drawer_first_line">Pay at the pump</string>
     <string name="default_drawer_second_line">Connected Fueling</string>
+    <string name="no_supported_browser_toast">Enable Google Chrome and restart the app to continue.</string>
 </resources>

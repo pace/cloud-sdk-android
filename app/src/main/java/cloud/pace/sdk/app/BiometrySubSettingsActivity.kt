@@ -5,13 +5,11 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.lifecycleScope
-import cloud.pace.sdk.app.view.mainscreen.settings.BiometrySubSettingView
+import cloud.pace.sdk.app.ui.components.settings.BiometrySubSettingView
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.utils.Completion
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
-import kotlinx.coroutines.launch
 
 internal var userInfo = mutableStateOf("username")
 internal var isPasswordSet = mutableStateOf(false)
@@ -87,20 +85,14 @@ class BiometrySubSettingsActivity : AppCompatActivity() {
             )
         }
 
-        if (IDKit.isAuthorizationValid()) {
-            showUserEmail()
-        } else {
-            lifecycleScope.launch {
-                IDKit.authorize(this@BiometrySubSettingsActivity) { completion ->
-                    when (completion) {
-                        is Success -> showUserEmail()
-                        is Failure -> userInfo.value = "Refresh error: ${completion.throwable.message}"
-                    }
-                }
+        biometryStatus.value = IDKit.isBiometricAuthenticationEnabled()
+
+        IDKit.userInfo { response ->
+            when (response) {
+                is Success -> userInfo.value = response.result.email.toString()
+                is Failure -> userInfo.value = "Refresh error: ${response.throwable.message}"
             }
         }
-
-        biometryStatus.value = IDKit.isBiometricAuthenticationEnabled()
 
         IDKit.isPINSet {
             when (it) {
@@ -130,15 +122,6 @@ class BiometrySubSettingsActivity : AppCompatActivity() {
                     }
                 }
                 is Failure -> Toast.makeText(this@BiometrySubSettingsActivity, it.throwable.toString(), Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
-    private fun showUserEmail() {
-        IDKit.userInfo { response ->
-            when (response) {
-                is Success -> userInfo.value = response.result.email.toString()
-                is Failure -> userInfo.value = "Refresh error: ${response.throwable.message}"
             }
         }
     }

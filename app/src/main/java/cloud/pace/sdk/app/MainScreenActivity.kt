@@ -25,12 +25,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import cloud.pace.sdk.api.pay.generated.model.Transactions
 import cloud.pace.sdk.app.databinding.ActivityMainBinding
+import cloud.pace.sdk.app.ui.components.BottomBar
+import cloud.pace.sdk.app.ui.components.SuccessfulLoginDialog
+import cloud.pace.sdk.app.ui.components.dashboardscreen.DashboardScreen
+import cloud.pace.sdk.app.ui.components.listscreen.ListScreen
+import cloud.pace.sdk.app.ui.components.settings.SettingsScreen
 import cloud.pace.sdk.app.ui.theme.Screen
-import cloud.pace.sdk.app.view.mainscreen.BottomBar
-import cloud.pace.sdk.app.view.mainscreen.SuccessfulLoginDialog
-import cloud.pace.sdk.app.view.mainscreen.dashboardscreen.DashboardScreen
-import cloud.pace.sdk.app.view.mainscreen.listscreen.ListScreen
-import cloud.pace.sdk.app.view.mainscreen.settings.SettingsScreen
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.model.App

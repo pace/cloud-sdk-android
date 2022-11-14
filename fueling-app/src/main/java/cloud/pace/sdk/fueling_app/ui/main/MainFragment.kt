@@ -23,6 +23,7 @@ import cloud.pace.sdk.fueling_app.databinding.FragmentMainBinding
 import cloud.pace.sdk.fueling_app.util.Result
 import cloud.pace.sdk.fueling_app.util.asSafeArgsGasStation
 import cloud.pace.sdk.idkit.IDKit
+import cloud.pace.sdk.idkit.model.NoSupportedBrowser
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
@@ -119,28 +120,30 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     private fun authorize(gasStation: GasStation) {
         lifecycleScope.launch {
-            IDKit.authorize(this@MainFragment) {
-                when (it) {
-                    is Success -> {
-                        MaterialAlertDialogBuilder(requireContext())
-                            .setIcon(R.drawable.ic_fingerprint)
-                            .setTitle(R.string.biometric_dialog_title)
-                            .setMessage(R.string.biometric_dialog_message)
-                            .setPositiveButton(R.string.common_yes) { dialog, _ ->
-                                IDKit.enableBiometricAuthentication { completion ->
-                                    if ((completion as? Success)?.result != true) {
-                                        Toast.makeText(requireContext(), R.string.biometric_setup_error, Toast.LENGTH_SHORT).show()
-                                    }
-                                    dialog.dismiss()
+            when (val result = IDKit.authorize(this@MainFragment)) {
+                is Success -> {
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setIcon(R.drawable.ic_fingerprint)
+                        .setTitle(R.string.biometric_dialog_title)
+                        .setMessage(R.string.biometric_dialog_message)
+                        .setPositiveButton(R.string.common_yes) { dialog, _ ->
+                            IDKit.enableBiometricAuthentication { completion ->
+                                if ((completion as? Success)?.result != true) {
+                                    Toast.makeText(requireContext(), R.string.biometric_setup_error, Toast.LENGTH_SHORT).show()
                                 }
+                                dialog.dismiss()
                             }
-                            .setNegativeButton(R.string.common_no, null)
-                            .setOnDismissListener {
-                                selectGasStation(gasStation)
-                            }
-                            .show()
+                        }
+                        .setNegativeButton(R.string.common_no, null)
+                        .setOnDismissListener {
+                            selectGasStation(gasStation)
+                        }
+                        .show()
+                }
+                is Failure -> {
+                    if (result.throwable !is NoSupportedBrowser) {
+                        showError()
                     }
-                    is Failure -> showError()
                 }
             }
         }

@@ -1,4 +1,4 @@
-package cloud.pace.sdk.app.view.mainscreen.settings
+package cloud.pace.sdk.app.ui.components.settings
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke

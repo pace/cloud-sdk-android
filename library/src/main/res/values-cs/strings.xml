@@ -8,4 +8,5 @@
     <string name="common_cancel">Zrušit</string>
     <string name="default_drawer_first_line">Platba přímo na pumpě</string>
     <string name="default_drawer_second_line">Connected Fueling</string>
+    <string name="no_supported_browser_toast">Povolte Google Chrome a restartujte aplikaci, abyste mohli pokračovat.</string>
 </resources>

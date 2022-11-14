@@ -95,10 +95,9 @@ class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
         viewModel.authorize.observe(this) { event ->
             event.getContentIfNotHandled()?.let { result ->
                 lifecycleScope.launch(Dispatchers.Main) {
-                    IDKit.authorize(this@AppActivity) {
-                        result.onResult(it)
-                        viewModel.onLogin(this@AppActivity, it)
-                    }
+                    val authorizationResult = IDKit.authorize(this@AppActivity)
+                    result.onResult(authorizationResult)
+                    viewModel.onLogin(this@AppActivity, authorizationResult)
                 }
             }
         }
@@ -106,14 +105,13 @@ class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
         viewModel.endSession.observe(this) { event ->
             event.getContentIfNotHandled()?.let { result ->
                 lifecycleScope.launch(Dispatchers.Main) {
-                    IDKit.endSession(this@AppActivity) {
-                        val logoutResponse = when {
-                            it is Success -> LogoutResponse.SUCCESSFUL
-                            it is Failure && it.throwable is FailedRetrievingSessionWhileEnding -> LogoutResponse.UNAUTHORIZED
-                            else -> LogoutResponse.OTHER
-                        }
-                        result.onResult(logoutResponse)
+                    val endSessionResult = IDKit.endSession(this@AppActivity)
+                    val logoutResponse = when {
+                        endSessionResult is Success -> LogoutResponse.SUCCESSFUL
+                        endSessionResult is Failure && endSessionResult.throwable is FailedRetrievingSessionWhileEnding -> LogoutResponse.UNAUTHORIZED
+                        else -> LogoutResponse.OTHER
                     }
+                    result.onResult(logoutResponse)
                 }
             }
         }

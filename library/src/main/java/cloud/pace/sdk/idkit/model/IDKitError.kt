@@ -10,3 +10,4 @@ object BiometricAuthenticationNotSupported : Exception("The device doesn't have 
 object BiometricAuthenticationNotSet : Exception("Biometric authentication is not set.")
 object PINNotSecure : Exception("PIN not secure.")
 object OperationCanceled : Exception("Operation was canceled by the user.")
+object NoSupportedBrowser : Exception("There is no supported custom tab browser installed on the device.")

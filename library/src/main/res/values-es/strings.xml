@@ -8,4 +8,5 @@
     <string name="common_cancel">Cancelar</string>
     <string name="default_drawer_first_line">Pagar directamente en el surtidor</string>
     <string name="default_drawer_second_line">Connected Fueling</string>
+    <string name="no_supported_browser_toast">Activa Google Chrome y reinicia la aplicación para continuar.</string>
 </resources>

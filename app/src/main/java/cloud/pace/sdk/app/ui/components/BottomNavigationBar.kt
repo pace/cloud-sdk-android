@@ -1,4 +1,4 @@
-package cloud.pace.sdk.app.view.mainscreen
+package cloud.pace.sdk.app.ui.components
 
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem

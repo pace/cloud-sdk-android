@@ -8,4 +8,5 @@
     <string name="common_cancel">Cancelar</string>
     <string name="default_drawer_first_line">Pagar directamente na bomba</string>
     <string name="default_drawer_second_line">Connected Fueling</string>
+    <string name="no_supported_browser_toast">Habilitar o Google Chrome e reiniciar o aplicativo para continuar.</string>
 </resources>

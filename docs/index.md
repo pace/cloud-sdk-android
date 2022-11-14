@@ -17,6 +17,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [13.x.x -> 14.x.x](#from-13xx-to-14xx)
         + [14.x.x -> 15.x.x](#from-14xx-to-15xx)
         + [15.x.x -> 16.x.x](#from-15xx-to-16xx)
+        + [16.x.x -> 17.x.x](#from-16xx-to-17xx)
     * [IDKit](#idkit)
         + [Setup](#setup-1)
         + [Discover configuration](#discover-configuration)
@@ -208,6 +209,11 @@ The `GasStations` properties `paymentMethods`, `amenities`, `foods`, `loyaltyPro
 
 - We've removed the `Environment.STAGE` environment completely. Please use `Environment.SANDBOX` during testing and `Environment.PRODUCTION` for everything else.
 
+### From 16.x.x to 17.x.x
+
+- Introduced a `NoSupportedBrowser` exception which will now be returned from all `IDKit.authorize(...)` and `IDKit.endSession(...)` calls instead of crashing the app with an `ActivityNotFoundException` if no supported browser is installed and enabled to handle the Custom Tab intent. In this case, we show a Toast prompting the user to enable Google Chrome.
+- The suspendable calls `IDKit.authorize(...)` and `IDKit.endSession(...)` now return the `Completion` result instead of invoking a function parameter on result to make the calls synchronous.
+
 ## IDKit
 **IDKit** manages the OpenID (OID) authorization and the general session flow with its token handling via **PACE ID**.
 
@@ -253,11 +259,9 @@ The authorization request to the authorization service can be dispatched using *
 
 ```kotlin
 lifecycleScope.launch(Dispatchers.Main) {
-    IDKit.authorize(this@MainActivity) {
-        when (it) {
-            is Success -> // it.result contains accessToken
-            is Failure -> // it.throwable contains error
-        }
+    when (val response = IDKit.authorize(this@MainActivity)) {
+        is Success -> // response.result contains accessToken
+        is Failure -> // response.throwable contains error
     }
 }
 ```
@@ -286,7 +290,16 @@ login_button.setOnClickListener {
     if (IDKit.isAuthorizationValid()) {
         // No login required
     } else {
-        startForResult.launch(IDKit.authorize())
+        when (val request = IDKit.authorize()) {
+            is Success -> startForResult.launch(request.result)
+            is Failure -> {
+                if (request.throwable is NoSupportedBrowser) {
+                    // SDK shows a Toast prompting the user to enable Google Chrome
+                } else {
+                    // Other error occurred
+                }
+            }
+        }
     }
 }
 ```
@@ -298,7 +311,16 @@ login_button.setOnClickListener {
     if (IDKit.isAuthorizationValid()) {
         // No login required
     } else {
-        startActivityForResult(IDKit.authorize(), REQUEST_CODE)
+        when (val request = IDKit.authorize()) {
+            is Success -> startActivityForResult(request.result, REQUEST_CODE)
+            is Failure -> {
+                if (request.throwable is NoSupportedBrowser) {
+                    // SDK shows a Toast prompting the user to enable Google Chrome
+                } else {
+                    // Other error occurred
+                }
+            }
+        }
     }
 }
 ```
@@ -324,7 +346,7 @@ if (IDKit.isAuthorizationValid()) {
 }
 ```
 Upon completion of this authorization request, a `PendingIntent` of the `completedActivity` will be invoked.
-If the user cancels the authorization request, a `PendingIntent` of the `canceledActivity` will be invoked.
+If the user cancels the authorization request or if no supported browser is installed, a `PendingIntent` of the `canceledActivity` will be invoked.
 
 Call the following function when an `intent` is passed to the `completedActivity` or `canceledActivity` from [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs) to retrieve the access token:
 ```kotlin
@@ -384,11 +406,9 @@ The end session request works the same way as the authorization request. It can 
 
 ```kotlin
 lifecycleScope.launch(Dispatchers.Main) {
-    IDKit.endSession(this@MainActivity) {
-        when (it) {
-            is Success -> // it.result contains Unit (success)
-            is Failure -> // it.throwable contains error
-        }
+    when (val response = IDKit.endSession(this@MainActivity)) {
+        is Success -> // response.result contains accessToken
+        is Failure -> // response.throwable contains error
     }
 }
 ```
@@ -414,7 +434,16 @@ val startForResult = registerForActivityResult(ActivityResultContracts.StartActi
 }
 
 logout_button.setOnClickListener {
-    startForResult.launch(IDKit.endSession())
+    when (val request = IDKit.endSession()) {
+        is Success -> startForResult.launch(request.result)
+        is Failure -> {
+            if (request.throwable is NoSupportedBrowser) {
+                // SDK shows a Toast prompting the user to enable Google Chrome
+            } else {
+                // Other error occurred
+            }
+        }
+    }
 }
 ```
 
@@ -422,7 +451,16 @@ logout_button.setOnClickListener {
 
 ```kotlin
 logout_button.setOnClickListener {
-    startActivityForResult(IDKit.endSession(), REQUEST_CODE)
+    when (val request = IDKit.endSession()) {
+        is Success -> startActivityForResult(request.result, REQUEST_CODE)
+        is Failure -> {
+            if (request.throwable is NoSupportedBrowser) {
+                // SDK shows a Toast prompting the user to enable Google Chrome
+            } else {
+                // Other error occurred
+            }
+        }
+    }
 }
 ```
 Upon completion of this end session request, `onActivityResult` will be invoked with the end session result intent.
@@ -443,7 +481,7 @@ IDKit.handleEndSessionResponse(intent) {
 IDKit.endSession(completedActivity, canceledActivity)
 ```
 Upon completion of this end session request, a `PendingIntent` of the `completedActivity` will be invoked.
-If the user cancels the end session request, a `PendingIntent` of the `canceledActivity` will be invoked.
+If the user cancels the end session request or if no supported browser is installed, a `PendingIntent` of the `canceledActivity` will be invoked.
 
 Call the following function when an `intent` is passed to the `completedActivity` or `canceledActivity` from [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs) to reset the session:
 ```kotlin

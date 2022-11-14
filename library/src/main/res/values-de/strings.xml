@@ -8,4 +8,5 @@
     <string name="common_cancel">Abbrechen</string>
     <string name="default_drawer_first_line">Zahle direkt an der Zapfsäule</string>
     <string name="default_drawer_second_line">Connected Fueling</string>
+    <string name="no_supported_browser_toast">Aktiviere Google Chrome und starte die App neu, um fortzufahren.</string>
 </resources>
