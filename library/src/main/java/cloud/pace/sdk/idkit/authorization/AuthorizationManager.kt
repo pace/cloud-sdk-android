@@ -1,16 +1,20 @@
 package cloud.pace.sdk.idkit.authorization
 
 import android.app.PendingIntent
+import android.app.PendingIntent.CanceledException
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import cloud.pace.sdk.PACECloudSDK
+import cloud.pace.sdk.R
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.SESSION_CACHE
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
@@ -21,6 +25,7 @@ import cloud.pace.sdk.idkit.model.FailedRetrievingSessionWhileAuthorizing
 import cloud.pace.sdk.idkit.model.FailedRetrievingSessionWhileEnding
 import cloud.pace.sdk.idkit.model.InternalError
 import cloud.pace.sdk.idkit.model.InvalidSession
+import cloud.pace.sdk.idkit.model.NoSupportedBrowser
 import cloud.pace.sdk.idkit.model.OIDConfiguration
 import cloud.pace.sdk.idkit.model.OperationCanceled
 import cloud.pace.sdk.idkit.model.ServiceConfiguration
@@ -30,10 +35,13 @@ import cloud.pace.sdk.utils.Canceled
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.Completion
 import cloud.pace.sdk.utils.Failure
+import cloud.pace.sdk.utils.IntentResult
 import cloud.pace.sdk.utils.Ok
 import cloud.pace.sdk.utils.SetupLogger
 import cloud.pace.sdk.utils.Success
 import cloud.pace.sdk.utils.getResultFor
+import cloud.pace.sdk.utils.resumeIfActive
+import kotlinx.coroutines.suspendCancellableCoroutine
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationRequest
@@ -112,17 +120,17 @@ internal class AuthorizationManager(
         }
     }
 
-    internal suspend fun authorize(activity: AppCompatActivity, completion: (Completion<String?>) -> Unit) {
-        when (val result = activity.getResultFor(authorize())) {
-            is Ok -> result.data?.let { handleAuthorizationResponse(it, completion) } ?: completion(Failure(InternalError))
-            is Canceled -> completion(Failure(OperationCanceled))
+    internal suspend fun authorize(activity: AppCompatActivity): Completion<String?> {
+        return when (val authorizationRequest = authorize()) {
+            is Success -> handleAuthorizationResult(activity.getResultFor(authorizationRequest.result))
+            is Failure -> Failure(authorizationRequest.throwable)
         }
     }
 
-    internal suspend fun authorize(fragment: Fragment, completion: (Completion<String?>) -> Unit) {
-        when (val result = fragment.getResultFor(authorize())) {
-            is Ok -> result.data?.let { handleAuthorizationResponse(it, completion) } ?: completion(Failure(InternalError))
-            is Canceled -> completion(Failure(OperationCanceled))
+    internal suspend fun authorize(fragment: Fragment): Completion<String?> {
+        return when (val authorizationRequest = authorize()) {
+            is Success -> handleAuthorizationResult(fragment.getResultFor(authorizationRequest.result))
+            is Failure -> Failure(authorizationRequest.throwable)
         }
     }
 
@@ -143,19 +151,45 @@ internal class AuthorizationManager(
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
         } else {
-            authorizationService.performAuthorizationRequest(
-                authorizationRequest,
-                PendingIntent.getActivity(context, 0, Intent(context, completedActivity), flags),
-                PendingIntent.getActivity(context, 0, Intent(context, canceledActivity), flags)
-            )
+            val canceledPendingIntent = PendingIntent.getActivity(context, 0, Intent(context, canceledActivity), flags)
+
+            try {
+                authorizationService.performAuthorizationRequest(
+                    authorizationRequest,
+                    PendingIntent.getActivity(context, 0, Intent(context, completedActivity), flags),
+                    canceledPendingIntent
+                )
+            } catch (e: ActivityNotFoundException) {
+                Timber.w(e, "No supported browser installed to launch the authorization request")
+                sendCanceledPendingIntent(canceledPendingIntent)
+            }
         }
     }
 
-    internal fun authorize(): Intent {
+    internal fun authorize(): Completion<Intent> {
         return if (configuration.integrated) {
-            AuthorizationWebViewActivity.createStartIntent(context, authorizationRequest)
+            Success(AuthorizationWebViewActivity.createStartIntent(context, authorizationRequest))
         } else {
-            authorizationService.getAuthorizationRequestIntent(authorizationRequest)
+            try {
+                Success(authorizationService.getAuthorizationRequestIntent(authorizationRequest))
+            } catch (e: ActivityNotFoundException) {
+                Timber.w(e, "No supported browser installed to launch the authorization request")
+                showNoSupportedBrowserToast()
+                Failure(NoSupportedBrowser)
+            }
+        }
+    }
+
+    private suspend fun handleAuthorizationResult(result: IntentResult): Completion<String?> {
+        return when (result) {
+            is Ok -> result.data?.let { intent ->
+                suspendCancellableCoroutine { continuation ->
+                    handleAuthorizationResponse(intent) {
+                        continuation.resumeIfActive(it)
+                    }
+                }
+            } ?: Failure(InternalError)
+            is Canceled -> Failure(OperationCanceled)
         }
     }
 
@@ -192,22 +226,18 @@ internal class AuthorizationManager(
         }
     }
 
-    internal suspend fun endSession(activity: AppCompatActivity, completion: (Completion<Unit>) -> Unit) {
-        endSession()?.let { intent ->
-            when (val result = activity.getResultFor(intent)) {
-                is Ok -> result.data?.let { IDKit.handleEndSessionResponse(it, completion) } ?: completion(Failure(InternalError))
-                is Canceled -> completion(Failure(OperationCanceled))
-            }
-        } ?: completion(Failure(FailedRetrievingSessionWhileEnding))
+    internal suspend fun endSession(activity: AppCompatActivity): Completion<Unit> {
+        return when (val endSessionRequest = endSession()) {
+            is Success -> handleEndSessionResult(activity.getResultFor(endSessionRequest.result))
+            is Failure -> Failure(endSessionRequest.throwable)
+        }
     }
 
-    internal suspend fun endSession(fragment: Fragment, completion: (Completion<Unit>) -> Unit) {
-        endSession()?.let { intent ->
-            when (val result = fragment.getResultFor(intent)) {
-                is Ok -> result.data?.let { IDKit.handleEndSessionResponse(it, completion) } ?: completion(Failure(InternalError))
-                is Canceled -> completion(Failure(OperationCanceled))
-            }
-        } ?: completion(Failure(FailedRetrievingSessionWhileEnding))
+    internal suspend fun endSession(fragment: Fragment): Completion<Unit> {
+        return when (val endSessionRequest = endSession()) {
+            is Success -> handleEndSessionResult(fragment.getResultFor(endSessionRequest.result))
+            is Failure -> Failure(endSessionRequest.throwable)
+        }
     }
 
     internal fun endSession(completedActivity: Class<*>, canceledActivity: Class<*>): Boolean {
@@ -228,23 +258,49 @@ internal class AuthorizationManager(
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
             } else {
-                authorizationService.performEndSessionRequest(
-                    it,
-                    PendingIntent.getActivity(context, 0, Intent(context, completedActivity), flags),
-                    PendingIntent.getActivity(context, 0, Intent(context, canceledActivity), flags)
-                )
+                val canceledPendingIntent = PendingIntent.getActivity(context, 0, Intent(context, canceledActivity), flags)
+
+                try {
+                    authorizationService.performEndSessionRequest(
+                        it,
+                        PendingIntent.getActivity(context, 0, Intent(context, completedActivity), flags),
+                        canceledPendingIntent
+                    )
+                } catch (e: ActivityNotFoundException) {
+                    Timber.w(e, "No supported browser installed to launch the end session request")
+                    sendCanceledPendingIntent(canceledPendingIntent)
+                }
             }
             true
         } ?: false
     }
 
-    internal fun endSession(): Intent? {
-        return createEndSessionRequest()?.let {
-            if (configuration.integrated) {
-                AuthorizationWebViewActivity.createStartIntent(context, it)
-            } else {
-                authorizationService.getEndSessionRequestIntent(it)
+    internal fun endSession(): Completion<Intent> {
+        val endSessionRequest = createEndSessionRequest() ?: return Failure(FailedRetrievingSessionWhileEnding)
+
+        return if (configuration.integrated) {
+            Success(AuthorizationWebViewActivity.createStartIntent(context, endSessionRequest))
+        } else {
+            try {
+                Success(authorizationService.getEndSessionRequestIntent(endSessionRequest))
+            } catch (e: ActivityNotFoundException) {
+                Timber.w(e, "No supported browser installed to launch the end session request")
+                showNoSupportedBrowserToast()
+                Failure(NoSupportedBrowser)
             }
+        }
+    }
+
+    private suspend fun handleEndSessionResult(result: IntentResult): Completion<Unit> {
+        return when (result) {
+            is Ok -> result.data?.let { intent ->
+                suspendCancellableCoroutine { continuation ->
+                    handleEndSessionResponse(intent) {
+                        continuation.resumeIfActive(it)
+                    }
+                }
+            } ?: Failure(InternalError)
+            is Canceled -> Failure(OperationCanceled)
         }
     }
 
@@ -371,6 +427,21 @@ internal class AuthorizationManager(
                 Timber.e(throwable, "Failed to handle token response")
                 completion(Failure(throwable))
             }
+        }
+    }
+
+    private fun showNoSupportedBrowserToast() {
+        Toast.makeText(context, R.string.no_supported_browser_toast, Toast.LENGTH_LONG).show()
+    }
+
+    private fun sendCanceledPendingIntent(canceledPendingIntent: PendingIntent) {
+        showNoSupportedBrowserToast()
+        val cancelData = AuthorizationException.fromTemplate(AuthorizationException.GeneralErrors.PROGRAM_CANCELED_AUTH_FLOW, null).toIntent()
+
+        try {
+            canceledPendingIntent.send(context, 0, cancelData)
+        } catch (e: CanceledException) {
+            Timber.e(e, "Failed to send cancel intent")
         }
     }
 

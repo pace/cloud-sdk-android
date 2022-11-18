@@ -1,4 +1,4 @@
-package cloud.pace.sdk.app.view.mainscreen
+package cloud.pace.sdk.app.ui.components
 
 import android.widget.Toast
 import androidx.compose.material.AlertDialog

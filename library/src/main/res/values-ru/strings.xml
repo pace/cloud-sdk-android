@@ -8,4 +8,5 @@
     <string name="common_cancel">Отмена</string>
     <string name="default_drawer_first_line">Платите непосредственно на насосе</string>
     <string name="default_drawer_second_line">Connected Fueling</string>
+    <string name="no_supported_browser_toast">Включите Google Chrome и перезапустите приложение, чтобы продолжить работу.</string>
 </resources>

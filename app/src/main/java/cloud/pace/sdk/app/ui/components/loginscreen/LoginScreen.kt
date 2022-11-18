@@ -1,12 +1,20 @@
-package cloud.pace.sdk.app.view.loginscreen
+package cloud.pace.sdk.app.ui.components.loginscreen
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,9 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import cloud.pace.sdk.app.R
+import cloud.pace.sdk.app.ui.components.NoSupportedBrowserDialog
 
 @Composable
-fun ShowLoginScreen(openLogin: () -> Unit) {
+fun ShowLoginScreen(showDialog: Boolean, onDialogDismiss: () -> Unit, openLogin: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -120,6 +129,10 @@ fun ShowLoginScreen(openLogin: () -> Unit) {
                             role = Role.Button
                         ) {}
                 )
+
+                if (showDialog) {
+                    NoSupportedBrowserDialog(onDismiss = onDialogDismiss)
+                }
             }
         }
     )

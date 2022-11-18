@@ -84,10 +84,11 @@ object IDKit : CloudSDKKoinComponent {
      * and handles the authorization response automatically.
      *
      * @param activity The Activity to launch the authorization request [Intent].
-     * @param completion The block to be called when the request is completed including either a valid `accessToken` or [Throwable].
+     *
+     * @return [Completion] which can be [successful][cloud.pace.sdk.utils.Success] with a valid `accessToken` or [failed][cloud.pace.sdk.utils.Failure] with a [Throwable].
      */
-    suspend fun authorize(activity: AppCompatActivity, completion: (Completion<String?>) -> Unit = {}) {
-        authorizationManager.authorize(activity, completion)
+    suspend fun authorize(activity: AppCompatActivity): Completion<String?> {
+        return authorizationManager.authorize(activity)
     }
 
     /**
@@ -95,16 +96,17 @@ object IDKit : CloudSDKKoinComponent {
      * and handles the authorization response automatically.
      *
      * @param fragment The Fragment to launch the authorization request [Intent].
-     * @param completion The block to be called when the request is completed including either a valid `accessToken` or [Throwable].
+     *
+     * @return [Completion] which can be [successful][cloud.pace.sdk.utils.Success] with a valid `accessToken` or [failed][cloud.pace.sdk.utils.Failure] with a [Throwable].
      */
-    suspend fun authorize(fragment: Fragment, completion: (Completion<String?>) -> Unit = {}) {
-        authorizationManager.authorize(fragment, completion)
+    suspend fun authorize(fragment: Fragment): Completion<String?> {
+        return authorizationManager.authorize(fragment)
     }
 
     /**
      * Sends an authorization request to the authorization service, using a [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs).
      * Upon completion of this authorization request, a [PendingIntent] of the [completedActivity] will be invoked.
-     * If the user cancels the authorization request, a [PendingIntent] of the [canceledActivity] will be invoked.
+     * If the user cancels the authorization request or if no supported browser is installed, a [PendingIntent] of the [canceledActivity] will be invoked.
      *
      * Note: Call [handleAuthorizationResponse] in [completedActivity] or [canceledActivity] when the intent is returned from Chrome Custom Tab.
      */
@@ -118,8 +120,10 @@ object IDKit : CloudSDKKoinComponent {
      *
      * Note: Call [handleAuthorizationResponse] in ActivityResultCallback if Activity Result API was used or in [android.app.Activity.onActivityResult] if
      * [android.app.Activity.startActivityForResult] was used when the authorization result is returned from Chrome Custom Tab.
+     *
+     * @return [Completion] with either an [Intent] on [success][cloud.pace.sdk.utils.Success] or a [failure][cloud.pace.sdk.utils.Failure] if no supported browser is installed to launch the intent.
      */
-    fun authorize(): Intent {
+    fun authorize(): Completion<Intent> {
         return authorizationManager.authorize()
     }
 
@@ -149,10 +153,11 @@ object IDKit : CloudSDKKoinComponent {
      * and handles the end session response automatically.
      *
      * @param activity The Activity to launch the end session request [Intent].
-     * @param completion The block to be called when the session has been reset or a [Throwable] when an exception occurred.
+     *
+     * @return [Completion] which can be [successful][cloud.pace.sdk.utils.Success] when the session has been reset or [failed][cloud.pace.sdk.utils.Failure] with a [Throwable].
      */
-    suspend fun endSession(activity: AppCompatActivity, completion: (Completion<Unit>) -> Unit = {}) {
-        authorizationManager.endSession(activity, completion)
+    suspend fun endSession(activity: AppCompatActivity): Completion<Unit> {
+        return authorizationManager.endSession(activity)
     }
 
     /**
@@ -160,16 +165,17 @@ object IDKit : CloudSDKKoinComponent {
      * and handles the end session response automatically.
      *
      * @param fragment The Fragment to launch the end session request [Intent].
-     * @param completion The block to be called when the session has been reset or a [Throwable] when an exception occurred.
+     *
+     * @return [Completion] which can be [successful][cloud.pace.sdk.utils.Success] when the session has been reset or [failed][cloud.pace.sdk.utils.Failure] with a [Throwable].
      */
-    suspend fun endSession(fragment: Fragment, completion: (Completion<Unit>) -> Unit = {}) {
-        authorizationManager.endSession(fragment, completion)
+    suspend fun endSession(fragment: Fragment): Completion<Unit> {
+        return authorizationManager.endSession(fragment)
     }
 
     /**
      * Sends an end session request to the authorization service, using a [Chrome Custom Tab](https://developer.chrome.com/multidevice/android/customtabs).
      * Upon completion of this end session request, a [PendingIntent] of the [completedActivity] will be invoked.
-     * If the user cancels the end session request, a [PendingIntent] of the [canceledActivity] will be invoked.
+     * If the user cancels the end session request or if no supported browser is installed, a [PendingIntent] of the [canceledActivity] will be invoked.
      *
      * Note: Call [handleEndSessionResponse] in [completedActivity] or [canceledActivity] when the intent is returned from Chrome Custom Tab.
      *
@@ -186,9 +192,9 @@ object IDKit : CloudSDKKoinComponent {
      * Note: Call [handleEndSessionResponse] in ActivityResultCallback if Activity Result API was used or in [android.app.Activity.onActivityResult] if
      * [android.app.Activity.startActivityForResult] was used when the end session result is returned from Chrome Custom Tab.
      *
-     * @return The end session request [Intent] or null, if none could be created due to an invalid session.
+     * @return [Completion] with either an [Intent] on [success][cloud.pace.sdk.utils.Success] or a [failure][cloud.pace.sdk.utils.Failure] with a [Throwable] (invalid session or no supported browser).
      */
-    fun endSession(): Intent? {
+    fun endSession(): Completion<Intent> {
         return authorizationManager.endSession()
     }
 

@@ -8,4 +8,5 @@
     <string name="common_cancel">Annuler</string>
     <string name="default_drawer_first_line">Payer directement à la pompe</string>
     <string name="default_drawer_second_line">Connected Fueling</string>
+    <string name="no_supported_browser_toast">Activez Google Chrome et redémarrez l\'application pour continuer.</string>
 </resources>

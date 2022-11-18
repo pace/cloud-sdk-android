@@ -1,4 +1,4 @@
-package cloud.pace.sdk.app.view.mainscreen.dashboardscreen
+package cloud.pace.sdk.app.ui.components.dashboardscreen
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -8,7 +8,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import cloud.pace.sdk.api.pay.generated.model.ReadOnlyLocation
 import cloud.pace.sdk.api.pay.generated.model.Transaction
-import java.util.*
+import java.util.Date
 
 @Composable
 fun DashboardDataItemTemplate(transaction: Transaction) {

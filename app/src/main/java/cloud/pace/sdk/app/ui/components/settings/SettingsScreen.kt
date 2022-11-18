@@ -1,14 +1,26 @@
-package cloud.pace.sdk.app.view.mainscreen.settings
+package cloud.pace.sdk.app.ui.components.settings
 
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,9 +34,11 @@ import cloud.pace.sdk.app.BiometrySubSettingsActivity
 import cloud.pace.sdk.app.LoginScreenActivity
 import cloud.pace.sdk.app.MainScreenActivity
 import cloud.pace.sdk.app.R
+import cloud.pace.sdk.app.ui.components.NoSupportedBrowserDialog
 import cloud.pace.sdk.app.ui.theme.ButtonCornerShape
 import cloud.pace.sdk.app.ui.theme.Screen
 import cloud.pace.sdk.idkit.IDKit
+import cloud.pace.sdk.idkit.model.NoSupportedBrowser
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +46,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen(activity: MainScreenActivity, lifecycleScope: LifecycleCoroutineScope, finishMainActivity: () -> Unit) {
+    val openDialog = remember { mutableStateOf(false) }
+
     Column {
         Text(
             text = Screen.Settings.title,
@@ -63,20 +79,27 @@ fun SettingsScreen(activity: MainScreenActivity, lifecycleScope: LifecycleCorout
             MiscellaneousButton()
             LogoutButton {
                 lifecycleScope.launch(Dispatchers.Main) {
-                    IDKit.endSession(activity) {
-                        when (it) {
-                            is Success -> {
-                                val intent = Intent(activity, LoginScreenActivity::class.java)
-                                activity.startActivity(intent)
-                                finishMainActivity()
-                                Toast.makeText(activity, "Logout Successful!", Toast.LENGTH_LONG).show()
-                            }
-                            is Failure -> {
-                                Toast.makeText(activity, "Logout failed!", Toast.LENGTH_LONG).show()
+                    when (val result = IDKit.endSession(activity)) {
+                        is Success -> {
+                            val intent = Intent(activity, LoginScreenActivity::class.java)
+                            activity.startActivity(intent)
+                            finishMainActivity()
+                        }
+                        is Failure -> {
+                            if (result.throwable is NoSupportedBrowser) {
+                                openDialog.value = true
+                            } else {
+                                Toast.makeText(activity, result.throwable.message, Toast.LENGTH_LONG).show()
                             }
                         }
                     }
                 }
+            }
+        }
+
+        if (openDialog.value) {
+            NoSupportedBrowserDialog {
+                openDialog.value = false
             }
         }
     }
