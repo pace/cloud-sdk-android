@@ -1,3 +1,21 @@
+17.0.0 Release notes (2022-11-22)
+=============================================================
+
+### Breaking Changes
+
+* Catch ActivityNotFoundExeption if no supported browser is installed during authorization
+
+### Fixes
+
+* Crash when selecting the feedback button in the fueling canceled error
+* Disable all activity transition animations
+
+### Internal
+
+* Cleanup variables
+* Force the use of Chrome custom tab for the authorization if it is installed and enabled
+* Adjust GitLab base URL
+
 16.0.3 Release notes (2022-10-12)
 =============================================================
 
