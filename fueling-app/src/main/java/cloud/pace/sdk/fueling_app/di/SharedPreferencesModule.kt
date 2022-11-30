@@ -1,8 +1,6 @@
 package cloud.pace.sdk.fueling_app.di
 
 import android.content.Context
-import android.content.SharedPreferences
-import androidx.preference.PreferenceManager
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import dagger.Module
@@ -16,12 +14,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 object SharedPreferencesModule {
 
     @Provides
-    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
-        return PreferenceManager.getDefaultSharedPreferences(context)
-    }
-
-    @Provides
-    fun provideSharedPreferencesImpl(sharedPreferences: SharedPreferences): SharedPreferencesModel {
-        return SharedPreferencesImpl(sharedPreferences)
+    fun provideSharedPreferencesImpl(@ApplicationContext context: Context): SharedPreferencesModel {
+        return SharedPreferencesImpl(context)
     }
 }

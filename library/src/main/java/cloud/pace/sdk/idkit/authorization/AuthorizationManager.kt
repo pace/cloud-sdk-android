@@ -4,11 +4,13 @@ import android.app.PendingIntent
 import android.app.PendingIntent.CanceledException
 import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -18,6 +20,7 @@ import cloud.pace.sdk.R
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.SESSION_CACHE
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
+import cloud.pace.sdk.appkit.utils.JWTUtils
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.authorization.integrated.AuthorizationWebViewActivity
 import cloud.pace.sdk.idkit.model.FailedRetrievingConfigurationWhileDiscovering
@@ -314,7 +317,7 @@ internal class AuthorizationManager(
                 completion(Failure(exception))
             }
             response != null -> {
-                IDKit.disableBiometricAuthentication()
+                removeUserPreferences()
                 API.addAuthorizationHeader(null)
 
                 val serviceConfiguration = session.authorizationServiceConfiguration
@@ -462,6 +465,17 @@ internal class AuthorizationManager(
             }
         } else {
             null
+        }
+    }
+
+    private fun removeUserPreferences() {
+        IDKit.cachedToken()?.let {
+            val userID = JWTUtils.getUserIDFromToken(it) ?: return
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                context.deleteSharedPreferences(userID)
+            } else {
+                context.getSharedPreferences(userID, MODE_PRIVATE).edit(true) { clear() }
+            }
         }
     }
 

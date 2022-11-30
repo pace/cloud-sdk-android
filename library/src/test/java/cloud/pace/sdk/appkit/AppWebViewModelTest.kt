@@ -28,6 +28,7 @@ import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.getTotpSecretPreferenceKey
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.persistence.TotpSecret
+import cloud.pace.sdk.appkit.persistence.UserRelatedConstants
 import cloud.pace.sdk.appkit.utils.CoroutineTestRule
 import cloud.pace.sdk.appkit.utils.EncryptionUtils
 import cloud.pace.sdk.appkit.utils.TestAppEventManager
@@ -172,10 +173,10 @@ class AppWebViewModelTest {
         appModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
-        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, payHost, key))).thenReturn(secret)
-        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, payHost, key))).thenReturn(algorithm)
-        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, payHost, key))).thenReturn(digits)
-        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, payHost, key))).thenReturn(period)
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(UserRelatedConstants.SECRET.value, payHost, key))).thenReturn(secret)
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(UserRelatedConstants.ALGORITHM.value, payHost, key))).thenReturn(algorithm)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(UserRelatedConstants.DIGITS.value, payHost, key))).thenReturn(digits)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(UserRelatedConstants.PERIOD.value, payHost, key))).thenReturn(period)
         `when`(sharedPreferencesModel.getTotpSecret(payHost, key)).thenReturn(TotpSecret(secret, digits, period, algorithm))
 
         val result = viewModel.getTOTP(120000, GetTOTPRequest(1611158191.0, key))
@@ -201,10 +202,10 @@ class AppWebViewModelTest {
         appModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
-        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, payHost, key))).thenReturn(secret)
-        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, payHost, key))).thenReturn(algorithm)
-        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, payHost, key))).thenReturn(digits)
-        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, payHost, key))).thenReturn(period)
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(UserRelatedConstants.SECRET.value, payHost, key))).thenReturn(secret)
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(UserRelatedConstants.ALGORITHM.value, payHost, key))).thenReturn(algorithm)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(UserRelatedConstants.DIGITS.value, payHost, key))).thenReturn(digits)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(UserRelatedConstants.PERIOD.value, payHost, key))).thenReturn(period)
         `when`(sharedPreferencesModel.getTotpSecret(payHost, key)).thenReturn(TotpSecret(secret, period, digits, algorithm))
 
         val result = viewModel.getTOTP(120000, GetTOTPRequest(1611158191.0, key))
@@ -249,10 +250,10 @@ class AppWebViewModelTest {
         appModel.biometricRequest.observeForever(observer)
 
         `when`(payManager.isFingerprintAvailable()).thenReturn(true)
-        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.SECRET, payHost, key))).thenReturn(null)
-        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(SharedPreferencesImpl.ALGORITHM, payHost, key))).thenReturn(algorithm)
-        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.DIGITS, payHost, key))).thenReturn(digits)
-        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(SharedPreferencesImpl.PERIOD, payHost, key))).thenReturn(period)
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(UserRelatedConstants.SECRET.value, payHost, key))).thenReturn(null)
+        `when`(sharedPreferencesModel.getString(getTotpSecretPreferenceKey(UserRelatedConstants.ALGORITHM.value, payHost, key))).thenReturn(algorithm)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(UserRelatedConstants.DIGITS.value, payHost, key))).thenReturn(digits)
+        `when`(sharedPreferencesModel.getInt(getTotpSecretPreferenceKey(UserRelatedConstants.PERIOD.value, payHost, key))).thenReturn(period)
         `when`(sharedPreferencesModel.getTotpSecret(payHost, key)).thenReturn(null)
 
         val result = viewModel.getTOTP(120000, GetTOTPRequest(1611158191.0, key))
