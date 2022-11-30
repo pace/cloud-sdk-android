@@ -3,6 +3,7 @@ package cloud.pace.sdk
 import android.content.Context
 import android.util.Log
 import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.meta.MetaCollector
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.CustomOIDConfiguration
@@ -21,6 +22,8 @@ import java.util.Locale
 object PACECloudSDK {
 
     internal lateinit var configuration: Configuration
+    var metaCollector: MetaCollector? = null
+        private set
     var isSetup: Boolean = false
 
     /**
@@ -84,6 +87,15 @@ object PACECloudSDK {
         }
 
     /**
+     * `true`, if the meta collector should be enabled, `false` otherwise (default: `true`).
+     */
+    var isMetaCollectorEnabled: Boolean
+        get() = metaCollector?.isEnabled ?: false
+        set(value) {
+            metaCollector?.isEnabled = value
+        }
+
+    /**
      * Sets up [PACECloudSDK] with the passed [configuration].
      * This needs to be called before any of its "Kits" can be used.
      *
@@ -111,6 +123,8 @@ object PACECloudSDK {
         }
 
         API.setup(configuration.environment, configuration.apiKey)
+
+        metaCollector = MetaCollector(configuration.isMetaCollectorEnabled)
 
         AppKit.locationAccuracy = configuration.locationAccuracy
         AppKit.updateUserAgent()

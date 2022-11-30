@@ -16,7 +16,8 @@ data class Configuration @JvmOverloads constructor(
     var speedThresholdInKmPerHour: Int = 50,
     var geoAppsScope: String = "pace-min",
     var appsDistanceThresholdInMeters: Int = 150,
-    var oidConfiguration: CustomOIDConfiguration?
+    var oidConfiguration: CustomOIDConfiguration? = null,
+    var isMetaCollectorEnabled: Boolean = true
 )
 
 enum class AuthenticationMode(val value: String) {

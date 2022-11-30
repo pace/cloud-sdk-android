@@ -208,6 +208,7 @@ class SharedPreferencesImpl(private val context: Context) : SharedPreferencesMod
         private const val MILEAGE = "mileage"
         private const val MIGRATED_USER_SCOPED_VALUES = "migratedUserScopedValues"
         const val SESSION_CACHE = "sessionCache"
+        const val DEVICE_ID = "deviceId"
 
         fun getTotpSecretPreferenceKey(which: String, host: String?, key: String) = which + (if (host != null) "_$host" else "") + "_$key"
 
