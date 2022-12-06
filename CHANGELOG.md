@@ -1,3 +1,14 @@
+17.1.0 Release notes (2022-12-06)
+=============================================================
+
+### Enhancements
+
+* Implement meta collector
+
+### Internal
+
+* Add the interruptible flag to the merge request CI jobs to cancel old pipelines
+
 17.0.1 Release notes (2022-11-30)
 =============================================================
 
