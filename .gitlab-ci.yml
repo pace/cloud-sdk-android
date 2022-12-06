@@ -6,6 +6,12 @@ stages:
   - build
   - publish
 
+.only_merge_requests: &only_merge_requests
+  interruptible: true
+  only:
+    refs:
+      - merge_requests
+
 .android_version:
   tags:
     - android-latest
@@ -13,8 +19,7 @@ stages:
 .testing:
   extends: .android_version
   stage: test
-  only:
-    - merge_requests
+  <<: *only_merge_requests
 
 before_script:
   - export TAG_COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
@@ -31,8 +36,7 @@ commit_format:
   script:
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${GIT_BASE_URL}/pace/mobile/common.git tmp/common
     - python3 tmp/common/scripts/validate_commit.py --project-id $CI_PROJECT_ID --merge-request-iid $CI_MERGE_REQUEST_IID
-  only:
-    - merge_requests
+  <<: *only_merge_requests
   tags:
     - xcode-12.4
 
@@ -62,8 +66,7 @@ library_review:
   stage: build
   script:
     - ./gradlew clean library:assemble
-  only:
-    - merge_requests
+  <<: *only_merge_requests
 
 documentation:
   extends: .android_version
