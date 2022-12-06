@@ -3,14 +3,30 @@ package cloud.pace.sdk.utils
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.DEVICE_ID
+import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import okio.Buffer
+import org.koin.core.component.inject
+import java.util.UUID
 
 /**
  * Utils for device attributes.
  *
  * Most of this is a copy from PACEKitConfig.
  */
-object DeviceUtils {
+object DeviceUtils : CloudSDKKoinComponent {
+
+    private val sharedPreferencesModel: SharedPreferencesModel by inject()
+
+    /**
+     * Returns the unique device UUID generated the first time this method is called.
+     * The UUID is saved in the app's SharedPreferences.
+     */
+    fun getDeviceId(): String {
+        return sharedPreferencesModel.getString(DEVICE_ID, null) ?: UUID.randomUUID().toString().also {
+            sharedPreferencesModel.putString(DEVICE_ID, it)
+        }
+    }
 
     /**
      * Returns the release version
