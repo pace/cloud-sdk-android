@@ -148,9 +148,15 @@ dependencies {
     testImplementation(Libs.MOCKITO_KOTLIN)
     testImplementation(Libs.MOCKK)
     testImplementation(Libs.ROBOLECTRIC)
+
     androidTestImplementation(Libs.TEST_CORE)
     androidTestImplementation(Libs.TEST_RUNNER)
     androidTestImplementation(Libs.TEST_JUNIT)
+    androidTestImplementation(Libs.KOIN_TEST) {
+        exclude("org.mockito")
+    }
+    androidTestImplementation(Libs.MOCKK_ANDROID)
+
     api(Libs.ROOM_TESTING)
 }
 

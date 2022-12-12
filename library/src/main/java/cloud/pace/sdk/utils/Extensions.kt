@@ -66,3 +66,9 @@ fun <T> List<T>.equalsTo(other: List<T>): Boolean {
 
 val PACECloudSDK.environment: Environment
     get() = configuration.environment
+
+inline fun <reified T> Set<*>.asSetOfType(): Set<T>? =
+    if (all { it is T })
+        @Suppress("UNCHECKED_CAST")
+        this as Set<T> else
+        null

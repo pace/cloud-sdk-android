@@ -1,5 +1,7 @@
 package cloud.pace.sdk.idkit.model
 
+import android.net.Uri
+import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.ResponseTypeValues
 
 data class OIDConfiguration @JvmOverloads constructor(
@@ -14,4 +16,11 @@ data class OIDConfiguration @JvmOverloads constructor(
     val responseType: String = ResponseTypeValues.CODE,
     var additionalParameters: Map<String, String>? = null,
     val integrated: Boolean = false
+)
+
+fun OIDConfiguration.toAuthorizationServiceConfiguration() = AuthorizationServiceConfiguration(
+    Uri.parse(authorizationEndpoint),
+    Uri.parse(tokenEndpoint),
+    null,
+    Uri.parse(endSessionEndpoint)
 )

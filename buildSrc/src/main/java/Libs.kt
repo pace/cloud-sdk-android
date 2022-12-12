@@ -43,6 +43,7 @@ object Libs {
     const val MOCKITO_INLINE = "org.mockito:mockito-inline:${Versions.MOCKITO}"
     const val MOCKITO_KOTLIN = "org.mockito.kotlin:mockito-kotlin:${Versions.MOCKITO_KOTLIN}"
     const val MOCKK = "io.mockk:mockk:${Versions.MOCKK}"
+    const val MOCKK_ANDROID = "io.mockk:mockk-android:${Versions.MOCKK}"
     const val MOSHI_ADAPTERS = "com.squareup.moshi:moshi-adapters:${Versions.MOSHI_KOTLIN}"
     const val MOSHI_JSONAPI_JAR = "libs/moshi-jsonapi-${Versions.MOSHI_JSONAPI}.jar"
     const val MOSHI_JSONAPI_RETROFIT_CONVERTER_JAR = "libs/moshi-jsonapi-retrofit-converter-${Versions.MOSHI_JSONAPI}.jar"
