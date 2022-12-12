@@ -28,6 +28,7 @@ import cloud.pace.sdk.appkit.persistence.CacheModelImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.idkit.authorization.AuthorizationManager
+import cloud.pace.sdk.idkit.authorization.SessionHolder
 import cloud.pace.sdk.idkit.browsermatcher.CustomBrowserMatcher
 import cloud.pace.sdk.idkit.credentials.CredentialsManager
 import cloud.pace.sdk.idkit.model.oidConfiguration
@@ -81,8 +82,8 @@ object KoinConfig {
                     single { UserInfoApiClient(configuration.oidConfiguration?.oidConfiguration(configuration.environment)?.userInfoEndpoint) }
                     single<SystemManager> { SystemManagerImpl(get()) }
                     single<SharedPreferencesModel> {
-                        val sharedPreferencesImpl = SharedPreferencesImpl(context)
-                        sharedPreferencesImpl.migrateScopedUserValues()
+                        val sharedPreferencesImpl = SharedPreferencesImpl(context, get())
+                        sharedPreferencesImpl.migrateUserValuesToUserId()
                         sharedPreferencesImpl
                     }
                     single<CacheModel> { CacheModelImpl() }
@@ -96,6 +97,7 @@ object KoinConfig {
                     single<AppModel> { AppModelImpl(get()) }
                     single { AppManager(DefaultDispatcherProvider()) }
                     single<GeoAPIManager> { GeoAPIManagerImpl(get(), get(), get()) }
+                    single { SessionHolder(get()) }
                     single {
                         val appAuthConfig = AppAuthConfiguration.Builder().setBrowserMatcher(CustomBrowserMatcher(get())).build()
                         AuthorizationService(get(), appAuthConfig)

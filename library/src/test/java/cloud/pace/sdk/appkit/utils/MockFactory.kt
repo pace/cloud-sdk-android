@@ -108,7 +108,7 @@ open class TestSharedPreferencesModel : SharedPreferencesModel {
         return null
     }
 
-    override fun migrateScopedUserValues() {}
+    override fun migrateUserValuesToUserId() {}
     override fun putBoolean(key: String, value: Boolean) {}
     override fun putInt(key: String, value: Int) {}
     override fun putLong(key: String, value: Long) {}

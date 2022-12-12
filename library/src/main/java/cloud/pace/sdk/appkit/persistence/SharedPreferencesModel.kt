@@ -2,19 +2,19 @@ package cloud.pace.sdk.appkit.persistence
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import cloud.pace.sdk.appkit.model.Car
 import cloud.pace.sdk.appkit.utils.JWTUtils
-import cloud.pace.sdk.idkit.IDKit
-import net.openid.appauth.AuthState
-import org.json.JSONException
+import cloud.pace.sdk.idkit.authorization.SessionHolder
+import cloud.pace.sdk.utils.asSetOfType
 import timber.log.Timber
 
 interface SharedPreferencesModel {
 
-    fun getBoolean(key: String, defValue: Boolean? = null): Boolean?
     fun putBoolean(key: String, value: Boolean)
+    fun getBoolean(key: String, defValue: Boolean? = null): Boolean?
     fun putString(key: String, value: String)
     fun getString(key: String, defValue: String? = null): String?
     fun putStringSet(key: String, values: HashSet<String>)
@@ -29,20 +29,23 @@ interface SharedPreferencesModel {
     fun getTotpSecret(host: String? = null, key: String = UserRelatedConstants.PAYMENT_AUTHORIZE.value): TotpSecret?
     fun removeTotpSecret(host: String? = null, key: String = UserRelatedConstants.PAYMENT_AUTHORIZE.value)
     fun remove(key: String)
-    fun migrateScopedUserValues()
+    fun migrateUserValuesToUserId()
 }
 
-class SharedPreferencesImpl(private val context: Context) : SharedPreferencesModel {
+class SharedPreferencesImpl(
+    private val context: Context,
+    private val sessionHolder: SessionHolder
+) : SharedPreferencesModel {
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+    override fun putBoolean(key: String, value: Boolean) {
+        getPreferences(key)?.edit { putBoolean(key, value) }
+    }
 
     override fun getBoolean(key: String, defValue: Boolean?): Boolean? {
         val preferences = getPreferences(key) ?: return defValue
         return preferences.getBoolean(key, defValue ?: false)
-    }
-
-    override fun putBoolean(key: String, value: Boolean) {
-        getPreferences(key)?.edit { putBoolean(key, value) }
     }
 
     override fun putString(key: String, value: String) {
@@ -59,7 +62,7 @@ class SharedPreferencesImpl(private val context: Context) : SharedPreferencesMod
     }
 
     override fun getStringSet(key: String, defValues: HashSet<String>?): HashSet<String>? {
-        return getPreferences(key)?.getStringSet(key, defValues) as? HashSet<String>
+        return (getPreferences(key)?.getStringSet(key, defValues) as? HashSet<String>) ?: defValues
     }
 
     override fun putInt(key: String, value: Int) {
@@ -131,83 +134,65 @@ class SharedPreferencesImpl(private val context: Context) : SharedPreferencesMod
         getPreferences(key)?.edit { remove(key) }
     }
 
-    override fun migrateScopedUserValues() {
-        val isAlreadyMigrated = sharedPreferences.getBoolean(MIGRATED_USER_SCOPED_VALUES, false)
-        if (isAlreadyMigrated) return
+    override fun migrateUserValuesToUserId() {
+        if (sharedPreferences.getBoolean(MIGRATED_USER_SCOPED_VALUES, false)) return
 
-        // Get token from shared preferences
-        val jsonString = sharedPreferences.getString(SESSION_CACHE, null) ?: return
-        val authState = try {
-            AuthState.jsonDeserialize(jsonString)
-        } catch (e: JSONException) {
-            Timber.e(e, "Failed retrieving session from SharedPreferences")
-            return
-        }
-        val userPreferences = getUserPreferences(context, authState.accessToken)
+        Timber.i("Start migration to move user values to file with user ID")
 
-        sharedPreferences.all.filter { isUserPreferenceValue(it.key) }.forEach {
-            var isMigrated = false
-            userPreferences?.edit {
-                when (val value = it.value) {
-                    is Int -> {
-                        putInt(it.key, value)
-                        isMigrated = true
+        if (sessionHolder.isAuthorizationValid()) {
+            val userPreferences = getUserPreferences(context, sessionHolder.cachedToken()) ?: return
+
+            userPreferences.edit {
+                sharedPreferences.all
+                    .filter { isUserPreferenceValue(it.key) }
+                    .forEach {
+                        put(it.key, it.value)
+                        sharedPreferences.edit { remove(it.key) }
                     }
-                    is String -> {
-                        putString(it.key, value)
-                        isMigrated = true
-                    }
-                    is Boolean -> {
-                        putBoolean(it.key, value)
-                        isMigrated = true
-                    }
-                    is Long -> {
-                        putLong(it.key, value)
-                        isMigrated = true
-                    }
-                    is Float -> {
-                        putFloat(it.key, value)
-                        isMigrated = true
-                    }
-                    is Set<*> -> {
-                        val set = value.asSetOfType<String>()
-                        putStringSet(it.key, set)
-                        isMigrated = true
-                    }
-                    else -> Timber.e("Error in scope user values migration: totp secret with invalid type (key: ${it.key} || value:${it.value}")
+            }
+        } else {
+            Timber.i("Authorization is not valid - Remove any existing user preferences from default shared preferences file")
+            sharedPreferences.all
+                .filter { isUserPreferenceValue(it.key) }
+                .forEach {
+                    sharedPreferences.edit { remove(it.key) }
                 }
-            }
-            if (isMigrated) {
-                sharedPreferences.edit { remove(it.key) }
-            }
         }
 
         sharedPreferences.edit { putBoolean(MIGRATED_USER_SCOPED_VALUES, true) }
-    }
 
-    private inline fun <reified T> Set<*>.asSetOfType(): Set<String>? =
-        if (all { it is String })
-            @Suppress("UNCHECKED_CAST")
-            this as Set<String> else
-            null
+        Timber.i("Migration to user ID file successfully")
+    }
 
     private fun isUserPreferenceValue(key: String) = UserRelatedConstants.values().any { key.contains(it.value) }
 
     private fun getPreferences(key: String): SharedPreferences? {
         return when {
             !isUserPreferenceValue(key) -> sharedPreferences
-            IDKit.isAuthorizationValid() -> getUserPreferences(context)
+            sessionHolder.isAuthorizationValid() -> getUserPreferences(context, sessionHolder.cachedToken())
             else -> null
         }
     }
 
+    private fun SharedPreferences.Editor.put(key: String, value: Any?) {
+        when (value) {
+            is Boolean -> putBoolean(key, value)
+            is Float -> putFloat(key, value)
+            is Int -> putInt(key, value)
+            is Long -> putLong(key, value)
+            is String -> putString(key, value)
+            is Set<*> -> putStringSet(key, value.asSetOfType<String>())
+            else -> Timber.w("Value has unknown type - key=$key; value=$value")
+        }
+    }
+
     companion object {
+
         private const val VIN = "vin"
         private const val FUEL_TYPE = "fuelType"
         private const val EXPECTED_AMOUNT = "expectedAmount"
         private const val MILEAGE = "mileage"
         private const val MIGRATED_USER_SCOPED_VALUES = "migratedUserScopedValues"
-        const val SESSION_CACHE = "sessionCache"
         const val DEVICE_ID = "deviceId"
 
         fun getTotpSecretPreferenceKey(which: String, host: String?, key: String) = which + (if (host != null) "_$host" else "") + "_$key"
@@ -217,13 +202,26 @@ class SharedPreferencesImpl(private val context: Context) : SharedPreferencesMod
         fun getDisableTimePreferenceKey(host: String) = "${UserRelatedConstants.DISABLE_TIME.value}_$host"
 
         /**
-         * SharedPreferences file with user id as name that is used to save user id related preferences
-         * User id is extracted from token
+         * SharedPreferences file with user ID as name that is used to save user related preferences.
+         * User ID is extracted from cached access token.
          */
-        fun getUserPreferences(context: Context, token: String? = null): SharedPreferences? {
-            val cachedToken = token ?: IDKit.cachedToken() ?: return null
-            val userID = JWTUtils.getUserIDFromToken(cachedToken) ?: return null
-            return context.getSharedPreferences(userID, Context.MODE_PRIVATE)
+        fun getUserPreferences(context: Context, accessToken: String?): SharedPreferences? {
+            val userId = accessToken?.let { JWTUtils.getUserIDFromToken(it) } ?: return null
+            return getPreferences(context, userId)
+        }
+
+        private fun getPreferences(context: Context, userId: String): SharedPreferences {
+            return context.getSharedPreferences(userId, Context.MODE_PRIVATE)
+        }
+
+        fun removeUserPreferences(context: Context, accessToken: String?) {
+            val userId = accessToken?.let { JWTUtils.getUserIDFromToken(it) } ?: return
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                context.deleteSharedPreferences(userId)
+            } else {
+                getPreferences(context, userId).edit(true) { clear() }
+            }
         }
     }
 }

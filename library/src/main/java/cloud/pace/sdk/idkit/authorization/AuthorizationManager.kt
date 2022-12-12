@@ -4,13 +4,11 @@ import android.app.PendingIntent
 import android.app.PendingIntent.CanceledException
 import android.content.ActivityNotFoundException
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -18,10 +16,6 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.R
 import cloud.pace.sdk.api.API
-import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl.Companion.SESSION_CACHE
-import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
-import cloud.pace.sdk.appkit.utils.JWTUtils
-import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.authorization.integrated.AuthorizationWebViewActivity
 import cloud.pace.sdk.idkit.model.FailedRetrievingConfigurationWhileDiscovering
 import cloud.pace.sdk.idkit.model.FailedRetrievingSessionWhileAuthorizing
@@ -32,6 +26,7 @@ import cloud.pace.sdk.idkit.model.NoSupportedBrowser
 import cloud.pace.sdk.idkit.model.OIDConfiguration
 import cloud.pace.sdk.idkit.model.OperationCanceled
 import cloud.pace.sdk.idkit.model.ServiceConfiguration
+import cloud.pace.sdk.idkit.model.toAuthorizationServiceConfiguration
 import cloud.pace.sdk.idkit.userinfo.UserInfoApiClient
 import cloud.pace.sdk.idkit.userinfo.UserInfoResponse
 import cloud.pace.sdk.utils.Canceled
@@ -45,7 +40,6 @@ import cloud.pace.sdk.utils.Success
 import cloud.pace.sdk.utils.getResultFor
 import cloud.pace.sdk.utils.resumeIfActive
 import kotlinx.coroutines.suspendCancellableCoroutine
-import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationResponse
@@ -57,19 +51,17 @@ import net.openid.appauth.EndSessionRequest
 import net.openid.appauth.EndSessionResponse
 import net.openid.appauth.TokenRequest
 import net.openid.appauth.TokenResponse
-import org.json.JSONException
 import timber.log.Timber
 
 internal class AuthorizationManager(
     private val context: Context,
     private val authorizationService: AuthorizationService,
-    private val sharedPreferencesModel: SharedPreferencesModel,
+    private val sessionHolder: SessionHolder,
     private val userInfoApi: UserInfoApiClient
 ) : CloudSDKKoinComponent, DefaultLifecycleObserver {
 
     private lateinit var configuration: OIDConfiguration
     private lateinit var authorizationRequest: AuthorizationRequest
-    private lateinit var session: AuthState
 
     internal fun setup(configuration: OIDConfiguration) {
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
@@ -78,17 +70,14 @@ internal class AuthorizationManager(
             additionalParameters = getMergedParameters(additionalParameters ?: emptyMap())
         }
 
-        createAuthorizationRequest(true)
-
-        loadSession()?.let {
-            session = it
-        }
+        createAuthorizationRequest()
+        sessionHolder.updateSession(configuration)
     }
 
     internal fun setAdditionalParameters(params: Map<String, String>?) {
         if (::configuration.isInitialized) {
             configuration.additionalParameters = getMergedParameters(params ?: emptyMap())
-            createAuthorizationRequest(false)
+            createAuthorizationRequest()
         } else {
             SetupLogger.logSDKWarningIfNeeded()
         }
@@ -202,12 +191,12 @@ internal class AuthorizationManager(
 
         when {
             exception != null -> {
-                session.update(response, exception)
+                sessionHolder.session?.update(response, exception)
                 Timber.e(exception, "Failed to handle authorization response")
                 completion(Failure(exception))
             }
             response != null -> {
-                session.update(response, exception)
+                sessionHolder.session?.update(response, exception)
                 performTokenRequest(response.createTokenExchangeRequest(), completion)
             }
             else -> {
@@ -221,9 +210,9 @@ internal class AuthorizationManager(
     internal fun refreshToken(force: Boolean = false, completion: (Completion<String?>) -> Unit) {
         if (isAuthorizationValid()) {
             if (force) {
-                session.needsTokenRefresh = true
+                sessionHolder.session?.needsTokenRefresh = true
             }
-            performTokenRequest(session.createTokenRefreshRequest(), completion)
+            sessionHolder.session?.createTokenRefreshRequest()?.let { performTokenRequest(it, completion) } ?: completion(Failure(InvalidSession))
         } else {
             completion(Failure(InvalidSession))
         }
@@ -317,20 +306,8 @@ internal class AuthorizationManager(
                 completion(Failure(exception))
             }
             response != null -> {
-                removeUserPreferences()
                 API.addAuthorizationHeader(null)
-
-                val serviceConfiguration = session.authorizationServiceConfiguration
-                if (serviceConfiguration != null) {
-                    val clearedState = AuthState(serviceConfiguration)
-                    val lastRegistrationResponse = session.lastRegistrationResponse
-                    if (lastRegistrationResponse != null) {
-                        clearedState.update(lastRegistrationResponse)
-                    }
-                    session = clearedState
-                }
-                persistSession(session)
-
+                sessionHolder.clearSessionAndPreferences()
                 completion(Success(Unit))
             }
             else -> {
@@ -341,7 +318,7 @@ internal class AuthorizationManager(
         }
     }
 
-    internal fun isAuthorizationValid() = session.isAuthorized
+    internal fun isAuthorizationValid() = sessionHolder.isAuthorizationValid()
 
     internal fun containsAuthorizationResponse(intent: Intent) = intent.hasExtra(AuthorizationResponse.EXTRA_RESPONSE)
 
@@ -349,7 +326,7 @@ internal class AuthorizationManager(
 
     internal fun containsException(intent: Intent) = intent.hasExtra(AuthorizationException.EXTRA_EXCEPTION)
 
-    internal fun cachedToken() = if (::session.isInitialized) session.accessToken else null
+    internal fun cachedToken() = sessionHolder.cachedToken()
 
     internal fun userInfo(additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null, completion: (Completion<UserInfoResponse>) -> Unit) {
         userInfoApi.getUserInfo(additionalHeaders, additionalParameters, completion)
@@ -360,12 +337,8 @@ internal class AuthorizationManager(
         return idKitParams + PACECloudSDK.additionalQueryParams
     }
 
-    private fun createAuthorizationRequest(createNewSession: Boolean) {
-        val serviceConfiguration = getAuthorizationServiceConfiguration()
-        if (createNewSession) {
-            session = AuthState(serviceConfiguration)
-        }
-
+    private fun createAuthorizationRequest() {
+        val serviceConfiguration = configuration.toAuthorizationServiceConfiguration()
         authorizationRequest = AuthorizationRequest.Builder(serviceConfiguration, configuration.clientId, configuration.responseType, Uri.parse(configuration.redirectUri))
             .setScopes(configuration.scopes?.plus("openid") ?: listOf("openid")) // Make sure that 'openid' is passed as scope so that the idToken for the end session request is returned
             .setAdditionalParameters(configuration.additionalParameters)
@@ -373,32 +346,23 @@ internal class AuthorizationManager(
     }
 
     private fun createEndSessionRequest(): EndSessionRequest? {
-        return session.idToken?.let {
-            EndSessionRequest.Builder(getAuthorizationServiceConfiguration())
+        return sessionHolder.session?.idToken?.let {
+            EndSessionRequest.Builder(configuration.toAuthorizationServiceConfiguration())
                 .setIdTokenHint(it)
                 .setPostLogoutRedirectUri(Uri.parse(configuration.redirectUri))
                 .build()
         }
     }
 
-    private fun getAuthorizationServiceConfiguration(): AuthorizationServiceConfiguration {
-        return AuthorizationServiceConfiguration(
-            Uri.parse(configuration.authorizationEndpoint),
-            Uri.parse(configuration.tokenEndpoint),
-            null,
-            Uri.parse(configuration.endSessionEndpoint)
-        )
-    }
-
     private fun performTokenRequest(request: TokenRequest, completion: (Completion<String?>) -> Unit) {
         Timber.i("Trying to refresh token...")
 
         val clientSecret = configuration.clientSecret
-        val clientAuthentication: ClientAuthentication = if (clientSecret != null) {
+        val clientAuthentication = if (clientSecret != null) {
             ClientSecretBasic(clientSecret)
         } else {
             try {
-                session.clientAuthentication
+                sessionHolder.session?.clientAuthentication
             } catch (e: ClientAuthentication.UnsupportedAuthenticationMethod) {
                 Timber.e(e, "Token request cannot be made, client authentication for the token endpoint could not be constructed")
                 completion(Failure(e))
@@ -406,14 +370,18 @@ internal class AuthorizationManager(
             }
         }
 
-        authorizationService.performTokenRequest(request, clientAuthentication) { tokenResponse, exception ->
-            handleTokenResponse(tokenResponse, exception, completion)
+        if (clientAuthentication != null) {
+            authorizationService.performTokenRequest(request, clientAuthentication) { tokenResponse, exception ->
+                handleTokenResponse(tokenResponse, exception, completion)
+            }
+        } else {
+            completion(Failure(InvalidSession))
         }
     }
 
     private fun handleTokenResponse(tokenResponse: TokenResponse?, exception: AuthorizationException?, completion: (Completion<String?>) -> Unit) {
-        session.update(tokenResponse, exception)
-        persistSession(session)
+        sessionHolder.session?.update(tokenResponse, exception)
+        sessionHolder.persistSession()
 
         when {
             exception != null -> {
@@ -421,8 +389,9 @@ internal class AuthorizationManager(
                 completion(Failure(exception))
             }
             tokenResponse != null -> {
-                session.accessToken?.let { API.addAuthorizationHeader(it) }
-                completion(Success(session.accessToken))
+                val accessToken = sessionHolder.cachedToken()
+                accessToken?.let { API.addAuthorizationHeader(it) }
+                completion(Success(accessToken))
                 Timber.i("Token refresh successful")
             }
             else -> {
@@ -445,37 +414,6 @@ internal class AuthorizationManager(
             canceledPendingIntent.send(context, 0, cancelData)
         } catch (e: CanceledException) {
             Timber.e(e, "Failed to send cancel intent")
-        }
-    }
-
-    private fun persistSession(authState: AuthState) {
-        Timber.i("Persisting session to SharedPreferences")
-        sharedPreferencesModel.putString(SESSION_CACHE, authState.jsonSerializeString())
-    }
-
-    private fun loadSession(): AuthState? {
-        Timber.i("Loading session from SharedPreferences")
-        val jsonString = sharedPreferencesModel.getString(SESSION_CACHE)
-        return if (!jsonString.isNullOrEmpty()) {
-            try {
-                AuthState.jsonDeserialize(jsonString)
-            } catch (jsonException: JSONException) {
-                Timber.e(jsonException, "Failed retrieving session from SharedPreferences")
-                null
-            }
-        } else {
-            null
-        }
-    }
-
-    private fun removeUserPreferences() {
-        IDKit.cachedToken()?.let {
-            val userID = JWTUtils.getUserIDFromToken(it) ?: return
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                context.deleteSharedPreferences(userID)
-            } else {
-                context.getSharedPreferences(userID, MODE_PRIVATE).edit(true) { clear() }
-            }
         }
     }
 
