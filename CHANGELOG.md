@@ -1,3 +1,10 @@
+17.1.1 Release notes (2022-12-12)
+=============================================================
+
+### Fixes
+
+* Fix crash in user preferences migration if an empty session is persisted
+
 17.1.0 Release notes (2022-12-06)
 =============================================================
 
