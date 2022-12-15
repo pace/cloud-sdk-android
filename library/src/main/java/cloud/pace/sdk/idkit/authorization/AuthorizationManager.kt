@@ -105,7 +105,7 @@ internal class AuthorizationManager(
                 }
                 else -> {
                     val throwable = FailedRetrievingConfigurationWhileDiscovering
-                    Timber.e(throwable, "Failed to discover configuration")
+                    Timber.w(throwable, "Failed to discover configuration")
                     completion(Failure(throwable))
                 }
             }
@@ -152,7 +152,7 @@ internal class AuthorizationManager(
                     canceledPendingIntent
                 )
             } catch (e: ActivityNotFoundException) {
-                Timber.w(e, "No supported browser installed to launch the authorization request")
+                Timber.i(e, "No supported browser installed to launch the authorization request")
                 sendCanceledPendingIntent(canceledPendingIntent)
             }
         }
@@ -165,7 +165,7 @@ internal class AuthorizationManager(
             try {
                 Success(authorizationService.getAuthorizationRequestIntent(authorizationRequest))
             } catch (e: ActivityNotFoundException) {
-                Timber.w(e, "No supported browser installed to launch the authorization request")
+                Timber.i(e, "No supported browser installed to launch the authorization request")
                 showNoSupportedBrowserToast()
                 Failure(NoSupportedBrowser)
             }
@@ -201,7 +201,7 @@ internal class AuthorizationManager(
             }
             else -> {
                 val throwable = FailedRetrievingSessionWhileAuthorizing
-                Timber.e(throwable, "Failed to handle authorization response")
+                Timber.w(throwable, "Failed to handle authorization response")
                 completion(Failure(throwable))
             }
         }
@@ -259,7 +259,7 @@ internal class AuthorizationManager(
                         canceledPendingIntent
                     )
                 } catch (e: ActivityNotFoundException) {
-                    Timber.w(e, "No supported browser installed to launch the end session request")
+                    Timber.i(e, "No supported browser installed to launch the end session request")
                     sendCanceledPendingIntent(canceledPendingIntent)
                 }
             }
@@ -276,7 +276,7 @@ internal class AuthorizationManager(
             try {
                 Success(authorizationService.getEndSessionRequestIntent(endSessionRequest))
             } catch (e: ActivityNotFoundException) {
-                Timber.w(e, "No supported browser installed to launch the end session request")
+                Timber.i(e, "No supported browser installed to launch the end session request")
                 showNoSupportedBrowserToast()
                 Failure(NoSupportedBrowser)
             }
@@ -312,7 +312,7 @@ internal class AuthorizationManager(
             }
             else -> {
                 val throwable = FailedRetrievingSessionWhileEnding
-                Timber.e(throwable, "Failed to handle end session response")
+                Timber.w(throwable, "Failed to handle end session response")
                 completion(Failure(throwable))
             }
         }
@@ -396,7 +396,7 @@ internal class AuthorizationManager(
             }
             else -> {
                 val throwable = FailedRetrievingSessionWhileAuthorizing
-                Timber.e(throwable, "Failed to handle token response")
+                Timber.w(throwable, "Failed to handle token response")
                 completion(Failure(throwable))
             }
         }

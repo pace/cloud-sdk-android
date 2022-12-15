@@ -1,11 +1,13 @@
 package cloud.pace.sdk.utils
 
+import android.util.Log
 import cloud.pace.sdk.api.utils.RequestUtils.REQUEST_ID_HEADER
 import cloud.pace.sdk.poikit.utils.ApiException
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
+import java.net.HttpURLConnection
 
 class CallBackKt<T> : Callback<T> {
 
@@ -13,13 +15,15 @@ class CallBackKt<T> : Callback<T> {
     var onFailure: ((t: Throwable?) -> Unit)? = null
 
     override fun onFailure(call: Call<T>, t: Throwable) {
-        Timber.e(t, "Request failed for URL: ${call.request().url}")
+        Timber.i(t, "Request failed for URL: ${call.request().url}")
         onFailure?.invoke(t)
     }
 
     override fun onResponse(call: Call<T>, response: Response<T>) {
         if (!response.isSuccessful) {
-            Timber.e(
+            val logLevel = if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) Log.INFO else Log.ERROR
+            Timber.log(
+                logLevel,
                 ApiException(response.code(), response.message(), response.requestId),
                 "Request unsuccessful for URL: ${call.request().url}"
             )

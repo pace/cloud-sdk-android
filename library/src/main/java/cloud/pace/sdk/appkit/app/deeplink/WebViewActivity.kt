@@ -100,7 +100,7 @@ class WebViewActivity : AppCompatActivity() {
         try {
             startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-            Timber.e(e, "Could not found an activity to start the intent with action ${intent.action} and URI ${intent.data}")
+            Timber.i(e, "Could not found an activity to start the intent with action ${intent.action} and URI ${intent.data}")
         }
     }
 

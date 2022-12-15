@@ -75,7 +75,7 @@ class CacheModelImpl : CacheModel {
                 }
 
                 override fun onFailure(call: Call, e: IOException) {
-                    Timber.e(e, "Request failed for URL: ${call.request().url}")
+                    Timber.i(e, "Request failed for URL: ${call.request().url}")
                     completion(Result.failure(e))
                 }
             })

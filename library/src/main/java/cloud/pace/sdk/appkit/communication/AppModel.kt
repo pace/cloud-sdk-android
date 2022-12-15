@@ -200,15 +200,15 @@ class AppModelImpl(private val context: Context) : AppModel {
 
             startActivity(context, chooserIntent, null)
         } catch (e: FileNotFoundException) {
-            Timber.e(e, "Could not create FileOutputStream to write the receipt file")
+            Timber.w(e, "Could not create FileOutputStream to write the receipt file")
         } catch (e: IOException) {
-            Timber.e(e, "Could not create or save the receipt bitmap")
+            Timber.w(e, "Could not create or save the receipt bitmap")
         } catch (e: IllegalArgumentException) {
-            Timber.e(e, "The receipt file is outside the paths supported by the FileProvider")
+            Timber.w(e, "The receipt file is outside the paths supported by the FileProvider")
         } catch (e: ActivityNotFoundException) {
-            Timber.e(e, "No Activity found to execute the share intent")
+            Timber.i(e, "No Activity found to execute the share intent")
         } catch (e: Exception) {
-            Timber.e(e, "Could not create, save or share the receipt bitmap")
+            Timber.w(e, "Could not create, save or share the receipt bitmap")
         }
     }
 
@@ -228,9 +228,9 @@ class AppModelImpl(private val context: Context) : AppModel {
 
             startActivity(context, chooserIntent, null)
         } catch (e: ActivityNotFoundException) {
-            Timber.e(e, "No Activity found to execute the share intent")
+            Timber.i(e, "No Activity found to execute the share intent")
         } catch (e: Exception) {
-            Timber.e(e, "Could not share the shareText")
+            Timber.w(e, "Could not share the shareText")
         }
     }
 

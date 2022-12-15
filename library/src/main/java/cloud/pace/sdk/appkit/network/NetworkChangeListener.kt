@@ -24,7 +24,7 @@ class NetworkChangeListenerImpl(private val systemManager: SystemManager) : Netw
                     connectivityManager?.unregisterNetworkCallback(this)
                 } catch (e: IllegalArgumentException) {
                     // listener was already unregistered
-                    Timber.e(e, "Exception when unregister NetworkChangeListener")
+                    Timber.i(e, "Exception when unregister NetworkChangeListener")
                 }
             }
         }
@@ -41,7 +41,7 @@ class NetworkChangeListenerImpl(private val systemManager: SystemManager) : Netw
                 callback(false)
             } catch (e: IllegalArgumentException) {
                 // listener was already unregistered
-                Timber.e(e, "Exception when unregister NetworkChangeListener")
+                Timber.i(e, "Exception when unregister NetworkChangeListener")
             }
         }, NETWORK_TIMEOUT)
     }
