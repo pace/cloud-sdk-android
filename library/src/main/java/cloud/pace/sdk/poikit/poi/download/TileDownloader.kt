@@ -64,7 +64,7 @@ class TileDownloader(environment: Environment) {
         val call = client.newCall(request)
         call.enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Timber.e(e, "Request failed for URL: ${call.request().url}")
+                Timber.i(e, "Request failed for URL: ${call.request().url}")
                 handler(Result.failure(e))
             }
 

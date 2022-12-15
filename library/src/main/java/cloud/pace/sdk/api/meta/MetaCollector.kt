@@ -81,7 +81,7 @@ class MetaCollector(isEnabled: Boolean) : CloudSDKKoinComponent, DefaultLifecycl
             }
 
             onFailure = {
-                Timber.e(it, "Could not send meta collector request")
+                Timber.i(it, "Could not send meta collector request")
             }
         }
     }

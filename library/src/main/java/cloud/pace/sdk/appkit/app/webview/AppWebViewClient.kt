@@ -148,7 +148,7 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
         try {
             context.startActivity(intent)
         } catch (e: ActivityNotFoundException) {
-            Timber.e(e, "Could not found an activity to start the intent with action ${intent.action} and URI ${intent.data}")
+            Timber.i(e, "Could not found an activity to start the intent with action ${intent.action} and URI ${intent.data}")
         }
     }
 

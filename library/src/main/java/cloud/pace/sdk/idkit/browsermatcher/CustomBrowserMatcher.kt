@@ -40,7 +40,7 @@ class CustomBrowserMatcher(private val context: Context) : BrowserMatcher {
                 Timber.d("Chrome is installed: version = ${it.versionName}, enabled = ${it.applicationInfo.enabled}")
             }
         } catch (e: PackageManager.NameNotFoundException) {
-            Timber.e(e, "Chrome is not installed")
+            Timber.i(e, "Chrome is not installed")
             null
         }
     }

@@ -160,12 +160,12 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
                         if (networkChanged) {
                             requestLocalApps(completion)
                         } else {
-                            Timber.e(NetworkError)
+                            Timber.i(NetworkError)
                             CoroutineScope(dispatchers.main()).launch { completion(Failure(NetworkError)) }
                         }
                     }
                 } else {
-                    Timber.e(NetworkError)
+                    Timber.i(NetworkError)
                     withContext(dispatchers.main()) { completion(Failure(NetworkError)) }
                 }
             }

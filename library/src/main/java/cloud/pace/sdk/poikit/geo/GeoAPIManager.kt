@@ -58,10 +58,10 @@ class GeoAPIManagerImpl(
                             Timber.w("Could not load initial apps cache because the location was null")
                         }
                     }
-                    is Failure -> Timber.e(locationResult.throwable, "Could not load initial apps cache")
+                    is Failure -> Timber.w(locationResult.throwable, "Could not load initial apps cache")
                 }
             } catch (e: Exception) {
-                Timber.e(e, "Failed loading initial GeoJson cache")
+                Timber.w(e, "Failed loading initial GeoJson cache")
             }
         }
     }

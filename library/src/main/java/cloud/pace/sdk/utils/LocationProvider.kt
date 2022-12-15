@@ -152,7 +152,7 @@ class LocationProviderImpl(
                                     }
                                 }
                                 client.requestLocationUpdates(locationRequest, callback, Looper.getMainLooper()).addOnFailureListener {
-                                    Timber.e(it, "Could no request location updates with Fused Location Provider API")
+                                    Timber.w(it, "Could no request location updates with Fused Location Provider API")
                                     poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
                                     continuation.resumeWithExceptionIfActive(it)
                                 }
@@ -230,7 +230,7 @@ class LocationProviderImpl(
                                         continuation.resumeIfActive(if (validate) getLocationIfValid(it, LOW_ACCURACY, startTime) else it)
                                     }
                                     .addOnFailureListener {
-                                        Timber.e(it, "Could no request location updates with Fused Location Provider API")
+                                        Timber.w(it, "Could no request location updates with Fused Location Provider API")
                                         poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
                                         continuation.resumeWithExceptionIfActive(it)
                                     }
@@ -242,7 +242,7 @@ class LocationProviderImpl(
                                         if (it != null) {
                                             continuation.resumeIfActive(if (validate) getLocationIfValid(it, LOW_ACCURACY, startTime) else it)
                                         } else {
-                                            Timber.w("No current location available with LocationManager")
+                                            Timber.i("No current location available with LocationManager")
                                             resumeWithNoLocationFound(continuation = continuation)
                                         }
                                     }
@@ -314,7 +314,7 @@ class LocationProviderImpl(
                                         continuation.resumeIfActive(if (validate) getLocationIfValid(it, LOW_ACCURACY, startTime) else it)
                                     }
                                     .addOnFailureListener {
-                                        Timber.e(it, "Could no request location updates with Fused Location Provider API")
+                                        Timber.w(it, "Could no request location updates with Fused Location Provider API")
                                         poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
                                         continuation.resumeWithExceptionIfActive(it)
                                     }
@@ -325,7 +325,7 @@ class LocationProviderImpl(
                                 if (location != null) {
                                     continuation.resumeIfActive(if (validate) getLocationIfValid(location, LOW_ACCURACY, startTime) else location)
                                 } else {
-                                    Timber.w("No last known location available with LocationManager")
+                                    Timber.i("No last known location available with LocationManager")
                                     resumeWithNoLocationFound(continuation = continuation)
                                 }
                             }

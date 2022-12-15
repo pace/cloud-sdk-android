@@ -1,10 +1,12 @@
 package cloud.pace.sdk.api.interceptor
 
+import android.util.Log
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.utils.requestId
 import okhttp3.Interceptor
 import okhttp3.Response
 import timber.log.Timber
+import java.net.HttpURLConnection
 
 class QueryParametersInterceptor(private val additionalParameters: Map<String, String>? = null) : Interceptor {
 
@@ -21,7 +23,8 @@ class QueryParametersInterceptor(private val additionalParameters: Map<String, S
         val response = chain.proceed(newRequest)
 
         if (!response.isSuccessful) {
-            Timber.e("Request failed: code = ${response.code} || message = ${response.message} || request ID = ${response.requestId} || url: ${newRequest.url}")
+            val logLevel = if (response.code == HttpURLConnection.HTTP_UNAUTHORIZED) Log.INFO else Log.ERROR
+            Timber.log(logLevel, "Request failed: code = ${response.code} || message = ${response.message} || request ID = ${response.requestId} || url: ${newRequest.url}")
         }
 
         return response
