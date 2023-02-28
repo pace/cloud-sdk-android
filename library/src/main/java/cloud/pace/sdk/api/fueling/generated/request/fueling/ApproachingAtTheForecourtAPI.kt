@@ -8,20 +8,10 @@
 package cloud.pace.sdk.api.fueling.generated.request.fueling
 
 import cloud.pace.sdk.api.fueling.FuelingAPI
-import cloud.pace.sdk.api.fueling.generated.model.ApproachingResponse
-import cloud.pace.sdk.api.fueling.generated.model.FuelPrice
-import cloud.pace.sdk.api.fueling.generated.model.GasStation
-import cloud.pace.sdk.api.fueling.generated.model.GasStationNote
-import cloud.pace.sdk.api.fueling.generated.model.PaymentMethod
-import cloud.pace.sdk.api.fueling.generated.model.PaymentMethodKind
-import cloud.pace.sdk.api.fueling.generated.model.Pump
-import cloud.pace.sdk.api.fueling.generated.model.Transaction
+import cloud.pace.sdk.api.fueling.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
-import retrofit2.http.HeaderMap
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 object ApproachingAtTheForecourtAPI {
 
@@ -62,7 +52,7 @@ Other than authorization, the most common error states encountered should be:
             additionalParameters: Map<String, String>? = null
         ): Call<ApproachingResponse> {
             val resources =
-                listOf(PaymentMethodKind::class.java, FuelPrice::class.java, PaymentMethod::class.java, GasStation::class.java, Pump::class.java, Transaction::class.java, GasStationNote::class.java)
+                listOf(PaymentMethod::class.java, FuelPrice::class.java, Pump::class.java, Transaction::class.java, GasStation::class.java, PaymentMethodKind::class.java, GasStationNote::class.java)
             val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(FuelingAPI.baseUrl, additionalParameters, readTimeout, resources)

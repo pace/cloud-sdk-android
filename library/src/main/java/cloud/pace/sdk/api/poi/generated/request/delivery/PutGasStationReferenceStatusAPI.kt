@@ -8,7 +8,7 @@
 package cloud.pace.sdk.api.poi.generated.request.delivery
 
 import cloud.pace.sdk.api.poi.POIAPI
-import cloud.pace.sdk.api.poi.generated.model.ReferenceStatusBody
+import cloud.pace.sdk.api.poi.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
 import okhttp3.ResponseBody
 import retrofit2.Call

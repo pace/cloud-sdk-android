@@ -34,6 +34,7 @@ class PaymentTokenCreateApplePay : Resource() {
         class PaymentData {
 
             var data: String? = null
+            var familyName: String? = null
             var header: Header? = null
             var signature: String? = null
             var version: String? = null

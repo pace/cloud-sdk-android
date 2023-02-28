@@ -8,15 +8,11 @@
 package cloud.pace.sdk.api.poi.generated.request.priceHistories
 
 import cloud.pace.sdk.api.poi.POIAPI
-import cloud.pace.sdk.api.poi.generated.model.Fuel
-import cloud.pace.sdk.api.poi.generated.model.PriceHistory
+import cloud.pace.sdk.api.poi.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
 import cloud.pace.sdk.utils.toIso8601
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.HeaderMap
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 import java.util.Date
 
 object GetPriceHistoryAPI {

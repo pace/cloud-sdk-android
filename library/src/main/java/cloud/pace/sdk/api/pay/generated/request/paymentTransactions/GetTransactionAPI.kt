@@ -8,15 +8,12 @@
 package cloud.pace.sdk.api.pay.generated.request.paymentTransactions
 
 import cloud.pace.sdk.api.pay.PayAPI
-import cloud.pace.sdk.api.pay.generated.model.Transaction
+import cloud.pace.sdk.api.pay.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.HeaderMap
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 object GetTransactionAPI {
 
@@ -56,9 +53,10 @@ before returning the result.
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
         ): Call<Transaction> {
+            val resources = listOf(Discount::class.java)
             val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
-            return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout)
+            return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout, resources)
                 .create(GetTransactionService::class.java)
                 .getTransaction(
                     headers,

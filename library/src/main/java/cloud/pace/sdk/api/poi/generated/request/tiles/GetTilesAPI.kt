@@ -8,11 +8,11 @@
 package cloud.pace.sdk.api.poi.generated.request.tiles
 
 import cloud.pace.sdk.api.poi.POIAPI
+import cloud.pace.sdk.api.poi.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.HeaderMap
-import retrofit2.http.POST
+import retrofit2.http.*
 import java.io.File
 
 object GetTilesAPI {

@@ -13,6 +13,9 @@ import moe.banana.jsonapi2.Resource
 @JsonApi(type = "paymentMethodKind")
 class PaymentMethodKind : Resource() {
 
+    /* Currencies supported by payment method kind */
+    var currencies: List<String>? = null
+
     /* data privacy information */
     var dataPrivacy: DataPrivacy? = null
 

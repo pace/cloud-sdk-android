@@ -21,6 +21,9 @@ class TransactionRequest : Resource() {
     /* Pump ID */
     lateinit var pumpId: String
 
+    /* A callback URL to report the status of the transaction to, once completed. Only relevant if unattendedPayment is true */
+    var callbackURL: String? = null
+
     /* Fuel type for cars, based on the EU fuel marking */
     var carFuelType: CarFuelType? = null
 
@@ -29,7 +32,13 @@ class TransactionRequest : Resource() {
 
     /* Current mileage in meters */
     var mileage: Int? = null
+
+    /* Number plate of the Vehicle */
+    var numberPlate: String? = null
     var priceIncludingVAT: Double? = null
+
+    /* Set to 'true' if you want the payment to be cleared automatically in the background after fueling */
+    var unattendedPayment: Boolean? = null
 
     /* Vehicle identification number */
     var vin: String? = null

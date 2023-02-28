@@ -21,9 +21,12 @@ class FuelPriceResponse : Resource() {
     /* Fuel type for cars, based on the EU fuel marking */
     var fuelType: FuelType? = null
 
-    /* Price in liters */
+    /* Price in currency/unit */
     var price: Double? = null
     var productName: String? = null
+
+    /* Fuel measurement unit. Eg: `liter`, `us-gallon`, `uk-gallon`, `kilogram` */
+    var unit: String? = null
 
     /* Fuel type for cars, based on the EU fuel marking */
     enum class FuelType(val value: String) {

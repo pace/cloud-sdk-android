@@ -25,6 +25,9 @@ class PaymentMethod : Resource() {
     var kind: String? = null
     var mandatoryAuthorisationAttributes: List<MandatoryAuthorisationAttributes>? = null
 
+    /* Identifies if the payment method is a PACE payment method (`true`) or a broker method (`false`) */
+    var pacePay: Boolean? = null
+
     /* The desired status for a payment method is `verified`, this means the method is ready to use.
 A payment method that has the status `created` has yet to be verified. This is the case for payment methods,
 which have an asynchronous verification process, e.g., paydirekt (waiting for an email).

@@ -8,11 +8,7 @@
 package cloud.pace.sdk.api.pay.generated.request.newPaymentMethods
 
 import cloud.pace.sdk.api.pay.PayAPI
-import cloud.pace.sdk.api.pay.generated.model.PaymentMethod
-import cloud.pace.sdk.api.pay.generated.model.PaymentMethodKind
-import cloud.pace.sdk.api.pay.generated.model.PaymentMethodLogpayCreateBody
-import cloud.pace.sdk.api.pay.generated.model.PaymentMethodVendor
-import cloud.pace.sdk.api.pay.generated.model.PaymentToken
+import cloud.pace.sdk.api.pay.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
 import retrofit2.http.*
@@ -47,7 +43,7 @@ The payment method ID is optional when posting data.
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
         ): Call<PaymentMethod> {
-            val resources = listOf(PaymentMethodVendor::class.java, PaymentToken::class.java, PaymentMethod::class.java, PaymentMethodKind::class.java)
+            val resources = listOf(PaymentMethodVendor::class.java, PaymentMethodKind::class.java, PaymentToken::class.java, PaymentMethod::class.java)
             val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout, resources)

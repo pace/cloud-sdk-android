@@ -7,9 +7,6 @@
 
 package cloud.pace.sdk.api.pay.generated.model
 
-import com.google.gson.annotations.SerializedName
-import com.squareup.moshi.Json
-
 class Fuel {
 
     /* Fuel amount in provided unit */
@@ -24,17 +21,6 @@ class Fuel {
     /* Number of the pump used for fueling, i.e., the actual number that is being displayed to the customer */
     var pumpNumber: Int? = null
 
-    /* Unit */
-    var unit: Unit? = null
-
-    /* Unit */
-    enum class Unit(val value: String) {
-        @SerializedName("liter")
-        @Json(name = "liter")
-        LITER("liter"),
-
-        @SerializedName("gallon")
-        @Json(name = "gallon")
-        GALLON("gallon")
-    }
+    /* Fuel measurement unit. Eg: `liter`, `us-gallon`, `uk-gallon`, `kilogram` */
+    var unit: String? = null
 }

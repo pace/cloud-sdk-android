@@ -8,8 +8,7 @@
 package cloud.pace.sdk.api.poi.generated.request.apps
 
 import cloud.pace.sdk.api.poi.POIAPI
-import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
-import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppBody
+import cloud.pace.sdk.api.poi.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
 import retrofit2.http.*

@@ -14,7 +14,7 @@ This API is responsible for managing payment methods for users as well as author
  */
 object PayAPI {
 
-    const val VERSION = "2021-2"
+    const val VERSION = "2022-1"
     internal val baseUrl = "${API.baseUrl}/pay/$VERSION/"
 
     class NewPaymentMethodsAPI
