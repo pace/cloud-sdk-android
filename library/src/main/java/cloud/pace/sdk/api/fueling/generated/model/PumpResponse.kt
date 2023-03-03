@@ -20,7 +20,7 @@ class PumpResponse : Resource() {
     /* Currency as specified in ISO-4217. */
     var currency: String? = null
 
-    /* Fuel amount in liters */
+    /* Fuel amount in units */
     var fuelAmount: Double? = null
     var fuelType: String? = null
 
@@ -35,10 +35,13 @@ class PumpResponse : Resource() {
     var identifier: String? = null
     var priceIncludingVAT: Double? = null
 
-    /* Fuel price in CUR/liter */
+    /* Fuel price in currency/unit */
     var pricePerUnit: Double? = null
     var priceWithoutVAT: Double? = null
     var productName: String? = null
+
+    /* Only if status is locked or readyToPay: PRNs required for creating a token for payment at this gas station */
+    var purposePRNs: List<String>? = null
 
     /* Current pump status.
 * `free` the pump is free, fueling possible (nozzle not lifted), possible transitions *inUse*, *locked*, *outOfOrder*. Note: A transition from *free* to *locked* may implies the pump was pre-authorization was canceled.
@@ -53,6 +56,9 @@ class PumpResponse : Resource() {
 
     /* Provided if the user pre-authorized the pump */
     var transactionId: String? = null
+
+    /* Fuel measurement unit. Eg: `liter`, `us-gallon`, `uk-gallon`, `kilogram` */
+    var unit: String? = null
 
     /* The fueling process that has to be followed
     * `postPay` the pump is *free* and needs to be [paid](#operation/ProcessPayment) after fueling

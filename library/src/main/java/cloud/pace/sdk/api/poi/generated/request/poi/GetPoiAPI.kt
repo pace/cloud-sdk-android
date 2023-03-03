@@ -8,16 +8,10 @@
 package cloud.pace.sdk.api.poi.generated.request.poi
 
 import cloud.pace.sdk.api.poi.POIAPI
-import cloud.pace.sdk.api.poi.generated.model.FuelPrice
-import cloud.pace.sdk.api.poi.generated.model.GasStation
-import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
-import cloud.pace.sdk.api.poi.generated.model.POI
-import cloud.pace.sdk.api.poi.generated.model.ReferenceStatus
+import cloud.pace.sdk.api.poi.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.HeaderMap
-import retrofit2.http.Path
+import retrofit2.http.*
 
 object GetPoiAPI {
 
@@ -40,7 +34,7 @@ object GetPoiAPI {
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
         ): Call<POI> {
-            val resources = listOf(ReferenceStatus::class.java, FuelPrice::class.java, LocationBasedApp::class.java, GasStation::class.java)
+            val resources = listOf(ReferenceStatus::class.java, GasStation::class.java, FuelPrice::class.java, LocationBasedApp::class.java)
             val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(POIAPI.baseUrl, additionalParameters, readTimeout, resources)

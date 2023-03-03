@@ -13,6 +13,8 @@ import moe.banana.jsonapi2.Resource
 @JsonApi(type = "transaction")
 class Transaction : Resource() {
 
+    /* UUID of the pump this transaction was created on */
+    var pumpUUID: String? = null
     var vat: VAT? = null
     var authorizedAmount: Double? = null
 
@@ -21,11 +23,17 @@ class Transaction : Resource() {
     var fuelAmount: Double? = null
     var fuelType: String? = null
     var paymentToken: String? = null
+
+    /* PRNs describing the restrictions (station and fuel types) for a token, if a token is provided */
+    var paymentTokenRestrictions: List<String>? = null
     var priceIncludingVAT: Double? = null
     var pricePerUnit: Double? = null
     var priceWithoutVAT: Double? = null
     var productName: String? = null
     var status: String? = null
+
+    /* Fuel measurement unit. Eg: `liter`, `us-gallon`, `uk-gallon`, `kilogram` */
+    var unit: String? = null
 
     class VAT {
 

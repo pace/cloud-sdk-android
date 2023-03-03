@@ -49,6 +49,10 @@ class TransactionCreate : Resource() {
 
     /* The given productFlow (e.g. preAuth, postPay) */
     var productFlow: String? = null
+    var tolling: TollingMetadata? = null
+
+    /* Set to true if the payment is for an unattended process */
+    var unattended: Boolean? = null
 
     /* Vehicle identification number */
     var vin: String? = null

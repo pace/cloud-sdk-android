@@ -15,6 +15,9 @@ import java.util.Date
 @JsonApi(type = "paymentToken")
 class PaymentToken : Resource() {
 
+    /* PACE resource name of the accountPRN that this is being charged to. */
+    var accountPRN: String? = null
+
     /* The amount that this token represents. */
     var amount: Double? = null
 

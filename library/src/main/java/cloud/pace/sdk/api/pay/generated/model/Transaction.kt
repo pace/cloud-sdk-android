@@ -7,6 +7,7 @@
 
 package cloud.pace.sdk.api.pay.generated.model
 
+import moe.banana.jsonapi2.HasMany
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 import java.util.Date
@@ -24,7 +25,7 @@ class Transaction : Resource() {
 
     /* Initial creation date of the transaction (local-time of the gas station/point of interest) (https://tools.ietf.org/html/rfc3339#section-5.6).
  */
-    var createdAtLocaltime: Date? = null
+    var createdAtLocaltime: String? = null
 
     /* Currency as specified in ISO-4217. */
     var currency: String? = null
@@ -51,7 +52,12 @@ class Transaction : Resource() {
 
     /* Payment token value */
     var paymentToken: String? = null
+
+    /* If a discount was applied, this is the already fully discounted transaction sum */
     var priceIncludingVAT: Double? = null
+
+    /* If a discount was applied, this the transaction sum, before applying the discound */
+    var priceIncludingVATBeforeDiscount: Double? = null
     var priceWithoutVAT: Double? = null
 
     /* The given productFlow (e.g. preAuth, postPay) */
@@ -70,6 +76,9 @@ class Transaction : Resource() {
 
     /* Vehicle identification number */
     var vin: String? = null
+
+    private var discountTokens: HasMany<Discount> = HasMany()
+    fun getDiscountTokens() = discountTokens.get(document)
 
     class VAT {
 

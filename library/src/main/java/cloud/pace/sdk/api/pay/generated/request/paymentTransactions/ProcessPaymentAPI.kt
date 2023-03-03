@@ -8,8 +8,7 @@
 package cloud.pace.sdk.api.pay.generated.request.paymentTransactions
 
 import cloud.pace.sdk.api.pay.PayAPI
-import cloud.pace.sdk.api.pay.generated.model.Transaction
-import cloud.pace.sdk.api.pay.generated.model.TransactionCreateBody
+import cloud.pace.sdk.api.pay.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
 import retrofit2.http.*
@@ -51,9 +50,10 @@ Only use after approaching (fueling api), otherwise returns `403 Forbidden`.
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
         ): Call<Transaction> {
+            val resources = listOf(Discount::class.java)
             val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
-            return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout)
+            return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout, resources)
                 .create(ProcessPaymentService::class.java)
                 .processPayment(
                     headers,

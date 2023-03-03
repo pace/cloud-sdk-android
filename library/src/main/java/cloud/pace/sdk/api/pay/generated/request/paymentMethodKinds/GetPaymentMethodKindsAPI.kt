@@ -8,13 +8,10 @@
 package cloud.pace.sdk.api.pay.generated.request.paymentMethodKinds
 
 import cloud.pace.sdk.api.pay.PayAPI
-import cloud.pace.sdk.api.pay.generated.model.PaymentMethodKinds
+import cloud.pace.sdk.api.pay.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.HeaderMap
-import retrofit2.http.Query
+import retrofit2.http.*
 
 object GetPaymentMethodKindsAPI {
 
@@ -40,7 +37,7 @@ object GetPaymentMethodKindsAPI {
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
         ): Call<PaymentMethodKinds> {
-            val headers = headers(false, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
+            val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout)
                 .create(GetPaymentMethodKindsService::class.java)

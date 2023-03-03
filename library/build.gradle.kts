@@ -156,8 +156,7 @@ dependencies {
         exclude("org.mockito")
     }
     androidTestImplementation(Libs.MOCKK_ANDROID)
-
-    api(Libs.ROOM_TESTING)
+    androidTestImplementation(Libs.ROOM_TESTING)
 }
 
 tasks.withType<ProcessResources> {

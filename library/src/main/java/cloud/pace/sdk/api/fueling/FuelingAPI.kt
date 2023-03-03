@@ -12,12 +12,14 @@ import cloud.pace.sdk.api.API
 /** Fueling API */
 object FuelingAPI {
 
-    const val VERSION = "2021-2"
+    const val VERSION = "2022-1"
     internal val baseUrl = "${API.baseUrl}/fueling/$VERSION/"
 
+    class DiscountAPI
     class FuelingAPI
     class NotificationAPI
 
+    val API.discount: DiscountAPI by lazy { DiscountAPI() }
     val API.fueling: FuelingAPI by lazy { FuelingAPI() }
     val API.notification: NotificationAPI by lazy { NotificationAPI() }
 }

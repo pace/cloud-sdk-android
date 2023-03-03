@@ -13,6 +13,9 @@ import moe.banana.jsonapi2.Resource
 @JsonApi(type = "paymentMethodKindMinimal")
 class PaymentMethodKindMinimal : Resource() {
 
+    /* Currencies supported by payment method kind */
+    var currencies: List<String>? = null
+
     /* Indicates whether the payment method is a fuel card. Fuelcard `no` means no. */
     var fuelcard: Boolean? = null
 

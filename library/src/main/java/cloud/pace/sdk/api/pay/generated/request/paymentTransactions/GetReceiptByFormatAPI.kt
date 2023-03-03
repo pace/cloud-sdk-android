@@ -8,15 +8,13 @@
 package cloud.pace.sdk.api.pay.generated.request.paymentTransactions
 
 import cloud.pace.sdk.api.pay.PayAPI
+import cloud.pace.sdk.api.pay.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.HeaderMap
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 object GetReceiptByFormatAPI {
 
@@ -30,7 +28,7 @@ object GetReceiptByFormatAPI {
             /* ID of the payment transaction */
             @Path("transactionID") transactionID: String,
             /* Format of the expected file */
-            @Path("fileFormat") fileFormat: FileFormat? = null,
+            @Path("fileFormat") fileFormat: FileFormat,
             /* (Optional) Specify the language you want the returned receipt to be localized in.
 Returns the receipt in the default language that is available if the specified language is not available.
 Language does not have to be valid language. For example, `language=local` means that the receipt should be displayed
@@ -56,7 +54,7 @@ in the language that is determined to be spoken in the area that the point of in
 
         fun getReceiptByFormat(
             transactionID: String,
-            fileFormat: FileFormat? = null,
+            fileFormat: FileFormat,
             language: String? = null,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
@@ -77,7 +75,7 @@ in the language that is determined to be spoken in the area that the point of in
 
     fun PayAPI.PaymentTransactionsAPI.getReceiptByFormat(
         transactionID: String,
-        fileFormat: FileFormat? = null,
+        fileFormat: FileFormat,
         language: String? = null,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,

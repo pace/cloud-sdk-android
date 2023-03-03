@@ -8,12 +8,11 @@
 package cloud.pace.sdk.api.pay.generated.request.paymentMethods
 
 import cloud.pace.sdk.api.pay.PayAPI
+import cloud.pace.sdk.api.pay.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.HeaderMap
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 
 object NotificationForPaymentMethodAPI {
 
@@ -23,7 +22,9 @@ object NotificationForPaymentMethodAPI {
         fun notificationForPaymentMethod(
             @HeaderMap headers: Map<String, String>,
             /* Type of the notification */
-            @Query("type") type: String? = null
+            @Query("type") type: String? = null,
+            /* ID of the paymentMethod */
+            @Path("paymentMethodId") paymentMethodId: String
         ): Call<ResponseBody>
     }
 
@@ -31,6 +32,7 @@ object NotificationForPaymentMethodAPI {
 
         fun notificationForPaymentMethod(
             type: String? = null,
+            paymentMethodId: String,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
@@ -41,18 +43,21 @@ object NotificationForPaymentMethodAPI {
                 .create(NotificationForPaymentMethodService::class.java)
                 .notificationForPaymentMethod(
                     headers,
-                    type
+                    type,
+                    paymentMethodId
                 )
         }
     }
 
     fun PayAPI.PaymentMethodsAPI.notificationForPaymentMethod(
         type: String? = null,
+        paymentMethodId: String,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
     ) = Request().notificationForPaymentMethod(
         type,
+        paymentMethodId,
         readTimeout,
         additionalHeaders,
         additionalParameters

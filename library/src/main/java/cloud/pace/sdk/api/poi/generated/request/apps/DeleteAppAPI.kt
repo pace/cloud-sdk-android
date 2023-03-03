@@ -8,12 +8,11 @@
 package cloud.pace.sdk.api.poi.generated.request.apps
 
 import cloud.pace.sdk.api.poi.POIAPI
+import cloud.pace.sdk.api.poi.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.DELETE
-import retrofit2.http.HeaderMap
-import retrofit2.http.Path
+import retrofit2.http.*
 
 object DeleteAppAPI {
 
