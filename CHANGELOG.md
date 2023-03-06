@@ -1,3 +1,13 @@
+17.1.2 Release notes (2023-03-06)
+=============================================================
+
+### Internal
+
+* Change Gradle configuration of Room testing from api to androidTestImplementation
+* Generate API 2022-1
+* Cleanup documentation
+* Decrease log level of unimportant error logs
+
 17.1.1 Release notes (2022-12-12)
 =============================================================
 
