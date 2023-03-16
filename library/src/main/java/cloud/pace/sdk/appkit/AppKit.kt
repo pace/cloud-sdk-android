@@ -97,7 +97,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, url, enableBackToFinish, callback)
+        appManager.openAppActivity(context, url, theme, enableBackToFinish, callback)
     }
 
     /**
@@ -109,7 +109,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openAppActivity(context: Context, app: App, enableBackToFinish: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, app, enableBackToFinish, callback)
+        appManager.openAppActivity(context, app, theme, enableBackToFinish, callback)
     }
 
     /**
@@ -121,7 +121,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openPaceID(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, URL.paceID, enableBackToFinish, callback)
+        appManager.openAppActivity(context, URL.paceID, theme, enableBackToFinish, callback)
     }
 
     /**
@@ -133,7 +133,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openPaymentApp(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, URL.payment, enableBackToFinish, callback)
+        appManager.openAppActivity(context, URL.payment, theme, enableBackToFinish, callback)
     }
 
     /**
@@ -145,7 +145,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openTransactions(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, URL.transactions, enableBackToFinish, callback)
+        appManager.openAppActivity(context, URL.transactions, theme, enableBackToFinish, callback)
     }
 
     /**
@@ -158,7 +158,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openFuelingApp(context: Context, id: String? = null, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openFuelingApp(context, id, enableBackToFinish, callback)
+        appManager.openFuelingApp(context, id, theme, enableBackToFinish, callback)
     }
 
     /**
@@ -170,7 +170,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openDashboard(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, URL.dashboard, enableBackToFinish, callback)
+        appManager.openAppActivity(context, URL.dashboard, theme, enableBackToFinish, callback)
     }
 
     /**
