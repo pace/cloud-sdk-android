@@ -2,25 +2,20 @@ package cloud.pace.sdk.poikit
 
 import androidx.room.Room
 import androidx.room.testing.MigrationTestHelper
-import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import cloud.pace.sdk.poikit.database.POIKitDatabase
-import junit.framework.Assert.assertEquals
+import junit.framework.TestCase.assertEquals
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import java.io.IOException
 
-@RunWith(AndroidJUnit4::class)
 class MigrationTest {
     private val TEST_DB = "migration-test"
 
     @get:Rule
     val helper: MigrationTestHelper = MigrationTestHelper(
         InstrumentationRegistry.getInstrumentation(),
-        POIKitDatabase::class.java.canonicalName,
-        FrameworkSQLiteOpenHelperFactory()
+        POIKitDatabase::class.java
     )
 
     @Test
@@ -54,9 +49,7 @@ class MigrationTest {
 
         // Open latest version of the database. Room will validate the schema
         // once all migrations execute.
-        Room.databaseBuilder(
-            InstrumentationRegistry.getInstrumentation().targetContext, POIKitDatabase::class.java, TEST_DB
-        ).addMigrations(
+        Room.databaseBuilder(InstrumentationRegistry.getInstrumentation().targetContext, POIKitDatabase::class.java, TEST_DB).addMigrations(
             POIKitDatabase.migration1to2,
             POIKitDatabase.migration2to3,
             POIKitDatabase.migration3to4,

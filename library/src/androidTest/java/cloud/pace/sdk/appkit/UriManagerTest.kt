@@ -1,17 +1,14 @@
 package cloud.pace.sdk.appkit
 
-import androidx.test.runner.AndroidJUnit4
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.app.api.UriManagerImpl
 import cloud.pace.sdk.appkit.app.api.UriManagerImpl.Companion.PARAM_R
 import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.Environment
-import junit.framework.Assert.assertEquals
+import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 class UriManagerTest {
 
     private val uriManager = UriManagerImpl()

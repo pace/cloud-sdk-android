@@ -47,11 +47,11 @@ fun DashboardScreen(transactions: Transactions, openPaymentMethods: () -> Unit) 
             fontSize = 26.sp,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(17.dp),
+                .padding(17.dp)
         )
         Divider(
             color = Color.Black,
-            thickness = 3.dp,
+            thickness = 3.dp
         )
         ManagePaymentMethodsButton {
             openPaymentMethods()
@@ -70,7 +70,7 @@ fun DashboardScreen(transactions: Transactions, openPaymentMethods: () -> Unit) 
         )
 
         LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
         ) {
             item {
                 LoadDashboardData(transactions)

@@ -56,7 +56,7 @@ fun BiometrySubSettingView(
     enableBioAutByOTPAction: (String) -> Unit,
     setPinWithPasswordAction: (String, String) -> Unit,
     setPinWithOTPAction: (String, String) -> Unit,
-    setPinWithBiometryAction: (String) -> Unit,
+    setPinWithBiometryAction: (String) -> Unit
 ) {
     val openEnableBiometryWithPinDialog = remember { mutableStateOf(false) }
     val openEnableBiometryWithPasswordDialog = remember { mutableStateOf(false) }
@@ -96,7 +96,7 @@ fun BiometrySubSettingView(
 
         Divider(
             color = Color.Black,
-            thickness = 3.dp,
+            thickness = 3.dp
         )
         // biometry status row:
         Row(
@@ -104,7 +104,6 @@ fun BiometrySubSettingView(
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
             Text(
                 text = "biometry status: ",
                 Modifier.padding(8.dp)
@@ -183,7 +182,7 @@ fun BiometrySubSettingView(
 
         Divider(
             color = Color.Black,
-            thickness = 3.dp,
+            thickness = 3.dp
         )
 
         Column(
@@ -222,9 +221,11 @@ fun BiometrySubSettingView(
                                 visualTransformation = if (textFieldInputVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                                 trailingIcon = {
-                                    val image = if (textFieldInputVisibility)
+                                    val image = if (textFieldInputVisibility) {
                                         Icons.Filled.Visibility
-                                    else Icons.Filled.VisibilityOff
+                                    } else {
+                                        Icons.Filled.VisibilityOff
+                                    }
 
                                     IconButton(onClick = {
                                         textFieldInputVisibility = !textFieldInputVisibility
@@ -239,7 +240,7 @@ fun BiometrySubSettingView(
                         Button(
                             onClick = {
                                 enableBioAutByPINAction(pinInput)
-                            },
+                            }
                         ) {
                             Text("Enable")
                         }
@@ -252,7 +253,7 @@ fun BiometrySubSettingView(
                         ) {
                             Text("Cancel")
                         }
-                    },
+                    }
                 )
             }
             CustomButton(text = "Enable biometry with password") {
@@ -267,7 +268,7 @@ fun BiometrySubSettingView(
                     title = {
                         Text(
                             text = "Enabling biometric authentication!",
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.Bold
                         )
                     },
                     text = {
@@ -286,9 +287,11 @@ fun BiometrySubSettingView(
                                 visualTransformation = if (textFieldInputVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                                 trailingIcon = {
-                                    val image = if (textFieldInputVisibility)
+                                    val image = if (textFieldInputVisibility) {
                                         Icons.Filled.Visibility
-                                    else Icons.Filled.VisibilityOff
+                                    } else {
+                                        Icons.Filled.VisibilityOff
+                                    }
 
                                     IconButton(onClick = {
                                         textFieldInputVisibility = !textFieldInputVisibility
@@ -301,7 +304,7 @@ fun BiometrySubSettingView(
                     },
                     confirmButton = {
                         Button(
-                            onClick = { enableBioAutByPasswordAction(passwordInput) },
+                            onClick = { enableBioAutByPasswordAction(passwordInput) }
                         ) {
                             Text("Enable")
                         }
@@ -314,7 +317,7 @@ fun BiometrySubSettingView(
                         ) {
                             Text("Cancel")
                         }
-                    },
+                    }
                 )
             }
             CustomButton(text = "Enable biometry with otp") {
@@ -322,7 +325,6 @@ fun BiometrySubSettingView(
             }
 
             if (openBiometryWithOTPDialog.value) {
-
                 AlertDialog(
                     onDismissRequest = {
                         openBiometryWithOTPDialog.value = false
@@ -338,14 +340,14 @@ fun BiometrySubSettingView(
                             Text(
                                 text = "To enable biometric authentication by otp you need to enter the code that was sent to you by mail:",
                                 modifier = Modifier
-                                    .padding(0.dp, 4.dp),
+                                    .padding(0.dp, 4.dp)
                             )
                             TextField(
                                 value = otpInput,
                                 onValueChange = { otpInput = it },
                                 label = { Text("OTP") },
                                 modifier = Modifier
-                                    .padding(0.dp, 4.dp),
+                                    .padding(0.dp, 4.dp)
                             )
                         }
                     },
@@ -353,7 +355,7 @@ fun BiometrySubSettingView(
                         Button(
                             onClick = {
                                 enableBioAutByOTPAction(otpInput)
-                            },
+                            }
                         ) {
                             Text("Enable")
                         }
@@ -366,7 +368,7 @@ fun BiometrySubSettingView(
                         ) {
                             Text("Cancel")
                         }
-                    },
+                    }
                 )
             }
 
@@ -415,9 +417,11 @@ fun BiometrySubSettingView(
                                 visualTransformation = if (textFieldInputVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                                 trailingIcon = {
-                                    val image = if (textFieldInputVisibility)
+                                    val image = if (textFieldInputVisibility) {
                                         Icons.Filled.Visibility
-                                    else Icons.Filled.VisibilityOff
+                                    } else {
+                                        Icons.Filled.VisibilityOff
+                                    }
                                     IconButton(onClick = {
                                         textFieldInputVisibility = !textFieldInputVisibility
                                     }) {
@@ -435,13 +439,13 @@ fun BiometrySubSettingView(
                                     .padding(0.dp, 4.dp),
                                 value = otpInput,
                                 onValueChange = { otpInput = it },
-                                label = { Text("OTP") },
+                                label = { Text("OTP") }
                             )
                         }
                     },
                     confirmButton = {
                         Button(
-                            onClick = { setPinWithOTPAction(pinInput, otpInput) },
+                            onClick = { setPinWithOTPAction(pinInput, otpInput) }
                         ) {
                             Text("set Pin")
                         }
@@ -454,7 +458,7 @@ fun BiometrySubSettingView(
                         ) {
                             Text("Cancel")
                         }
-                    },
+                    }
                 )
             }
             CustomButton(text = "Set pin with biometry") {
@@ -488,9 +492,11 @@ fun BiometrySubSettingView(
                                 visualTransformation = if (textFieldInputVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                                 trailingIcon = {
-                                    val image = if (textFieldInputVisibility)
+                                    val image = if (textFieldInputVisibility) {
                                         Icons.Filled.Visibility
-                                    else Icons.Filled.VisibilityOff
+                                    } else {
+                                        Icons.Filled.VisibilityOff
+                                    }
 
                                     IconButton(onClick = {
                                         textFieldInputVisibility = !textFieldInputVisibility
@@ -505,7 +511,7 @@ fun BiometrySubSettingView(
                         Button(
                             onClick = {
                                 setPinWithBiometryAction(pinInput)
-                            },
+                            }
                         ) {
                             Text("Set pin")
                         }
@@ -518,7 +524,7 @@ fun BiometrySubSettingView(
                         ) {
                             Text("Cancel")
                         }
-                    },
+                    }
                 )
             }
             CustomButton(text = "Set pin with password") {
@@ -546,9 +552,11 @@ fun BiometrySubSettingView(
                                 visualTransformation = if (textFieldInputVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                                 trailingIcon = {
-                                    val image = if (textFieldInputVisibility)
+                                    val image = if (textFieldInputVisibility) {
                                         Icons.Filled.Visibility
-                                    else Icons.Filled.VisibilityOff
+                                    } else {
+                                        Icons.Filled.VisibilityOff
+                                    }
 
                                     IconButton(onClick = {
                                         textFieldInputVisibility = !textFieldInputVisibility
@@ -565,9 +573,11 @@ fun BiometrySubSettingView(
                                 visualTransformation = if (textFieldInputVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                                 trailingIcon = {
-                                    val image = if (textFieldInputVisibility)
+                                    val image = if (textFieldInputVisibility) {
                                         Icons.Filled.Visibility
-                                    else Icons.Filled.VisibilityOff
+                                    } else {
+                                        Icons.Filled.VisibilityOff
+                                    }
 
                                     IconButton(onClick = {
                                         textFieldInputVisibility = !textFieldInputVisibility
@@ -580,7 +590,7 @@ fun BiometrySubSettingView(
                     },
                     confirmButton = {
                         Button(
-                            onClick = { setPinWithPasswordAction(pinInput, passwordInput) },
+                            onClick = { setPinWithPasswordAction(pinInput, passwordInput) }
                         ) {
                             Text("Enable")
                         }
@@ -593,7 +603,7 @@ fun BiometrySubSettingView(
                         ) {
                             Text("Cancel")
                         }
-                    },
+                    }
                 )
             }
         }
@@ -609,10 +619,10 @@ fun CustomButton(text: String, onClick: () -> Unit) {
             .padding(16.dp)
             .height(50.dp)
             .width(300.dp),
-        border = BorderStroke(1.dp, Color.Black),
+        border = BorderStroke(1.dp, Color.Black)
     ) {
         Text(
-            text = text,
+            text = text
         )
     }
 }

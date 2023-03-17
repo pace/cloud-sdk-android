@@ -17,6 +17,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [14.x.x -> 15.x.x](#from-14xx-to-15xx)
         + [15.x.x -> 16.x.x](#from-15xx-to-16xx)
         + [16.x.x -> 17.x.x](#from-16xx-to-17xx)
+        + [17.x.x -> 18.x.x](#from-17xx-to-18xx)
 
 ## Documentation
 The full documentation and instructions on how to integrate PACE Cloud SDK can be found [here](https://docs.pace.cloud/en/integrating/mobile-app)
@@ -119,6 +120,11 @@ The `GasStations` properties `paymentMethods`, `amenities`, `foods`, `loyaltyPro
 
 - Introduced a `NoSupportedBrowser` exception which will now be returned from all `IDKit.authorize(...)` and `IDKit.endSession(...)` calls instead of crashing the app with an `ActivityNotFoundException` if no supported browser is installed and enabled to handle the Custom Tab intent. In this case, we show a Toast prompting the user to enable Google Chrome.
 - The suspendable calls `IDKit.authorize(...)` and `IDKit.endSession(...)` now return the `Completion` result instead of invoking a function parameter on result to make the calls synchronous.
+
+### From 17.x.x to 18.x.x
+
+- Upgraded dependencies for Android gradle plugin, Kotlin and Compose. Make sure client dependencies are compatible or update them.
+
 
 ## SDK API Docs
 

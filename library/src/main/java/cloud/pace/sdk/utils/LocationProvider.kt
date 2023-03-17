@@ -57,8 +57,8 @@ class LocationProviderImpl(
     }
     private val locationCallback by lazy {
         object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                val lastLocation = locationResult?.lastLocation ?: return
+            override fun onLocationResult(locationResult: LocationResult) {
+                val lastLocation = locationResult.lastLocation ?: return
                 location.postValue(lastLocation)
             }
         }
@@ -144,8 +144,8 @@ class LocationProviderImpl(
                                 // Use Fused Location Provider API
                                 val client = systemManager.getFusedLocationProviderClient()
                                 val callback = object : LocationCallback() {
-                                    override fun onLocationResult(locationResult: LocationResult?) {
-                                        getLocationIfValid(locationResult?.lastLocation, null, startTime)?.let {
+                                    override fun onLocationResult(locationResult: LocationResult) {
+                                        getLocationIfValid(locationResult.lastLocation, null, startTime)?.let {
                                             client.removeLocationUpdates(this)
                                             continuation.resumeIfActive(it)
                                         }
