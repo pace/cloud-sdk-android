@@ -116,7 +116,8 @@ class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
             }
         }
 
-        binding.appWebView.init(RequestUtils.getUrlWithQueryParams(url))
+        val isDarkMode = intent?.extras?.getBoolean(IS_DARK_MODE)
+        binding.appWebView.init(RequestUtils.getUrlWithQueryParams(url), isDarkMode)
     }
 
     override fun onBackPressed() {
@@ -136,5 +137,6 @@ class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
         private const val TAG = "AppActivity"
         const val APP_URL = "APP_URL"
         const val BACK_TO_FINISH = "BACK_TO_FINISH"
+        const val IS_DARK_MODE = "IS_DARK_MODE"
     }
 }

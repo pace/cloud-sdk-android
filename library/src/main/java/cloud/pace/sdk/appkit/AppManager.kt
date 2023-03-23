@@ -222,32 +222,33 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
         }
     }
 
-    internal fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
+    internal fun openAppActivity(context: Context, url: String, theme: Theme, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
         callback.onOpen(null)
-        startAppActivity(context, url, enableBackToFinish, callback)
+        startAppActivity(context, url, theme, enableBackToFinish, callback)
     }
 
-    internal fun openAppActivity(context: Context, app: App, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
+    internal fun openAppActivity(context: Context, app: App, theme: Theme, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
         callback.onOpen(app)
-        startAppActivity(context, app.url, enableBackToFinish, callback)
+        startAppActivity(context, app.url, theme, enableBackToFinish, callback)
     }
 
-    internal fun openFuelingApp(context: Context, id: String? = null, enableBackToFinish: Boolean = true, callback: AppCallbackImpl) {
+    internal fun openFuelingApp(context: Context, id: String? = null, theme: Theme, enableBackToFinish: Boolean = true, callback: AppCallbackImpl) {
         if (id == null) {
-            openAppActivity(context, fueling, enableBackToFinish, callback)
+            openAppActivity(context, fueling, theme, enableBackToFinish, callback)
         } else {
             appRepository.getFuelingUrl(id) {
-                openAppActivity(context, it, enableBackToFinish, callback)
+                openAppActivity(context, it, theme, enableBackToFinish, callback)
             }
         }
     }
 
-    private fun startAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
+    private fun startAppActivity(context: Context, url: String, theme: Theme, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
         appModel.callback = callback
 
         val intent = Intent(context, AppActivity::class.java)
         intent.putExtra(AppActivity.BACK_TO_FINISH, enableBackToFinish)
         intent.putExtra(AppActivity.APP_URL, url)
+        intent.putExtra(AppActivity.IS_DARK_MODE, theme == Theme.DARK)
         context.startActivity(intent)
     }
 
@@ -262,7 +263,7 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
             appDrawer.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
 
             appDrawer.setApp(app, theme == Theme.DARK) {
-                openAppActivity(context, app, callback = callback)
+                openAppActivity(context, app, theme, callback = callback)
             }
             appDrawer.expand()
 
