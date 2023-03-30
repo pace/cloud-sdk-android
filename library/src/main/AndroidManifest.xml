@@ -68,6 +68,10 @@
             android:name="appAuthRedirectScheme"
             android:value="${appAuthRedirectScheme}" />
 
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
+
         <provider
             android:name=".appkit.utils.PACECloudSDKFileProvider"
             android:authorities="${applicationId}.pace_cloud_sdk_file_provider"

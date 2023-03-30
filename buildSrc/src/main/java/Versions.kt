@@ -21,6 +21,7 @@ object Versions {
     const val DOKKA = "1.8.10"
     const val FRAGMENT_KTX = "1.5.5"
     const val GOOGLE_MAPS_UTILS = "3.4.0"
+    const val GOOGLE_PAY = "19.1.0"
     const val GOOGLE_PLAY_SERVICES_LOCATION = "21.0.1"
     const val GOOGLE_PLAY_SERVICES_MAPS = "18.1.0"
     const val GOOGLE_PROTOBUF_GRADLE_PLUGIN = "0.8.17"

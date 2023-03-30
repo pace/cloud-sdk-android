@@ -16,7 +16,7 @@ public data class OpenURLInNewTabRequest(
      */
     public val cancelUrl: String,
     /**
-     * Wheter the tab should be opened in the SDK's web view instead of the system's browser.
+     * Whether the tab should be opened in the SDK's web view instead of the system's browser.
      */
     public val integrated: Boolean?
 )

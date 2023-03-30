@@ -20,12 +20,13 @@ import cloud.pace.sdk.appkit.communication.generated.Communication
 import cloud.pace.sdk.appkit.communication.generated.Metadata
 import cloud.pace.sdk.appkit.communication.generated.model.request.AppRedirectRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.ApplePayAvailabilityCheckRequest
-import cloud.pace.sdk.appkit.communication.generated.model.request.ApplePayRequestRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.DisableRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.GetAccessTokenRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.GetConfigRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.GetSecureDataRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.GetTOTPRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.GooglePayAvailabilityCheckRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.GooglePayPaymentRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.ImageDataRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.LogEventRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.OpenURLInNewTabRequest
@@ -41,8 +42,6 @@ import cloud.pace.sdk.appkit.communication.generated.model.response.AppRedirectE
 import cloud.pace.sdk.appkit.communication.generated.model.response.AppRedirectResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.ApplePayAvailabilityCheckError
 import cloud.pace.sdk.appkit.communication.generated.model.response.ApplePayAvailabilityCheckResult
-import cloud.pace.sdk.appkit.communication.generated.model.response.ApplePayRequestError
-import cloud.pace.sdk.appkit.communication.generated.model.response.ApplePayRequestResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.BackError
 import cloud.pace.sdk.appkit.communication.generated.model.response.BackResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.CloseError
@@ -70,6 +69,11 @@ import cloud.pace.sdk.appkit.communication.generated.model.response.GetTOTPResul
 import cloud.pace.sdk.appkit.communication.generated.model.response.GetTraceIdError
 import cloud.pace.sdk.appkit.communication.generated.model.response.GetTraceIdResponse
 import cloud.pace.sdk.appkit.communication.generated.model.response.GetTraceIdResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayAvailabilityCheckError
+import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayAvailabilityCheckResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayAvailabilityCheckResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayPaymentError
+import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayPaymentResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.ImageDataError
 import cloud.pace.sdk.appkit.communication.generated.model.response.ImageDataResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.IntrospectError
@@ -227,6 +231,7 @@ class AppWebViewModelImpl(
                             )
                         )
                     )
+
                     LogoutResponse.OTHER -> continuation.resumeIfActive(LogoutResult(LogoutResult.Failure(LogoutResult.Failure.StatusCode.InternalServerError, LogoutError())))
                 }
             }
@@ -567,15 +572,6 @@ class AppWebViewModelImpl(
         )
     }
 
-    override suspend fun applePayRequest(timeout: Long?, applePayRequestRequest: ApplePayRequestRequest): ApplePayRequestResult {
-        return ApplePayRequestResult(
-            ApplePayRequestResult.Failure(
-                ApplePayRequestResult.Failure.StatusCode.InternalServerError,
-                ApplePayRequestError("ApplePayRequestResult is not supported on Android")
-            )
-        )
-    }
-
     override suspend fun back(timeout: Long?): BackResult {
         return handle(
             timeout,
@@ -693,6 +689,7 @@ class AppWebViewModelImpl(
                                     )
                                 )
                             }
+
                             is Failure -> {
                                 when (validLocation.throwable) {
                                     is PermissionDenied -> GetLocationResult(
@@ -701,12 +698,14 @@ class AppWebViewModelImpl(
                                             GetLocationError(validLocation.throwable.message)
                                         )
                                     )
+
                                     is NoLocationFound -> GetLocationResult(
                                         GetLocationResult.Failure(
                                             GetLocationResult.Failure.StatusCode.NotFound,
                                             GetLocationError(validLocation.throwable.message)
                                         )
                                     )
+
                                     else -> GetLocationResult(
                                         GetLocationResult.Failure(
                                             GetLocationResult.Failure.StatusCode.InternalServerError,
@@ -718,6 +717,7 @@ class AppWebViewModelImpl(
                         }
                     }
                 }
+
                 is Failure -> {
                     when (currentLocation.throwable) {
                         is PermissionDenied -> GetLocationResult(GetLocationResult.Failure(GetLocationResult.Failure.StatusCode.Forbidden, GetLocationError(currentLocation.throwable.message)))
@@ -809,6 +809,68 @@ class AppWebViewModelImpl(
         ) {
             appModel.onShareTextReceived(shareTextRequest.text, shareTextRequest.title)
             ShareTextResult(ShareTextResult.Success())
+        }
+    }
+
+    override suspend fun googlePayAvailabilityCheck(timeout: Long?, googlePayAvailabilityCheckRequest: GooglePayAvailabilityCheckRequest): GooglePayAvailabilityCheckResult {
+        handleAsync(
+            timeout,
+            GooglePayAvailabilityCheckResult(
+                GooglePayAvailabilityCheckResult.Failure(
+                    GooglePayAvailabilityCheckResult.Failure.StatusCode.RequestTimeout,
+                    GooglePayAvailabilityCheckError("Timeout for googlePayAvailabilityCheck")
+                )
+            ),
+            GooglePayAvailabilityCheckResult(
+                GooglePayAvailabilityCheckResult.Failure(
+                    GooglePayAvailabilityCheckResult.Failure.StatusCode.InternalServerError,
+                    GooglePayAvailabilityCheckError("An error occurred")
+                )
+            )
+        ) { continuation ->
+            appModel.onGooglePayAvailabilityRequest(googlePayAvailabilityCheckRequest) {
+                when (it) {
+                    is Success -> continuation.resumeIfActive(GooglePayAvailabilityCheckResult(GooglePayAvailabilityCheckResult.Success(it.result)))
+                    is Failure -> continuation.resumeIfActive(
+                        GooglePayAvailabilityCheckResult(
+                            GooglePayAvailabilityCheckResult.Failure(
+                                if (it.throwable is OperationCanceled) {
+                                    GooglePayAvailabilityCheckResult.Failure.StatusCode.ClientClosedRequest
+                                } else {
+                                    GooglePayAvailabilityCheckResult.Failure.StatusCode.InternalServerError
+                                },
+                                GooglePayAvailabilityCheckError(it.throwable.message)
+                            )
+                        )
+                    )
+                }
+            }
+        }
+
+        return GooglePayAvailabilityCheckResult(
+            GooglePayAvailabilityCheckResult.Success(GooglePayAvailabilityCheckResponse(true))
+        )
+    }
+
+    override suspend fun googlePayPayment(timeout: Long?, googlePayPaymentRequest: GooglePayPaymentRequest): GooglePayPaymentResult {
+        return handleAsync(
+            timeout,
+            GooglePayPaymentResult(GooglePayPaymentResult.Failure(GooglePayPaymentResult.Failure.StatusCode.RequestTimeout, GooglePayPaymentError("Timeout for googlePayPayment"))),
+            GooglePayPaymentResult(GooglePayPaymentResult.Failure(GooglePayPaymentResult.Failure.StatusCode.InternalServerError, GooglePayPaymentError("An error occurred")))
+        ) { continuation ->
+            appModel.onGooglePayPayment(googlePayPaymentRequest) {
+                when (it) {
+                    is Success -> continuation.resumeIfActive(GooglePayPaymentResult(GooglePayPaymentResult.Success(it.result)))
+                    is Failure -> continuation.resumeIfActive(
+                        GooglePayPaymentResult(
+                            GooglePayPaymentResult.Failure(
+                                if (it.throwable is OperationCanceled) GooglePayPaymentResult.Failure.StatusCode.ClientClosedRequest else GooglePayPaymentResult.Failure.StatusCode.InternalServerError,
+                                GooglePayPaymentError(it.throwable.message)
+                            )
+                        )
+                    )
+                }
+            }
         }
     }
 

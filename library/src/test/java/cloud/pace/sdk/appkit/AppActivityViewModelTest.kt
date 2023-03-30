@@ -9,10 +9,15 @@ import cloud.pace.sdk.appkit.app.webview.AppWebViewModel
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.communication.AppModelImpl
 import cloud.pace.sdk.appkit.communication.LogoutResponse
+import cloud.pace.sdk.appkit.communication.generated.model.request.GooglePayAvailabilityCheckRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.GooglePayPaymentRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.OpenURLInNewTabRequest
+import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayAvailabilityCheckResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayPaymentResponse
 import cloud.pace.sdk.appkit.utils.CoroutineTestRule
 import cloud.pace.sdk.utils.Completion
 import cloud.pace.sdk.utils.Event
+import io.mockk.mockk
 import junit.framework.Assert.assertEquals
 import org.junit.After
 import org.junit.Before
@@ -120,6 +125,34 @@ class AppActivityViewModelTest : KoinTest {
         assertEquals(onResult, viewModel.endSession.value?.peekContent()?.onResult)
 
         viewModel.endSession.removeObserver(observer)
+    }
+
+    @Test
+    fun `google pay availability check is requested`() {
+        val onResult: (Completion<GooglePayAvailabilityCheckResponse>) -> Unit = {}
+        val googlePayAvailabilityCheckRequest = GooglePayAvailabilityCheckRequest(2, 0, listOf())
+
+        val observer = Observer<Event<Pair<GooglePayAvailabilityCheckRequest, (Completion<GooglePayAvailabilityCheckResponse>) -> Unit>>> {}
+        viewModel.googlePayAvailabilityCheck.observeForever(observer)
+
+        appModel.onGooglePayAvailabilityRequest(googlePayAvailabilityCheckRequest, onResult)
+        assertEquals(Pair(googlePayAvailabilityCheckRequest, onResult), viewModel.googlePayAvailabilityCheck.value?.peekContent())
+
+        viewModel.googlePayAvailabilityCheck.removeObserver(observer)
+    }
+
+    @Test
+    fun `google pay payment is requested`() {
+        val onResult: (Completion<GooglePayPaymentResponse>) -> Unit = {}
+        val googlePayPaymentRequest = GooglePayPaymentRequest(2, 0, null, listOf(), mockk())
+
+        val observer = Observer<Event<Pair<GooglePayPaymentRequest, (Completion<GooglePayPaymentResponse>) -> Unit>>> {}
+        viewModel.googlePayPayment.observeForever(observer)
+
+        appModel.onGooglePayPayment(googlePayPaymentRequest, onResult)
+        assertEquals(Pair(googlePayPaymentRequest, onResult), viewModel.googlePayPayment.value?.peekContent())
+
+        viewModel.googlePayPayment.removeObserver(observer)
     }
 
     @After

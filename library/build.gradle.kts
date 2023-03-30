@@ -110,6 +110,7 @@ dependencies {
     api(Libs.GOOGLE_PLAY_SERVICES_MAPS)
     implementation(Libs.GOOGLE_MAPS_UTILS)
     implementation(Libs.GOOGLE_PROTOBUF_JAVALITE)
+    implementation(Libs.GOOGLE_PAY)
 
     // Dependency injection
     api(Libs.KOIN_ANDROID)
