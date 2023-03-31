@@ -43,20 +43,20 @@ fun ListScreenListItem(gasStation: GasStation, location: Location?) {
         Column(
             modifier = Modifier
                 .padding(vertical = 4.dp, horizontal = 14.dp)
-                .weight(1f),
+                .weight(1f)
         ) {
             Text(
                 text = gasStation.name.orEmpty(),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 overflow = TextOverflow.Visible,
-                maxLines = 1,
+                maxLines = 1
             )
 
             Text(
                 text = getAddressText(gasStation.address).orEmpty(),
                 overflow = TextOverflow.Visible,
-                maxLines = 2,
+                maxLines = 2
             )
             if (location != null) {
                 Text(
@@ -78,7 +78,7 @@ fun ListScreenListItem(gasStation: GasStation, location: Location?) {
                 text = gasStation.prices.toString().replace(",", "\n").replace("[", "").replace("]", "").replace(" ", ""),
                 textAlign = TextAlign.End,
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 7,
+                maxLines = 7
             )
         }
     }

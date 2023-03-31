@@ -72,15 +72,14 @@ fun ListScreen(gasStationList: List<GasStation>, location: LiveData<Location>, p
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 Divider(
                     color = Color.Black,
-                    thickness = 3.dp,
+                    thickness = 3.dp
                 )
                 Column(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
-                        .fillMaxSize(),
+                        .fillMaxSize()
                 ) {
                     if (isPermissionGranted == false) {
                         Snackbar {
@@ -105,7 +104,7 @@ fun ListScreen(gasStationList: List<GasStation>, location: LiveData<Location>, p
                     painter = painterResource(id = R.drawable.ic_baseline_menu_24),
                     contentDescription = "",
                     modifier = Modifier
-                        .size(36.dp),
+                        .size(36.dp)
                 )
             }
             Text(

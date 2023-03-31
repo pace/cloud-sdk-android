@@ -61,7 +61,7 @@ fun SettingsScreen(activity: MainScreenActivity, lifecycleScope: LifecycleCorout
 
         Divider(
             color = Color.Black,
-            thickness = 3.dp,
+            thickness = 3.dp
         )
 
         Column(
@@ -70,7 +70,7 @@ fun SettingsScreen(activity: MainScreenActivity, lifecycleScope: LifecycleCorout
                 .verticalScroll(rememberScrollState())
                 .background(MaterialTheme.colors.background),
             verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             OpenSubSettingsButton {
                 val intent = Intent(activity, BiometrySubSettingsActivity::class.java)
@@ -118,11 +118,11 @@ fun OpenSubSettingsButton(onClick: () -> Unit) {
             .padding(16.dp)
             .height(50.dp)
             .width(300.dp),
-        border = BorderStroke(1.dp, Color.Black),
+        border = BorderStroke(1.dp, Color.Black)
     ) {
         Text(
             text = "Biometry settings",
-            fontSize = 16.sp,
+            fontSize = 16.sp
         )
         Icon(
             painter = painterResource(id = R.drawable.ic_baseline_chevron_right_24),
@@ -143,11 +143,11 @@ fun MiscellaneousButton() {
             .padding(12.dp)
             .height(50.dp)
             .width(300.dp),
-        border = BorderStroke(1.dp, Color.Black),
+        border = BorderStroke(1.dp, Color.Black)
     ) {
         Text(
             text = "Miscellaneous",
-            fontSize = 16.sp,
+            fontSize = 16.sp
         )
     }
 }
@@ -165,7 +165,7 @@ fun LogoutButton(onClick: () -> Unit) {
             .padding(12.dp)
             .height(50.dp)
             .width(300.dp),
-        border = BorderStroke(1.dp, Color.Black),
+        border = BorderStroke(1.dp, Color.Black)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_baseline_logout_24),

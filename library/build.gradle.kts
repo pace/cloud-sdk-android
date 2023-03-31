@@ -77,6 +77,11 @@ android {
         }
     }
 
+    packagingOptions {
+        resources.merges.add("META-INF/LICENSE.md")
+        resources.merges.add("META-INF/LICENSE-notice.md")
+    }
+
     tasks.dokkaHtml.configure {
         outputDirectory.set(buildDir.resolve("dokka"))
 
@@ -151,7 +156,7 @@ dependencies {
 
     androidTestImplementation(Libs.TEST_CORE)
     androidTestImplementation(Libs.TEST_RUNNER)
-    androidTestImplementation(Libs.TEST_JUNIT)
+    androidTestImplementation(Libs.JUNIT)
     androidTestImplementation(Libs.KOIN_TEST) {
         exclude("org.mockito")
     }

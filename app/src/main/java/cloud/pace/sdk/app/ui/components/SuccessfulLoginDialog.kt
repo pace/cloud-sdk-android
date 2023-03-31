@@ -50,7 +50,7 @@ fun SuccessfulLoginDialog(activity: MainScreenActivity, enableBioAuth: () -> Uni
                 ) {
                     Text("No")
                 }
-            },
+            }
         )
     }
 }

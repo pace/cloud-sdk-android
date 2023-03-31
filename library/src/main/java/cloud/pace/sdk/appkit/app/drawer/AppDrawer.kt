@@ -315,13 +315,13 @@ class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
             this.binding.expandedBackground.layoutParams = layoutParams
         }
         anim.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationRepeat(animation: Animator?) {}
-            override fun onAnimationCancel(animation: Animator?) {}
-            override fun onAnimationStart(animation: Animator?) {
+            override fun onAnimationRepeat(animation: Animator) {}
+            override fun onAnimationCancel(animation: Animator) {}
+            override fun onAnimationStart(animation: Animator) {
                 cancelClick = true
             }
 
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
                 cancelClick = false
                 handleCloseButton(expand)
             }

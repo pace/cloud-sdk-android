@@ -81,7 +81,7 @@ class BiometrySubSettingsActivity : AppCompatActivity() {
                         pin = pin,
                         completion = completion
                     )
-                },
+                }
             )
         }
 

@@ -39,7 +39,7 @@ import org.mockito.Mockito.mock
 open class TestLocationProvider(
     private val mockedLocation: Location? = null,
     private val throwable: Throwable = NoLocationFound,
-    private val mockedLocationState: LocationState = LocationState.LOCATION_HIGH_ACCURACY,
+    private val mockedLocationState: LocationState = LocationState.LOCATION_HIGH_ACCURACY
 ) : LocationProvider {
 
     override val locationState = MutableLiveData<LocationState>()

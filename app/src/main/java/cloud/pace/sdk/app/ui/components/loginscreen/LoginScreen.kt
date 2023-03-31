@@ -41,18 +41,18 @@ fun ShowLoginScreen(showDialog: Boolean, onDialogDismiss: () -> Unit, openLogin:
                     Icon(
                         painter = painterResource(id = R.drawable.pace_logo),
                         contentDescription = null,
-                        modifier = Modifier.padding(20.dp),
+                        modifier = Modifier.padding(20.dp)
                     )
                     Text(
                         text = stringResource(id = R.string.app_name),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
-                        textAlign = TextAlign.Center,
+                        textAlign = TextAlign.Center
                     )
                 },
                 contentColor = Color.White,
-                elevation = 60.dp,
+                elevation = 60.dp
             )
         },
         content = {
@@ -111,7 +111,7 @@ fun ShowLoginScreen(showDialog: Boolean, onDialogDismiss: () -> Unit, openLogin:
                 ) {
                     drawCircle(
                         color = Color.Black,
-                        radius = 6f,
+                        radius = 6f
                     )
                 }
 
@@ -140,7 +140,6 @@ fun ShowLoginScreen(showDialog: Boolean, onDialogDismiss: () -> Unit, openLogin:
 
 @Composable
 fun LoginButton(modifier: Modifier, openLogin: () -> Unit) {
-
     OutlinedButton(
         modifier = modifier
             .padding(25.dp)
@@ -149,20 +148,20 @@ fun LoginButton(modifier: Modifier, openLogin: () -> Unit) {
         onClick = {
             openLogin()
         },
-        shape = RoundedCornerShape(40),
+        shape = RoundedCornerShape(40)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_baseline_login_24),
             contentDescription = "",
             modifier = Modifier
                 .size(60.dp)
-                .padding(10.dp),
+                .padding(10.dp)
         )
         Text(
             text = "Login",
             fontSize = 30.sp,
             modifier = Modifier
-                .padding(10.dp),
+                .padding(10.dp)
         )
     }
 }

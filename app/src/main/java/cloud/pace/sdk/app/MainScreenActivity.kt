@@ -157,7 +157,6 @@ class MainScreenActivity : AppCompatActivity() {
 
     @Composable
     fun BottomBarControl(navController: NavHostController) {
-
         val transactions = remember { transactions }
 
         val gasStations = remember { gasStations }

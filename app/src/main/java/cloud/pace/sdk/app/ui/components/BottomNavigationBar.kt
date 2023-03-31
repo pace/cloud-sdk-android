@@ -19,7 +19,7 @@ fun BottomBar(navController: NavController) {
     val items = listOf(
         Screen.List,
         Screen.Dashboard,
-        Screen.Settings,
+        Screen.Settings
     )
     BottomNavigation(
         elevation = 6.dp
