@@ -1,3 +1,14 @@
+18.0.0 Release notes (2023-03-31)
+=============================================================
+
+### Breaking Changes
+
+* Upgraded dependencies for Android gradle plugin, Kotlin and Compose. Make sure client dependencies are compatible or update them.
+
+### Fixes
+
+* Correctly set webview background color
+
 17.1.2 Release notes (2023-03-06)
 =============================================================
 
