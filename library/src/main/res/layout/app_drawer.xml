@@ -36,36 +36,58 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="76dp"
-        android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:elevation="10dp"
         android:ellipsize="end"
         android:lines="1"
+        android:text="@string/default_drawer_second_line"
         android:textColor="@color/drawer_default_text"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@id/expanded_background"
         app:layout_constraintEnd_toStartOf="@id/close_button"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@id/expanded_background"
-        app:layout_constraintTop_toBottomOf="@+id/subtitle_view"
-        android:text="@string/default_drawer_second_line" />
+        app:layout_constraintTop_toBottomOf="@+id/subtitle_view" />
 
     <TextView
         android:id="@+id/subtitle_view"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="10dp"
         android:elevation="10dp"
         android:ellipsize="end"
         android:lines="1"
+        android:text="@string/default_drawer_first_line"
         android:textColor="@color/drawer_default_text"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@id/close_button"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toStartOf="@id/distance_view"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="@id/title_view"
-        app:layout_constraintTop_toTopOf="@id/expanded_background"
-        android:text="@string/default_drawer_first_line" />
+        app:layout_constraintTop_toTopOf="@id/expanded_background" />
+
+    <TextView
+        android:id="@+id/distance_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:background="@drawable/rounded_box_4dp"
+        android:drawableLeft="@drawable/ic_icon_distance_10dp"
+        android:drawablePadding="3dp"
+        android:elevation="10dp"
+        android:lines="1"
+        android:outlineProvider="none"
+        android:paddingHorizontal="3dp"
+        android:textColor="@color/drawer_default_text"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/subtitle_view"
+        app:layout_constraintEnd_toStartOf="@id/close_button"
+        app:layout_constraintStart_toEndOf="@id/subtitle_view"
+        app:layout_constraintTop_toTopOf="@id/subtitle_view"
+        tools:backgroundTint="@color/pace_blue"
+        tools:text="100 m"
+        tools:visibility="visible" />
 
     <LinearLayout
         android:id="@+id/close_button"
@@ -90,3 +112,4 @@
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -257,7 +257,7 @@ internal class AppManager(private val dispatchers: DispatcherProvider) : CloudSD
 
         var topAppDrawerId: Int? = null
         apps.forEach { app ->
-            val appDrawer = AppDrawer(context, null)
+            val appDrawer = AppDrawer(context, null, apps.size >= 2)
             appDrawer.visibility = View.GONE
             appDrawer.id = View.generateViewId()
             appDrawer.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)

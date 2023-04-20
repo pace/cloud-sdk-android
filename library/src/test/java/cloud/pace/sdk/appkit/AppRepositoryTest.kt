@@ -74,7 +74,7 @@ class AppRepositoryTest {
     private val geoApiManager = object : TestGeoAPIManager() {
         override suspend fun apps(latitude: Double, longitude: Double): Result<List<GeoGasStation>> {
             return if (latitude == locationWithApp.latitude && longitude == locationWithApp.longitude) {
-                Result.success(listOf(GeoGasStation(id, mapOf(FUELING_TYPE to listOf(urlLocationBasedApp)))))
+                Result.success(listOf(GeoGasStation(id, mapOf(FUELING_TYPE to listOf(urlLocationBasedApp)), LatLng(0.0, 0.0))))
             } else {
                 Result.success(emptyList())
             }

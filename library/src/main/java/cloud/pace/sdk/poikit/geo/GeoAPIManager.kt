@@ -183,7 +183,7 @@ class GeoAPIManagerImpl(
                         }
                     }
                 }
-                GeoGasStation(it.id, appUrls)
+                GeoGasStation(it.id, appUrls, it.coordinates().firstOrNull())
             } ?: emptyList()
     }
 
