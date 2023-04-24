@@ -20,6 +20,7 @@ import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_SHOP_GOODS
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_VALID_FROM
 import cloud.pace.sdk.poikit.utils.OpeningHoursParser
 import cloud.pace.sdk.poikit.utils.PriceListParser
+import cloud.pace.sdk.utils.OpeningHoursUtils
 import java.util.*
 
 /**
@@ -209,6 +210,8 @@ open class GasStation(id: String, geometry: ArrayList<Geometry.CommandGeo>) :
             this.priceComparisonOptOut = it == "y"
         }
     }
+
+    fun isOpen(now: Date) = OpeningHoursUtils.isOpen(now, openingHours)
 }
 
 /**
@@ -231,7 +234,6 @@ data class OpeningHour(val from: String, val to: String) {
         return "from $from to $to"
     }
 }
-
 /**
  * A fuel price entry, consisting of a [FuelType], a display name
  * and a price. The price includes VAT.
