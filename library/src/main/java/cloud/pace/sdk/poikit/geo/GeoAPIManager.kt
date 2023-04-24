@@ -34,11 +34,12 @@ class GeoAPIManagerImpl(
     private val locationProvider: LocationProvider
 ) : GeoAPIManager {
 
+    private val scope = CoroutineScope(Dispatchers.Default)
     private var appsCache: AppsCache? = null
     private var cofuGasStationsCache: CofuGasStationsCache? = null
 
     init {
-        CoroutineScope(Dispatchers.Default).launch {
+        scope.launch {
             try {
                 // Execute GeoJson and location requests and cache building concurrently
                 val deferredResponse = async(Dispatchers.IO) { appApi.getGeoApiApps() }
@@ -58,6 +59,7 @@ class GeoAPIManagerImpl(
                             Timber.w("Could not load initial apps cache because the location was null")
                         }
                     }
+
                     is Failure -> Timber.w(locationResult.throwable, "Could not load initial apps cache")
                 }
             } catch (e: Exception) {
@@ -97,7 +99,7 @@ class GeoAPIManagerImpl(
         if (cache != null && systemManager.getCurrentTimeMillis() - cache.time <= CACHE_MAX_AGE) {
             completion(Result.success(cache.cofuGasStations))
         } else {
-            CoroutineScope(Dispatchers.Default).launch {
+            scope.launch {
                 val response = withContext(Dispatchers.IO) {
                     appApi.getGeoApiApps()
                 }
@@ -120,26 +122,26 @@ class GeoAPIManagerImpl(
 
     override fun cofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit) {
         cofuGasStations { response ->
-            response.onSuccess {
+            response.onSuccess { cofuGasStations ->
                 val targetLocation = LatLng(location.latitude, location.longitude)
-                val cofuGasStationsInRange = it.filter { station -> station.coordinate.distanceTo(targetLocation) < radius }
+                val cofuGasStationsInRange = cofuGasStations.filter { station -> station.coordinate.distanceTo(targetLocation) < radius }
                 val locations = cofuGasStationsInRange.associate { station -> station.id to station.coordinate.toLocationPoint() }
 
-                POIKit.requestGasStations(locations) { gasStations ->
-                    when (gasStations) {
-                        is Success -> {
-                            val cofuStations = gasStations.result.mapNotNull { gasStation ->
-                                val cofuGasStation = cofuGasStationsInRange.firstOrNull { it.id == gasStation.id }
+                scope.launch {
+                    val result = POIKit
+                        .getGasStations(locations)
+                        .map { gasStations ->
+                            gasStations.mapNotNull { gasStation ->
+                                val cofuGasStation = cofuGasStationsInRange.firstOrNull { cofuGasStation -> cofuGasStation.id == gasStation.id }
                                 if (cofuGasStation != null) {
                                     gasStation.also { it.additionalProperties = cofuGasStation.properties }
                                 } else {
                                     null
                                 }
                             }
-                            completion(Result.success(cofuStations))
                         }
-                        is Failure -> completion(Result.failure(gasStations.throwable))
-                    }
+
+                    completion(result)
                 }
             }
 
@@ -157,6 +159,7 @@ class GeoAPIManagerImpl(
                     is Failure -> null
                 }
             }
+
             is Failure -> null
         }
         return if (userLocation != null) {

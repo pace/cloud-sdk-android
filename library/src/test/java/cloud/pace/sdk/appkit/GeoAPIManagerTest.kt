@@ -11,7 +11,6 @@ import cloud.pace.sdk.poikit.geo.GeoAPIManager
 import cloud.pace.sdk.poikit.geo.GeoAPIManagerImpl
 import cloud.pace.sdk.poikit.geo.GeoAPIResponse
 import cloud.pace.sdk.poikit.geo.Polygon
-import cloud.pace.sdk.poikit.poi.download.TileDownloader
 import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.Environment
 import cloud.pace.sdk.utils.KoinConfig
@@ -30,8 +29,8 @@ import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.inject
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import retrofit2.Response
 import java.util.UUID
 
@@ -77,10 +76,6 @@ class GeoAPIManagerTest : KoinTest {
         }
 
         val module = module {
-            single<TileDownloader> {
-                mockk(relaxed = true)
-            }
-
             single {
                 geoAPIClient
             }

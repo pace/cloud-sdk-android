@@ -49,10 +49,10 @@ object Versions {
     const val RECYCLER_VIEW = "1.3.0"
     const val RETROFIT = "2.9.0"
     const val ROBOLECTRIC = "4.9.2"
-    const val ROOM = "2.5.1"
     const val RXANDROID = "3.0.2"
     const val RXJAVA = "3.1.6"
     const val TEST_CORE = "1.5.0"
+    const val TEST_RULES = "1.5.0"
     const val TEST_RUNNER = "1.5.2"
     const val TIMBER = "5.0.1"
 }

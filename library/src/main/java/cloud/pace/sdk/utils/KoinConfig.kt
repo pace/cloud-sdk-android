@@ -1,7 +1,6 @@
 package cloud.pace.sdk.utils
 
 import android.content.Context
-import androidx.room.Room
 import cloud.pace.sdk.appkit.AppManager
 import cloud.pace.sdk.appkit.app.AppActivityViewModel
 import cloud.pace.sdk.appkit.app.AppActivityViewModelImpl
@@ -33,11 +32,13 @@ import cloud.pace.sdk.idkit.browsermatcher.CustomBrowserMatcher
 import cloud.pace.sdk.idkit.credentials.CredentialsManager
 import cloud.pace.sdk.idkit.model.oidConfiguration
 import cloud.pace.sdk.idkit.userinfo.UserInfoApiClient
-import cloud.pace.sdk.poikit.database.POIKitDatabase
 import cloud.pace.sdk.poikit.geo.GeoAPIClient
 import cloud.pace.sdk.poikit.geo.GeoAPIManager
 import cloud.pace.sdk.poikit.geo.GeoAPIManagerImpl
-import cloud.pace.sdk.poikit.poi.download.TileDownloader
+import cloud.pace.sdk.poikit.poi.tiles.POIAPI
+import cloud.pace.sdk.poikit.poi.tiles.POIAPIImpl
+import cloud.pace.sdk.poikit.poi.tiles.TilesAPIManager
+import cloud.pace.sdk.poikit.poi.tiles.TilesAPIManagerImpl
 import cloud.pace.sdk.poikit.pricehistory.PriceHistoryClient
 import cloud.pace.sdk.poikit.routing.NavigationApiClient
 import cloud.pace.sdk.poikit.search.AddressSearchClient
@@ -62,19 +63,6 @@ object KoinConfig {
             modules(
                 module {
                     factory<LocationProvider> { LocationProviderImpl(get(), get()) }
-                    single {
-                        Room.databaseBuilder(get(), POIKitDatabase::class.java, POIKitDatabase.DATABASE_NAME)
-                            .addMigrations(
-                                POIKitDatabase.migration1to2,
-                                POIKitDatabase.migration2to3,
-                                POIKitDatabase.migration3to4,
-                                POIKitDatabase.migration4to5,
-                                POIKitDatabase.migration5to6,
-                                POIKitDatabase.migration6to7
-                            )
-                            .build()
-                    }
-                    single { TileDownloader(configuration.environment) }
                     single { NavigationApiClient(configuration.environment, configuration.apiKey) }
                     single { AddressSearchClient(configuration.environment, configuration.apiKey) }
                     single { GeoAPIClient(configuration.environment, get()) }
@@ -104,6 +92,9 @@ object KoinConfig {
                     }
                     single { AuthorizationManager(get(), get(), get(), get()) }
                     single { CredentialsManager(get(), get(), get()) }
+                    single<POIAPI> { POIAPIImpl() }
+                    single<TilesAPIManager> { TilesAPIManagerImpl(get()) }
+                    single(createdAtStart = true) { MigrationHelper(get(), get()) }
                     viewModel<AppActivityViewModel> { AppActivityViewModelImpl(get()) }
                     viewModel<AppWebViewModel> { (context: Context) -> AppWebViewModelImpl(context, get(), get(), get(), get(), get()) }
                     viewModel<AppDrawerViewModel> { AppDrawerViewModelImpl(get()) }

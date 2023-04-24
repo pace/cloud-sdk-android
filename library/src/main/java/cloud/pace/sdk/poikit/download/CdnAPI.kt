@@ -1,4 +1,4 @@
-package cloud.pace.sdk.poikit.poi.download
+package cloud.pace.sdk.poikit.download
 
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.converter.EnumConverterFactory

@@ -1,7 +1,5 @@
 package cloud.pace.sdk.poikit.poi
 
-import androidx.room.Entity
-import androidx.room.Ignore
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_AMENITIES
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_BRAND
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_CURRENCY
@@ -26,11 +24,9 @@ import java.util.*
 /**
  * Point of Interest - Gas station with opening hours, prices and payment methods.
  */
-@Entity
 open class GasStation(id: String, geometry: ArrayList<Geometry.CommandGeo>) :
     PointOfInterest(id, geometry) {
 
-    @Ignore
     override val poiLayer = POILayer.GAS_STATION
 
     /**
@@ -126,7 +122,6 @@ open class GasStation(id: String, geometry: ArrayList<Geometry.CommandGeo>) :
     /**
      * Map of additional properties
      */
-    @Ignore
     var additionalProperties: Map<String, Any> = mapOf()
 
     /*protected constructor(parcel: Parcel) : this(

@@ -193,6 +193,7 @@ class SharedPreferencesImpl(
         private const val EXPECTED_AMOUNT = "expectedAmount"
         private const val MILEAGE = "mileage"
         private const val MIGRATED_USER_SCOPED_VALUES = "migratedUserScopedValues"
+        const val POIKIT_DATABASE_DELETED = "poikitDatabaseDeleted"
         const val DEVICE_ID = "deviceId"
 
         fun getTotpSecretPreferenceKey(which: String, host: String?, key: String) = which + (if (host != null) "_$host" else "") + "_$key"

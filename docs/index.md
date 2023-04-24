@@ -40,7 +40,6 @@ It uses the following dependencies:
 - [Android Lifecycle](https://developer.android.com/jetpack/androidx/releases/lifecycle): Lifecycle-aware components perform actions in response to a change in the lifecycle status of another component, such as activities and fragments.
 - [Android Biometric](https://developer.android.com/jetpack/androidx/releases/biometric): Authenticate with biometrics or device credentials, and perform cryptographic operations.
 - [Android Browser](https://developer.android.com/jetpack/androidx/releases/browser): This artifact is used for the Chrome Custom Tabs.
-- [Android Room](https://developer.android.com/jetpack/androidx/releases/room): The Room persistence library provides an abstraction layer over SQLite to allow for more robust database access while harnessing the full power of SQLite.
 - [Google Play Services Location](https://developers.google.com/android/reference/com/google/android/gms/location/package-summary): The location APIs available in Google Play services facilitate adding location awareness with automated location tracking, geofencing, and activity recognition.
 - [Google Play Services Maps](https://developers.google.com/android/reference/com/google/android/gms/maps/package-summary): Contains the Google Maps SDK for Android.
 - [Maps SDK for Android Utility Library](https://github.com/googlemaps/android-maps-utils): This open-source library contains utilities for Google Maps Android API.

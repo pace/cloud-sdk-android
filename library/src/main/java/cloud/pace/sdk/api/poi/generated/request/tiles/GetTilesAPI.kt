@@ -7,74 +7,86 @@
 
 package cloud.pace.sdk.api.poi.generated.request.tiles
 
+import TileQueryRequestOuterClass
+import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.poi.POIAPI
 import cloud.pace.sdk.api.poi.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
-import okhttp3.ResponseBody
+import cloud.pace.sdk.poikit.poi.GasStation
+import cloud.pace.sdk.poikit.poi.tiles.converter.TilesConverterFactory
+import moe.banana.jsonapi2.Resource
 import retrofit2.Call
+import retrofit2.Retrofit
 import retrofit2.http.*
-import java.io.File
 
 object GetTilesAPI {
 
     interface GetTilesService {
-        /* Query for tiles
- */
-        /* Get a list of map tiles in the Protobuf binary wire format.
- */
+        /**
+         * Query for tiles.
+         * Get a list of map tiles in the Protobuf binary wire format.
+         *
+         * Protobuf binary wire format of the following definition:
+         * ```
+         * syntax = "proto3";
+         * message TileQueryRequest {
+         * uint32 zoom = 1;
+         * repeated AreaQuery areas = 2;
+         * repeated IndividualTileQuery tiles = 3;
+         * }
+         * message AreaQuery {
+         * // if NE(1,1) + SW(1,1) == { tile(1,1) }
+         * // if NE(2,1) + SW(1,2) == { tile(1,1), tile(2,1), tile(1,2), tile(2,2) }
+         * Coordinate north_east = 1;
+         * Coordinate south_west = 2;
+         * uint64 invalidation_token = 3; // e.g. timestamp or sequence number
+         * }
+         * message IndividualTileQuery {
+         * Coordinate geo = 1;
+         * uint64 invalidation_token = 3; // e.g. timestamp or sequence number
+         * }
+         * message Coordinate {
+         * uint32 x = 1; // tile coordinate
+         * uint32 y = 2; // tile coordinate
+         * }
+         * ```
+         */
         @POST("v1/tiles/query")
         fun getTiles(
             @HeaderMap headers: Map<String, String>,
-            /* Protobuf binary wire format of the following definition
-```
-syntax = "proto3";
-message TileQueryRequest {
-  uint32 zoom = 1;
-  repeated AreaQuery areas = 2;
-  repeated IndividualTileQuery tiles = 3;
-}
-message AreaQuery {
-  // if NE(1,1) + SW(1,1) == { tile(1,1) }
-  // if NE(2,1) + SW(1,2) == { tile(1,1), tile(2,1), tile(1,2), tile(2,2) }
-  Coordinate north_east = 1;
-  Coordinate south_west = 2;
-  uint64 invalidation_token = 3; // e.g. timestamp or sequence number
-}
-message IndividualTileQuery {
-  Coordinate geo = 1;
-  uint64 invalidation_token = 3; // e.g. timestamp or sequence number
-}
-message Coordinate {
-  uint32 x = 1; // tile coordinate
-  uint32 y = 2; // tile coordinate
-}
-```
- */
-            @retrofit2.http.Body body: File
-        ): Call<ResponseBody>
+            @Body body: TileQueryRequestOuterClass.TileQueryRequest
+        ): Call<List<GasStation>>
     }
 
     open class Request : BaseRequest() {
 
         fun getTiles(
-            body: File,
+            body: TileQueryRequestOuterClass.TileQueryRequest,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
-        ): Call<ResponseBody> {
+        ): Call<List<GasStation>> {
             val headers = headers(true, "application/protobuf", "application/protobuf", additionalHeaders)
 
-            return retrofit(POIAPI.baseUrl, additionalParameters, readTimeout)
+            return retrofit("${API.baseUrl}/poi/", additionalParameters, readTimeout)
                 .create(GetTilesService::class.java)
                 .getTiles(
                     headers,
                     body
                 )
         }
+
+        override fun retrofit(baseUrl: String, additionalParameters: Map<String, String>?, readTimeout: Long?, resources: List<Class<out Resource>>?): Retrofit {
+            return Retrofit.Builder()
+                .client(okHttpClient(additionalParameters, readTimeout))
+                .baseUrl(baseUrl)
+                .addConverterFactory(TilesConverterFactory())
+                .build()
+        }
     }
 
     fun POIAPI.TilesAPI.getTiles(
-        body: File,
+        body: TileQueryRequestOuterClass.TileQueryRequest,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
