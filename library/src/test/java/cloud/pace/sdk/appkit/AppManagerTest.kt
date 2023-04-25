@@ -68,7 +68,8 @@ class AppManagerTest : CloudSDKKoinComponent {
             name = "App #1",
             shortName = "Connected Fueling",
             description = "Subtitle app #1",
-            logo = null
+            logo = null,
+            distance = null
         )
 
         val appRepository = object : TestAppRepository() {
@@ -225,7 +226,8 @@ class AppManagerTest : CloudSDKKoinComponent {
             name = "App #1",
             shortName = "Connected Fueling",
             description = "Subtitle app #1",
-            logo = null
+            logo = null,
+            distance = null
         )
 
         val appRepository = object : TestAppRepository() {
@@ -296,7 +298,8 @@ class AppManagerTest : CloudSDKKoinComponent {
             name = "App #1",
             shortName = "Connected Fueling",
             description = "Subtitle app #1",
-            logo = null
+            logo = null,
+            distance = null
         )
 
         val app2 = App(
@@ -304,7 +307,8 @@ class AppManagerTest : CloudSDKKoinComponent {
             name = "App #2",
             shortName = "Connected Fueling",
             description = "Subtitle app #2",
-            logo = null
+            logo = null,
+            distance = null
         )
 
         val app3 = App(
@@ -312,7 +316,8 @@ class AppManagerTest : CloudSDKKoinComponent {
             name = "App #3",
             shortName = "Connected Fueling",
             description = "Subtitle app #3",
-            logo = null
+            logo = null,
+            distance = null
         )
 
         val appRepository = object : TestAppRepository() {

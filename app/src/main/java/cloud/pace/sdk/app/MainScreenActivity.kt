@@ -123,8 +123,8 @@ class MainScreenActivity : AppCompatActivity() {
                 AppKit.requestLocalApps { completion ->
                     if (completion is Success) {
                         val apps = completion.result
-                        // Only refresh App Drawers if old and new app lists are not equal
-                        if (currentApps.size != apps.size || !currentApps.containsAll(apps)) {
+                        // Only refresh App Drawers if old and new app lists are not equal or if new app list has at least 2 apps in order to update location
+                        if (apps.size >= 2 || currentApps.size != apps.size || !currentApps.containsAll(apps)) {
                             currentApps = apps
                             AppKit.openApps(this, completion.result, binding.mainLayout, bottomMargin = 100f, callback = defaultAppCallback)
                         }

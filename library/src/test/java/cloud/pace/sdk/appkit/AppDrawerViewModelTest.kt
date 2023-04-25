@@ -54,7 +54,7 @@ class AppDrawerViewModelTest {
 
     @Test
     fun `set app`() {
-        val app = App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null)
+        val app = App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null, distance = null)
         viewModel.init(app, false)
 
         Assert.assertEquals(app.name, viewModel.title.value)
@@ -67,7 +67,7 @@ class AppDrawerViewModelTest {
 
     @Test
     fun `set app with icon`() {
-        val app = App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = logo)
+        val app = App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = logo, distance = null)
         viewModel.init(app, true)
 
         Assert.assertEquals(app.logo, viewModel.logo.value)
@@ -75,7 +75,8 @@ class AppDrawerViewModelTest {
 
     @Test
     fun `set app with icon background`() {
-        val app = App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null, iconBackgroundColor = "#ffffff")
+        val app =
+            App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null, distance = null, iconBackgroundColor = "#ffffff")
         viewModel.init(app, false)
 
         Assert.assertNotNull(viewModel.iconBackground.value)
@@ -84,7 +85,7 @@ class AppDrawerViewModelTest {
     @Test
     fun `close app`() {
         val url = "https://pace.tanke.emma.net"
-        viewModel.init(App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = url, logo = null), false)
+        viewModel.init(App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = url, logo = null, distance = null), false)
 
         viewModel.onCreate()
 
@@ -97,7 +98,7 @@ class AppDrawerViewModelTest {
 
     @Test
     fun `do not close app`() {
-        viewModel.init(App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null), false)
+        viewModel.init(App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null, distance = null), false)
 
         viewModel.onCreate()
 
@@ -112,7 +113,7 @@ class AppDrawerViewModelTest {
     fun `disable app`() {
         val host = "pace.tanke.emma.net"
         val url = "https://$host"
-        viewModel.init(App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = url, logo = null), false)
+        viewModel.init(App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = url, logo = null, distance = null), false)
 
         viewModel.onCreate()
 

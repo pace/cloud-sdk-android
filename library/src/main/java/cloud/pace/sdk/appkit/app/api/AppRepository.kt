@@ -11,6 +11,7 @@ import cloud.pace.sdk.poikit.geo.GeoAPIManager
 import cloud.pace.sdk.poikit.geo.GeoAPIManagerImpl
 import cloud.pace.sdk.poikit.geo.GeoAPIManagerImpl.Companion.FUELING_TYPE
 import cloud.pace.sdk.poikit.geo.GeoAPIManagerImpl.Companion.URL_KEY
+import cloud.pace.sdk.poikit.utils.distanceTo
 import cloud.pace.sdk.utils.Completion
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.IconUtils
@@ -20,6 +21,7 @@ import cloud.pace.sdk.utils.dp
 import cloud.pace.sdk.utils.resumeIfActive
 import cloud.pace.sdk.utils.resumeWithExceptionIfActive
 import cloud.pace.sdk.utils.suspendCoroutineWithTimeout
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -53,8 +55,10 @@ class AppRepositoryImpl(
 
             val deferred = apps.flatMap { geoGasStation ->
                 geoGasStation.appUrls[FUELING_TYPE]?.map { url ->
+                    val appLocation = geoGasStation.coordinate
+                    val userLocation = LatLng(latitude, longitude)
                     CoroutineScope(Dispatchers.IO).async {
-                        castLocationBasedApp(url, listOf(geoGasStation.id))
+                        castLocationBasedApp(url, listOf(geoGasStation.id), appLocation?.let { userLocation.distanceTo(it).toInt() })
                     }
                 } ?: emptyList()
             }
@@ -138,7 +142,7 @@ class AppRepositoryImpl(
         }
     }
 
-    private suspend fun castLocationBasedApp(appUrl: String?, references: List<String>?): List<App> {
+    private suspend fun castLocationBasedApp(appUrl: String?, references: List<String>?, distance: Int? = null): List<App> {
         appUrl ?: return emptyList()
 
         val manifest = loadManifest(appUrl)
@@ -159,7 +163,8 @@ class AppRepositoryImpl(
                     textColor = manifest?.textColor,
                     textBackgroundColor = manifest?.themeColor,
                     display = manifest?.display,
-                    poiId = it.key
+                    poiId = it.key,
+                    distance = distance
                 )
             }
     }

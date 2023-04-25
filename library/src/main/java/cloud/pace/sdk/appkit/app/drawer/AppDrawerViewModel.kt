@@ -22,6 +22,7 @@ abstract class AppDrawerViewModel : ViewModel() {
     abstract val textColor: LiveData<Int>
     abstract val logo: LiveData<Bitmap>
     abstract val closeEvent: LiveData<Event<Unit>>
+    abstract val distance: LiveData<Int?>
 
     abstract fun init(app: App, darkBackground: Boolean)
     abstract fun onCreate()
@@ -38,6 +39,7 @@ class AppDrawerViewModelImpl(private val eventManager: AppEventManager) : AppDra
     override val textColor = MutableLiveData<Int>()
     override val logo = MutableLiveData<Bitmap>()
     override val closeEvent = MutableLiveData<Event<Unit>>()
+    override val distance = MutableLiveData<Int?>()
 
     private val invalidAppsObserver = Observer<List<String>> {
         if (it.contains(url.value)) {
@@ -60,6 +62,7 @@ class AppDrawerViewModelImpl(private val eventManager: AppEventManager) : AppDra
         url.value = app.url
         title.value = app.name
         subtitle.value = app.description
+        distance.value = app.distance
 
         app.iconBackgroundColor?.let {
             try {

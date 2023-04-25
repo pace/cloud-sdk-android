@@ -16,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import cloud.pace.sdk.R
 import cloud.pace.sdk.appkit.model.App
@@ -26,7 +27,7 @@ import cloud.pace.sdk.utils.dp
 import cloud.pace.sdk.utils.isNotNullOrEmpty
 import org.koin.core.component.inject
 
-class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(context, attrs), CloudSDKKoinComponent {
+class AppDrawer(context: Context, attrs: AttributeSet?, private val showDistance: Boolean) : ConstraintLayout(context, attrs), CloudSDKKoinComponent {
 
     private val binding = AppDrawerBinding.inflate(LayoutInflater.from(context), this, true)
     private val viewModel: AppDrawerViewModel by inject()
@@ -88,6 +89,21 @@ class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
             requestLayout()
         }
 
+    var distance: Int? = null
+        set(value) {
+            field = value
+
+            if (value != null && showDistance) {
+                binding.distanceView.isVisible = true
+                binding.distanceView.text = if (value > 10) "$value m" else "0 m"
+                binding.distanceView.setTextColor(backgroundTint)
+            } else {
+                binding.distanceView.isVisible = false
+            }
+
+            requestLayout()
+        }
+
     private val titleObserver = Observer<String> {
         title = it
     }
@@ -98,6 +114,7 @@ class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
 
     private val backgroundObserver = Observer<Int> {
         backgroundTint = it
+        binding.distanceView.compoundDrawables[0].setTint(it)
     }
 
     private val iconBackgroundObserver = Observer<Int> {
@@ -112,12 +129,17 @@ class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
         binding.titleView.setTextColor(it)
         binding.subtitleView.setTextColor(it)
         binding.closeButtonIcon.imageTintList = ColorStateList.valueOf(it)
+        binding.distanceView.backgroundTintList = ColorStateList.valueOf(it)
     }
 
     private val closeEventObserver = Observer<Event<Unit>> {
         if (!it.hasBeenHandled) {
             (parent as? ViewGroup)?.removeView(this)
         }
+    }
+
+    private val distanceObserver = Observer<Int?> {
+        distance = it
     }
 
     init {
@@ -171,6 +193,7 @@ class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
         viewModel.textColor.observeForever(textColorObserver)
         viewModel.logo.observeForever(logoObserver)
         viewModel.closeEvent.observeForever(closeEventObserver)
+        viewModel.distance.observeForever(distanceObserver)
     }
 
     override fun onDetachedFromWindow() {
@@ -185,6 +208,7 @@ class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
         viewModel.textColor.removeObserver(textColorObserver)
         viewModel.logo.removeObserver(logoObserver)
         viewModel.closeEvent.removeObserver(closeEventObserver)
+        viewModel.distance.removeObserver(distanceObserver)
     }
 
     /**
@@ -323,7 +347,7 @@ class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
 
             override fun onAnimationEnd(animation: Animator) {
                 cancelClick = false
-                handleCloseButton(expand)
+                handleDrawerViews(expand)
             }
         })
         anim.start()
@@ -338,9 +362,10 @@ class AppDrawer(context: Context, attrs: AttributeSet?) : ConstraintLayout(conte
         isExpanded = expand
     }
 
-    private fun handleCloseButton(enable: Boolean) {
+    private fun handleDrawerViews(enable: Boolean) {
         binding.closeButtonIcon.visibility = if (enable) View.VISIBLE else View.INVISIBLE
-        binding.closeButton.visibility = if (enable) View.VISIBLE else View.GONE
+        binding.closeButton.isVisible = enable
+        binding.distanceView.isVisible = enable && showDistance
     }
 
     companion object {
