@@ -1,3 +1,11 @@
+18.1.0 Release notes (2023-04-25)
+=============================================================
+
+### Enhancements
+
+* Add updating distance label to app drawers
+* Add GasStation.isOpen function
+
 18.0.0 Release notes (2023-03-31)
 =============================================================
 
