@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="common_retry">Prøv igen</string>
+    <string name="error_connection_problem_network_headline">Utilstrækkelig netværksforbindelse</string>
+    <string name="error_connection_problem_network">PACE har brug for en stabil og tilstrækkelig hurtig netværksforbindelse for at kunne fortsætte.\n\nSørg for, at din app har tilladelse til at få adgang til mobil data på din telefon. Du kan også bruge Wi-Fi.</string>
+    <string name="appkit_secureData_authentication_confirmation">Godkend adgang til sikrede data</string>
+    <string name="payment_biometric_prompt_title">Betal nu</string>
+    <string name="common_cancel">Annuller</string>
+    <string name="default_drawer_first_line">Betal ved pumpen</string>
+    <string name="default_drawer_second_line">Connected Fueling</string>
+    <string name="no_supported_browser_toast">Aktiver Google Chrome, og genstart appen for at fortsætte.</string>
+</resources>
