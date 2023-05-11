@@ -141,7 +141,9 @@ class GeoAPIManagerImpl(
                             }
                         }
 
-                    completion(result)
+                    withContext(Dispatchers.Main) {
+                        completion(result)
+                    }
                 }
             }
 

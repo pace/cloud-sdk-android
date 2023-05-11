@@ -7,6 +7,7 @@ import cloud.pace.sdk.api.poi.POIAPI.metadataFilters
 import cloud.pace.sdk.api.poi.POIAPI.prices
 import cloud.pace.sdk.api.poi.generated.model.Categories
 import cloud.pace.sdk.api.poi.generated.model.RegionalPrices
+import cloud.pace.sdk.api.poi.generated.request.gasStations.GetGasStationAPI
 import cloud.pace.sdk.api.poi.generated.request.metadataFilters.GetMetadataFiltersAPI.getMetadataFilters
 import cloud.pace.sdk.api.poi.generated.request.prices.GetRegionalPricesAPI.getRegionalPrices
 import cloud.pace.sdk.poikit.geo.CofuGasStation
@@ -63,20 +64,73 @@ object POIKit : CloudSDKKoinComponent, DefaultLifecycleObserver {
         stopLocationListener()
     }
 
+    /**
+     * Returns a [Result] of [GasStation]s within the [visibleRegion] plus the provided [padding] at the defined [zoomLevel] on success or a [Throwable] on failure.
+     *
+     * @param visibleRegion [VisibleRegion] (bounding box) for which [GasStation]s should be returned.
+     * @param padding Additional padding around the visible region.
+     * @param zoomLevel The zoom level for which gas station information should be retrieved.
+     *
+     * @return [GasStation]s on success or [Throwable] on failure.
+     */
     suspend fun getGasStations(visibleRegion: VisibleRegion, padding: Double = 0.0, zoomLevel: Int = POIKitConfig.ZOOMLEVEL): Result<List<GasStation>> {
         return tilesApiManager.getTiles(visibleRegion, padding, zoomLevel)
     }
 
+    /**
+     * Returns a [Result] of [GasStation]s by [ids] at the defined [zoomLevel] on success or a [Throwable] on failure.
+     *
+     * **Note:** This function first requests the gas stations from the [GasStationAPI][GetGasStationAPI.getGasStation] to get the locations for requesting the tiles.
+     * If the locations of the gas stations are known, prefer the variant where you can pass a map of `idsWithLocation` to save bandwidth.
+     *
+     * @param ids A list of [GasStation] IDs.
+     * @param zoomLevel The zoom level for which gas station information should be retrieved.
+     *
+     * @return [GasStation]s on success or [Throwable] on failure.
+     */
     suspend fun getGasStations(ids: List<String>, zoomLevel: Int = POIKitConfig.ZOOMLEVEL): Result<List<GasStation>> {
         return tilesApiManager.getTiles(ids, zoomLevel)
     }
 
-    suspend fun getGasStations(locations: Map<String, LocationPoint>, zoomLevel: Int = POIKitConfig.ZOOMLEVEL): Result<List<GasStation>> {
-        return tilesApiManager.getTiles(locations, zoomLevel)
+    /**
+     * Returns a [Result] of [GasStation]s by [idsWithLocations] at the defined [zoomLevel] on success or a [Throwable] on failure.
+     * The [idsWithLocations] is a map of the [GasStation] ID and the [GasStation] location.
+     *
+     * @param idsWithLocations A map of [GasStation] entries where the key is the [GasStation] ID and the value is the [GasStation] location.
+     * @param zoomLevel The zoom level for which gas station information should be retrieved.
+     *
+     * @return [GasStation]s on success or [Throwable] on failure.
+     */
+    suspend fun getGasStations(idsWithLocations: Map<String, LocationPoint>, zoomLevel: Int = POIKitConfig.ZOOMLEVEL): Result<List<GasStation>> {
+        return tilesApiManager.getTiles(idsWithLocations, zoomLevel)
     }
 
+    /**
+     * Returns a [Result] of a [GasStation] by [id] at the defined [zoomLevel] on success or a [Throwable] on failure.
+     *
+     * **Note:** This function first requests the gas station from the [GasStationAPI][GetGasStationAPI.getGasStation] to get the location for requesting the tiles.
+     * If the location of the gas station is known, prefer the variant where you can pass a pair of ID and location (`idWithLocation`) to save bandwidth.
+     *
+     * @param id The ID of the [GasStation].
+     * @param zoomLevel The zoom level for which gas station information should be retrieved.
+     *
+     * @return [GasStation] on success or [Throwable] on failure.
+     */
     suspend fun getGasStation(id: String, zoomLevel: Int = POIKitConfig.ZOOMLEVEL): Result<GasStation> {
         return tilesApiManager.getTiles(id, zoomLevel)
+    }
+
+    /**
+     * Returns a [Result] of a [GasStation] by [idWithLocation] at the defined [zoomLevel] on success or a [Throwable] on failure.
+     * The [idWithLocation] is a pair of the [GasStation] ID and the [GasStation] location.
+     *
+     * @param idWithLocation A pair of the [GasStation] ID and the [GasStation] location.
+     * @param zoomLevel The zoom level for which gas station information should be retrieved.
+     *
+     * @return [GasStation] on success or [Throwable] on failure.
+     */
+    suspend fun getGasStation(idWithLocation: Pair<String, LocationPoint>, zoomLevel: Int = POIKitConfig.ZOOMLEVEL): Result<GasStation> {
+        return tilesApiManager.getTiles(idWithLocation, zoomLevel)
     }
 
     fun getRoute(destination: LocationPoint, completion: (Completion<Route?>) -> Unit) {

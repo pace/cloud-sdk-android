@@ -21,11 +21,9 @@ class MigrationHelper(
         if (sharedPreferencesModel.getBoolean(POIKIT_DATABASE_DELETED, false) != true) {
             CoroutineScope(Dispatchers.IO).launch {
                 Timber.i("Start deleting POIKit database")
-                context.deleteDatabase(POIKIT_DATABASE_NAME).also {
-                    Timber.i("Result of POIKit database deletion: $it")
-                }
-
-                sharedPreferencesModel.putBoolean(POIKIT_DATABASE_DELETED, true)
+                val result = context.deleteDatabase(POIKIT_DATABASE_NAME)
+                Timber.i("Result of POIKit database deletion: $result")
+                sharedPreferencesModel.putBoolean(POIKIT_DATABASE_DELETED, result)
             }
         }
     }

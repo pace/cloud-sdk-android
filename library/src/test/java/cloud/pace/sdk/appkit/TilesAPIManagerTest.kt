@@ -16,6 +16,7 @@ import cloud.pace.sdk.poikit.utils.LatLngBounds
 import cloud.pace.sdk.poikit.utils.toVisibleRegion
 import com.google.android.gms.maps.model.LatLng
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -166,6 +167,8 @@ class TilesAPIManagerTest : KoinTest {
 
         val result = tilesAPIManager.getTiles(oldId).exceptionOrNull()
         assert(result is Throwable)
+
+        coVerify(exactly = 3) { poiAPI.getGasStation(any(), any()) }
     }
 
     @Test

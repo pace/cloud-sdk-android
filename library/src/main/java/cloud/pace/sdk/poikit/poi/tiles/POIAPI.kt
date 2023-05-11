@@ -47,6 +47,6 @@ class POIAPIImpl : POIAPI {
         additionalHeaders: Map<String, String>?,
         additionalParameters: Map<String, String>?
     ): Response<cloud.pace.sdk.api.poi.generated.model.GasStation> {
-        return API.gasStations.getGasStation(id, false).awaitResponse()
+        return API.gasStations.getGasStation(id, compileopeningHours, readTimeout, additionalHeaders, additionalParameters).awaitResponse()
     }
 }

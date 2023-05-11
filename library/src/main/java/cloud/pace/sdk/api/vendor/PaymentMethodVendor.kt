@@ -1,4 +1,4 @@
-package cloud.pace.sdk.poikit.download
+package cloud.pace.sdk.api.vendor
 
 import com.google.gson.annotations.SerializedName
 

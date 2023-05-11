@@ -5,10 +5,12 @@ import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.LocationPoint
 import cloud.pace.sdk.poikit.poi.toTileQueryRequest
 import cloud.pace.sdk.poikit.utils.POIKitConfig
+import cloud.pace.sdk.poikit.utils.addPadding
 import cloud.pace.sdk.poikit.utils.toTileQueryRequest
 import com.google.android.gms.maps.model.VisibleRegion
 import kotlinx.coroutines.async
 import kotlinx.coroutines.supervisorScope
+import timber.log.Timber
 import java.net.HttpURLConnection
 
 interface TilesAPIManager {
@@ -17,17 +19,22 @@ interface TilesAPIManager {
 
     suspend fun getTiles(ids: List<String>, zoomLevel: Int = POIKitConfig.ZOOMLEVEL): Result<List<GasStation>>
 
-    suspend fun getTiles(locations: Map<String, LocationPoint>, zoomLevel: Int = POIKitConfig.ZOOMLEVEL): Result<List<GasStation>>
+    suspend fun getTiles(idsWithLocations: Map<String, LocationPoint>, zoomLevel: Int = POIKitConfig.ZOOMLEVEL): Result<List<GasStation>>
 
     suspend fun getTiles(id: String, zoomLevel: Int = POIKitConfig.ZOOMLEVEL): Result<GasStation>
+
+    suspend fun getTiles(idWithLocation: Pair<String, LocationPoint>, zoomLevel: Int = POIKitConfig.ZOOMLEVEL): Result<GasStation>
 }
 
 class TilesAPIManagerImpl(private val poiApi: POIAPI) : TilesAPIManager {
 
     override suspend fun getTiles(visibleRegion: VisibleRegion, padding: Double, zoomLevel: Int): Result<List<GasStation>> {
         return runCatching {
-            val tileRequest = visibleRegion.toTileQueryRequest(zoomLevel)
+            val paddedVisibleRegion = visibleRegion.addPadding(padding)
+            val tileRequest = paddedVisibleRegion.toTileQueryRequest(zoomLevel)
             poiApi.getTiles(tileRequest)
+        }.onFailure {
+            Timber.e(it, "Failed fetching gas station within visible region: $visibleRegion")
         }
     }
 
@@ -36,7 +43,7 @@ class TilesAPIManagerImpl(private val poiApi: POIAPI) : TilesAPIManager {
             supervisorScope {
                 ids
                     .map {
-                        async { getGasStation(it, zoomLevel) }
+                        async { getGasStation(it) }
                     }
                     .mapNotNull {
                         val gasStation = runCatching { it.await() }.getOrNull() ?: return@mapNotNull null
@@ -48,49 +55,62 @@ class TilesAPIManagerImpl(private val poiApi: POIAPI) : TilesAPIManager {
                     .toMap()
             }
         }.getOrElse {
+            Timber.e(it, "Failed fetching gas station with IDs: $ids")
             return Result.failure(it)
         }
 
         return getTiles(locations, zoomLevel)
     }
 
-    override suspend fun getTiles(locations: Map<String, LocationPoint>, zoomLevel: Int): Result<List<GasStation>> {
+    override suspend fun getTiles(idsWithLocations: Map<String, LocationPoint>, zoomLevel: Int): Result<List<GasStation>> {
         return runCatching {
-            val tileRequest = locations.values.toTileQueryRequest(zoomLevel)
-            val ids = locations.keys
-
+            val tileRequest = idsWithLocations.values.toTileQueryRequest(zoomLevel)
+            val ids = idsWithLocations.keys
             poiApi.getTiles(tileRequest).filter { it.id in ids }
+        }.onFailure {
+            Timber.e(it, "Failed fetching gas stations with IDs and locations: $idsWithLocations")
         }
     }
 
     override suspend fun getTiles(id: String, zoomLevel: Int): Result<GasStation> {
-        return runCatching {
-            val gasStation = getGasStation(id, zoomLevel)
+        val location = runCatching {
+            val gasStation = getGasStation(id)
             val latitude = gasStation.latitude?.toDouble()
             val longitude = gasStation.longitude?.toDouble()
 
             if (latitude != null && longitude != null) {
-                val location = LocationPoint(latitude, longitude)
-                val tileRequest = location.toTileQueryRequest(zoomLevel)
-
-                poiApi.getTiles(tileRequest).find { it.id == gasStation.id } ?: throw Exception("Could not find a gas station with ID: ${gasStation.id}")
+                gasStation.id to LocationPoint(latitude, longitude)
             } else {
                 throw Exception("Location of gas station with ID ${gasStation.id} is null")
             }
+        }.getOrElse {
+            Timber.e(it, "Failed fetching gas station with ID: $id")
+            return Result.failure(it)
+        }
+
+        return getTiles(location, zoomLevel)
+    }
+
+    override suspend fun getTiles(idWithLocation: Pair<String, LocationPoint>, zoomLevel: Int): Result<GasStation> {
+        return runCatching {
+            val tileRequest = idWithLocation.second.toTileQueryRequest(zoomLevel)
+            poiApi.getTiles(tileRequest).find { it.id == idWithLocation.first } ?: throw Exception("Could not find a gas station with ID: ${idWithLocation.first}")
+        }.onFailure {
+            Timber.e(it, "Failed fetching gas station with ID and location: $idWithLocation")
         }
     }
 
-    private suspend fun getGasStation(id: String, zoomLevel: Int, redirectCount: Int = 1): cloud.pace.sdk.api.poi.generated.model.GasStation {
+    private suspend fun getGasStation(id: String, redirectCount: Int = 1): cloud.pace.sdk.api.poi.generated.model.GasStation {
         if (redirectCount > MAX_REDIRECTS) throw Exception("Too many redirects (max: $MAX_REDIRECTS) for gas station with ID: $id")
 
         val response = poiApi.getGasStation(id, false)
 
         return when {
             response.isSuccessful -> response.body() ?: throw Exception("Gas station response body is null. Gas station ID: $id")
-            response.code() == HttpURLConnection.HTTP_MOVED_PERM -> {
+            response.code() == HttpURLConnection.HTTP_MOVED_PERM || response.code() == HttpURLConnection.HTTP_MOVED_TEMP || response.code() == TEMPORARY_REDIRECT -> {
                 val newId = response.headers().get(LOCATION_HEADER)?.split("/")?.lastOrNull()
                 if (!newId.isNullOrEmpty()) {
-                    getGasStation(newId, zoomLevel, redirectCount + 1)
+                    getGasStation(newId, redirectCount + 1)
                 } else {
                     throw Exception("Moved gas station ID is null or empty. Old gas station ID: $id")
                 }
@@ -102,5 +122,6 @@ class TilesAPIManagerImpl(private val poiApi: POIAPI) : TilesAPIManager {
 
     companion object {
         private const val MAX_REDIRECTS = 3
+        private const val TEMPORARY_REDIRECT = 307
     }
 }
