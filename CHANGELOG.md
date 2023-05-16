@@ -1,3 +1,15 @@
+19.0.0 Release notes (2023-05-16)
+=============================================================
+
+### Breaking Changes
+
+* Moved and renamed the CdnAPI to PaymentMethodVendorsAPI
+* Change POIKit.observe functions to return live gas station response instead of observables
+
+### Enhancements
+
+* Add danish localization
+
 18.1.0 Release notes (2023-04-25)
 =============================================================
 
