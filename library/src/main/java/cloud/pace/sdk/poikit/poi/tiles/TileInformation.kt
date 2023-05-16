@@ -1,4 +1,4 @@
-package cloud.pace.sdk.poikit.poi.download
+package cloud.pace.sdk.poikit.poi.tiles
 
 import android.os.Parcelable
 import cloud.pace.sdk.poikit.poi.LocationPoint

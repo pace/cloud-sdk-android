@@ -1,26 +1,20 @@
 package cloud.pace.sdk.poikit.poi
 
-import androidx.room.Embedded
-import androidx.room.Ignore
-import androidx.room.PrimaryKey
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_TEMPORARY
-import java.util.*
+import java.util.Date
 
 /**
  * Superclass of all Point of Interests.
  */
 abstract class PointOfInterest(
-    @PrimaryKey(autoGenerate = false)
     var id: String,
     var geometry: ArrayList<Geometry.CommandGeo>
 ) {
     abstract val poiLayer: POILayer
 
-    @Ignore
     var values: HashMap<String, String>? = null
     var temporary: Boolean? = null
 
-    @Embedded
     var address: Address? = null
     var updatedAt: Date? = null
 

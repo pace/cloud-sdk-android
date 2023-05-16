@@ -32,12 +32,6 @@ android {
         manifestPlaceholders["pace_redirect_scheme"] = "\${pace_redirect_scheme}"
         manifestPlaceholders["appAuthRedirectScheme"] = "\${appAuthRedirectScheme}"
 
-        kapt {
-            arguments {
-                arg("room.schemaLocation", "$projectDir/schemas")
-            }
-        }
-
         consumerProguardFile("proguard-rules.pro")
     }
 
@@ -110,8 +104,6 @@ dependencies {
     implementation(Libs.LIFECYCLE_PROCESS_KTX)
     implementation(Libs.BIOMETRIC)
     implementation(Libs.BROWSER)
-    implementation(Libs.ROOM_RUNTIME)
-    kapt(Libs.ROOM_COMPILER)
 
     // Google
     implementation(Libs.GOOGLE_PLAY_SERVICES_LOCATION)
@@ -155,13 +147,13 @@ dependencies {
     testImplementation(Libs.ROBOLECTRIC)
 
     androidTestImplementation(Libs.TEST_CORE)
+    androidTestImplementation(Libs.TEST_RULES)
     androidTestImplementation(Libs.TEST_RUNNER)
     androidTestImplementation(Libs.JUNIT)
     androidTestImplementation(Libs.KOIN_TEST) {
         exclude("org.mockito")
     }
     androidTestImplementation(Libs.MOCKK_ANDROID)
-    androidTestImplementation(Libs.ROOM_TESTING)
 }
 
 tasks.withType<ProcessResources> {

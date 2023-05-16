@@ -1,7 +1,7 @@
 package cloud.pace.sdk.poikit.utils
 
 import cloud.pace.sdk.poikit.poi.LocationPoint
-import cloud.pace.sdk.poikit.poi.download.TileInformation
+import cloud.pace.sdk.poikit.poi.tiles.TileInformation
 import com.google.android.gms.maps.model.LatLng
 import vector_tile.VectorTile
 import java.lang.Math.ceil

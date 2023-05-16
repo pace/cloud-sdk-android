@@ -14,6 +14,7 @@ object RequestUtils {
     const val API_KEY_HEADER = "API-Key"
     const val UBER_TRACE_ID_HEADER = "uber-trace-id"
     const val REQUEST_ID_HEADER = "request-id"
+    const val LOCATION_HEADER = "location"
     const val AUTHORIZATION_HEADER = "Authorization"
     const val BEARER = "Bearer"
 

@@ -5,7 +5,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
 - [PACE Cloud SDK](#pace-cloud-sdk)
     * [Documentation](#documentation)
     * [Source code](#source-code)
-    * [Specifications](#specifications
+    * [Specifications](#specifications)
     * [Migration](#migration)
         + [2.x.x -> 3.x.x](#from-2xx-to-3xx)
         + [7.x.x -> 8.x.x](#from-7xx-to-8xx)
@@ -18,6 +18,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [15.x.x -> 16.x.x](#from-15xx-to-16xx)
         + [16.x.x -> 17.x.x](#from-16xx-to-17xx)
         + [17.x.x -> 18.x.x](#from-17xx-to-18xx)
+        + [18.x.x -> 19.x.x](#from-18xx-to-19xx)
 
 ## Documentation
 The full documentation and instructions on how to integrate PACE Cloud SDK can be found [here](https://docs.pace.cloud/en/integrating/mobile-app)
@@ -40,7 +41,6 @@ It uses the following dependencies:
 - [Android Lifecycle](https://developer.android.com/jetpack/androidx/releases/lifecycle): Lifecycle-aware components perform actions in response to a change in the lifecycle status of another component, such as activities and fragments.
 - [Android Biometric](https://developer.android.com/jetpack/androidx/releases/biometric): Authenticate with biometrics or device credentials, and perform cryptographic operations.
 - [Android Browser](https://developer.android.com/jetpack/androidx/releases/browser): This artifact is used for the Chrome Custom Tabs.
-- [Android Room](https://developer.android.com/jetpack/androidx/releases/room): The Room persistence library provides an abstraction layer over SQLite to allow for more robust database access while harnessing the full power of SQLite.
 - [Google Play Services Location](https://developers.google.com/android/reference/com/google/android/gms/location/package-summary): The location APIs available in Google Play services facilitate adding location awareness with automated location tracking, geofencing, and activity recognition.
 - [Google Play Services Maps](https://developers.google.com/android/reference/com/google/android/gms/maps/package-summary): Contains the Google Maps SDK for Android.
 - [Maps SDK for Android Utility Library](https://github.com/googlemaps/android-maps-utils): This open-source library contains utilities for Google Maps Android API.
@@ -125,6 +125,31 @@ The `GasStations` properties `paymentMethods`, `amenities`, `foods`, `loyaltyPro
 
 - Upgraded dependencies for Android gradle plugin, Kotlin and Compose. Make sure client dependencies are compatible or update them.
 
+### From 18.x.x to 19.x.x
+
+- We have refactored our `POIKit.observe(...)` functions to retrieve gas stations:
+  - We have removed the caching of the gas stations in the database. Therefore, when the PACE Cloud SDK is initialized for the first time, the `poikit_database` is deleted. Also, Room has been removed as dependency.
+  - The new functions to retrieve gas stations now return only live responses, instead of an observable object, which was triggered when there were changes in the database.
+  - The new functions are now suspendable functions that return the gas station result instead of triggering a lambda function. Therefore, you must execute them in a coroutine.
+  - The following mapping shows which old `POIKit` functions must be replaced with which new `POIKit` function:
+    | Old | New |
+    | ------ | ------ |
+    | POIKit.observe(visibleRegion: VisibleRegion, padding: Double, completion: (Completion<List<PointOfInterest>>) -> Unit) | POIKit.getGasStations(visibleRegion: VisibleRegion, padding: Double, zoomLevel: Int)  |
+    | POIKit.observe(ids: List<String>, completion: (Completion<List<PointOfInterest>>) -> Unit) | POIKit.getGasStations(ids: List<String>, zoomLevel: Int) |
+    | POIKit.observe(locations: Map<String, LocationPoint>, completion: (Completion<List<PointOfInterest>>) -> Unit) | POIKit.getGasStations(idsWithLocations: Map<String, LocationPoint>, zoomLevel: Int) |
+    | POIKit.observe(id: String, completion: (Completion<GasStation>) -> Unit) | POIKit.getGasStation(id: String, zoomLevel: Int) |
+    | POIKit.requestGasStations(locations: Map<String, LocationPoint>, zoomLevel: Int, completion: (Completion<List<GasStation>>) -> Unit) | POIKit.getGasStations(idsWithLocations: Map<String, LocationPoint>, zoomLevel: Int): Result<List<GasStation>> |
+    | POIKit.getGasStation(id: String, compileOpeningHours: Boolean, forMovedGasStation: Boolean, completion: (Completion<GasStationMovedResponse>) -> Unit) | POIKit.getGasStation(id: String, zoomLevel: Int) |
+  - The following functions no longer exist because there is no longer a `POIKit` database:
+    - `POIKit.getGasStationLocal(vararg ids: String, completion: (Completion<List<GasStation>>) -> Unit)`
+    - `POIKit.getFromBoundingBoxLocal(minLatitude: Double, maxLatitude: Double, minLongitude: Double, maxLongitude: Double, completion: (Completion<List<GasStation>>) -> Unit)`
+    - `POIKit.insertGasStations(vararg gasStations: GasStation)`
+- The `CdnAPI` class for retrieving `PaymentMethodVendor`s has been renamed to `PaymentMethodVendorsAPI` and moved to `cloud.pace.sdk.api.vendor`. Change the following imports if you use this API:
+  | Old | New |
+  | ------ | ------ |
+  | import cloud.pace.sdk.poikit.poi.download.CdnAPI | import cloud.pace.sdk.api.vendor.PaymentMethodVendorsAPI |
+  | import cloud.pace.sdk.poikit.poi.download.CdnAPI.getPaymentMethodVendors |  import cloud.pace.sdk.api.vendor.PaymentMethodVendorsAPI.getPaymentMethodVendors |
+  | import cloud.pace.sdk.poikit.poi.download.PaymentMethodVendor |  import cloud.pace.sdk.api.vendor.PaymentMethodVendor |
 
 ## SDK API Docs
 
