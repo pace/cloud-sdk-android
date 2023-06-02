@@ -7,13 +7,14 @@ import cloud.pace.sdk.poikit.POIKit
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.toLocationPoint
 import cloud.pace.sdk.poikit.utils.distanceTo
+import cloud.pace.sdk.utils.DefaultDispatcherProvider
+import cloud.pace.sdk.utils.DispatcherProvider
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.LocationProvider
 import cloud.pace.sdk.utils.Success
 import cloud.pace.sdk.utils.SystemManager
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,10 +32,11 @@ interface GeoAPIManager {
 class GeoAPIManagerImpl(
     private val appApi: AppAPI,
     private val systemManager: SystemManager,
-    private val locationProvider: LocationProvider
+    private val locationProvider: LocationProvider,
+    private val dispatchers: DispatcherProvider = DefaultDispatcherProvider()
 ) : GeoAPIManager {
 
-    private val scope = CoroutineScope(Dispatchers.Default)
+    private val scope = CoroutineScope(dispatchers.default())
     private var appsCache: AppsCache? = null
     private var cofuGasStationsCache: CofuGasStationsCache? = null
 
@@ -42,8 +44,8 @@ class GeoAPIManagerImpl(
         scope.launch {
             try {
                 // Execute GeoJson and location requests and cache building concurrently
-                val deferredResponse = async(Dispatchers.IO) { appApi.getGeoApiApps() }
-                val deferredLocation = async(Dispatchers.IO) { locationProvider.currentLocation(false) }
+                val deferredResponse = async(dispatchers.io()) { appApi.getGeoApiApps() }
+                val deferredLocation = async(dispatchers.io()) { locationProvider.currentLocation(false) }
 
                 val response = deferredResponse.await().getOrThrow() // Throw (handled) exception if GeoJson request fails
                 loadCofuGasStationsCache(response)
@@ -100,19 +102,19 @@ class GeoAPIManagerImpl(
             completion(Result.success(cache.cofuGasStations))
         } else {
             scope.launch {
-                val response = withContext(Dispatchers.IO) {
+                val response = withContext(dispatchers.io()) {
                     appApi.getGeoApiApps()
                 }
 
                 response.onSuccess {
                     val newCache = loadCofuGasStationsCache(it)
-                    withContext(Dispatchers.Main) {
+                    withContext(dispatchers.main()) {
                         completion(Result.success(newCache.cofuGasStations))
                     }
                 }
 
                 response.onFailure {
-                    withContext(Dispatchers.Main) {
+                    withContext(dispatchers.main()) {
                         completion(Result.failure(it))
                     }
                 }
@@ -141,7 +143,7 @@ class GeoAPIManagerImpl(
                             }
                         }
 
-                    withContext(Dispatchers.Main) {
+                    withContext(dispatchers.main()) {
                         completion(result)
                     }
                 }

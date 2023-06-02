@@ -18,6 +18,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -31,12 +32,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import cloud.pace.sdk.app.BiometrySubSettingsActivity
 import cloud.pace.sdk.app.biometryStatus
 import cloud.pace.sdk.app.isPasswordSet
@@ -82,15 +81,13 @@ fun BiometrySubSettingView(
         ) {
             Text(
                 text = "User email:",
-                fontSize = 16.sp,
-                modifier = Modifier
-                    .padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.body2
             )
             Text(
                 text = userInfo.value,
-                fontSize = 16.sp,
-                modifier = Modifier
-                    .padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.body2
             )
         }
 
@@ -106,12 +103,14 @@ fun BiometrySubSettingView(
         ) {
             Text(
                 text = "biometry status: ",
-                Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.body2
             )
 
             Text(
                 text = if (biometryStatus.value) "biometry is enabled" else "biometry is disabled",
-                Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.body2
             )
         }
 
@@ -128,12 +127,14 @@ fun BiometrySubSettingView(
         ) {
             Text(
                 text = "pin status:",
-                Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.body2
             )
 
             Text(
                 text = if (isPinSet.value) "pin is set" else "pin is not set",
-                Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.body2
             )
         }
 
@@ -150,11 +151,15 @@ fun BiometrySubSettingView(
         ) {
             Text(
                 text = "password status:",
-                Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.body2
+
             )
             Text(
                 text = if (isPasswordSet.value) "password is set" else "password is not set",
-                Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.body2
+
             )
         }
 
@@ -171,12 +176,14 @@ fun BiometrySubSettingView(
         ) {
             Text(
                 text = "pinOrPasswordStatus:",
-                Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.body2
             )
 
             Text(
                 text = isPinOrPasswordSet.value,
-                Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
+                style = MaterialTheme.typography.body2
             )
         }
 
@@ -202,15 +209,15 @@ fun BiometrySubSettingView(
                     title = {
                         Text(
                             text = "Enabling biometric authentication!",
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.body2
                         )
                     },
                     text = {
                         Column {
                             Text(
                                 text = "To enable biometric authentication, you need to enter your PIN:",
-                                modifier = Modifier
-                                    .padding(0.dp, 4.dp)
+                                modifier = Modifier.padding(0.dp, 4.dp),
+                                style = MaterialTheme.typography.body2
                             )
                             TextField(
                                 modifier = Modifier
@@ -266,17 +273,13 @@ fun BiometrySubSettingView(
                         openEnableBiometryWithPasswordDialog.value = false
                     },
                     title = {
-                        Text(
-                            text = "Enabling biometric authentication!",
-                            fontWeight = FontWeight.Bold
-                        )
+                        Text(text = "Enabling biometric authentication!")
                     },
                     text = {
                         Column {
                             Text(
                                 text = "To enable biometric authentication, you need to enter your password:",
-                                modifier = Modifier
-                                    .padding(0.dp, 4.dp)
+                                modifier = Modifier.padding(0.dp, 4.dp)
                             )
                             TextField(
                                 modifier = Modifier
@@ -330,24 +333,19 @@ fun BiometrySubSettingView(
                         openBiometryWithOTPDialog.value = false
                     },
                     title = {
-                        Text(
-                            text = "Enabling biometric authentication!",
-                            fontWeight = FontWeight.Bold
-                        )
+                        Text(text = "Enabling biometric authentication!")
                     },
                     text = {
                         Column {
                             Text(
                                 text = "To enable biometric authentication by otp you need to enter the code that was sent to you by mail:",
-                                modifier = Modifier
-                                    .padding(0.dp, 4.dp)
+                                modifier = Modifier.padding(0.dp, 4.dp)
                             )
                             TextField(
                                 value = otpInput,
                                 onValueChange = { otpInput = it },
                                 label = { Text("OTP") },
-                                modifier = Modifier
-                                    .padding(0.dp, 4.dp)
+                                modifier = Modifier.padding(0.dp, 4.dp)
                             )
                         }
                     },
@@ -396,17 +394,13 @@ fun BiometrySubSettingView(
                         openSetPinWithOTPDialog.value = false
                     },
                     title = {
-                        Text(
-                            text = "Setting a new pin by OTP!",
-                            fontWeight = FontWeight.Bold
-                        )
+                        Text(text = "Setting a new pin by OTP!")
                     },
                     text = {
                         Column {
                             Text(
                                 text = "Enter your desired pin to set:",
-                                modifier = Modifier
-                                    .padding(0.dp, 4.dp)
+                                modifier = Modifier.padding(0.dp, 4.dp)
                             )
                             TextField(
                                 modifier = Modifier
@@ -431,8 +425,7 @@ fun BiometrySubSettingView(
                             )
                             Text(
                                 text = "Enter the otp send by email to allow setting the pin:",
-                                modifier = Modifier
-                                    .padding(0.dp, 4.dp)
+                                modifier = Modifier.padding(0.dp, 4.dp)
                             )
                             TextField(
                                 modifier = Modifier
@@ -471,17 +464,13 @@ fun BiometrySubSettingView(
                         openSetPinWithBiometryDialog.value = false
                     },
                     title = {
-                        Text(
-                            text = "Set pin with biometry!",
-                            fontWeight = FontWeight.Bold
-                        )
+                        Text(text = "Set pin with biometry!")
                     },
                     text = {
                         Column {
                             Text(
                                 text = "Enter your desired pin:",
-                                modifier = Modifier
-                                    .padding(0.dp, 4.dp)
+                                modifier = Modifier.padding(0.dp, 4.dp)
                             )
                             TextField(
                                 modifier = Modifier
@@ -537,10 +526,7 @@ fun BiometrySubSettingView(
                         openSetPinWithPasswordDialog.value = false
                     },
                     title = {
-                        Text(
-                            text = "Setting a new pin by password!",
-                            fontWeight = FontWeight.Bold
-                        )
+                        Text(text = "Setting a new pin by password!")
                     },
                     text = {
                         Column {
@@ -621,8 +607,6 @@ fun CustomButton(text: String, onClick: () -> Unit) {
             .width(300.dp),
         border = BorderStroke(1.dp, Color.Black)
     ) {
-        Text(
-            text = text
-        )
+        Text(text = text)
     }
 }

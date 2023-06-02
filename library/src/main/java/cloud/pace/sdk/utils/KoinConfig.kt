@@ -8,22 +8,19 @@ import cloud.pace.sdk.appkit.app.api.AppAPI
 import cloud.pace.sdk.appkit.app.api.AppAPIImpl
 import cloud.pace.sdk.appkit.app.api.AppRepository
 import cloud.pace.sdk.appkit.app.api.AppRepositoryImpl
+import cloud.pace.sdk.appkit.app.api.ManifestClient
 import cloud.pace.sdk.appkit.app.api.UriManager
 import cloud.pace.sdk.appkit.app.api.UriManagerImpl
-import cloud.pace.sdk.appkit.app.drawer.AppDrawerViewModel
-import cloud.pace.sdk.appkit.app.drawer.AppDrawerViewModelImpl
+import cloud.pace.sdk.appkit.app.drawer.ui.AppDrawerViewModel
+import cloud.pace.sdk.appkit.app.drawer.ui.AppDrawerViewModelImpl
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModel
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModelImpl
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppEventManagerImpl
 import cloud.pace.sdk.appkit.communication.AppModel
 import cloud.pace.sdk.appkit.communication.AppModelImpl
-import cloud.pace.sdk.appkit.network.NetworkChangeListener
-import cloud.pace.sdk.appkit.network.NetworkChangeListenerImpl
 import cloud.pace.sdk.appkit.pay.PayAuthenticationManager
 import cloud.pace.sdk.appkit.pay.PayAuthenticationManagerImpl
-import cloud.pace.sdk.appkit.persistence.CacheModel
-import cloud.pace.sdk.appkit.persistence.CacheModelImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.idkit.authorization.AuthorizationManager
@@ -68,22 +65,21 @@ object KoinConfig {
                     single { GeoAPIClient(configuration.environment, get()) }
                     single { PriceHistoryClient(configuration.environment) }
                     single { UserInfoApiClient(configuration.oidConfiguration?.oidConfiguration(configuration.environment)?.userInfoEndpoint) }
+                    single { ManifestClient(get()) }
                     single<SystemManager> { SystemManagerImpl(get()) }
                     single<SharedPreferencesModel> {
                         val sharedPreferencesImpl = SharedPreferencesImpl(context, get())
                         sharedPreferencesImpl.migrateUserValuesToUserId()
                         sharedPreferencesImpl
                     }
-                    single<CacheModel> { CacheModelImpl() }
                     single<AppRepository> { AppRepositoryImpl(get(), get(), get(), get(), get()) }
-                    single<NetworkChangeListener> { NetworkChangeListenerImpl(get()) }
                     single<AppEventManager> { AppEventManagerImpl() }
                     single<PayAuthenticationManager> { PayAuthenticationManagerImpl(get()) }
                     single<UriManager> { UriManagerImpl() }
                     single<AppAPI> { AppAPIImpl(get()) }
                     single { LocationServices.getGeofencingClient(get<Context>()) }
                     single<AppModel> { AppModelImpl(get()) }
-                    single { AppManager(DefaultDispatcherProvider()) }
+                    single { AppManager() }
                     single<GeoAPIManager> { GeoAPIManagerImpl(get(), get(), get()) }
                     single { SessionHolder(get()) }
                     single {
@@ -97,7 +93,7 @@ object KoinConfig {
                     single(createdAtStart = true) { MigrationHelper(get(), get()) }
                     viewModel<AppActivityViewModel> { AppActivityViewModelImpl(get()) }
                     viewModel<AppWebViewModel> { (context: Context) -> AppWebViewModelImpl(context, get(), get(), get(), get(), get()) }
-                    viewModel<AppDrawerViewModel> { AppDrawerViewModelImpl(get()) }
+                    viewModel<AppDrawerViewModel> { AppDrawerViewModelImpl(get(), get(), get(), get()) }
                 }
             )
         }

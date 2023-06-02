@@ -7,15 +7,14 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import cloud.pace.sdk.app.MainScreenActivity
 
 /**
  * Opens a dialog that asks the user if he likes to enable BioAuth
  */
-
 @Composable
-fun SuccessfulLoginDialog(activity: MainScreenActivity, enableBioAuth: () -> Unit) {
+fun SuccessfulLoginDialog(enableBioAuth: () -> Unit) {
     val openDialog = remember { mutableStateOf(true) }
     if (openDialog.value) {
         AlertDialog(
@@ -42,10 +41,12 @@ fun SuccessfulLoginDialog(activity: MainScreenActivity, enableBioAuth: () -> Uni
                 }
             },
             dismissButton = {
+                val context = LocalContext.current
+
                 Button(
                     onClick = {
                         openDialog.value = false
-                        Toast.makeText(activity, "declined enabling Biometric authentication!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "declined enabling Biometric authentication!", Toast.LENGTH_SHORT).show()
                     }
                 ) {
                     Text("No")

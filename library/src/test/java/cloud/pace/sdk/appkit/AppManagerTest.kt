@@ -14,6 +14,7 @@ import cloud.pace.sdk.appkit.utils.*
 import cloud.pace.sdk.utils.*
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -53,7 +54,9 @@ class AppManagerTest : CloudSDKKoinComponent {
         `when`(mockLocation.longitude).then { 8.427326 }
         `when`(mockLocation.speed).then { 3f }
 
-        PACECloudSDK.configuration = Configuration("", "", "", "", environment = Environment.DEVELOPMENT, oidConfiguration = null)
+        mockkObject(PACECloudSDK)
+        every { PACECloudSDK.configuration.speedThresholdInKmPerHour } returns 50
+        every { PACECloudSDK.configuration.environment } returns Environment.DEVELOPMENT
     }
 
     @After
@@ -68,7 +71,7 @@ class AppManagerTest : CloudSDKKoinComponent {
             name = "App #1",
             shortName = "Connected Fueling",
             description = "Subtitle app #1",
-            logo = null,
+            iconUrl = null,
             distance = null
         )
 
@@ -226,7 +229,7 @@ class AppManagerTest : CloudSDKKoinComponent {
             name = "App #1",
             shortName = "Connected Fueling",
             description = "Subtitle app #1",
-            logo = null,
+            iconUrl = null,
             distance = null
         )
 
@@ -298,7 +301,7 @@ class AppManagerTest : CloudSDKKoinComponent {
             name = "App #1",
             shortName = "Connected Fueling",
             description = "Subtitle app #1",
-            logo = null,
+            iconUrl = null,
             distance = null
         )
 
@@ -307,7 +310,7 @@ class AppManagerTest : CloudSDKKoinComponent {
             name = "App #2",
             shortName = "Connected Fueling",
             description = "Subtitle app #2",
-            logo = null,
+            iconUrl = null,
             distance = null
         )
 
@@ -316,7 +319,7 @@ class AppManagerTest : CloudSDKKoinComponent {
             name = "App #3",
             shortName = "Connected Fueling",
             description = "Subtitle app #3",
-            logo = null,
+            iconUrl = null,
             distance = null
         )
 

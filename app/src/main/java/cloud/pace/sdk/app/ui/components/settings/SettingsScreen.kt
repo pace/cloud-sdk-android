@@ -3,8 +3,6 @@ package cloud.pace.sdk.app.ui.components.settings
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -13,9 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -36,7 +31,6 @@ import cloud.pace.sdk.app.MainScreenActivity
 import cloud.pace.sdk.app.R
 import cloud.pace.sdk.app.ui.components.NoSupportedBrowserDialog
 import cloud.pace.sdk.app.ui.theme.ButtonCornerShape
-import cloud.pace.sdk.app.ui.theme.Screen
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.NoSupportedBrowser
 import cloud.pace.sdk.utils.Failure
@@ -48,59 +42,42 @@ import kotlinx.coroutines.launch
 fun SettingsScreen(activity: MainScreenActivity, lifecycleScope: LifecycleCoroutineScope, finishMainActivity: () -> Unit) {
     val openDialog = remember { mutableStateOf(false) }
 
-    Column {
-        Text(
-            text = Screen.Settings.title,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colors.primary,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(17.dp),
-            fontSize = 26.sp
-        )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 20.dp, vertical = 10.dp)
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OpenSubSettingsButton {
+            val intent = Intent(activity, BiometrySubSettingsActivity::class.java)
+            activity.startActivity(intent)
+        }
+        MiscellaneousButton()
+        LogoutButton {
+            lifecycleScope.launch(Dispatchers.Main) {
+                when (val result = IDKit.endSession(activity)) {
+                    is Success -> {
+                        val intent = Intent(activity, LoginScreenActivity::class.java)
+                        activity.startActivity(intent)
+                        finishMainActivity()
+                    }
 
-        Divider(
-            color = Color.Black,
-            thickness = 3.dp
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .background(MaterialTheme.colors.background),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            OpenSubSettingsButton {
-                val intent = Intent(activity, BiometrySubSettingsActivity::class.java)
-                activity.startActivity(intent)
-            }
-            MiscellaneousButton()
-            LogoutButton {
-                lifecycleScope.launch(Dispatchers.Main) {
-                    when (val result = IDKit.endSession(activity)) {
-                        is Success -> {
-                            val intent = Intent(activity, LoginScreenActivity::class.java)
-                            activity.startActivity(intent)
-                            finishMainActivity()
-                        }
-                        is Failure -> {
-                            if (result.throwable is NoSupportedBrowser) {
-                                openDialog.value = true
-                            } else {
-                                Toast.makeText(activity, result.throwable.message, Toast.LENGTH_LONG).show()
-                            }
+                    is Failure -> {
+                        if (result.throwable is NoSupportedBrowser) {
+                            openDialog.value = true
+                        } else {
+                            Toast.makeText(activity, result.throwable.message, Toast.LENGTH_LONG).show()
                         }
                     }
                 }
             }
         }
+    }
 
-        if (openDialog.value) {
-            NoSupportedBrowserDialog {
-                openDialog.value = false
-            }
+    if (openDialog.value) {
+        NoSupportedBrowserDialog {
+            openDialog.value = false
         }
     }
 }
@@ -126,9 +103,8 @@ fun OpenSubSettingsButton(onClick: () -> Unit) {
         )
         Icon(
             painter = painterResource(id = R.drawable.ic_baseline_chevron_right_24),
-            contentDescription = "",
-            modifier = Modifier
-                .size(20.dp)
+            contentDescription = null,
+            modifier = Modifier.size(20.dp)
         )
     }
 }

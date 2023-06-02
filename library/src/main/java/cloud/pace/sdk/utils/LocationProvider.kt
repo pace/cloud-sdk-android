@@ -1,9 +1,6 @@
 package cloud.pace.sdk.utils
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -15,11 +12,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.distinctUntilChanged
 import cloud.pace.sdk.PACECloudSDK
+import cloud.pace.sdk.utils.LocationProviderImpl.Companion.DEFAULT_LOCATION_REQUEST
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.CancellableContinuation
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import timber.log.Timber
 
 interface LocationProvider {
@@ -27,8 +29,9 @@ interface LocationProvider {
     val locationState: LiveData<LocationState>
     val location: LiveData<Location>
 
-    fun requestLocationUpdates()
+    fun requestLocationUpdates(locationRequest: LocationRequest = DEFAULT_LOCATION_REQUEST)
     fun removeLocationUpdates()
+    fun locationFlow(locationRequest: LocationRequest = DEFAULT_LOCATION_REQUEST): Flow<Location>
     suspend fun firstValidLocation(timeout: Long = LocationProviderImpl.LOCATION_TIMEOUT): Completion<Location>
     suspend fun currentLocation(validate: Boolean, timeout: Long = LocationProviderImpl.LOCATION_TIMEOUT): Completion<Location?>
     suspend fun lastKnownLocation(validate: Boolean, timeout: Long = LocationProviderImpl.LOCATION_TIMEOUT): Completion<Location?>
@@ -39,46 +42,16 @@ class LocationProviderImpl(
     private val systemManager: SystemManager
 ) : LocationProvider {
 
-    private val locationProviderReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            requestLocationUpdates()
-        }
-    }
     private val fusedLocationClient by lazy { systemManager.getFusedLocationProviderClient() }
     private val locationManager by lazy { systemManager.getLocationManager() }
-    private val locationRequest by lazy {
-        LocationRequest.create().apply {
-            interval = LOCATION_REQUEST_INTERVAL
-            fastestInterval = LOCATION_REQUEST_FASTEST_INTERVAL
-            priority = LOCATION_REQUEST_PRIORITY
-            smallestDisplacement = LOCATION_REQUEST_SMALLEST_DISPLACEMENT
-        }
-    }
     private val locationCallback by lazy {
-        object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                val lastLocation = locationResult.lastLocation ?: return
-                location.postValue(lastLocation)
-            }
+        createLocationCallback {
+            location.postValue(it)
         }
     }
     private val locationListener by lazy {
-        object : LocationListener {
-            override fun onLocationChanged(newLocation: Location) {
-                location.postValue(newLocation)
-            }
-
-            override fun onProviderEnabled(provider: String) {
-                handleLocationStateChange(provider, true)
-            }
-
-            override fun onProviderDisabled(provider: String) {
-                resumeWithNoLocationFound()
-            }
-
-            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-                handleLocationStateChange(provider, provider != null && locationManager?.isProviderEnabled(provider) == true)
-            }
+        createLocationListener {
+            location.postValue(it)
         }
     }
     private val poiKitLocationState = MutableLiveData<LocationState>()
@@ -87,9 +60,7 @@ class LocationProviderImpl(
     override val locationState = poiKitLocationState.distinctUntilChanged()
     override val location = MutableLiveData<Location>()
 
-    override fun requestLocationUpdates() {
-        context.registerReceiver(locationProviderReceiver, IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION))
-
+    override fun requestLocationUpdates(locationRequest: LocationRequest) {
         if (systemManager.isLocationPermissionGranted()) {
             try {
                 val provider = checkLocationState()
@@ -97,9 +68,9 @@ class LocationProviderImpl(
                 if (systemManager.isGooglePlayServicesAvailable()) {
                     // Use Fused Location Provider API
                     fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
-                } else if (provider != null) {
+                } else {
                     // Use LocationManager as fallback
-                    locationManager?.requestLocationUpdates(provider, LOCATION_REQUEST_INTERVAL, LOCATION_REQUEST_SMALLEST_DISPLACEMENT, locationListener, Looper.getMainLooper())
+                    locationManager?.requestLocationUpdates(provider, locationRequest.intervalMillis, locationRequest.minUpdateDistanceMeters, locationListener, Looper.getMainLooper())
                 }
             } catch (e: SecurityException) {
                 resumeWithPermissionDenied()
@@ -110,14 +81,52 @@ class LocationProviderImpl(
     }
 
     override fun removeLocationUpdates() {
-        try {
-            context.unregisterReceiver(locationProviderReceiver)
-        } catch (e: IllegalArgumentException) {
-        }
-
         if (systemManager.isGooglePlayServicesAvailable()) {
             fusedLocationClient.removeLocationUpdates(locationCallback)
         } else {
+            locationManager?.removeUpdates(locationListener)
+        }
+    }
+
+    override fun locationFlow(locationRequest: LocationRequest): Flow<Location> {
+        return if (systemManager.isGooglePlayServicesAvailable()) {
+            // Use Fused Location Provider API
+            fusedLocationProviderUpdates(locationRequest)
+        } else {
+            // Use LocationManager as fallback
+            locationListenerUpdates(locationRequest)
+        }
+    }
+
+    private fun fusedLocationProviderUpdates(locationRequest: LocationRequest) = callbackFlow {
+        val locationCallback = createLocationCallback {
+            trySend(it)
+        }
+
+        try {
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+        } catch (e: SecurityException) {
+            Timber.w(PermissionDenied)
+        }
+
+        awaitClose {
+            fusedLocationClient.removeLocationUpdates(locationCallback)
+        }
+    }
+
+    private fun locationListenerUpdates(locationRequest: LocationRequest) = callbackFlow {
+        val locationListener = createLocationListener {
+            trySend(it)
+        }
+
+        try {
+            val provider = checkLocationState()
+            locationManager?.requestLocationUpdates(provider, locationRequest.intervalMillis, locationRequest.minUpdateDistanceMeters, locationListener, Looper.getMainLooper())
+        } catch (e: SecurityException) {
+            Timber.w(PermissionDenied)
+        }
+
+        awaitClose {
             locationManager?.removeUpdates(locationListener)
         }
     }
@@ -137,57 +146,55 @@ class LocationProviderImpl(
                     try {
                         val startTime = systemManager.getCurrentTimeMillis()
                         val provider = checkLocationState()
+                        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 500L).build()
 
-                        when {
-                            systemManager.isGooglePlayServicesAvailable() -> {
-                                // Use Fused Location Provider API
-                                val client = systemManager.getFusedLocationProviderClient()
-                                val callback = object : LocationCallback() {
-                                    override fun onLocationResult(locationResult: LocationResult) {
-                                        getLocationIfValid(locationResult.lastLocation, null, startTime)?.let {
-                                            client.removeLocationUpdates(this)
-                                            continuation.resumeIfActive(it)
-                                        }
+                        if (systemManager.isGooglePlayServicesAvailable()) {
+                            // Use Fused Location Provider API
+                            val client = systemManager.getFusedLocationProviderClient()
+                            val callback = object : LocationCallback() {
+                                override fun onLocationResult(locationResult: LocationResult) {
+                                    getLocationIfValid(locationResult.lastLocation, null, startTime)?.let {
+                                        client.removeLocationUpdates(this)
+                                        continuation.resumeIfActive(it)
                                     }
-                                }
-                                client.requestLocationUpdates(locationRequest, callback, Looper.getMainLooper()).addOnFailureListener {
-                                    Timber.w(it, "Could no request location updates with Fused Location Provider API")
-                                    poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
-                                    continuation.resumeWithExceptionIfActive(it)
-                                }
-                                continuation.invokeOnCancellation {
-                                    client.removeLocationUpdates(callback)
                                 }
                             }
-                            provider != null -> {
-                                // Use LocationManager as fallback
-                                val listener = object : LocationListener {
-                                    override fun onLocationChanged(location: Location) {
-                                        getLocationIfValid(location, null, startTime)?.let {
-                                            locationManager?.removeUpdates(this)
-                                            continuation.resumeIfActive(it)
-                                        }
-                                    }
-
-                                    override fun onProviderEnabled(provider: String) {
-                                        handleLocationStateChange(provider, true, this, continuation)
-                                    }
-
-                                    override fun onProviderDisabled(provider: String) {
-                                        resumeWithNoLocationFound(this, continuation)
-                                    }
-
-                                    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-                                        handleLocationStateChange(provider, provider != null && locationManager?.isProviderEnabled(provider) == true, this, continuation)
+                            client.requestLocationUpdates(locationRequest, callback, Looper.getMainLooper()).addOnFailureListener {
+                                Timber.w(it, "Could no request location updates with Fused Location Provider API")
+                                poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
+                                continuation.resumeWithExceptionIfActive(it)
+                            }
+                            continuation.invokeOnCancellation {
+                                client.removeLocationUpdates(callback)
+                            }
+                        } else {
+                            // Use LocationManager as fallback
+                            val listener = object : LocationListener {
+                                override fun onLocationChanged(location: Location) {
+                                    getLocationIfValid(location, null, startTime)?.let {
+                                        locationManager?.removeUpdates(this)
+                                        continuation.resumeIfActive(it)
                                     }
                                 }
 
-                                locationManager?.requestLocationUpdates(provider, LOCATION_REQUEST_INTERVAL, LOCATION_REQUEST_SMALLEST_DISPLACEMENT, listener, Looper.getMainLooper())
-                                continuation.invokeOnCancellation {
-                                    locationManager?.removeUpdates(listener)
+                                override fun onProviderEnabled(provider: String) {
+                                    handleLocationStateChange(provider, true, this, continuation)
+                                }
+
+                                override fun onProviderDisabled(provider: String) {
+                                    resumeWithNoLocationFound(this, continuation)
+                                }
+
+                                @Deprecated("Deprecated in Java")
+                                override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+                                    handleLocationStateChange(provider, provider != null && locationManager?.isProviderEnabled(provider) == true, this, continuation)
                                 }
                             }
-                            else -> resumeWithNoLocationFound(continuation = continuation)
+
+                            locationManager?.requestLocationUpdates(provider, locationRequest.intervalMillis, locationRequest.minUpdateDistanceMeters, listener, Looper.getMainLooper())
+                            continuation.invokeOnCancellation {
+                                locationManager?.removeUpdates(listener)
+                            }
                         }
                     } catch (e: SecurityException) {
                         resumeWithPermissionDenied(continuation)
@@ -221,57 +228,55 @@ class LocationProviderImpl(
                         val startTime = systemManager.getCurrentTimeMillis()
                         val provider = checkLocationState()
 
-                        when {
-                            systemManager.isGooglePlayServicesAvailable() -> {
-                                // Use Fused Location Provider API
-                                systemManager.getFusedLocationProviderClient().getCurrentLocation(LOCATION_REQUEST_PRIORITY, CancellationTokenSource().token)
-                                    .addOnSuccessListener {
+                        if (systemManager.isGooglePlayServicesAvailable()) {
+                            // Use Fused Location Provider API
+                            systemManager.getFusedLocationProviderClient().getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token)
+                                .addOnSuccessListener {
+                                    continuation.resumeIfActive(if (validate) getLocationIfValid(it, LOW_ACCURACY, startTime) else it)
+                                }
+                                .addOnFailureListener {
+                                    Timber.w(it, "Could no request location updates with Fused Location Provider API")
+                                    poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
+                                    continuation.resumeWithExceptionIfActive(it)
+                                }
+                        } else {
+                            // Use LocationManager as fallback
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                                locationManager?.getCurrentLocation(provider, null, ContextCompat.getMainExecutor(context)) {
+                                    if (it != null) {
                                         continuation.resumeIfActive(if (validate) getLocationIfValid(it, LOW_ACCURACY, startTime) else it)
-                                    }
-                                    .addOnFailureListener {
-                                        Timber.w(it, "Could no request location updates with Fused Location Provider API")
-                                        poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
-                                        continuation.resumeWithExceptionIfActive(it)
-                                    }
-                            }
-                            provider != null -> {
-                                // Use LocationManager as fallback
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                                    locationManager?.getCurrentLocation(provider, null, ContextCompat.getMainExecutor(context)) {
-                                        if (it != null) {
-                                            continuation.resumeIfActive(if (validate) getLocationIfValid(it, LOW_ACCURACY, startTime) else it)
-                                        } else {
-                                            Timber.i("No current location available with LocationManager")
-                                            resumeWithNoLocationFound(continuation = continuation)
-                                        }
-                                    }
-                                } else {
-                                    val listener = object : LocationListener {
-                                        override fun onLocationChanged(location: Location) {
-                                            locationManager?.removeUpdates(this)
-                                            continuation.resumeIfActive(if (validate) getLocationIfValid(location, LOW_ACCURACY, startTime) else location)
-                                        }
-
-                                        override fun onProviderEnabled(provider: String) {
-                                            handleLocationStateChange(provider, true, this, continuation)
-                                        }
-
-                                        override fun onProviderDisabled(provider: String) {
-                                            resumeWithNoLocationFound(this, continuation)
-                                        }
-
-                                        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-                                            handleLocationStateChange(provider, provider != null && locationManager?.isProviderEnabled(provider) == true, this, continuation)
-                                        }
-                                    }
-
-                                    locationManager?.requestSingleUpdate(provider, listener, Looper.getMainLooper())
-                                    continuation.invokeOnCancellation {
-                                        locationManager?.removeUpdates(listener)
+                                    } else {
+                                        Timber.i("No current location available with LocationManager")
+                                        resumeWithNoLocationFound(continuation = continuation)
                                     }
                                 }
+                            } else {
+                                val listener = object : LocationListener {
+                                    override fun onLocationChanged(location: Location) {
+                                        locationManager?.removeUpdates(this)
+                                        continuation.resumeIfActive(if (validate) getLocationIfValid(location, LOW_ACCURACY, startTime) else location)
+                                    }
+
+                                    override fun onProviderEnabled(provider: String) {
+                                        handleLocationStateChange(provider, true, this, continuation)
+                                    }
+
+                                    override fun onProviderDisabled(provider: String) {
+                                        resumeWithNoLocationFound(this, continuation)
+                                    }
+
+                                    @Deprecated("Deprecated in Java")
+                                    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+                                        handleLocationStateChange(provider, provider != null && locationManager?.isProviderEnabled(provider) == true, this, continuation)
+                                    }
+                                }
+
+                                @Suppress("DEPRECATION")
+                                locationManager?.requestSingleUpdate(provider, listener, Looper.getMainLooper())
+                                continuation.invokeOnCancellation {
+                                    locationManager?.removeUpdates(listener)
+                                }
                             }
-                            else -> resumeWithNoLocationFound(continuation = continuation)
                         }
                     } catch (e: SecurityException) {
                         resumeWithPermissionDenied(continuation)
@@ -305,30 +310,26 @@ class LocationProviderImpl(
                         val startTime = systemManager.getCurrentTimeMillis()
                         val provider = checkLocationState()
 
-                        when {
-                            systemManager.isGooglePlayServicesAvailable() -> {
-                                // Use Fused Location Provider API
-                                systemManager.getFusedLocationProviderClient().lastLocation
-                                    .addOnSuccessListener {
-                                        continuation.resumeIfActive(if (validate) getLocationIfValid(it, LOW_ACCURACY, startTime) else it)
-                                    }
-                                    .addOnFailureListener {
-                                        Timber.w(it, "Could no request location updates with Fused Location Provider API")
-                                        poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
-                                        continuation.resumeWithExceptionIfActive(it)
-                                    }
-                            }
-                            provider != null -> {
-                                // Use LocationManager as fallback
-                                val location = locationManager?.getLastKnownLocation(provider)
-                                if (location != null) {
-                                    continuation.resumeIfActive(if (validate) getLocationIfValid(location, LOW_ACCURACY, startTime) else location)
-                                } else {
-                                    Timber.i("No last known location available with LocationManager")
-                                    resumeWithNoLocationFound(continuation = continuation)
+                        if (systemManager.isGooglePlayServicesAvailable()) {
+                            // Use Fused Location Provider API
+                            systemManager.getFusedLocationProviderClient().lastLocation
+                                .addOnSuccessListener {
+                                    continuation.resumeIfActive(if (validate) getLocationIfValid(it, LOW_ACCURACY, startTime) else it)
                                 }
+                                .addOnFailureListener {
+                                    Timber.w(it, "Could no request location updates with Fused Location Provider API")
+                                    poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
+                                    continuation.resumeWithExceptionIfActive(it)
+                                }
+                        } else {
+                            // Use LocationManager as fallback
+                            val location = locationManager?.getLastKnownLocation(provider)
+                            if (location != null) {
+                                continuation.resumeIfActive(if (validate) getLocationIfValid(location, LOW_ACCURACY, startTime) else location)
+                            } else {
+                                Timber.i("No last known location available with LocationManager")
+                                resumeWithNoLocationFound(continuation = continuation)
                             }
-                            else -> resumeWithNoLocationFound(continuation = continuation)
                         }
                     } catch (e: SecurityException) {
                         resumeWithPermissionDenied(continuation)
@@ -344,21 +345,47 @@ class LocationProviderImpl(
         return Success(location)
     }
 
-    private fun checkLocationState(): String? {
-        return when {
-            locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true -> {
-                poiKitLocationState.postValue(LocationState.LOCATION_HIGH_ACCURACY)
-                LocationManager.GPS_PROVIDER
+    private fun createLocationCallback(onLocationChanged: (Location) -> Unit): LocationCallback {
+        return object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                val lastLocation = locationResult.lastLocation
+                if (lastLocation != null) {
+                    onLocationChanged(lastLocation)
+                } else {
+                    resumeWithNoLocationFound()
+                }
             }
-            locationManager?.isProviderEnabled(LocationManager.NETWORK_PROVIDER) == true -> {
-                poiKitLocationState.postValue(LocationState.LOCATION_LOW_ACCURACY)
-                LocationManager.NETWORK_PROVIDER
+        }
+    }
+
+    private fun createLocationListener(onLocationChanged: (Location) -> Unit): LocationListener {
+        return object : LocationListener {
+            override fun onLocationChanged(newLocation: Location) {
+                onLocationChanged(newLocation)
             }
-            else -> {
-                Timber.w(NoLocationFound)
-                poiKitLocationState.postValue(LocationState.NO_LOCATION_FOUND)
-                null
+
+            override fun onProviderEnabled(provider: String) {
+                handleLocationStateChange(provider, true)
             }
+
+            override fun onProviderDisabled(provider: String) {
+                resumeWithNoLocationFound()
+            }
+
+            @Deprecated("Deprecated in Java")
+            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+                handleLocationStateChange(provider, provider != null && locationManager?.isProviderEnabled(provider) == true)
+            }
+        }
+    }
+
+    private fun checkLocationState(): String {
+        return if (locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER) == true) {
+            poiKitLocationState.postValue(LocationState.LOCATION_HIGH_ACCURACY)
+            LocationManager.GPS_PROVIDER
+        } else {
+            poiKitLocationState.postValue(LocationState.LOCATION_LOW_ACCURACY)
+            LocationManager.NETWORK_PROVIDER
         }
     }
 
@@ -423,10 +450,9 @@ class LocationProviderImpl(
     }
 
     companion object {
-        private const val LOCATION_REQUEST_INTERVAL = 500L // In ms
-        private const val LOCATION_REQUEST_FASTEST_INTERVAL = 200L // In ms
-        private const val LOCATION_REQUEST_PRIORITY = LocationRequest.PRIORITY_HIGH_ACCURACY
-        private const val LOCATION_REQUEST_SMALLEST_DISPLACEMENT = 0f // In m
+
+        private const val DEFAULT_INTERVAL_MILLIS = 2000L // 2 sec
+        val DEFAULT_LOCATION_REQUEST = LocationRequest.Builder(DEFAULT_INTERVAL_MILLIS).build()
 
         const val LOCATION_TIMEOUT = 30 * 1000L // 30 sec
         private const val LOCATION_SEGMENTS = 5

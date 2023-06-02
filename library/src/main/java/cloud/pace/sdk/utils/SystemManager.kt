@@ -3,7 +3,6 @@ package cloud.pace.sdk.utils
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
-import android.net.ConnectivityManager
 import android.os.Handler
 import android.os.Looper
 import androidx.core.content.ContextCompat
@@ -18,7 +17,6 @@ interface SystemManager {
     fun isGooglePlayServicesAvailable(): Boolean
     fun getFusedLocationProviderClient(): FusedLocationProviderClient
     fun getLocationManager(): LocationManager?
-    fun getConnectivityManager(): ConnectivityManager?
     fun getHandler(): Handler
     fun getCurrentTimeMillis(): Long
 }
@@ -40,10 +38,6 @@ class SystemManagerImpl(private val context: Context) : SystemManager {
 
     override fun getLocationManager(): LocationManager? {
         return context.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
-    }
-
-    override fun getConnectivityManager(): ConnectivityManager? {
-        return context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
     }
 
     override fun getHandler(): Handler {

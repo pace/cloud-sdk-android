@@ -19,6 +19,7 @@ import cloud.pace.sdk.utils.Completion
 import cloud.pace.sdk.utils.Event
 import io.mockk.mockk
 import junit.framework.Assert.assertEquals
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -33,6 +34,7 @@ import org.koin.test.inject
 import org.mockito.Mockito.mock
 import org.mockito.junit.MockitoJUnitRunner
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(MockitoJUnitRunner::class)
 class AppActivityViewModelTest : KoinTest {
 

@@ -1,126 +1,143 @@
 package cloud.pace.sdk.appkit
 
-import android.content.Context
-import android.graphics.Bitmap
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import cloud.pace.sdk.appkit.app.drawer.AppDrawerViewModel
-import cloud.pace.sdk.appkit.app.drawer.AppDrawerViewModelImpl
+import android.location.Location
+import cloud.pace.sdk.appkit.app.api.UriManager
+import cloud.pace.sdk.appkit.app.drawer.ui.AppDrawerViewModel
+import cloud.pace.sdk.appkit.app.drawer.ui.AppDrawerViewModelImpl
+import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.model.App
+import cloud.pace.sdk.appkit.utils.CoroutineTestRule
 import cloud.pace.sdk.appkit.utils.TestAppEventManager
+import cloud.pace.sdk.appkit.utils.TestLocationProvider
+import cloud.pace.sdk.appkit.utils.TestUriUtils
+import cloud.pace.sdk.utils.Failure
+import cloud.pace.sdk.utils.LocationProvider
+import cloud.pace.sdk.utils.Success
+import io.mockk.coEvery
+import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runTest
 import org.junit.After
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
-import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
+import org.koin.test.KoinTest
+import org.koin.test.inject
+import kotlin.test.assertEquals
 
-@RunWith(MockitoJUnitRunner::class)
-class AppDrawerViewModelTest {
+@OptIn(ExperimentalCoroutinesApi::class)
+class AppDrawerViewModelTest : KoinTest {
 
     @get:Rule
-    val rule = InstantTaskExecutorRule()
+    val coroutineTestRule = CoroutineTestRule()
 
+    private val host = "pace.tanke.emma.net"
+    private val app1 = App(
+        name = "Jetzt tanken",
+        shortName = "Connected Fueling",
+        description = "Tanke Emma",
+        url = "https://$host",
+        iconUrl = "https://icon.pace.tanke.emma.net",
+        distance = 42
+    )
+    private val app2 = App(
+        name = "Jetzt tanken",
+        shortName = "Connected Fueling",
+        description = "Tanke Emma 2",
+        url = "https://pace.tanke.emma2.net",
+        iconUrl = "https://icon.pace.tanke.emma2.net",
+        distance = 52
+    )
+    private val apps = listOf(app1, app2)
+
+    private val location = Location("").apply {
+        latitude = 49.012440
+        longitude = 8.426530
+    }
+
+    private val locationProvider = TestLocationProvider(location)
+    private val appManager = mockk<AppManager>(relaxed = true)
     private val eventManager = TestAppEventManager()
-    private val viewModel = AppDrawerViewModelImpl(eventManager)
+    private val uriManager = TestUriUtils()
+    private val viewModel: AppDrawerViewModel by inject()
 
-    @Mock
-    private lateinit var mockContext: Context
-
-    @Mock
-    private lateinit var logo: Bitmap
-
-    @Before
-    fun init() {
-        startKoin {
-            androidContext(mockContext)
-            modules(
-                module {
-                    single { eventManager }
-                    viewModel<AppDrawerViewModel> { viewModel }
-                }
-            )
+    private val testModule = module {
+        single<LocationProvider> { locationProvider }
+        single { appManager }
+        single<AppEventManager> { eventManager }
+        single<UriManager> { uriManager }
+        viewModel<AppDrawerViewModel> {
+            AppDrawerViewModelImpl(get(), get(), get(), get())
         }
     }
 
-    @After
-    fun onFinished() = stopKoin()
-
-    @Test
-    fun `set app`() {
-        val app = App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null, distance = null)
-        viewModel.init(app, false)
-
-        Assert.assertEquals(app.name, viewModel.title.value)
-        Assert.assertEquals(app.description, viewModel.subtitle.value)
-        Assert.assertNull(viewModel.background.value)
-        Assert.assertNull(viewModel.textColor.value)
-        Assert.assertNull(viewModel.iconBackground.value)
-        Assert.assertNull(viewModel.logo.value)
+    @Before
+    fun setup() {
+        startKoin {
+            modules(testModule)
+        }
     }
 
     @Test
-    fun `set app with icon`() {
-        val app = App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = logo, distance = null)
-        viewModel.init(app, true)
+    fun `apps are set if local available apps are available`() = runTest {
+        coEvery { appManager.requestLocalApps(any<Location>()) } returns Success(apps)
 
-        Assert.assertEquals(app.logo, viewModel.logo.value)
+        // Create an empty collector for the StateFlow
+        backgroundScope.launch(coroutineTestRule.testDispatcher) {
+            viewModel.apps.collect()
+        }
+
+        assertEquals(apps, viewModel.apps.value)
     }
 
     @Test
-    fun `set app with icon background`() {
-        val app =
-            App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null, distance = null, iconBackgroundColor = "#ffffff")
-        viewModel.init(app, false)
+    fun `apps are empty if no apps are available`() = runTest {
+        coEvery { appManager.requestLocalApps(any<Location>()) } returns Success(emptyList())
 
-        Assert.assertNotNull(viewModel.iconBackground.value)
+        // Create an empty collector for the StateFlow
+        backgroundScope.launch(coroutineTestRule.testDispatcher) {
+            viewModel.apps.collect()
+        }
+
+        assertEquals(emptyList(), viewModel.apps.value)
     }
 
     @Test
-    fun `close app`() {
-        val url = "https://pace.tanke.emma.net"
-        viewModel.init(App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = url, logo = null, distance = null), false)
+    fun `apps are empty if request fails`() = runTest {
+        coEvery { appManager.requestLocalApps(any<Location>()) } returns Failure(Exception())
 
-        viewModel.onCreate()
+        // Create an empty collector for the StateFlow
+        backgroundScope.launch(coroutineTestRule.testDispatcher) {
+            viewModel.apps.collect()
+        }
 
-        eventManager.setInvalidApps(listOf(url))
-
-        Assert.assertNotNull(viewModel.closeEvent.value)
-
-        viewModel.onDestroy()
+        assertEquals(emptyList(), viewModel.apps.value)
     }
 
     @Test
-    fun `do not close app`() {
-        viewModel.init(App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = "https://pace.tanke.emma.net", logo = null, distance = null), false)
+    fun `disabled app is removed`() = runTest {
+        coEvery { appManager.requestLocalApps(any<Location>()) } returns Success(apps)
 
-        viewModel.onCreate()
+        // Create an empty collector for the StateFlow
+        backgroundScope.launch(coroutineTestRule.testDispatcher) {
+            viewModel.apps.collect()
+        }
 
-        eventManager.setInvalidApps(listOf("https://app.test.net"))
+        assertEquals(apps, viewModel.apps.value)
 
-        Assert.assertNull(viewModel.closeEvent.value)
-
-        viewModel.onDestroy()
-    }
-
-    @Test
-    fun `disable app`() {
-        val host = "pace.tanke.emma.net"
-        val url = "https://$host"
-        viewModel.init(App(name = "Jetzt tanken", shortName = "Connected Fueling", description = "Tanke Emma", url = url, logo = null, distance = null), false)
-
-        viewModel.onCreate()
-
-        Assert.assertNull(viewModel.closeEvent.value?.getContentIfNotHandled())
         eventManager.setDisabledHost(host)
-        Assert.assertEquals(Unit, viewModel.closeEvent.value?.getContentIfNotHandled())
 
-        viewModel.onDestroy()
+        assertEquals(listOf(app2), viewModel.apps.value)
+    }
+
+    @After
+    fun tearDown() {
+        stopKoin()
     }
 }

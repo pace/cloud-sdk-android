@@ -6,7 +6,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,8 +21,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -35,30 +32,23 @@ fun ShowLoginScreen(showDialog: Boolean, onDialogDismiss: () -> Unit, openLogin:
     Scaffold(
         topBar = {
             TopAppBar(
-                modifier = Modifier
-                    .height(80.dp),
                 title = {
+                    Text(text = stringResource(id = R.string.app_name))
+                },
+                navigationIcon = {
                     Icon(
                         painter = painterResource(id = R.drawable.pace_logo),
                         contentDescription = null,
-                        modifier = Modifier.padding(20.dp)
+                        modifier = Modifier.padding(10.dp)
                     )
-                    Text(
-                        text = stringResource(id = R.string.app_name),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        textAlign = TextAlign.Center
-                    )
-                },
-                contentColor = Color.White,
-                elevation = 60.dp
+                }
             )
         },
         content = {
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(it)
             ) {
                 val (infoText, loginButton, termsText, termsAndPrivacyDivider, privacyText) = createRefs()
                 val context = LocalContext.current
@@ -160,8 +150,7 @@ fun LoginButton(modifier: Modifier, openLogin: () -> Unit) {
         Text(
             text = "Login",
             fontSize = 30.sp,
-            modifier = Modifier
-                .padding(10.dp)
+            modifier = Modifier.padding(10.dp)
         )
     }
 }
