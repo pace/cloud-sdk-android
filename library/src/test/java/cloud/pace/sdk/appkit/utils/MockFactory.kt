@@ -52,15 +52,15 @@ open class TestLocationProvider(
 
     override fun removeLocationUpdates() {}
 
-    override suspend fun firstValidLocation(): Completion<Location> {
+    override suspend fun firstValidLocation(timeout: Long): Completion<Location> {
         return mockedLocation?.let { Success(it) } ?: Failure(throwable)
     }
 
-    override suspend fun currentLocation(validate: Boolean): Completion<Location?> {
+    override suspend fun currentLocation(validate: Boolean, timeout: Long): Completion<Location?> {
         return mockedLocation?.let { Success(it) } ?: Failure(throwable)
     }
 
-    override suspend fun lastKnownLocation(validate: Boolean): Completion<Location?> {
+    override suspend fun lastKnownLocation(validate: Boolean, timeout: Long): Completion<Location?> {
         return mockedLocation?.let { Success(it) } ?: Failure(throwable)
     }
 }
