@@ -20,7 +20,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.CancellableContinuation
-import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 
 interface LocationProvider {
@@ -30,9 +29,9 @@ interface LocationProvider {
 
     fun requestLocationUpdates()
     fun removeLocationUpdates()
-    suspend fun firstValidLocation(): Completion<Location>
-    suspend fun currentLocation(validate: Boolean): Completion<Location?>
-    suspend fun lastKnownLocation(validate: Boolean): Completion<Location?>
+    suspend fun firstValidLocation(timeout: Long = LocationProviderImpl.LOCATION_TIMEOUT): Completion<Location>
+    suspend fun currentLocation(validate: Boolean, timeout: Long = LocationProviderImpl.LOCATION_TIMEOUT): Completion<Location?>
+    suspend fun lastKnownLocation(validate: Boolean, timeout: Long = LocationProviderImpl.LOCATION_TIMEOUT): Completion<Location?>
 }
 
 class LocationProviderImpl(
@@ -131,9 +130,9 @@ class LocationProviderImpl(
      *
      * @see getLocationIfValid
      */
-    override suspend fun firstValidLocation(): Completion<Location> {
+    override suspend fun firstValidLocation(timeout: Long): Completion<Location> {
         val location = try {
-            suspendCoroutineWithTimeout<Location>(LOCATION_TIMEOUT) { continuation ->
+            suspendCoroutineWithTimeout<Location>(timeout) { continuation ->
                 if (systemManager.isLocationPermissionGranted()) {
                     try {
                         val startTime = systemManager.getCurrentTimeMillis()
@@ -214,9 +213,9 @@ class LocationProviderImpl(
      *
      * @see getLocationIfValid
      */
-    override suspend fun currentLocation(validate: Boolean): Completion<Location?> {
+    override suspend fun currentLocation(validate: Boolean, timeout: Long): Completion<Location?> {
         val location = try {
-            suspendCancellableCoroutine<Location?> { continuation ->
+            suspendCoroutineWithTimeout<Location?>(timeout) { continuation ->
                 if (systemManager.isLocationPermissionGranted()) {
                     try {
                         val startTime = systemManager.getCurrentTimeMillis()
@@ -298,9 +297,9 @@ class LocationProviderImpl(
      *
      * @see getLocationIfValid
      */
-    override suspend fun lastKnownLocation(validate: Boolean): Completion<Location?> {
+    override suspend fun lastKnownLocation(validate: Boolean, timeout: Long): Completion<Location?> {
         val location = try {
-            suspendCancellableCoroutine<Location?> { continuation ->
+            suspendCoroutineWithTimeout<Location?>(timeout) { continuation ->
                 if (systemManager.isLocationPermissionGranted()) {
                     try {
                         val startTime = systemManager.getCurrentTimeMillis()
@@ -429,7 +428,7 @@ class LocationProviderImpl(
         private const val LOCATION_REQUEST_PRIORITY = LocationRequest.PRIORITY_HIGH_ACCURACY
         private const val LOCATION_REQUEST_SMALLEST_DISPLACEMENT = 0f // In m
 
-        private const val LOCATION_TIMEOUT = 30 * 1000L // 30 sec
+        const val LOCATION_TIMEOUT = 30 * 1000L // 30 sec
         private const val LOCATION_SEGMENTS = 5
         private const val MAX_LOCATION_AGE = 30 * 1000 // 30 sec
 
