@@ -1,3 +1,14 @@
+19.1.0 Release notes (2023-06-12)
+=============================================================
+
+### Enhancements
+
+* Implement payment process with Google Pay
+
+### Internal
+
+* Add timeout to location functions
+
 19.0.0 Release notes (2023-05-16)
 =============================================================
 
