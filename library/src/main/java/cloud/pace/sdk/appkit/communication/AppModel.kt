@@ -15,7 +15,11 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cloud.pace.sdk.appkit.app.webview.AppWebViewModel
+import cloud.pace.sdk.appkit.communication.generated.model.request.GooglePayAvailabilityCheckRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.GooglePayPaymentRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.OpenURLInNewTabRequest
+import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayAvailabilityCheckResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayPaymentResponse
 import cloud.pace.sdk.appkit.utils.TokenValidator
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.InternalError
@@ -38,6 +42,8 @@ interface AppModel {
     val biometricRequest: LiveData<AppWebViewModel.BiometricRequest>
     val authorize: LiveData<Result<Completion<String?>>>
     val endSession: LiveData<Result<LogoutResponse>>
+    val googlePayAvailabilityCheckRequest: LiveData<Pair<GooglePayAvailabilityCheckRequest, (Completion<GooglePayAvailabilityCheckResponse>) -> Unit>>
+    val googlePayPayment: LiveData<Pair<GooglePayPaymentRequest, (Completion<GooglePayPaymentResponse>) -> Unit>>
 
     fun reset()
     fun setBiometricRequest(request: AppWebViewModel.BiometricRequest)
@@ -53,13 +59,15 @@ interface AppModel {
     fun onLogout(onResult: (LogoutResponse) -> Unit)
     fun onCustomSchemeError(context: Context?, scheme: String)
     fun onImageDataReceived(bitmap: Bitmap)
+    fun onShareTextReceived(text: String, title: String)
     fun setUserProperty(key: String, value: String, update: Boolean)
     fun logEvent(key: String, parameters: Map<String, Any>)
     fun getConfig(key: String, config: (String?) -> Unit)
     fun isAppRedirectAllowed(app: String, isAllowed: (Boolean) -> Unit)
     fun isSignedIn(isSignedIn: (Boolean) -> Unit)
     fun isRemoteConfigAvailable(isAvailable: (Boolean) -> Unit)
-    fun onShareTextReceived(text: String, title: String)
+    fun onGooglePayAvailabilityRequest(request: GooglePayAvailabilityCheckRequest, onResult: (Completion<GooglePayAvailabilityCheckResponse>) -> Unit)
+    fun onGooglePayPayment(googlePayPaymentRequest: GooglePayPaymentRequest, onResult: (Completion<GooglePayPaymentResponse>) -> Unit)
 
     class Result<T>(val onResult: (T) -> Unit)
 }
@@ -72,6 +80,8 @@ class AppModelImpl(private val context: Context) : AppModel {
     override var biometricRequest = MutableLiveData<AppWebViewModel.BiometricRequest>()
     override var authorize = MutableLiveData<AppModel.Result<Completion<String?>>>()
     override var endSession = MutableLiveData<AppModel.Result<LogoutResponse>>()
+    override var googlePayAvailabilityCheckRequest = MutableLiveData<Pair<GooglePayAvailabilityCheckRequest, (Completion<GooglePayAvailabilityCheckResponse>) -> Unit>>()
+    override var googlePayPayment = MutableLiveData<Pair<GooglePayPaymentRequest, (Completion<GooglePayPaymentResponse>) -> Unit>>()
 
     override fun reset() {
         close = MutableLiveData()
@@ -79,6 +89,8 @@ class AppModelImpl(private val context: Context) : AppModel {
         biometricRequest = MutableLiveData()
         authorize = MutableLiveData()
         endSession = MutableLiveData()
+        googlePayAvailabilityCheckRequest = MutableLiveData()
+        googlePayPayment = MutableLiveData()
     }
 
     override fun setBiometricRequest(request: AppWebViewModel.BiometricRequest) {
@@ -155,6 +167,7 @@ class AppModelImpl(private val context: Context) : AppModel {
                                     onResult(Failure(InternalError))
                                 }
                             }
+
                             is Failure -> onResult(Failure(completion.throwable))
                         }
                     }
@@ -305,6 +318,18 @@ class AppModelImpl(private val context: Context) : AppModel {
     override fun isRemoteConfigAvailable(isAvailable: (Boolean) -> Unit) {
         onMainThread {
             callback?.isRemoteConfigAvailable(isAvailable)
+        }
+    }
+
+    override fun onGooglePayAvailabilityRequest(request: GooglePayAvailabilityCheckRequest, onResult: (Completion<GooglePayAvailabilityCheckResponse>) -> Unit) {
+        onMainThread {
+            googlePayAvailabilityCheckRequest.value = Pair(request, onResult)
+        }
+    }
+
+    override fun onGooglePayPayment(googlePayPaymentRequest: GooglePayPaymentRequest, onResult: (Completion<GooglePayPaymentResponse>) -> Unit) {
+        onMainThread {
+            googlePayPayment.value = Pair(googlePayPaymentRequest, onResult)
         }
     }
 

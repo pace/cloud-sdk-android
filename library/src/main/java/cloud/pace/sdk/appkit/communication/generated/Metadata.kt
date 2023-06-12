@@ -22,8 +22,9 @@ public object Metadata {
         "/introspect", "/close", "/logout",
         "/getBiometricStatus", "/setTOTP", "/getTOTP", "/setSecureData", "/getSecureData", "/disable",
         "/openURLInNewTab", "/verifyLocation", "/getAccessToken", "/imageData",
-        "/applePayAvailabilityCheck", "/applePayRequest", "/back", "/appInterceptableLink",
-        "/setUserProperty", "/logEvent", "/getConfig", "/getTraceId", "/getLocation", "/appRedirect",
-        "/isBiometricAuthEnabled", "/isSignedIn", "/isRemoteConfigAvailable", "/shareText"
+        "/applePayAvailabilityCheck", "/back", "/appInterceptableLink", "/setUserProperty",
+        "/logEvent", "/getConfig", "/getTraceId", "/getLocation", "/appRedirect",
+        "/isBiometricAuthEnabled", "/isSignedIn", "/isRemoteConfigAvailable", "/shareText",
+        "/googlePayAvailabilityCheck", "/googlePayPayment"
     )
 }

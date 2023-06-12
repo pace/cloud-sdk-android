@@ -6,17 +6,19 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
-public data class ApplePayRequestResponse(
-    public val paymentMethod: PaymentMethod,
-    public val paymentData: PaymentData,
-    public val transactionIdentifier: String
+public data class GooglePayPaymentResponse(
+    public val apiVersion: Int,
+    public val apiVersionMinor: Int,
+    public val paymentMethodData: PaymentMethodData,
+    public val email: String?,
+    public val shippingAddress: ShippingAddress?
 ) : ResponseBody()
 
-public data class ApplePayRequestError(
+public data class GooglePayPaymentError(
     public val message: String? = null
 ) : ResponseBody()
 
-public class ApplePayRequestResult private constructor(
+public class GooglePayPaymentResult private constructor(
     status: Int,
     body: ResponseBody?
 ) : Result(status, body) {
@@ -25,18 +27,19 @@ public class ApplePayRequestResult private constructor(
     public constructor(failure: Failure) : this(failure.statusCode.code, failure.response)
 
     public class Success(
-        public val response: ApplePayRequestResponse
+        public val response: GooglePayPaymentResponse
     )
 
     public class Failure(
         public val statusCode: StatusCode,
-        public val response: ApplePayRequestError
+        public val response: GooglePayPaymentError
     ) {
         public enum class StatusCode(
             public val code: Int
         ) {
             BadRequest(400),
             RequestTimeout(408),
+            ClientClosedRequest(499),
             InternalServerError(500),
             ;
         }

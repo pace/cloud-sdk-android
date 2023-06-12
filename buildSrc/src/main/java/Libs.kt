@@ -14,6 +14,7 @@ object Libs {
     const val DOKKA = "org.jetbrains.dokka"
     const val FRAGMENT_KTX = "androidx.fragment:fragment-ktx:${Versions.FRAGMENT_KTX}"
     const val GOOGLE_MAPS_UTILS = "com.google.maps.android:android-maps-utils:${Versions.GOOGLE_MAPS_UTILS}"
+    const val GOOGLE_PAY = "com.google.android.gms:play-services-wallet:${Versions.GOOGLE_PAY}"
     const val GOOGLE_PLAY_SERVICES_LOCATION = "com.google.android.gms:play-services-location:${Versions.GOOGLE_PLAY_SERVICES_LOCATION}"
     const val GOOGLE_PLAY_SERVICES_MAPS = "com.google.android.gms:play-services-maps:${Versions.GOOGLE_PLAY_SERVICES_MAPS}"
     const val GOOGLE_PROTOBUF_GRADLE_PLUGIN = "com.google.protobuf"

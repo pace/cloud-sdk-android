@@ -8,12 +8,13 @@ package cloud.pace.sdk.appkit.communication.generated
 
 import cloud.pace.sdk.appkit.communication.generated.model.request.AppRedirectRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.ApplePayAvailabilityCheckRequest
-import cloud.pace.sdk.appkit.communication.generated.model.request.ApplePayRequestRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.DisableRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.GetAccessTokenRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.GetConfigRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.GetSecureDataRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.GetTOTPRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.GooglePayAvailabilityCheckRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.GooglePayPaymentRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.ImageDataRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.LogEventRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.OpenURLInNewTabRequest
@@ -71,6 +72,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/close" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -82,6 +84,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/logout" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -93,6 +96,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/getBiometricStatus" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -104,6 +108,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/setTOTP" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -128,6 +133,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/getTOTP" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -152,6 +158,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/setSecureData" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -176,6 +183,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/getSecureData" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -200,6 +208,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/disable" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -224,6 +233,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/openURLInNewTab" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -248,6 +258,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/verifyLocation" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -272,6 +283,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/getAccessToken" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -296,6 +308,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/imageData" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -320,6 +333,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/applePayAvailabilityCheck" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -345,30 +359,7 @@ public data class CommunicationManager(
                     }
                 }
             }
-            "/applePayRequest" -> {
-                CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
-                    val applePayRequestRequest = gson.fromJson<ApplePayRequestRequest>(message)
-                    val body = applePayRequestRequest?.body
-                    if (body == null) {
-                        withContext(Dispatchers.Main) {
-                            respond(
-                                Response(
-                                    request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
-                                    Message("Could not deserialize the JSON request message")
-                                )
-                            )
-                        }
-                    } else {
-                        val result = listener.applePayRequest(timeout, body)
-                        withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
-                        }
-                    }
-                }
-            }
+
             "/back" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -380,6 +371,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/appInterceptableLink" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -391,6 +383,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/setUserProperty" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -415,6 +408,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/logEvent" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -439,6 +433,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/getConfig" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -463,6 +458,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/getTraceId" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -474,6 +470,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/getLocation" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -485,6 +482,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/appRedirect" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -509,6 +507,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/isBiometricAuthEnabled" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -520,6 +519,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/isSignedIn" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -531,6 +531,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/isRemoteConfigAvailable" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -542,6 +543,7 @@ public data class CommunicationManager(
                     }
                 }
             }
+
             "/shareText" -> {
                 CoroutineScope(Dispatchers.Default).launch {
                     val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
@@ -566,6 +568,58 @@ public data class CommunicationManager(
                     }
                 }
             }
+
+            "/googlePayAvailabilityCheck" -> {
+                CoroutineScope(Dispatchers.Default).launch {
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
+                        TimeUnit.SECONDS.toMillis(it)
+                    }
+                    val googlePayAvailabilityCheckRequest =
+                        gson.fromJson<GooglePayAvailabilityCheckRequest>(message)
+                    val body = googlePayAvailabilityCheckRequest?.body
+                    if (body == null) {
+                        withContext(Dispatchers.Main) {
+                            respond(
+                                Response(
+                                    request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
+                                    Message("Could not deserialize the JSON request message")
+                                )
+                            )
+                        }
+                    } else {
+                        val result = listener.googlePayAvailabilityCheck(timeout, body)
+                        withContext(Dispatchers.Main) {
+                            respond(Response(request.id, result.status, request.header, result.body))
+                        }
+                    }
+                }
+            }
+
+            "/googlePayPayment" -> {
+                CoroutineScope(Dispatchers.Default).launch {
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
+                        TimeUnit.SECONDS.toMillis(it)
+                    }
+                    val googlePayPaymentRequest = gson.fromJson<GooglePayPaymentRequest>(message)
+                    val body = googlePayPaymentRequest?.body
+                    if (body == null) {
+                        withContext(Dispatchers.Main) {
+                            respond(
+                                Response(
+                                    request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
+                                    Message("Could not deserialize the JSON request message")
+                                )
+                            )
+                        }
+                    } else {
+                        val result = listener.googlePayPayment(timeout, body)
+                        withContext(Dispatchers.Main) {
+                            respond(Response(request.id, result.status, request.header, result.body))
+                        }
+                    }
+                }
+            }
+
             else -> {
                 CoroutineScope(Dispatchers.Main).launch {
                     respond(

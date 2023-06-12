@@ -90,7 +90,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
         }
 
         communicationManager = CommunicationManager(webViewModel) {
-            binding.webView.evaluateJavascript("window.postMessage('$it', window.origin)") {}
+            binding.webView.evaluateJavascript("window.postMessage(JSON.stringify($it), window.origin)") {}
         }
         binding.webView.addJavascriptInterface(CommunicationHandler(), "pace_native_api")
 

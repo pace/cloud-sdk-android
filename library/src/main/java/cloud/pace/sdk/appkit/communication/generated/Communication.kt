@@ -8,12 +8,13 @@ package cloud.pace.sdk.appkit.communication.generated
 
 import cloud.pace.sdk.appkit.communication.generated.model.request.AppRedirectRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.ApplePayAvailabilityCheckRequest
-import cloud.pace.sdk.appkit.communication.generated.model.request.ApplePayRequestRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.DisableRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.GetAccessTokenRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.GetConfigRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.GetSecureDataRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.GetTOTPRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.GooglePayAvailabilityCheckRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.GooglePayPaymentRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.ImageDataRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.LogEventRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.OpenURLInNewTabRequest
@@ -25,7 +26,6 @@ import cloud.pace.sdk.appkit.communication.generated.model.request.VerifyLocatio
 import cloud.pace.sdk.appkit.communication.generated.model.response.AppInterceptableLinkResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.AppRedirectResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.ApplePayAvailabilityCheckResult
-import cloud.pace.sdk.appkit.communication.generated.model.response.ApplePayRequestResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.BackResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.CloseResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.DisableResult
@@ -36,6 +36,8 @@ import cloud.pace.sdk.appkit.communication.generated.model.response.GetLocationR
 import cloud.pace.sdk.appkit.communication.generated.model.response.GetSecureDataResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.GetTOTPResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.GetTraceIdResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayAvailabilityCheckResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayPaymentResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.ImageDataResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.IntrospectResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.IsBiometricAuthEnabledResult
@@ -133,8 +135,9 @@ public interface Communication {
 
     /**
      * Open the given url in a new browser tab.
-     * This specifically is the case when authorizing the payment process via paypal due to security
-     * reasons.
+     * This specifically is the case in the payment process.
+     * Only works when a client schema is set and returned via `appInterceptableLink` or if integrated
+     * is set to true (assuming client listens to default schema: `cloudsdk`).
      *
      * @param timeout The timeout of openURLInNewTab in milliseconds or null if no timeout should be
      * used
@@ -186,18 +189,6 @@ public interface Communication {
         applePayAvailabilityCheckRequest: ApplePayAvailabilityCheckRequest
     ):
         ApplePayAvailabilityCheckResult
-
-    /**
-     * The Apple Pay payment request to be handled (iOS only).
-     *
-     * @param timeout The timeout of applePayRequest in milliseconds or null if no timeout should be
-     * used
-     * @param applePayRequestRequest The applePayRequest request body object
-     */
-    public suspend fun applePayRequest(
-        timeout: Long?,
-        applePayRequestRequest: ApplePayRequestRequest
-    ): ApplePayRequestResult
 
     /**
      * The app requests navigating back.
@@ -305,4 +296,29 @@ public interface Communication {
      * @param shareTextRequest The shareText request body object
      */
     public suspend fun shareText(timeout: Long?, shareTextRequest: ShareTextRequest): ShareTextResult
+
+    /**
+     * Requests, if Google Pay is ready to be used (enabled + cards onboarded; Android only)
+     *
+     * @param timeout The timeout of googlePayAvailabilityCheck in milliseconds or null if no timeout
+     * should be used
+     * @param googlePayAvailabilityCheckRequest The googlePayAvailabilityCheck request body object
+     */
+    public suspend fun googlePayAvailabilityCheck(
+        timeout: Long?,
+        googlePayAvailabilityCheckRequest: GooglePayAvailabilityCheckRequest
+    ):
+        GooglePayAvailabilityCheckResult
+
+    /**
+     * The Google Pay payment request to be handled (Android only).
+     *
+     * @param timeout The timeout of googlePayPayment in milliseconds or null if no timeout should be
+     * used
+     * @param googlePayPaymentRequest The googlePayPayment request body object
+     */
+    public suspend fun googlePayPayment(
+        timeout: Long?,
+        googlePayPaymentRequest: GooglePayPaymentRequest
+    ): GooglePayPaymentResult
 }
