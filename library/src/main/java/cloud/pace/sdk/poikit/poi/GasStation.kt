@@ -2,6 +2,7 @@ package cloud.pace.sdk.poikit.poi
 
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_AMENITIES
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_BRAND
+import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_BRAND_ID
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_CURRENCY
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_FOODS
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_LOYALTY_PROGRAMS
@@ -38,6 +39,11 @@ open class GasStation(id: String, geometry: ArrayList<Geometry.CommandGeo>) :
      * Brand of the gas station
      */
     var brand: String? = null
+
+    /**
+     * Brand id
+     */
+    var brandId: String? = null
 
     /**
      * Opening hours represented by a list of [OpeningHours] rules.
@@ -142,6 +148,7 @@ open class GasStation(id: String, geometry: ArrayList<Geometry.CommandGeo>) :
 
         name = values[OSM_POI_NAME]
         brand = values[OSM_BRAND]
+        brandId = values[OSM_BRAND_ID]
         currency = values[OSM_CURRENCY]
 
         values[OSM_VALID_FROM]?.let {
