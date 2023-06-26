@@ -20,13 +20,17 @@ import cloud.pace.sdk.appkit.communication.generated.model.request.GooglePayPaym
 import cloud.pace.sdk.appkit.communication.generated.model.request.OpenURLInNewTabRequest
 import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayAvailabilityCheckResponse
 import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayPaymentResponse
+import cloud.pace.sdk.appkit.navigation.NavigationUtils
 import cloud.pace.sdk.appkit.utils.TokenValidator
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.InternalError
 import cloud.pace.sdk.utils.Completion
+import cloud.pace.sdk.utils.DefaultDispatcherProvider
+import cloud.pace.sdk.utils.DispatcherProvider
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
-import cloud.pace.sdk.utils.onMainThread
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import net.openid.appauth.AuthorizationException
 import timber.log.Timber
 import java.io.File
@@ -55,6 +59,7 @@ interface AppModel {
     fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (Completion<GetAccessTokenResponse>) -> Unit)
     fun showShareSheet(bitmap: Bitmap)
     fun showShareSheet(text: String, title: String)
+    fun startNavigation(lat: Double, lon: Double)
     fun onLogin(context: Context, result: Completion<String?>)
     fun onLogout(onResult: (LogoutResponse) -> Unit)
     fun onCustomSchemeError(context: Context?, scheme: String)
@@ -68,11 +73,15 @@ interface AppModel {
     fun isRemoteConfigAvailable(isAvailable: (Boolean) -> Unit)
     fun onGooglePayAvailabilityRequest(request: GooglePayAvailabilityCheckRequest, onResult: (Completion<GooglePayAvailabilityCheckResponse>) -> Unit)
     fun onGooglePayPayment(googlePayPaymentRequest: GooglePayPaymentRequest, onResult: (Completion<GooglePayPaymentResponse>) -> Unit)
+    fun onNavigationRequestReceived(lat: Double, lon: Double, name: String)
 
     class Result<T>(val onResult: (T) -> Unit)
 }
 
-class AppModelImpl(private val context: Context) : AppModel {
+class AppModelImpl(
+    private val context: Context,
+    dispatchers: DispatcherProvider = DefaultDispatcherProvider()
+) : AppModel {
 
     override var callback: AppCallbackImpl? = null
     override var close = MutableLiveData<Unit>()
@@ -82,6 +91,8 @@ class AppModelImpl(private val context: Context) : AppModel {
     override var endSession = MutableLiveData<AppModel.Result<LogoutResponse>>()
     override var googlePayAvailabilityCheckRequest = MutableLiveData<Pair<GooglePayAvailabilityCheckRequest, (Completion<GooglePayAvailabilityCheckResponse>) -> Unit>>()
     override var googlePayPayment = MutableLiveData<Pair<GooglePayPaymentRequest, (Completion<GooglePayPaymentResponse>) -> Unit>>()
+
+    private val coroutineScope = CoroutineScope(dispatchers.main())
 
     override fun reset() {
         close = MutableLiveData()
@@ -94,39 +105,39 @@ class AppModelImpl(private val context: Context) : AppModel {
     }
 
     override fun setBiometricRequest(request: AppWebViewModel.BiometricRequest) {
-        onMainThread {
+        coroutineScope.launch {
             biometricRequest.value = request
         }
     }
 
     override fun authorize(onResult: (Completion<String?>) -> Unit) {
-        onMainThread {
+        coroutineScope.launch {
             authorize.value = AppModel.Result(onResult)
         }
     }
 
     override fun endSession(onResult: (LogoutResponse) -> Unit) {
-        onMainThread {
+        coroutineScope.launch {
             endSession.value = AppModel.Result(onResult)
         }
     }
 
     override fun close() {
-        onMainThread {
+        coroutineScope.launch {
             close.value = Unit
             callback?.onClose()
         }
     }
 
     override fun openUrlInNewTab(openURLInNewTabRequest: OpenURLInNewTabRequest) {
-        onMainThread {
+        coroutineScope.launch {
             openUrlInNewTab.value = openURLInNewTabRequest
             callback?.onOpenInNewTab(openURLInNewTabRequest.url)
         }
     }
 
     override fun disable(host: String) {
-        onMainThread {
+        coroutineScope.launch {
             callback?.onDisable(host)
         }
     }
@@ -174,7 +185,7 @@ class AppModelImpl(private val context: Context) : AppModel {
                 }
             }
         } else {
-            onMainThread {
+            coroutineScope.launch {
                 callback?.getAccessToken(reason, oldToken) {
                     onResult(Success(it))
                 }
@@ -241,14 +252,26 @@ class AppModelImpl(private val context: Context) : AppModel {
 
             startActivity(context, chooserIntent, null)
         } catch (e: ActivityNotFoundException) {
-            Timber.i(e, "No Activity found to execute the share intent")
+            Timber.i(e, "No Activity found to execute the share intent of the text $text with title $title")
         } catch (e: Exception) {
-            Timber.w(e, "Could not share the shareText")
+            Timber.w(e, "Could not share the text $text with title $title")
+        }
+    }
+
+    override fun startNavigation(lat: Double, lon: Double) {
+        try {
+            // Open navigation app chooser (Google Maps or Waze)
+            val navigationIntent = NavigationUtils.getNavigationIntent(lat, lon)
+            startActivity(context, navigationIntent, null)
+        } catch (e: ActivityNotFoundException) {
+            Timber.i(e, "No Activity found to execute the navigation intent to $lat; $lon")
+        } catch (e: Exception) {
+            Timber.w(e, "Could not start the navigation to $lat; $lon")
         }
     }
 
     private fun sendOnSessionRenewalFailed(throwable: Throwable?, onResult: (Completion<GetAccessTokenResponse>) -> Unit) {
-        onMainThread {
+        coroutineScope.launch {
             callback?.onSessionRenewalFailed(throwable) {
                 it?.let { onResult(Success(GetAccessTokenResponse(it))) } ?: onResult(Failure(InternalError))
             }
@@ -256,80 +279,86 @@ class AppModelImpl(private val context: Context) : AppModel {
     }
 
     override fun onLogin(context: Context, result: Completion<String?>) {
-        onMainThread {
+        coroutineScope.launch {
             callback?.onLogin(context, result)
         }
     }
 
     override fun onLogout(onResult: (LogoutResponse) -> Unit) {
-        onMainThread {
+        coroutineScope.launch {
             callback?.onLogout(onResult)
         }
     }
 
     override fun onCustomSchemeError(context: Context?, scheme: String) {
-        onMainThread {
+        coroutineScope.launch {
             callback?.onCustomSchemeError(context, scheme)
         }
     }
 
     override fun onImageDataReceived(bitmap: Bitmap) {
-        onMainThread {
+        coroutineScope.launch {
             callback?.onImageDataReceived(bitmap)
         }
     }
 
     override fun onShareTextReceived(text: String, title: String) {
-        onMainThread {
+        coroutineScope.launch {
             callback?.onShareTextReceived(text, title)
         }
     }
 
     override fun setUserProperty(key: String, value: String, update: Boolean) {
-        onMainThread {
+        coroutineScope.launch {
             callback?.setUserProperty(key, value, update)
         }
     }
 
     override fun logEvent(key: String, parameters: Map<String, Any>) {
-        onMainThread {
+        coroutineScope.launch {
             callback?.logEvent(key, parameters)
         }
     }
 
     override fun getConfig(key: String, config: (String?) -> Unit) {
-        onMainThread {
+        coroutineScope.launch {
             callback?.getConfig(key, config)
         }
     }
 
     override fun isAppRedirectAllowed(app: String, isAllowed: (Boolean) -> Unit) {
-        onMainThread {
+        coroutineScope.launch {
             callback?.isAppRedirectAllowed(app, isAllowed)
         }
     }
 
     override fun isSignedIn(isSignedIn: (Boolean) -> Unit) {
-        onMainThread {
+        coroutineScope.launch {
             callback?.isSignedIn(isSignedIn)
         }
     }
 
     override fun isRemoteConfigAvailable(isAvailable: (Boolean) -> Unit) {
-        onMainThread {
+        coroutineScope.launch {
             callback?.isRemoteConfigAvailable(isAvailable)
         }
     }
 
     override fun onGooglePayAvailabilityRequest(request: GooglePayAvailabilityCheckRequest, onResult: (Completion<GooglePayAvailabilityCheckResponse>) -> Unit) {
-        onMainThread {
+        coroutineScope.launch {
             googlePayAvailabilityCheckRequest.value = Pair(request, onResult)
         }
     }
 
     override fun onGooglePayPayment(googlePayPaymentRequest: GooglePayPaymentRequest, onResult: (Completion<GooglePayPaymentResponse>) -> Unit) {
-        onMainThread {
+        coroutineScope.launch {
             googlePayPayment.value = Pair(googlePayPaymentRequest, onResult)
+        }
+    }
+
+    override fun onNavigationRequestReceived(lat: Double, lon: Double, name: String) {
+        coroutineScope.launch {
+            callback?.onNavigationRequestReceived(lat, lon, name)
         }
     }
 

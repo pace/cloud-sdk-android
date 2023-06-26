@@ -77,7 +77,7 @@ class AppWebViewModelTest {
         }
     }
     private val appCallback = mock(AppCallbackImpl::class.java)
-    private val appModel = AppModelImpl(context)
+    private val appModel = AppModelImpl(context, coroutineTestRule.testDispatcherProvider)
     private val viewModel = AppWebViewModelImpl(context, sharedPreferencesModel, eventManager, payManager, appModel, mock(LocationProvider::class.java))
 
     @Before

@@ -45,7 +45,7 @@ class AppActivityViewModelTest : KoinTest {
     val rule = InstantTaskExecutorRule()
 
     private val mockContext = mock(Context::class.java)
-    private val appModel = AppModelImpl(mockContext)
+    private val appModel = AppModelImpl(mockContext, coroutineTestRule.testDispatcherProvider)
     private val viewModel: AppActivityViewModel by inject()
 
     private val testModule = module {
