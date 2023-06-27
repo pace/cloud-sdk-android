@@ -1,3 +1,15 @@
+19.1.1 Release notes (2023-06-27)
+=============================================================
+
+### Fixes
+
+* Add merchantId to request model to fix payment on production
+> **_NOTE:_** If you want to use Google Pay, please upgrade to this PACE Cloud SDK version.
+
+### Internal
+
+* Add brand id to gas station
+
 19.1.0 Release notes (2023-06-12)
 =============================================================
 
