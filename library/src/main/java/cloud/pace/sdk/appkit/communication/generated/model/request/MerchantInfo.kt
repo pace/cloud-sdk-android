@@ -10,5 +10,11 @@ public data class MerchantInfo(
     /**
      * Merchant name encoded as UTF-8. Merchant name is rendered in the payment sheet.
      */
-    public val merchantName: String
+    public val merchantName: String,
+    /**
+     * A Google merchant identifier issued after registration with the Google Pay and Wallet Console.
+     * Required when PaymentsClient is initialized with an environment property of PRODUCTION. The
+     * merchantID can have 12-18 characters.
+     */
+    public val merchantId: String
 )
