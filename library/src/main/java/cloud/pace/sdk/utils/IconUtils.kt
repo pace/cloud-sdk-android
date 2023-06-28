@@ -1,30 +1,29 @@
 package cloud.pace.sdk.utils
 
-import cloud.pace.sdk.appkit.model.AppManifest
+import cloud.pace.sdk.appkit.model.AppIcon
 import kotlin.math.abs
 
 object IconUtils {
 
-    fun getBestMatchingIcon(requestedSize: Double, icons: Array<AppManifest.AppIcons>): AppManifest.AppIcons? {
-        val pngIcons = icons.filter { it.type.contains("png") }.toTypedArray()
-        val prefIcons = if (pngIcons.isEmpty()) icons else pngIcons
-
-        return prefIcons
+    fun getBestMatchingIcon(requestedSize: Double, icons: List<AppIcon>): AppIcon? {
+        return icons
+            .filter { it.type?.contains("png") == true }
+            .ifEmpty { icons }
             .filter { appIcons ->
                 appIcons.sizes
-                    .split(" ")
-                    .any {
+                    ?.split(" ")
+                    ?.any {
                         val dimensions = it.split("x")
                         val width = dimensions.firstOrNull()?.toIntOrNull()
                         val height = dimensions.lastOrNull()?.toIntOrNull()
 
                         width != null && height != null
-                    }
+                    } ?: false
             }
             .minByOrNull { appIcons ->
                 appIcons.sizes
-                    .split(" ")
-                    .mapNotNull {
+                    ?.split(" ")
+                    ?.mapNotNull {
                         val dimensions = it.split("x")
                         val width = dimensions.firstOrNull()?.toIntOrNull()
                         val height = dimensions.lastOrNull()?.toIntOrNull()
@@ -35,7 +34,7 @@ object IconUtils {
                             null
                         }
                     }
-                    .minOrNull() ?: return null
+                    ?.minOrNull() ?: return null
             }
     }
 }

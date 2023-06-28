@@ -61,7 +61,12 @@ android {
     }
 
     buildFeatures {
+        compose = true
         viewBinding = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = Versions.JETPACK_COMPOSE_COMPILER
     }
 
     testOptions {
@@ -105,8 +110,18 @@ dependencies {
     implementation(Libs.BIOMETRIC)
     implementation(Libs.BROWSER)
 
+    // Jetpack Compose
+    // The api declaration and the animation dependency is needed for clients without Jetpack Compose
+    api(Libs.JETPACK_COMPOSE_ANIMATION)
+    api(Libs.JETPACK_COMPOSE_FOUNDATION)
+    api(Libs.JETPACK_COMPOSE_MATERIAL)
+    api(Libs.JETPACK_COMPOSE_UI_TOOLING_PREVIEW)
+    debugApi(Libs.JETPACK_COMPOSE_UI_TOOLING)
+    api(Libs.LIFECYCLE_RUNTIME_COMPOSE_KTX)
+    api(Libs.COIL_COMPOSE)
+
     // Google
-    implementation(Libs.GOOGLE_PLAY_SERVICES_LOCATION)
+    api(Libs.GOOGLE_PLAY_SERVICES_LOCATION)
     api(Libs.GOOGLE_PLAY_SERVICES_MAPS)
     implementation(Libs.GOOGLE_MAPS_UTILS)
     implementation(Libs.GOOGLE_PROTOBUF_JAVALITE)
@@ -114,6 +129,7 @@ dependencies {
 
     // Dependency injection
     api(Libs.KOIN_ANDROID)
+    api(Libs.KOIN_ANDROID_COMPOSE)
     api(Libs.KOIN_CORE)
 
     // Networking

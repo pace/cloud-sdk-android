@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <declare-styleable name="AppDrawer">
-        <attr name="title" format="string" />
-        <attr name="subtitle" format="string" />
-        <attr name="icon" format="reference" />
-        <attr name="iconTint" format="color" />
-    </declare-styleable>
-</resources>

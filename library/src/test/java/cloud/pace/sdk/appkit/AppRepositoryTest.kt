@@ -4,10 +4,10 @@ import android.content.Context
 import android.location.Location
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.app.api.AppRepositoryImpl
+import cloud.pace.sdk.appkit.app.api.ManifestClient
 import cloud.pace.sdk.appkit.app.api.UriManagerImpl.Companion.PARAM_R
 import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.utils.TestAppAPI
-import cloud.pace.sdk.appkit.utils.TestCacheModel
 import cloud.pace.sdk.appkit.utils.TestGeoAPIManager
 import cloud.pace.sdk.appkit.utils.TestUriUtils
 import cloud.pace.sdk.poikit.geo.CofuGasStation
@@ -20,6 +20,8 @@ import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
 import cloud.pace.sdk.utils.URL
 import com.google.android.gms.maps.model.LatLng
+import io.mockk.coEvery
+import io.mockk.mockk
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNull
 import junit.framework.Assert.assertTrue
@@ -27,12 +29,11 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.mock
 import java.util.concurrent.CompletableFuture
 
 class AppRepositoryTest {
 
-    private val context = mock(Context::class.java)
+    private val context = mockk<Context>()
     private val locationWithApp = Location("").also {
         it.latitude = 48.0
         it.longitude = 8.0
@@ -47,7 +48,7 @@ class AppRepositoryTest {
         startUrl = "",
         sdkStartUrl = "",
         display = "",
-        icons = arrayOf(),
+        icons = emptyList(),
         backgroundColor = "",
         themeColor = "",
         textColor = ""
@@ -65,12 +66,6 @@ class AppRepositoryTest {
         }
     }
 
-    private val cache = object : TestCacheModel() {
-        override fun getManifest(context: Context, url: String, completion: (Result<AppManifest>) -> Unit) {
-            if (url == urlLocationBasedApp) completion(Result.success(manifest))
-        }
-    }
-
     private val geoApiManager = object : TestGeoAPIManager() {
         override suspend fun apps(latitude: Double, longitude: Double): Result<List<GeoGasStation>> {
             return if (latitude == locationWithApp.latitude && longitude == locationWithApp.longitude) {
@@ -81,7 +76,11 @@ class AppRepositoryTest {
         }
     }
 
-    private val appRepository = AppRepositoryImpl(context, cache, appApi, uriUtil, geoApiManager)
+    private val manifestClient = mockk<ManifestClient>().also {
+        coEvery { it.getManifest(urlLocationBasedApp) } returns manifest
+    }
+
+    private val appRepository = AppRepositoryImpl(context, appApi, uriUtil, geoApiManager, manifestClient)
 
     @Before
     fun init() {
@@ -98,7 +97,7 @@ class AppRepositoryTest {
         assertEquals(manifest.description, app.description)
         assertEquals(manifest.backgroundColor, app.iconBackgroundColor)
         assertEquals(startUrl, app.url)
-        assertNull(app.logo)
+        assertNull(app.iconUrl)
     }
 
     @Test
@@ -109,13 +108,8 @@ class AppRepositoryTest {
 
     @Test
     fun `also return app when manifest is missing`() = runBlocking {
-        val cacheModel = object : TestCacheModel() {
-            override fun getManifest(context: Context, url: String, completion: (Result<AppManifest>) -> Unit) {
-                completion(Result.failure(Exception()))
-            }
-        }
+        coEvery { manifestClient.getManifest(any()) } throws Exception()
 
-        val appRepository = AppRepositoryImpl(context, cacheModel, appApi, uriUtil, geoApiManager)
         val apps = appRepository.getLocationBasedApps(locationWithApp.latitude, locationWithApp.longitude)
         assertEquals(1, (apps as Success).result.size)
     }
@@ -127,7 +121,7 @@ class AppRepositoryTest {
                 return Result.failure(RuntimeException())
             }
         }
-        val appRepository = AppRepositoryImpl(context, cache, appApi, uriUtil, geoApiManager)
+        val appRepository = AppRepositoryImpl(context, appApi, uriUtil, geoApiManager, manifestClient)
         val exception = appRepository.getLocationBasedApps(locationWithApp.latitude, locationWithApp.longitude)
         assertTrue((exception as Failure).throwable is RuntimeException)
     }
@@ -139,7 +133,7 @@ class AppRepositoryTest {
                 completion(Result.success(listOf(CofuGasStation(id, LatLng(52.5563160654065, 13.4150576591492), ConnectedFuelingStatus.ONLINE, emptyMap()))))
             }
         }
-        val appRepository = AppRepositoryImpl(context, cache, appApi, uriUtil, geoApiManager)
+        val appRepository = AppRepositoryImpl(context, appApi, uriUtil, geoApiManager, manifestClient)
 
         val future = CompletableFuture<String>()
         appRepository.getFuelingUrl(id) {
@@ -156,7 +150,7 @@ class AppRepositoryTest {
                 completion(Result.failure(RuntimeException()))
             }
         }
-        val appRepository = AppRepositoryImpl(context, cache, appApi, uriUtil, geoApiManager)
+        val appRepository = AppRepositoryImpl(context, appApi, uriUtil, geoApiManager, manifestClient)
 
         val future = CompletableFuture<String>()
         appRepository.getFuelingUrl(id) {

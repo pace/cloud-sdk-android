@@ -46,24 +46,13 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Versions.KOTLIN_COMPILER_EXTENSION
+        kotlinCompilerExtensionVersion = Versions.JETPACK_COMPOSE_COMPILER
     }
 }
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(project(":library"))
-
-    // Compose
-    val composeBom = platform(Libs.COMPOSE_BOM)
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
-    implementation(Libs.JETPACK_COMPOSE_CONSTRAINT_LAYOUT)
-    implementation(Libs.JETPACK_COMPOSE_MATERIAL)
-    implementation(Libs.JETPACK_COMPOSE_MATERIAL_ICONS)
-    implementation(Libs.JETPACK_COMPOSE_UI)
-    implementation(Libs.JETPACK_COMPOSE_UI_TOOLING)
-    implementation(Libs.JETPACK_COMPOSE_RUNTIME_LIVEDATA)
 
     // Android
     implementation(Libs.CORE_KTX)
@@ -75,4 +64,12 @@ dependencies {
     implementation(Libs.NAVIGATION_COMPOSE)
     implementation(Libs.NAVIGATION_FRAGMENT)
     implementation(Libs.NAVIGATION_UI)
+
+    // Jetpack Compose
+    implementation(Libs.JETPACK_COMPOSE_MATERIAL)
+    implementation(Libs.JETPACK_COMPOSE_MATERIAL_ICONS)
+    implementation(Libs.JETPACK_COMPOSE_RUNTIME_LIVEDATA)
+    implementation(Libs.JETPACK_COMPOSE_UI_TOOLING_PREVIEW)
+    debugImplementation(Libs.JETPACK_COMPOSE_UI_TOOLING)
+    implementation(Libs.JETPACK_COMPOSE_CONSTRAINT_LAYOUT)
 }

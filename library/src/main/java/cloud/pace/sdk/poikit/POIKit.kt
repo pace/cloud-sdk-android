@@ -7,7 +7,6 @@ import cloud.pace.sdk.api.poi.POIAPI.metadataFilters
 import cloud.pace.sdk.api.poi.POIAPI.prices
 import cloud.pace.sdk.api.poi.generated.model.Categories
 import cloud.pace.sdk.api.poi.generated.model.RegionalPrices
-import cloud.pace.sdk.api.poi.generated.request.gasStations.GetGasStationAPI
 import cloud.pace.sdk.api.poi.generated.request.metadataFilters.GetMetadataFiltersAPI.getMetadataFilters
 import cloud.pace.sdk.api.poi.generated.request.prices.GetRegionalPricesAPI.getRegionalPrices
 import cloud.pace.sdk.poikit.geo.CofuGasStation
@@ -26,12 +25,14 @@ import cloud.pace.sdk.poikit.search.AddressSearchRequest
 import cloud.pace.sdk.poikit.search.PhotonResult
 import cloud.pace.sdk.poikit.utils.POIKitConfig
 import cloud.pace.sdk.utils.*
+import cloud.pace.sdk.utils.LocationProviderImpl.Companion.DEFAULT_LOCATION_REQUEST
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.maps.model.VisibleRegion
 import io.reactivex.rxjava3.core.Observable
 import org.koin.core.component.inject
 import java.util.*
 
-object POIKit : CloudSDKKoinComponent, DefaultLifecycleObserver {
+object POIKit : CloudSDKKoinComponent {
 
     private val navigationApi: NavigationApiClient by inject()
     private val addressSearchApi: AddressSearchClient by inject()
@@ -47,21 +48,22 @@ object POIKit : CloudSDKKoinComponent, DefaultLifecycleObserver {
         SetupLogger.logSDKWarningIfNeeded()
     }
 
-    fun startLocationListener(): LocationProvider {
-        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
-        return locationProvider.also { it.requestLocationUpdates() }
+    fun startLocationListener(locationRequest: LocationRequest = DEFAULT_LOCATION_REQUEST): LocationProvider {
+        ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onStart(owner: LifecycleOwner) {
+                locationProvider.requestLocationUpdates(locationRequest)
+            }
+
+            override fun onStop(owner: LifecycleOwner) {
+                stopLocationListener()
+            }
+        })
+
+        return locationProvider.also { it.requestLocationUpdates(locationRequest) }
     }
 
     fun stopLocationListener() {
         locationProvider.removeLocationUpdates()
-    }
-
-    override fun onStart(owner: LifecycleOwner) {
-        locationProvider.requestLocationUpdates()
-    }
-
-    override fun onStop(owner: LifecycleOwner) {
-        stopLocationListener()
     }
 
     /**
@@ -80,7 +82,7 @@ object POIKit : CloudSDKKoinComponent, DefaultLifecycleObserver {
     /**
      * Returns a [Result] of [GasStation]s by [ids] at the defined [zoomLevel] on success or a [Throwable] on failure.
      *
-     * **Note:** This function first requests the gas stations from the [GasStationAPI][GetGasStationAPI.getGasStation] to get the locations for requesting the tiles.
+     * **Note:** This function first requests the gas stations from the GasStationAPI to get the locations for requesting the tiles.
      * If the locations of the gas stations are known, prefer the variant where you can pass a map of `idsWithLocation` to save bandwidth.
      *
      * @param ids A list of [GasStation] IDs.
@@ -108,7 +110,7 @@ object POIKit : CloudSDKKoinComponent, DefaultLifecycleObserver {
     /**
      * Returns a [Result] of a [GasStation] by [id] at the defined [zoomLevel] on success or a [Throwable] on failure.
      *
-     * **Note:** This function first requests the gas station from the [GasStationAPI][GetGasStationAPI.getGasStation] to get the location for requesting the tiles.
+     * **Note:** This function first requests the gas station from the GasStationAPI to get the location for requesting the tiles.
      * If the location of the gas station is known, prefer the variant where you can pass a pair of ID and location (`idWithLocation`) to save bandwidth.
      *
      * @param id The ID of the [GasStation].

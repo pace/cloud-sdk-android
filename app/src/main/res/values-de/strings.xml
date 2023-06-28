@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PACE Example App</string>
-    <string name="short_login_screen_information">Wilkommen in der PACE Example App.\nKurze Information über den Sinn dieser App.</string>
+    <string name="short_login_screen_information">Wilkommen in der PACE Example App.</string>
     <string name="common_use_unknown">unbekannt</string>
     <string name="common_use_unit_meter">m</string>
     <string name="common_use_unit_kilometer">km</string>

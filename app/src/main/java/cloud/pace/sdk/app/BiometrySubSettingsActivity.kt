@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.mutableStateOf
 import cloud.pace.sdk.app.ui.components.settings.BiometrySubSettingView
 import cloud.pace.sdk.idkit.IDKit
+import cloud.pace.sdk.ui.theme.PACETheme
 import cloud.pace.sdk.utils.Completion
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
@@ -21,68 +22,70 @@ class BiometrySubSettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            BiometrySubSettingView(
-                this@BiometrySubSettingsActivity,
-                enableBioAutByPasswordAction = {
-                    IDKit.enableBiometricAuthenticationWithPassword(it) { completion ->
-                        when (completion) {
-                            is Success -> Toast.makeText(this, if (completion.result) "Biometric authentication set" else "Biometric authentication not set", Toast.LENGTH_SHORT).show()
-                            is Failure -> Toast.makeText(this, completion.throwable.toString(), Toast.LENGTH_LONG).show()
+            PACETheme {
+                BiometrySubSettingView(
+                    this@BiometrySubSettingsActivity,
+                    enableBioAutByPasswordAction = {
+                        IDKit.enableBiometricAuthenticationWithPassword(it) { completion ->
+                            when (completion) {
+                                is Success -> Toast.makeText(this, if (completion.result) "Biometric authentication set" else "Biometric authentication not set", Toast.LENGTH_SHORT).show()
+                                is Failure -> Toast.makeText(this, completion.throwable.toString(), Toast.LENGTH_LONG).show()
+                            }
+                            biometryStatus.value = IDKit.isBiometricAuthenticationEnabled()
                         }
-                        biometryStatus.value = IDKit.isBiometricAuthenticationEnabled()
-                    }
-                },
-                enableBioAutByPINAction = {
-                    IDKit.enableBiometricAuthenticationWithPIN(it) { completion ->
-                        when (completion) {
-                            is Success -> Toast.makeText(this, if (completion.result) "Biometric authentication set" else "Biometric authentication not set", Toast.LENGTH_SHORT).show()
-                            is Failure -> Toast.makeText(this, completion.throwable.toString(), Toast.LENGTH_LONG).show()
+                    },
+                    enableBioAutByPINAction = {
+                        IDKit.enableBiometricAuthenticationWithPIN(it) { completion ->
+                            when (completion) {
+                                is Success -> Toast.makeText(this, if (completion.result) "Biometric authentication set" else "Biometric authentication not set", Toast.LENGTH_SHORT).show()
+                                is Failure -> Toast.makeText(this, completion.throwable.toString(), Toast.LENGTH_LONG).show()
+                            }
+                            biometryStatus.value = IDKit.isBiometricAuthenticationEnabled()
                         }
-                        biometryStatus.value = IDKit.isBiometricAuthenticationEnabled()
-                    }
-                },
-                enableBioAutByOTPAction = {
-                    IDKit.enableBiometricAuthenticationWithOTP(it) { completion ->
-                        when (completion) {
-                            is Success -> Toast.makeText(this, if (completion.result) "Biometric authentication set" else "Biometric authentication not set", Toast.LENGTH_SHORT).show()
-                            is Failure -> Toast.makeText(this, completion.throwable.toString(), Toast.LENGTH_LONG).show()
+                    },
+                    enableBioAutByOTPAction = {
+                        IDKit.enableBiometricAuthenticationWithOTP(it) { completion ->
+                            when (completion) {
+                                is Success -> Toast.makeText(this, if (completion.result) "Biometric authentication set" else "Biometric authentication not set", Toast.LENGTH_SHORT).show()
+                                is Failure -> Toast.makeText(this, completion.throwable.toString(), Toast.LENGTH_LONG).show()
+                            }
+                            biometryStatus.value = IDKit.isBiometricAuthenticationEnabled()
                         }
-                        biometryStatus.value = IDKit.isBiometricAuthenticationEnabled()
-                    }
-                },
-                setPinWithPasswordAction = { pinInputToSetWithPassword, passwordInputToSetPin ->
-                    IDKit.setPINWithPassword(pinInputToSetWithPassword, passwordInputToSetPin) {
-                        when (it) {
-                            is Success -> Toast.makeText(this@BiometrySubSettingsActivity, if (it.result) "PIN set" else "PIN not set", Toast.LENGTH_SHORT).show()
-                            is Failure -> Toast.makeText(this@BiometrySubSettingsActivity, it.throwable.toString(), Toast.LENGTH_LONG).show()
+                    },
+                    setPinWithPasswordAction = { pinInputToSetWithPassword, passwordInputToSetPin ->
+                        IDKit.setPINWithPassword(pinInputToSetWithPassword, passwordInputToSetPin) {
+                            when (it) {
+                                is Success -> Toast.makeText(this@BiometrySubSettingsActivity, if (it.result) "PIN set" else "PIN not set", Toast.LENGTH_SHORT).show()
+                                is Failure -> Toast.makeText(this@BiometrySubSettingsActivity, it.throwable.toString(), Toast.LENGTH_LONG).show()
+                            }
                         }
-                    }
-                },
-                setPinWithOTPAction = { pin, otp ->
-                    IDKit.setPINWithOTP(pin, otp) {
-                        when (it) {
-                            is Success -> Toast.makeText(this@BiometrySubSettingsActivity, if (it.result) "PIN set" else "PIN not set", Toast.LENGTH_SHORT).show()
-                            is Failure -> Toast.makeText(this@BiometrySubSettingsActivity, it.throwable.toString(), Toast.LENGTH_LONG).show()
+                    },
+                    setPinWithOTPAction = { pin, otp ->
+                        IDKit.setPINWithOTP(pin, otp) {
+                            when (it) {
+                                is Success -> Toast.makeText(this@BiometrySubSettingsActivity, if (it.result) "PIN set" else "PIN not set", Toast.LENGTH_SHORT).show()
+                                is Failure -> Toast.makeText(this@BiometrySubSettingsActivity, it.throwable.toString(), Toast.LENGTH_LONG).show()
+                            }
                         }
-                    }
-                },
-                setPinWithBiometryAction = { pin ->
-                    val completion: (Completion<Boolean>) -> Unit = {
-                        when (it) {
-                            is Success -> Toast.makeText(this, if (it.result) "PIN set" else "PIN not set", Toast.LENGTH_SHORT).show()
-                            is Failure -> Toast.makeText(this, it.throwable.toString(), Toast.LENGTH_LONG).show()
+                    },
+                    setPinWithBiometryAction = { pin ->
+                        val completion: (Completion<Boolean>) -> Unit = {
+                            when (it) {
+                                is Success -> Toast.makeText(this, if (it.result) "PIN set" else "PIN not set", Toast.LENGTH_SHORT).show()
+                                is Failure -> Toast.makeText(this, it.throwable.toString(), Toast.LENGTH_LONG).show()
+                            }
                         }
+                        IDKit.setPINWithBiometry(
+                            this@BiometrySubSettingsActivity,
+                            "Set PIN",
+                            "Confirm with fingerprint",
+                            isDeviceCredentialsAllowed = false,
+                            pin = pin,
+                            completion = completion
+                        )
                     }
-                    IDKit.setPINWithBiometry(
-                        this@BiometrySubSettingsActivity,
-                        "Set PIN",
-                        "Confirm with fingerprint",
-                        isDeviceCredentialsAllowed = false,
-                        pin = pin,
-                        completion = completion
-                    )
-                }
-            )
+                )
+            }
         }
 
         biometryStatus.value = IDKit.isBiometricAuthenticationEnabled()
@@ -121,6 +124,7 @@ class BiometrySubSettingsActivity : AppCompatActivity() {
                         "Password is not set"
                     }
                 }
+
                 is Failure -> Toast.makeText(this@BiometrySubSettingsActivity, it.throwable.toString(), Toast.LENGTH_LONG).show()
             }
         }

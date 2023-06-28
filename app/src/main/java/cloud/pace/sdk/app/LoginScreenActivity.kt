@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import cloud.pace.sdk.app.ui.components.loginscreen.ShowLoginScreen
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.NoSupportedBrowser
+import cloud.pace.sdk.ui.theme.PACETheme
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +27,9 @@ class LoginScreenActivity : AppCompatActivity() {
             if (IDKit.isAuthorizationValid()) {
                 startMainActivity()
             } else {
-                LoginScreenContent()
+                PACETheme {
+                    LoginScreenContent()
+                }
             }
         }
     }

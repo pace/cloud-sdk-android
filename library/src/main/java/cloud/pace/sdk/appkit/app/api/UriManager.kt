@@ -10,6 +10,7 @@ interface UriManager {
     fun appendPath(baseUrl: String, path: String): String
     fun appendQueryParameter(baseUrl: String, key: String, value: String): String
     fun getIconUrl(baseUrl: String, url: String): String
+    fun getHost(url: String): String?
 }
 
 class UriManagerImpl : UriManager {
@@ -42,6 +43,10 @@ class UriManagerImpl : UriManager {
 
     override fun getIconUrl(baseUrl: String, url: String): String {
         return if (Uri.parse(url).isAbsolute) url else appendPath(baseUrl, url)
+    }
+
+    override fun getHost(url: String): String? {
+        return Uri.parse(url).host
     }
 
     companion object {

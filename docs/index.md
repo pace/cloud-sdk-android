@@ -19,6 +19,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [16.x.x -> 17.x.x](#from-16xx-to-17xx)
         + [17.x.x -> 18.x.x](#from-17xx-to-18xx)
         + [18.x.x -> 19.x.x](#from-18xx-to-19xx)
+        + [19.x.x -> 20.x.x](#from-19xx-to-20xx)
 
 ## Documentation
 The full documentation and instructions on how to integrate PACE Cloud SDK can be found [here](https://docs.pace.cloud/en/integrating/mobile-app)
@@ -150,6 +151,20 @@ The `GasStations` properties `paymentMethods`, `amenities`, `foods`, `loyaltyPro
   | import cloud.pace.sdk.poikit.poi.download.CdnAPI | import cloud.pace.sdk.api.vendor.PaymentMethodVendorsAPI |
   | import cloud.pace.sdk.poikit.poi.download.CdnAPI.getPaymentMethodVendors |  import cloud.pace.sdk.api.vendor.PaymentMethodVendorsAPI.getPaymentMethodVendors |
   | import cloud.pace.sdk.poikit.poi.download.PaymentMethodVendor |  import cloud.pace.sdk.api.vendor.PaymentMethodVendor |
+
+### From 19.x.x to 20.x.x
+
+- We have re-implemented our local available apps and AppDrawer logic to make it even easier for you to integrate our Plug & Play solution into your app:
+  - The view-based AppDrawer has been rewritten in Jetpack Compose. This makes it possible to include our solution in Jetpack Compose apps as well as in view-based apps.
+  - Our solution now consists of two components:
+    - AppDrawerHost: This component requests local available apps and shows them as AppDrawers. When the location changes (please make sure that the location permissions are granted), new apps are requested and the AppDrawerHost updates the AppDrawers. **Therefore you don't have to call `AppKit.requestLocalApps(...)` for every location update anymore, if you want to use our Plug & Play solution.** The `AppKit.requestLocalApps(...)` function still exists, if you want to implement a custom AppDrawer behavior.
+    - AppDrawer: This component declares the UI of the AppDrawer.
+  - **Jetpack Compose apps:** You can simply call the `AppDrawerHost` composable function in your app composable function. We recommend placing the `AppDrawerHost` so that it is displayed above the rest of your app's content and aligned from the bottom.
+  - **View-based apps:** We also introduced an `AppDrawerHostView`, which is a regular view and internally calls the `AppDrawerHost` composable function as content. You can then add this view in your XML layout or programmatically if you do not use Jetpack Compose.
+- Added a new `onShow(apps: List<App>)` AppCallback that is triggered when a list of AppDrawers is displayed. The `apps` parameter contains the currently displayed AppDrawers.
+- The functions `AppKit.openApps(...)` and `AppKit.closeApps(...)` have been deleted, as this is now done automatically by the AppDrawerHost.
+- Added a `LocationRequest` parameter to the `POIKit.startLocationListener` function so that you can specify the desired location criteria for the location request.
+- Added a `locationFlow(...)` function to the `LocationProvider` so that you can fetch location updates using a Kotlin Flow.
 
 ## SDK API Docs
 

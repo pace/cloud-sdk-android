@@ -1,10 +1,8 @@
 package cloud.pace.sdk.appkit
 
 import android.content.Context
-import androidx.constraintlayout.widget.ConstraintLayout
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.app.AppActivity
-import cloud.pace.sdk.appkit.app.drawer.AppDrawer
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.appkit.model.Car
@@ -15,7 +13,7 @@ object AppKit : CloudSDKKoinComponent {
 
     private val appManager: AppManager by inject()
     internal lateinit var userAgent: String
-    private val defaultAppCallback = object : AppCallbackImpl() {}
+    internal val defaultAppCallback = object : AppCallbackImpl() {}
 
     /**
      * Specifies whether the light or dark theme should be used for the apps.
@@ -171,37 +169,6 @@ object AppKit : CloudSDKKoinComponent {
     @JvmOverloads
     fun openDashboard(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
         appManager.openAppActivity(context, URL.dashboard, theme, enableBackToFinish, callback)
-    }
-
-    /**
-     * Adds an [AppDrawer] to the parent view [buttonContainer] for each app in [apps] list.
-     * Clicking on the [AppDrawer] opens the [AppActivity] and shows the App.
-     *
-     * @param context Context which should be used to start the [AppActivity].
-     * @param theme The [Theme] of the [AppDrawer].
-     * @param bottomMargin The margin with which the [AppDrawer]s should be drawn to the bottom edge.
-     * @param callback Via this callback the client app can subscribe to certain app events.
-     */
-    @JvmOverloads
-    fun openApps(
-        context: Context,
-        apps: List<App>,
-        buttonContainer: ConstraintLayout,
-        theme: Theme = Theme.LIGHT,
-        bottomMargin: Float = 16f,
-        callback: AppCallbackImpl = defaultAppCallback
-    ) {
-        appManager.openApps(context, apps, buttonContainer, theme, bottomMargin, callback)
-    }
-
-    /**
-     * Closes (removes) all [AppDrawer]s in the [buttonContainer] parent layout.
-     *
-     * @see openAppActivity
-     * @see openApps
-     */
-    fun closeApps(buttonContainer: ConstraintLayout) {
-        appManager.closeApps(buttonContainer)
     }
 
     /**

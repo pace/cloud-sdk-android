@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,7 +31,6 @@ import java.util.Date
 /**
  * Template of items inside the gasStation list, to be shown on the listScreen
  */
-
 @Composable
 fun ListScreenListItem(gasStation: GasStation, location: Location?) {
     Row(
@@ -50,13 +50,15 @@ fun ListScreenListItem(gasStation: GasStation, location: Location?) {
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
                 overflow = TextOverflow.Visible,
-                maxLines = 1
+                maxLines = 1,
+                style = MaterialTheme.typography.body2
             )
 
             Text(
                 text = getAddressText(gasStation.address).orEmpty(),
                 overflow = TextOverflow.Visible,
-                maxLines = 2
+                maxLines = 2,
+                style = MaterialTheme.typography.body2
             )
             if (location != null) {
                 Text(
@@ -64,7 +66,8 @@ fun ListScreenListItem(gasStation: GasStation, location: Location?) {
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.End,
                     maxLines = 1,
-                    modifier = Modifier.padding(vertical = 6.dp)
+                    modifier = Modifier.padding(vertical = 6.dp),
+                    style = MaterialTheme.typography.body2
                 )
             }
         }
@@ -78,7 +81,8 @@ fun ListScreenListItem(gasStation: GasStation, location: Location?) {
                 text = gasStation.prices.toString().replace(",", "\n").replace("[", "").replace("]", "").replace(" ", ""),
                 textAlign = TextAlign.End,
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 7
+                maxLines = 7,
+                style = MaterialTheme.typography.body2
             )
         }
     }

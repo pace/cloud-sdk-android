@@ -1,34 +1,15 @@
 package cloud.pace.sdk.appkit.model
 
-import android.graphics.Bitmap
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
-
-@Parcelize
 data class App(
-    var name: String,
-    var shortName: String,
-    var description: String? = null,
-    var url: String,
-    var logo: Bitmap? = null,
-    var iconBackgroundColor: String? = null,
-    var textBackgroundColor: String? = null,
-    var textColor: String? = null,
-    var display: String? = null,
-    var poiId: String? = null,
-    var distance: Int?
-) : Parcelable {
-
-    override fun equals(other: Any?): Boolean {
-        return when {
-            (other is App) -> {
-                url == other.url
-            }
-            else -> false
-        }
-    }
-
-    override fun hashCode(): Int {
-        return url.hashCode()
-    }
-}
+    val name: String? = null,
+    val shortName: String? = null,
+    val description: String? = null,
+    val url: String,
+    val iconUrl: String? = null,
+    val iconBackgroundColor: String? = null,
+    val textBackgroundColor: String? = null,
+    val textColor: String? = null,
+    val display: String? = null,
+    val poiId: String? = null,
+    val distance: Int? = null
+)

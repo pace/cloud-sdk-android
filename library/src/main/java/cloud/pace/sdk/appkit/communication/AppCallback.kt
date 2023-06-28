@@ -2,6 +2,8 @@ package cloud.pace.sdk.appkit.communication
 
 import android.content.Context
 import android.graphics.Bitmap
+import cloud.pace.sdk.appkit.app.drawer.ui.AppDrawer
+import cloud.pace.sdk.appkit.app.drawer.ui.AppDrawerHost
 import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
@@ -15,7 +17,15 @@ import org.koin.core.component.inject
 interface AppCallback {
 
     /**
-     * Is called when the app was opened (e.g. by clicking the [cloud.pace.sdk.appkit.app.drawer.AppDrawer]).
+     * Is called when the [AppDrawerHost] shows a list of [App]s.
+     * This callback is triggered when the apps or their attributes change.
+     *
+     * @param apps The list of [App]s, which are shown as [AppDrawer]s from the [AppDrawerHost].
+     */
+    fun onShow(apps: List<App>)
+
+    /**
+     * Is called when the app was opened (e.g. by clicking the [cloud.pace.sdk.appkit.app.drawer.ui.AppDrawer]).
      *
      * @param app The app that was opened or null if no app is available (e.g. if the app was opened by URL).
      */
@@ -154,6 +164,7 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
 
     private val appModel: AppModel by inject()
 
+    override fun onShow(apps: List<App>) {}
     override fun onOpen(app: App?) {}
     override fun onClose() {}
     override fun onOpenInNewTab(url: String) {}

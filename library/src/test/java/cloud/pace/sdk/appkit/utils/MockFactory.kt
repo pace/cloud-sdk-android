@@ -1,9 +1,7 @@
 package cloud.pace.sdk.appkit.utils
 
-import android.content.Context
 import android.location.Location
 import android.location.LocationManager
-import android.net.ConnectivityManager
 import android.os.Handler
 import androidx.lifecycle.MutableLiveData
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
@@ -14,9 +12,7 @@ import cloud.pace.sdk.appkit.app.api.UriManager
 import cloud.pace.sdk.appkit.app.webview.AppWebViewClient
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.model.App
-import cloud.pace.sdk.appkit.model.AppManifest
 import cloud.pace.sdk.appkit.model.Car
-import cloud.pace.sdk.appkit.persistence.CacheModel
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesModel
 import cloud.pace.sdk.appkit.persistence.TotpSecret
 import cloud.pace.sdk.poikit.geo.CofuGasStation
@@ -26,6 +22,7 @@ import cloud.pace.sdk.poikit.geo.GeoAPIResponse
 import cloud.pace.sdk.poikit.geo.GeoGasStation
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.utils.Completion
+import cloud.pace.sdk.utils.Event
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.LocationProvider
 import cloud.pace.sdk.utils.LocationState
@@ -33,7 +30,12 @@ import cloud.pace.sdk.utils.NoLocationFound
 import cloud.pace.sdk.utils.Success
 import cloud.pace.sdk.utils.SystemManager
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
 import io.mockk.mockk
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOf
 import org.mockito.Mockito.mock
 
 open class TestLocationProvider(
@@ -45,12 +47,16 @@ open class TestLocationProvider(
     override val locationState = MutableLiveData<LocationState>()
     override val location = MutableLiveData<Location>()
 
-    override fun requestLocationUpdates() {
+    override fun requestLocationUpdates(locationRequest: LocationRequest) {
         locationState.value = mockedLocationState
         location.value = mockedLocation
     }
 
     override fun removeLocationUpdates() {}
+
+    override fun locationFlow(locationRequest: LocationRequest): Flow<Location> {
+        return mockedLocation?.let { flowOf(it) } ?: emptyFlow()
+    }
 
     override suspend fun firstValidLocation(timeout: Long): Completion<Location> {
         return mockedLocation?.let { Success(it) } ?: Failure(throwable)
@@ -150,19 +156,18 @@ open class TestUriUtils(private val id: String? = null, private val startUrl: St
     override fun getIconUrl(baseUrl: String, url: String): String {
         return ""
     }
+
+    override fun getHost(url: String): String? {
+        return url.removePrefix("https://")
+    }
 }
 
 open class TestAppEventManager : AppEventManager {
 
-    override val invalidApps = MutableLiveData<List<String>>()
-    override val disabledHost = MutableLiveData<String>()
-
-    override fun setInvalidApps(list: List<String>) {
-        invalidApps.value = list
-    }
+    override val disabledHost = MutableStateFlow<Event<String>?>(null)
 
     override fun setDisabledHost(host: String) {
-        disabledHost.value = host
+        disabledHost.value = Event(host)
     }
 }
 
@@ -171,7 +176,6 @@ open class TestSystemManager(
     private val isGooglePlayServicesAvailable: Boolean = true,
     private val mockFusedLocationProviderClient: FusedLocationProviderClient = mock(FusedLocationProviderClient::class.java),
     private val mockLocationManager: LocationManager = mock(LocationManager::class.java),
-    private val mockConnectivityManager: ConnectivityManager = mock(ConnectivityManager::class.java),
     private val mockHandler: Handler = mock(Handler::class.java),
     private val mockTimeMillis: Long = System.currentTimeMillis()
 ) : SystemManager {
@@ -190,10 +194,6 @@ open class TestSystemManager(
 
     override fun getLocationManager(): LocationManager? {
         return mockLocationManager
-    }
-
-    override fun getConnectivityManager(): ConnectivityManager? {
-        return mockConnectivityManager
     }
 
     override fun getHandler(): Handler {
@@ -218,12 +218,6 @@ open class TestAppAPI : AppAPI {
     override suspend fun getGeoApiApps(): Result<GeoAPIResponse> = mockk()
     override fun getAllApps(completion: (Result<LocationBasedApps>) -> Unit) {}
     override fun getAppByAppId(appId: String, completion: (Result<LocationBasedApp>) -> Unit) {}
-}
-
-open class TestCacheModel : CacheModel {
-
-    override fun getUri(context: Context, url: String, completion: (Result<ByteArray>) -> Unit) {}
-    override fun getManifest(context: Context, url: String, completion: (Result<AppManifest>) -> Unit) {}
 }
 
 open class TestGeoAPIManager(private val isPoiInRange: Boolean = false) : GeoAPIManager {
