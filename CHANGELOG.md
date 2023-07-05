@@ -1,5 +1,9 @@
-19.1.1 Release notes (2023-06-27)
+20.0.0 Release notes (2023-07-05)
 =============================================================
+
+### Breaking Changes
+
+* Re-implement the local available apps and AppDrawer logic in Jetpack Compose
 
 ### Fixes
 
