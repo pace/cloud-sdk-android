@@ -4,6 +4,7 @@
 ### Breaking Changes
 
 * Re-implement the local available apps and AppDrawer logic in Jetpack Compose
+> **_BREAKING CHANGE:_** You no longer need to call AppKit.requestLocalApps, AppKit.openApps and AppKit.closeApps yourself. This is now automatically managed by the AppDrawerHost. So just add the AppDrawerHost composable function to your Jetpack Compose layout or the AppDrawerHostView to your view-based layout. See migration guide or documentation for more information.
 
 ### Fixes
 
