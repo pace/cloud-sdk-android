@@ -27,7 +27,7 @@ object OSMKeys {
     const val OSM_GAS_STATION = "gasStation"
     const val OSM_POI_NAME = "n"
     const val OSM_BRAND = "b"
-    const val OSM_BRAND_ID = "brand_id"
+    const val OSM_BRAND_ID = "bi"
     const val OSM_CURRENCY = "pc"
     const val OSM_PRICE_FORMAT = "pf"
     const val OSM_VALID_FROM = "vf"
