@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.api.utils.RequestUtils
 import cloud.pace.sdk.appkit.app.deeplink.DeepLinkManagementActivity
 import cloud.pace.sdk.appkit.communication.LogoutResponse
@@ -12,8 +11,8 @@ import cloud.pace.sdk.appkit.communication.generated.model.request.GooglePayPaym
 import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayAvailabilityCheckResponse
 import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayPaymentResponse
 import cloud.pace.sdk.appkit.model.PaymentResult
-import cloud.pace.sdk.appkit.pay.PaymentsUtil
-import cloud.pace.sdk.appkit.pay.PaymentsUtil.LOAD_PAYMENT_DATA_REQUEST_CODE
+import cloud.pace.sdk.appkit.pay.GooglePayUtils
+import cloud.pace.sdk.appkit.pay.GooglePayUtils.LOAD_PAYMENT_DATA_REQUEST_CODE
 import cloud.pace.sdk.appkit.utils.BiometricUtils
 import cloud.pace.sdk.databinding.ActivityAppBinding
 import cloud.pace.sdk.idkit.IDKit
@@ -28,7 +27,6 @@ import cloud.pace.sdk.utils.ErrorListener
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Ok
 import cloud.pace.sdk.utils.Success
-import cloud.pace.sdk.utils.environment
 import cloud.pace.sdk.utils.getResultFor
 import cloud.pace.sdk.utils.viewBinding
 import com.google.android.gms.wallet.AutoResolveHelper
@@ -57,7 +55,7 @@ class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        paymentsClient = PaymentsUtil.createPaymentsClient(this, PACECloudSDK.environment)
+        paymentsClient = GooglePayUtils.createPaymentsClient(this)
 
         val url = intent?.extras?.getString(APP_URL)
         if (url == null) {
