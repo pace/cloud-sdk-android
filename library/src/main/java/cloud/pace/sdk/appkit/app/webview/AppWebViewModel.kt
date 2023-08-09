@@ -34,6 +34,7 @@ import cloud.pace.sdk.appkit.communication.generated.model.request.SetSecureData
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetTOTPRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetUserPropertyRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.ShareTextRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.StartNavigationRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.VerifyLocationRequest
 import cloud.pace.sdk.appkit.communication.generated.model.response.AppInterceptableLinkError
 import cloud.pace.sdk.appkit.communication.generated.model.response.AppInterceptableLinkResponse
@@ -103,6 +104,8 @@ import cloud.pace.sdk.appkit.communication.generated.model.response.SetUserPrope
 import cloud.pace.sdk.appkit.communication.generated.model.response.SetUserPropertyResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.ShareTextError
 import cloud.pace.sdk.appkit.communication.generated.model.response.ShareTextResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.StartNavigationError
+import cloud.pace.sdk.appkit.communication.generated.model.response.StartNavigationResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.VerifyLocationError
 import cloud.pace.sdk.appkit.communication.generated.model.response.VerifyLocationResponse
 import cloud.pace.sdk.appkit.communication.generated.model.response.VerifyLocationResult
@@ -871,6 +874,17 @@ class AppWebViewModelImpl(
                     )
                 }
             }
+        }
+    }
+
+    override suspend fun startNavigation(timeout: Long?, startNavigationRequest: StartNavigationRequest): StartNavigationResult {
+        return handle(
+            timeout,
+            StartNavigationResult(StartNavigationResult.Failure(StartNavigationResult.Failure.StatusCode.RequestTimeout, StartNavigationError("Timeout for startNavigation"))),
+            StartNavigationResult(StartNavigationResult.Failure(StartNavigationResult.Failure.StatusCode.InternalServerError, StartNavigationError("An error occurred")))
+        ) {
+            appModel.onNavigationRequestReceived(startNavigationRequest.lat, startNavigationRequest.lon, startNavigationRequest.name)
+            StartNavigationResult(StartNavigationResult.Success())
         }
     }
 

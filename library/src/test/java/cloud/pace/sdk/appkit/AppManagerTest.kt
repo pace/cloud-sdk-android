@@ -99,7 +99,7 @@ class AppManagerTest : CloudSDKKoinComponent {
             }
 
             single<AppModel> {
-                AppModelImpl(mockContext)
+                AppModelImpl(mockContext, coroutineTestRule.testDispatcherProvider)
             }
         }
 
@@ -205,7 +205,7 @@ class AppManagerTest : CloudSDKKoinComponent {
             }
 
             single<AppModel> {
-                AppModelImpl(mockContext)
+                AppModelImpl(mockContext, coroutineTestRule.testDispatcherProvider)
             }
         }
 
@@ -261,7 +261,7 @@ class AppManagerTest : CloudSDKKoinComponent {
             }
 
             single<AppModel> {
-                AppModelImpl(mockContext)
+                AppModelImpl(mockContext, coroutineTestRule.testDispatcherProvider)
             }
         }
 
@@ -347,7 +347,7 @@ class AppManagerTest : CloudSDKKoinComponent {
             }
 
             single<AppModel> {
-                AppModelImpl(mockContext)
+                AppModelImpl(mockContext, coroutineTestRule.testDispatcherProvider)
             }
         }
 

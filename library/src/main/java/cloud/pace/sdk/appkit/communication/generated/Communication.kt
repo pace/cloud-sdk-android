@@ -22,6 +22,7 @@ import cloud.pace.sdk.appkit.communication.generated.model.request.SetSecureData
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetTOTPRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetUserPropertyRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.ShareTextRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.StartNavigationRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.VerifyLocationRequest
 import cloud.pace.sdk.appkit.communication.generated.model.response.AppInterceptableLinkResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.AppRedirectResult
@@ -50,6 +51,7 @@ import cloud.pace.sdk.appkit.communication.generated.model.response.SetSecureDat
 import cloud.pace.sdk.appkit.communication.generated.model.response.SetTOTPResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.SetUserPropertyResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.ShareTextResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.StartNavigationResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.VerifyLocationResult
 
 /**
@@ -321,4 +323,16 @@ public interface Communication {
         timeout: Long?,
         googlePayPaymentRequest: GooglePayPaymentRequest
     ): GooglePayPaymentResult
+
+    /**
+     * Requests to start the navigation to the specified coordinates.
+     *
+     * @param timeout The timeout of startNavigation in milliseconds or null if no timeout should be
+     * used
+     * @param startNavigationRequest The startNavigation request body object
+     */
+    public suspend fun startNavigation(
+        timeout: Long?,
+        startNavigationRequest: StartNavigationRequest
+    ): StartNavigationResult
 }

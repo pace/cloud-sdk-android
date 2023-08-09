@@ -23,6 +23,7 @@ import cloud.pace.sdk.appkit.communication.generated.model.request.SetSecureData
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetTOTPRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetUserPropertyRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.ShareTextRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.StartNavigationRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.VerifyLocationRequest
 import cloud.pace.sdk.appkit.communication.generated.model.response.Message
 import cloud.pace.sdk.appkit.communication.generated.model.response.Response
@@ -613,6 +614,31 @@ public data class CommunicationManager(
                         }
                     } else {
                         val result = listener.googlePayPayment(timeout, body)
+                        withContext(Dispatchers.Main) {
+                            respond(Response(request.id, result.status, request.header, result.body))
+                        }
+                    }
+                }
+            }
+
+            "/startNavigation" -> {
+                CoroutineScope(Dispatchers.Default).launch {
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
+                        TimeUnit.SECONDS.toMillis(it)
+                    }
+                    val startNavigationRequest = gson.fromJson<StartNavigationRequest>(message)
+                    val body = startNavigationRequest?.body
+                    if (body == null) {
+                        withContext(Dispatchers.Main) {
+                            respond(
+                                Response(
+                                    request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
+                                    Message("Could not deserialize the JSON request message")
+                                )
+                            )
+                        }
+                    } else {
+                        val result = listener.startNavigation(timeout, body)
                         withContext(Dispatchers.Main) {
                             respond(Response(request.id, result.status, request.header, result.body))
                         }

@@ -158,6 +158,16 @@ interface AppCallback {
      * @param isAvailable Call this function to specify whether the remote config feature is available or not
      */
     fun isRemoteConfigAvailable(isAvailable: (Boolean) -> Unit)
+
+    /**
+     * Is called when the app receives a navigation request to the specified location.
+     * If it is not overwritten, it starts the navigation in the navigation app selected by the user.
+     *
+     * @param lat The latitude of the location to be navigated to.
+     * @param lon The longitude of the location to be navigated to.
+     * @param name The name of the location.
+     */
+    fun onNavigationRequestReceived(lat: Double, lon: Double, name: String)
 }
 
 abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
@@ -208,5 +218,9 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
 
     override fun isRemoteConfigAvailable(isAvailable: (Boolean) -> Unit) {
         isAvailable(false)
+    }
+
+    override fun onNavigationRequestReceived(lat: Double, lon: Double, name: String) {
+        appModel.startNavigation(lat, lon)
     }
 }
