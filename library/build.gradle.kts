@@ -98,6 +98,7 @@ dependencies {
 
     // Kotlin
     implementation(Libs.KOTLIN_COROUTINES_ANDROID)
+    implementation(Libs.KOTLIN_COROUTINES_PLAY_SERVICES)
 
     // Android
     implementation(Libs.CORE_KTX)

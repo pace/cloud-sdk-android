@@ -71,7 +71,6 @@ import cloud.pace.sdk.appkit.communication.generated.model.response.GetTraceIdEr
 import cloud.pace.sdk.appkit.communication.generated.model.response.GetTraceIdResponse
 import cloud.pace.sdk.appkit.communication.generated.model.response.GetTraceIdResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayAvailabilityCheckError
-import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayAvailabilityCheckResponse
 import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayAvailabilityCheckResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayPaymentError
 import cloud.pace.sdk.appkit.communication.generated.model.response.GooglePayPaymentResult
@@ -816,7 +815,7 @@ class AppWebViewModelImpl(
     }
 
     override suspend fun googlePayAvailabilityCheck(timeout: Long?, googlePayAvailabilityCheckRequest: GooglePayAvailabilityCheckRequest): GooglePayAvailabilityCheckResult {
-        handleAsync(
+        return handleAsync(
             timeout,
             GooglePayAvailabilityCheckResult(
                 GooglePayAvailabilityCheckResult.Failure(
@@ -849,10 +848,6 @@ class AppWebViewModelImpl(
                 }
             }
         }
-
-        return GooglePayAvailabilityCheckResult(
-            GooglePayAvailabilityCheckResult.Success(GooglePayAvailabilityCheckResponse(true))
-        )
     }
 
     override suspend fun googlePayPayment(timeout: Long?, googlePayPaymentRequest: GooglePayPaymentRequest): GooglePayPaymentResult {

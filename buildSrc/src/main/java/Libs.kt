@@ -29,6 +29,7 @@ object Libs {
     const val KOIN_TEST = "io.insert-koin:koin-test:${Versions.KOIN_TEST}"
     const val KOTLIN_GRADLE_PLUGIN = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.KOTLIN}"
     const val KOTLIN_COROUTINES_ANDROID = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.COROUTINES}"
+    const val KOTLIN_COROUTINES_PLAY_SERVICES = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:${Versions.COROUTINES}"
     const val KTLINT_GRADLE_PLUGIN = "org.jlleitschuh.gradle.ktlint"
     const val JETBRAINS_IDEA_GRADLE_PLUGIN = "org.jetbrains.gradle.plugin.idea-ext"
 
