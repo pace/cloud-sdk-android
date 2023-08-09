@@ -1,3 +1,20 @@
+20.1.0 Release notes (2023-08-09)
+=============================================================
+
+### Enhancements
+
+* Add a communication handler to start the navigation to the specified location
+
+### Fixes
+
+* Return the correct response in the Google Pay availability check
+> **_NOTE:_** If you want to use Google Pay, please upgrade to this PACE Cloud SDK version.
+
+### Internal
+
+* Add Google Pay availability check as util function
+* Rename brand id key
+
 20.0.0 Release notes (2023-07-05)
 =============================================================
 
