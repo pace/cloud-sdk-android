@@ -62,7 +62,7 @@ object Libs {
     const val NAVIGATION_FRAGMENT = "androidx.navigation:navigation-fragment-ktx:${Versions.NAVIGATION}"
     const val NAVIGATION_SAFE_ARGS = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.NAVIGATION}"
     const val NAVIGATION_UI = "androidx.navigation:navigation-ui-ktx:${Versions.NAVIGATION}"
-    const val NEXUS_STAGING = "io.codearte.nexus-staging"
+    const val NEXUS_PUBLISH = "io.github.gradle-nexus.publish-plugin"
     const val OKHTTP_LOGGING_INTERCEPTOR = "com.squareup.okhttp3:logging-interceptor:${Versions.OKHTTP}"
     const val ONE_TIME_PASSWORD = "dev.turingcomplete:kotlin-onetimepassword:${Versions.ONE_TIME_PASSWORD}"
     const val PREFERENCE_KTX = "androidx.preference:preference-ktx:${Versions.PREFERENCE_KTX}"
