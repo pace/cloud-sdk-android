@@ -9,11 +9,9 @@ package cloud.pace.sdk.api.user.generated.request.federatedIdentity
 
 import cloud.pace.sdk.api.request.BaseRequest
 import cloud.pace.sdk.api.user.UserAPI
-import cloud.pace.sdk.api.user.generated.model.AccessToken
+import cloud.pace.sdk.api.user.generated.model.*
 import retrofit2.Call
-import retrofit2.http.HeaderMap
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 object GrantFederatedTokenAPI {
 

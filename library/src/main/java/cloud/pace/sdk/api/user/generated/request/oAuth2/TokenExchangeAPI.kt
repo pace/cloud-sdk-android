@@ -9,11 +9,9 @@ package cloud.pace.sdk.api.user.generated.request.oAuth2
 
 import cloud.pace.sdk.api.request.BaseRequest
 import cloud.pace.sdk.api.user.UserAPI
-import cloud.pace.sdk.api.user.generated.model.OAuth2Token
-import cloud.pace.sdk.api.user.generated.model.OAuth2TokenExchange
+import cloud.pace.sdk.api.user.generated.model.*
 import retrofit2.Call
-import retrofit2.http.HeaderMap
-import retrofit2.http.POST
+import retrofit2.http.*
 
 object TokenExchangeAPI {
 

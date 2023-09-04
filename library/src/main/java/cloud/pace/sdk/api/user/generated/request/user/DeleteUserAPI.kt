@@ -9,11 +9,10 @@ package cloud.pace.sdk.api.user.generated.request.user
 
 import cloud.pace.sdk.api.request.BaseRequest
 import cloud.pace.sdk.api.user.UserAPI
+import cloud.pace.sdk.api.user.generated.model.*
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.DELETE
-import retrofit2.http.HeaderMap
-import retrofit2.http.Path
+import retrofit2.http.*
 
 object DeleteUserAPI {
 

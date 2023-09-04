@@ -51,6 +51,7 @@ class TransactionCreateBody {
 
         /* PACE resource name - referring to the transaction's merchant */
         var merchantPRN: String? = null
+        var metadata: List<TransactionMetadata>? = null
 
         /* Current mileage in meters */
         var mileage: Int? = null
