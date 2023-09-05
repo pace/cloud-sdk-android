@@ -1,10 +1,15 @@
-variables:
-  PROJECT_NAME: "PACECloudSDK"
-
 stages:
   - test
   - build
   - publish
+
+before_script:
+  - export TAG_COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
+  - "echo TAG_COMMIT_TIME: $TAG_COMMIT_TIME"
+  - export BUILD_NUMBER=$(TZ=Etc/Utc date -j -f '%s' ${TAG_COMMIT_TIME} "+%Y%m%d%H")
+  - "echo BUILD_NUMBER: $BUILD_NUMBER"
+  - export BUILD_VERSION_NAME=`echo $CI_COMMIT_TAG | cut -d '-' -f2`
+  - "echo BUILD_VERSION_NAME: $BUILD_VERSION_NAME"
 
 .only_merge_requests: &only_merge_requests
   interruptible: true
@@ -21,12 +26,35 @@ stages:
   stage: test
   <<: *only_merge_requests
 
-before_script:
-  - export TAG_COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
-  - export BUILD_NUMBER=$(TZ=Etc/Utc date -j -f '%s' ${TAG_COMMIT_TIME} "+%Y%m%d%H")
-  - export BUILD_VERSION_NAME=`echo $CI_COMMIT_TAG | cut -d '-' -f2`
+.rules_schedule: &rules_schedule
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "master"
+    - if: $SCHEDULED_JOB == "snapshot-release"
 
-### Commit format
+.snapshot_version: &snapshot_version
+  before_script:
+    - export TAG_COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
+    - "echo TAG_COMMIT_TIME: $TAG_COMMIT_TIME"
+    - export BUILD_NUMBER=$(TZ=Etc/Utc date -j -f '%s' ${TAG_COMMIT_TIME} "+%Y%m%d%H")
+    - "echo BUILD_NUMBER: $BUILD_NUMBER"
+    - export BUILD_VERSION_NAME=`echo $CI_COMMIT_TAG | cut -d '-' -f2`-SNAPSHOT # Add -SNAPSHOT to the version name
+    - "echo BUILD_VERSION_NAME: $BUILD_VERSION_NAME"
+
+.build_and_publish_library:
+  extends: .android_version
+  stage: build
+  script:
+    - bash -c "echo '$SIGNING_GPG_KEY_CONTENT' | base64 -d > '$SIGNING_SECRET_KEY_RING_FILE'"
+    - ./gradlew clean library:assembleRelease
+    - ./gradlew sourcesJar javadocJar
+    - ./gradlew publishReleasePublicationToSonatypeRepository -PbuildNumber=$BUILD_NUMBER -PversionName=$BUILD_VERSION_NAME -PsigningKeyId=$SIGNING_KEY_ID -PsigningPassword=$SIGNING_PASSWORD -PsigningSecretKeyRingFile=$SIGNING_SECRET_KEY_RING_FILE -PossrhUsername=$OSSRH_USERNAME -PossrhPassword=$OSSRH_PASSWORD
+
+.close_and_release_library:
+  extends: .android_version
+  stage: publish
+  script:
+    - ./gradlew findSonatypeStagingRepository closeAndReleaseSonatypeStagingRepository -PbuildNumber=$BUILD_NUMBER -PversionName=$BUILD_VERSION_NAME -PossrhUsername=$OSSRH_USERNAME -PossrhPassword=$OSSRH_PASSWORD -PsonatypeStagingProfileId=$SONATYPE_STAGING_PROFILE_ID
+
 commit_format:
   stage: test
   before_script:
@@ -82,27 +110,30 @@ documentation:
     name: "android-pace-cloud-sdk-$BUILD_VERSION_NAME.zip"
     expire_in: 1 week
 
-maven_central_upload:
-  extends: .android_version
-  stage: build
-  script:
-    - bash -c "echo '$SIGNING_GPG_KEY_CONTENT' | base64 -d > '$SIGNING_SECRET_KEY_RING_FILE'"
-    - ./gradlew clean library:assembleRelease
-    - ./gradlew sourcesJar javadocJar
-    - ./gradlew publishReleasePublicationToMavenCentralRepository --max-workers 1 -PbuildNumber=$BUILD_NUMBER -PversionName=$BUILD_VERSION_NAME -PsigningKeyId=$SIGNING_KEY_ID -PsigningPassword=$SIGNING_PASSWORD -PsigningSecretKeyRingFile=$SIGNING_SECRET_KEY_RING_FILE -PossrhUsername=$OSSRH_USERNAME -PossrhPassword=$OSSRH_PASSWORD
+# Stable release
+build_and_publish_stable:
+  extends: .build_and_publish_library
   only:
     - tags
 
-maven_central_close_and_release:
-  extends: .android_version
-  stage: publish
-  script:
-    - ./gradlew closeAndReleaseRepository -PossrhUsername=$OSSRH_USERNAME -PossrhPassword=$OSSRH_PASSWORD -PsonatypeStagingProfileId=$SONATYPE_STAGING_PROFILE_ID
+close_and_release_stable:
+  extends: .close_and_release_library
   when: manual
   only:
     - tags
 
-# GitHub Release
+# Snapshot release
+build_and_publish_snapshot:
+  extends: .build_and_publish_library
+  <<: *snapshot_version
+  <<: *rules_schedule
+
+close_and_release_snapshot:
+  extends: .close_and_release_library
+  <<: *snapshot_version
+  <<: *rules_schedule
+
+# GitHub release
 framework_publish_github:
   script:
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${COMMON_REPO} tmp/common

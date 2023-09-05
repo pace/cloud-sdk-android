@@ -46,7 +46,7 @@ object Versions {
     const val MOSHI_JSONAPI = "3.5.0"
     const val MOSHI_KOTLIN = "1.14.0"
     const val NAVIGATION = "2.5.3"
-    const val NEXUS_STAGING = "0.30.0"
+    const val NEXUS_PUBLISH = "2.0.0-rc-1"
     const val OKHTTP = "4.10.0"
     const val ONE_TIME_PASSWORD = "2.4.0"
     const val PREFERENCE_KTX = "1.2.0"

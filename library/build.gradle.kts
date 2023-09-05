@@ -221,9 +221,6 @@ artifacts {
 
 configurations.create("javadocDeps")
 
-group = Config.GROUP_ID
-version = properties.getOrDefault("versionName", Versions.DEFAULT_VERSION_NAME_LIBRARY)!!.toString()
-
 publishing {
     publications {
         create<MavenPublication>("debug") {
@@ -328,16 +325,6 @@ publishing {
                         }
                     }
                 }
-            }
-        }
-    }
-    repositories {
-        maven {
-            name = "mavenCentral"
-            setUrl("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = extra["ossrhUsername"]?.toString().orEmpty()
-                password = extra["ossrhPassword"]?.toString().orEmpty()
             }
         }
     }

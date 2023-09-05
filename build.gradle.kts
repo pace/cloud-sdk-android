@@ -24,7 +24,7 @@ buildscript {
 
 plugins {
     id(Libs.DOKKA) version Versions.DOKKA
-    id(Libs.NEXUS_STAGING) version Versions.NEXUS_STAGING
+    id(Libs.NEXUS_PUBLISH) version Versions.NEXUS_PUBLISH
     id(Libs.GOOGLE_PROTOBUF_GRADLE_PLUGIN) version Versions.GOOGLE_PROTOBUF_GRADLE_PLUGIN
     java
 }
@@ -57,10 +57,18 @@ idea.project.settings {
     }
 }
 
-nexusStaging {
-    serverUrl = "https://s01.oss.sonatype.org/service/local/"
-    packageGroup = Config.GROUP_ID
-    stagingProfileId = properties["sonatypeStagingProfileId"]?.toString().orEmpty()
-    username = properties["ossrhUsername"]?.toString().orEmpty()
-    password = properties["ossrhPassword"]?.toString().orEmpty()
+group = Config.GROUP_ID
+version = properties.getOrDefault("versionName", Versions.DEFAULT_VERSION_NAME_LIBRARY)!!.toString()
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            stagingProfileId.set(properties["sonatypeStagingProfileId"]?.toString())
+            username.set(properties["ossrhUsername"]?.toString())
+            password.set(properties["ossrhPassword"]?.toString())
+            repositoryDescription.set("${Config.GROUP_ID}:${Config.ARTIFACT_ID}:${properties["versionName"] ?: Versions.DEFAULT_VERSION_NAME_LIBRARY}")
+        }
+    }
 }
