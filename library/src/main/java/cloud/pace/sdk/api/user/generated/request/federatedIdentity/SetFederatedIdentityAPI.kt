@@ -9,11 +9,10 @@ package cloud.pace.sdk.api.user.generated.request.federatedIdentity
 
 import cloud.pace.sdk.api.request.BaseRequest
 import cloud.pace.sdk.api.user.UserAPI
+import cloud.pace.sdk.api.user.generated.model.*
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.HeaderMap
-import retrofit2.http.PUT
-import retrofit2.http.Path
+import retrofit2.http.*
 
 object SetFederatedIdentityAPI {
 

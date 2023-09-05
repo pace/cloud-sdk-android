@@ -9,8 +9,7 @@ package cloud.pace.sdk.api.user.generated.request.totp
 
 import cloud.pace.sdk.api.request.BaseRequest
 import cloud.pace.sdk.api.user.UserAPI
-import cloud.pace.sdk.api.user.generated.model.DeviceTOTP
-import cloud.pace.sdk.api.user.generated.model.DeviceTOTPBody
+import cloud.pace.sdk.api.user.generated.model.*
 import retrofit2.Call
 import retrofit2.http.*
 

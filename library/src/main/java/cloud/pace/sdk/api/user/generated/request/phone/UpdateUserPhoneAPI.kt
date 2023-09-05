@@ -9,7 +9,7 @@ package cloud.pace.sdk.api.user.generated.request.phone
 
 import cloud.pace.sdk.api.request.BaseRequest
 import cloud.pace.sdk.api.user.UserAPI
-import cloud.pace.sdk.api.user.generated.model.UpdateUserPhoneBody
+import cloud.pace.sdk.api.user.generated.model.*
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
