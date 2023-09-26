@@ -12,7 +12,7 @@ import com.squareup.moshi.Json
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
-@JsonApi(type = "paymentMethodPayPalCreate")
+@JsonApi(type = "paymentMethod")
 class PaymentMethodPayPalCreate : Resource() {
 
     lateinit var kind: Kind

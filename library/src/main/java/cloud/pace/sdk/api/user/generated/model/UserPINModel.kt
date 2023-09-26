@@ -10,7 +10,7 @@ package cloud.pace.sdk.api.user.generated.model
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
-@JsonApi(type = "userPIN")
+@JsonApi(type = "pin")
 class UserPIN : Resource() {
 
     /* 4-digit code */

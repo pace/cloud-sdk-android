@@ -45,7 +45,7 @@ If you provide a valid Billing Agreement ID, the payment method is created direc
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
         ): Call<PaymentMethod> {
-            val resources = listOf(PaymentMethodVendor::class.java, PaymentMethodKind::class.java, PaymentToken::class.java, PaymentMethod::class.java)
+            val resources = listOf(PaymentMethod::class.java, PaymentMethodKind::class.java, PaymentMethodVendor::class.java, PaymentToken::class.java)
             val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout, resources)

@@ -12,7 +12,7 @@ import com.squareup.moshi.Json
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
-@JsonApi(type = "pumpResponse")
+@JsonApi(type = "pump")
 class PumpResponse : Resource() {
 
     var vat: VAT? = null

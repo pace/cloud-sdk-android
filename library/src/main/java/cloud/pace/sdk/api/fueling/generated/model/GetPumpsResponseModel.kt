@@ -11,7 +11,7 @@ import moe.banana.jsonapi2.HasMany
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
-@JsonApi(type = "getPumpsResponse")
+@JsonApi(type = "getPumps")
 class GetPumpsResponse : Resource() {
 
     private var pumps: HasMany<Pump> = HasMany()

@@ -10,7 +10,7 @@ package cloud.pace.sdk.api.user.generated.model
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
-@JsonApi(type = "updateUserPhone")
+@JsonApi(type = "phone")
 class UpdateUserPhone : Resource() {
 
     /* complete phone number of the user */

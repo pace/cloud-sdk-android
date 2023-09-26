@@ -23,7 +23,7 @@ object GetAppPOIsRelationshipsAPI {
             @HeaderMap headers: Map<String, String>,
             /* ID of the App */
             @Path("appID") appID: String? = null
-        ): Call<List<AppPOIsRelationships>>
+        ): Call<POIs>
     }
 
     open class Request : BaseRequest() {
@@ -33,7 +33,7 @@ object GetAppPOIsRelationshipsAPI {
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
-        ): Call<List<AppPOIsRelationships>> {
+        ): Call<POIs> {
             val headers = headers(true, "application/json", "application/json", additionalHeaders)
 
             return retrofit(POIAPI.baseUrl, additionalParameters, readTimeout)

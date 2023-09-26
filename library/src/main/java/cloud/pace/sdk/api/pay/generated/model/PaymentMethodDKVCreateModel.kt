@@ -13,7 +13,7 @@ import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 import java.util.Date
 
-@JsonApi(type = "paymentMethodDKVCreate")
+@JsonApi(type = "paymentMethod")
 class PaymentMethodDKVCreate : Resource() {
 
     lateinit var kind: Kind

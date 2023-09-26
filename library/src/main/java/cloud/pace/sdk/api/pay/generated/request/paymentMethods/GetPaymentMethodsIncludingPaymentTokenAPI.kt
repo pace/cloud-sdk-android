@@ -46,7 +46,7 @@ The list will contain the pre-authorized amount (incl. currency), the purpose PR
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
         ): Call<PaymentMethods> {
-            val resources = listOf(PaymentMethodVendor::class.java, PaymentMethodKind::class.java, PaymentToken::class.java, PaymentMethod::class.java)
+            val resources = listOf(PaymentMethod::class.java, PaymentMethodKind::class.java, PaymentMethodVendor::class.java, PaymentToken::class.java)
             val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout, resources)

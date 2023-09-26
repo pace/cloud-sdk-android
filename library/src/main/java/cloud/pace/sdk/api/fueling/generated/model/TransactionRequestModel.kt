@@ -12,7 +12,7 @@ import com.squareup.moshi.Json
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
-@JsonApi(type = "transactionRequest")
+@JsonApi(type = "transaction")
 class TransactionRequest : Resource() {
 
     /* 'Value' field of the payment token (not the payment token ID) */

@@ -11,7 +11,7 @@ import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 import java.util.Date
 
-@JsonApi(type = "source")
+@JsonApi(type = "sources")
 class Source : Resource() {
 
     /* list of ISO-3166-1 ALPHA-2 encoded countries */

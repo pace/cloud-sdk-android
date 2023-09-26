@@ -13,7 +13,7 @@ import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 import java.util.Date
 
-@JsonApi(type = "paymentMethodLogpayCreate")
+@JsonApi(type = "paymentMethod")
 class PaymentMethodLogpayCreate : Resource() {
 
     lateinit var kind: Kind

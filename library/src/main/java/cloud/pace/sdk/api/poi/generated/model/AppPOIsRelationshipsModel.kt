@@ -10,5 +10,5 @@ package cloud.pace.sdk.api.poi.generated.model
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
-@JsonApi(type = "appPOIsRelationships")
+@JsonApi(type = "pois")
 class AppPOIsRelationships : Resource()

@@ -10,7 +10,7 @@ package cloud.pace.sdk.api.pay.generated.model
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
-@JsonApi(type = "applePaySession")
+@JsonApi(type = "applePayPaymentSession")
 class ApplePaySession : Resource() {
 
     /* Merchant identifier */

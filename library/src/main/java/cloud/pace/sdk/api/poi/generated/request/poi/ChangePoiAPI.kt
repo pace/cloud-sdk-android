@@ -42,7 +42,7 @@ object ChangePoiAPI {
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
         ): Call<POI> {
-            val resources = listOf(ReferenceStatus::class.java, GasStation::class.java, FuelPrice::class.java, LocationBasedApp::class.java)
+            val resources = listOf(FuelPrice::class.java, GasStation::class.java, LocationBasedApp::class.java, ReferenceStatus::class.java)
             val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(POIAPI.baseUrl, additionalParameters, readTimeout, resources)

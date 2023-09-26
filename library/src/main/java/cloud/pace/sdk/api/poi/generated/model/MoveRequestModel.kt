@@ -11,7 +11,7 @@ import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
 /* Creates a new event object at lat/lng from this POI ID */
-@JsonApi(type = "moveRequest")
+@JsonApi(type = "movePoi")
 class MoveRequest : Resource() {
 
     /* Latitude in degrees */

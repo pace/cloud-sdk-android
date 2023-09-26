@@ -12,7 +12,7 @@ import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
-@JsonApi(type = "approachingResponse")
+@JsonApi(type = "approaching")
 class ApproachingResponse : Resource() {
 
     private var gasStation: HasOne<GasStation> = HasOne()

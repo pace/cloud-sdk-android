@@ -11,7 +11,7 @@ import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 import java.util.Date
 
-@JsonApi(type = "policy")
+@JsonApi(type = "policies")
 class Policy : Resource() {
 
     var countryId: CommonCountryId? = null
