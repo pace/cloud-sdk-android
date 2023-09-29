@@ -20,6 +20,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [17.x.x -> 18.x.x](#from-17xx-to-18xx)
         + [18.x.x -> 19.x.x](#from-18xx-to-19xx)
         + [19.x.x -> 20.x.x](#from-19xx-to-20xx)
+        + [20.x.x -> 21.x.x](#from-20xx-to-21xx)
 
 ## Documentation
 The full documentation and instructions on how to integrate PACE Cloud SDK can be found [here](https://docs.pace.cloud/en/integrating/mobile-app)
@@ -165,6 +166,9 @@ The `GasStations` properties `paymentMethods`, `amenities`, `foods`, `loyaltyPro
 - The functions `AppKit.openApps(...)` and `AppKit.closeApps(...)` have been deleted, as this is now done automatically by the AppDrawerHost.
 - Added a `LocationRequest` parameter to the `POIKit.startLocationListener` function so that you can specify the desired location criteria for the location request.
 - Added a `locationFlow(...)` function to the `LocationProvider` so that you can fetch location updates using a Kotlin Flow.
+
+### From 20.x.x to 21.x.x
+- We have refactored our `Configuration` object that is used in the `PACECloudSDK.setup(...)` function: We have added `clientID` as property to `Configuration` and removed it from `CustomOIDConfiguration`.
 
 ## SDK API Docs
 

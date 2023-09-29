@@ -4,7 +4,6 @@ import cloud.pace.sdk.utils.Environment
 import net.openid.appauth.ResponseTypeValues
 
 data class CustomOIDConfiguration @JvmOverloads constructor(
-    val clientId: String,
     val redirectUri: String,
     val authorizationEndpoint: String? = null,
     val endSessionEndpoint: String? = null,
@@ -24,7 +23,6 @@ fun CustomOIDConfiguration.oidConfiguration(environment: Environment) =
             endSessionEndpoint = endSessionEndpoint ?: "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/logout",
             tokenEndpoint = tokenEndpoint ?: "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/token",
             userInfoEndpoint = userInfoEndpoint ?: "https://id.pace.cloud/auth/realms/pace/protocol/openid-connect/userinfo",
-            clientId = clientId,
             clientSecret = clientSecret,
             scopes = scopes,
             redirectUri = redirectUri,
@@ -37,7 +35,6 @@ fun CustomOIDConfiguration.oidConfiguration(environment: Environment) =
             endSessionEndpoint = endSessionEndpoint ?: "https://id.sandbox.pace.cloud/auth/realms/pace/protocol/openid-connect/logout",
             tokenEndpoint = tokenEndpoint ?: "https://id.sandbox.pace.cloud/auth/realms/pace/protocol/openid-connect/token",
             userInfoEndpoint = userInfoEndpoint ?: "https://id.sandbox.pace.cloud/auth/realms/pace/protocol/openid-connect/userinfo",
-            clientId = clientId,
             clientSecret = clientSecret,
             scopes = scopes,
             redirectUri = redirectUri,
@@ -50,7 +47,6 @@ fun CustomOIDConfiguration.oidConfiguration(environment: Environment) =
             endSessionEndpoint = endSessionEndpoint ?: "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/logout",
             tokenEndpoint = tokenEndpoint ?: "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/token",
             userInfoEndpoint = userInfoEndpoint ?: "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/userinfo",
-            clientId = clientId,
             clientSecret = clientSecret,
             scopes = scopes,
             redirectUri = redirectUri,

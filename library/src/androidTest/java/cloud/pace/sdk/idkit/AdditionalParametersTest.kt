@@ -74,12 +74,13 @@ class AdditionalParametersTest : KoinTest {
         PACECloudSDK.setup(
             context,
             Configuration(
+                clientId = "cloud-sdk-example-app",
                 clientAppName = clientAppName,
                 clientAppVersion = "1",
                 clientAppBuild = "1",
                 apiKey = "YOUR_API_KEY",
                 environment = Environment.DEVELOPMENT,
-                oidConfiguration = CustomOIDConfiguration(clientId = "cloud-sdk-example-app", redirectUri = "cloud-sdk-example://callback", additionalParameters = idKitParams)
+                oidConfiguration = CustomOIDConfiguration(redirectUri = "cloud-sdk-example://callback", additionalParameters = idKitParams)
             )
         )
     }

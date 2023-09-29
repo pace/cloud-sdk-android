@@ -84,7 +84,7 @@ class AppRepositoryTest {
 
     @Before
     fun init() {
-        PACECloudSDK.configuration = Configuration("", "", "", "", environment = Environment.DEVELOPMENT, oidConfiguration = null)
+        PACECloudSDK.configuration = Configuration("", "", "", "", "", environment = Environment.DEVELOPMENT, oidConfiguration = null)
     }
 
     @Test

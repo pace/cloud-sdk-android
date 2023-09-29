@@ -21,12 +21,13 @@ class FuelingApplication : Application() {
         PACECloudSDK.setup(
             this,
             Configuration(
+                clientId = "cloud-sdk-example-app",
                 clientAppName = "PACECloudSDKFuelingExample",
                 clientAppVersion = BuildConfig.VERSION_NAME,
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),
                 apiKey = "YOUR_API_KEY",
                 environment = Environment.DEVELOPMENT, // Change to Environment.PRODUCTION for production builds
-                oidConfiguration = CustomOIDConfiguration(clientId = "cloud-sdk-example-app", redirectUri = "cloud-sdk-example://callback") // Change to your OIDC configuration
+                oidConfiguration = CustomOIDConfiguration(redirectUri = "cloud-sdk-example://callback") // Change to your OIDC configuration
             )
         )
     }
