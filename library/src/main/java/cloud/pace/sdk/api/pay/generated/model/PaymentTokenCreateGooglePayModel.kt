@@ -10,7 +10,7 @@ package cloud.pace.sdk.api.pay.generated.model
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
-@JsonApi(type = "paymentTokenCreateGooglePay")
+@JsonApi(type = "paymentToken")
 class PaymentTokenCreateGooglePay : Resource() {
 
     /* Currency as specified in ISO-4217. */

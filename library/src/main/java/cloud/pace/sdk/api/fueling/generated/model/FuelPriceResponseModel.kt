@@ -12,7 +12,7 @@ import com.squareup.moshi.Json
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
-@JsonApi(type = "fuelPriceResponse")
+@JsonApi(type = "fuelPrice")
 class FuelPriceResponse : Resource() {
 
     /* Currency as specified in ISO-4217. */

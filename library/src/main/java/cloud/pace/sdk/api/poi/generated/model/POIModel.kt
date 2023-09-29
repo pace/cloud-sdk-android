@@ -12,7 +12,7 @@ import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 import java.util.Date
 
-@JsonApi(type = "poi")
+@JsonApi(type = "GasStation")
 class POI : Resource() {
 
     var active: Boolean? = null

@@ -12,7 +12,7 @@ import com.squareup.moshi.Json
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
-@JsonApi(type = "paymentMethodTFCCreate")
+@JsonApi(type = "paymentMethod")
 class PaymentMethodTFCCreate : Resource() {
 
     lateinit var kind: Kind

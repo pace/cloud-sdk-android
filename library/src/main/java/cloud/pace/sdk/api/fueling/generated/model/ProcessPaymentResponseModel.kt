@@ -10,7 +10,7 @@ package cloud.pace.sdk.api.fueling.generated.model
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
-@JsonApi(type = "processPaymentResponse")
+@JsonApi(type = "transaction")
 class ProcessPaymentResponse : Resource() {
 
     var vat: VAT? = null

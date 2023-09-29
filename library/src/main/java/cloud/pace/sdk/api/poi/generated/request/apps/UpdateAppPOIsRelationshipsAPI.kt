@@ -23,19 +23,19 @@ object UpdateAppPOIsRelationshipsAPI {
             @HeaderMap headers: Map<String, String>,
             /* ID of the App */
             @Path("appID") appID: String? = null,
-            @retrofit2.http.Body body: List<AppPOIsRelationships>
-        ): Call<List<AppPOIsRelationships>>
+            @retrofit2.http.Body body: POIs
+        ): Call<POIs>
     }
 
     open class Request : BaseRequest() {
 
         fun updateAppPOIsRelationships(
             appID: String? = null,
-            body: List<AppPOIsRelationships>,
+            body: POIs,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
-        ): Call<List<AppPOIsRelationships>> {
+        ): Call<POIs> {
             val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(POIAPI.baseUrl, additionalParameters, readTimeout)
@@ -50,7 +50,7 @@ object UpdateAppPOIsRelationshipsAPI {
 
     fun POIAPI.AppsAPI.updateAppPOIsRelationships(
         appID: String? = null,
-        body: List<AppPOIsRelationships>,
+        body: POIs,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null

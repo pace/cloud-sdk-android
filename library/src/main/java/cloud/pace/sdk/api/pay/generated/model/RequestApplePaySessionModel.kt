@@ -10,7 +10,7 @@ package cloud.pace.sdk.api.pay.generated.model
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
-@JsonApi(type = "requestApplePaySession")
+@JsonApi(type = "applePayPaymentSession")
 class RequestApplePaySession : Resource() {
 
     /* Schemaless (no http/https!) validation URL obtained by the client through communicating directly with Apple Pay. */

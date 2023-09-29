@@ -77,12 +77,12 @@ class Transaction : Resource() {
     /* Vehicle identification number */
     var vin: String? = null
 
-    private var discountTokens: HasMany<Discount> = HasMany()
-    fun getDiscountTokens() = discountTokens.get(document)
-
     class VAT {
 
         var amount: Double? = null
         var rate: Double? = null
     }
+
+    private var discountTokens: HasMany<Discount> = HasMany()
+    fun getDiscountTokens() = discountTokens.get(document)
 }

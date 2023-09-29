@@ -52,7 +52,7 @@ Other than authorization, the most common error states encountered should be:
             additionalParameters: Map<String, String>? = null
         ): Call<ApproachingResponse> {
             val resources =
-                listOf(PaymentMethod::class.java, FuelPrice::class.java, Pump::class.java, Transaction::class.java, GasStation::class.java, PaymentMethodKind::class.java, GasStationNote::class.java)
+                listOf(FuelPrice::class.java, GasStation::class.java, GasStationNote::class.java, PaymentMethod::class.java, PaymentMethodKind::class.java, Pump::class.java, Transaction::class.java)
             val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(FuelingAPI.baseUrl, additionalParameters, readTimeout, resources)

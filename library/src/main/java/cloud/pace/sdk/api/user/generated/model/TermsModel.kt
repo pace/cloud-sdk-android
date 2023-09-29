@@ -10,7 +10,7 @@ package cloud.pace.sdk.api.user.generated.model
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
-@JsonApi(type = "terms")
+@JsonApi(type = "Terms")
 class Terms : Resource() {
 
     /* Location to the terms of service that need to be accepted */

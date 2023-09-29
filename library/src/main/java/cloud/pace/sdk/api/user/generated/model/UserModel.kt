@@ -13,7 +13,7 @@ import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 import java.util.Date
 
-@JsonApi(type = "user")
+@JsonApi(type = "User")
 class User : Resource() {
 
     var address: Address? = null
