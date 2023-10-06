@@ -132,7 +132,11 @@ class OnboardingFragment : BaseOnboardingFragment(), FragmentResultable {
         }
 
         viewModel.unselectedFuelType.observe(viewLifecycleOwner) {
-            Toast.makeText(context, getString(R.string.ONBOARDING_FUEL_TYPE_UNSELECTED_TEXT), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                getString(R.string.ONBOARDING_FUEL_TYPE_UNSELECTED_TEXT),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -210,6 +214,7 @@ class OnboardingFragment : BaseOnboardingFragment(), FragmentResultable {
                         false -> navigate(NavigateToDirection(OnboardingFragmentDirections.onboardingConfigureBiometry()))
                     }
                 }
+
                 is Failure -> handleApiFailure(
                     it.throwable,
                     ::setupFingerprintAuthorisationOnServer
@@ -234,6 +239,7 @@ class OnboardingFragment : BaseOnboardingFragment(), FragmentResultable {
                         )
                     )
                 }
+
                 is Failure -> handleApiFailure(it.throwable, ::checkAuthorisationMethods)
             }
         }
@@ -255,11 +261,13 @@ class OnboardingFragment : BaseOnboardingFragment(), FragmentResultable {
                 actionText = getString(R.string.ONBOARDING_RETRY_LOGIN),
                 actionListener = ::startPaceIdRegistration
             )
+
             is UnknownHostException, is SocketTimeoutException -> ShowSnack(
                 messageRes = R.string.ONBOARDING_NETWORK_ERROR,
                 actionText = getString(R.string.COMMON_RETRY),
                 actionListener = retryAction
             )
+
             else -> ShowSnack(getString(R.string.ONBOARDING_UNKNOWN_ERROR))
         }
         handleEvent(event)
