@@ -22,7 +22,6 @@
 
         <TextView
             style="@style/Text.Onboarding"
-            android:labelFor="@id/editText"
             android:text="@{viewModel.description}"
             tools:text="@string/ALERT.LOCATION_PERMISSION.DESCRIPTION" />
 

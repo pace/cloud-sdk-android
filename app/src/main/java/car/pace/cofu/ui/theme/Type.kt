@@ -7,22 +7,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 
 val Typography = Typography(
-    titleMedium = TextStyle(
-        fontSize = 24.sp,
-        fontWeight = FontWeight.Light,
+    titleLarge = TextStyle(
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        letterSpacing = 0.4.sp,
         textAlign = TextAlign.Center,
-        lineHeight = 29.sp
+        lineHeight = 24.sp
     ),
-    titleSmall = TextStyle(
-        color = Subtitle,
+    bodyLarge = TextStyle(
         fontSize = 16.sp,
-        fontWeight = FontWeight.Light,
+        letterSpacing = 0.5.sp,
         textAlign = TextAlign.Center,
         lineHeight = 19.sp
     ),
     labelLarge = TextStyle(
-        fontSize = 18.sp,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Medium,
+        letterSpacing = 0.44.sp,
         textAlign = TextAlign.Center,
-        lineHeight = 21.sp
+        lineHeight = 16.sp
     )
 )

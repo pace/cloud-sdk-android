@@ -1,96 +1,71 @@
 package car.pace.cofu.ui.onboarding
 
-import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableInt
-import androidx.lifecycle.MutableLiveData
-import car.pace.cofu.core.events.DismissSnackbars
-import car.pace.cofu.core.events.FragmentEvent
-import car.pace.cofu.core.mvvm.BaseViewModel
-import car.pace.cofu.core.util.decrease
-import car.pace.cofu.core.util.increase
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModel
+import car.pace.cofu.data.PaymentMethodRepository
+import car.pace.cofu.data.SharedPreferencesRepository
+import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_FUEL_TYPE
+import car.pace.cofu.data.UserRepository
 import car.pace.cofu.repository.FuelType
-import car.pace.cofu.repository.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class OnboardingViewModel @Inject constructor(internal val userDataRepository: UserDataRepository) :
-    BaseViewModel() {
+class OnboardingViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+    private val paymentMethodRepository: PaymentMethodRepository,
+    private val sharedPreferencesRepository: SharedPreferencesRepository
+) : ViewModel() {
 
-    val loading = ObservableInt(0)
+    var currentIndex by mutableIntStateOf(0)
 
-    private val paceAuthorisationItemViewModel =
-        PaceAuthorisationItemViewModel(this@OnboardingViewModel)
+    fun nextStep() {
+        currentIndex++
+    }
 
-    var hasFingerprint = false
-        set(value) {
-            field = value
-            paceAuthorisationItemViewModel.hasFingerprint = value
+    fun navigateToAuthorization() {
+        currentIndex = OnboardingPage.AUTHENTICATION.ordinal
+    }
+
+    fun setFuelType(fuelType: FuelType) {
+        sharedPreferencesRepository.putValue(PREF_KEY_FUEL_TYPE, fuelType.ordinal)
+        nextStep()
+    }
+
+    suspend fun skipPageIfNeeded(currentPage: OnboardingPage?, context: Context) {
+        when (currentPage) {
+            OnboardingPage.LOCATION_PERMISSION -> {
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    nextStep()
+                }
+            }
+
+            OnboardingPage.AUTHENTICATION -> {
+                if (userRepository.isAuthorizationValid()) {
+                    nextStep()
+                }
+            }
+
+            OnboardingPage.TWO_FACTOR -> {
+                if (userRepository.isBiometricAuthenticationEnabled() && userRepository.isPINSet().getOrNull() == true) {
+                    nextStep()
+                }
+            }
+
+            OnboardingPage.PAYMENT_METHOD -> {
+                val hasPaymentMethods = !paymentMethodRepository.getPaymentMethods().getOrNull().isNullOrEmpty()
+                if (hasPaymentMethods) {
+                    nextStep()
+                }
+            }
+
+            else -> {}
         }
-
-    var isSmallDevice = false
-        set(value) {
-            field = value
-            fuelTypeSelectionItemViewModel.isSmallDevice = value
-        }
-
-    var fuelType: FuelType? = null
-    var unselectedFuelType: MutableLiveData<Unit> = MutableLiveData()
-
-    val fuelTypeSelectionItemViewModel = FuelTypeSelectionViewModel(this@OnboardingViewModel)
-    val pagerItems = mutableListOf<OnboardingItemViewModel>().apply {
-        add(LocationPermissionItemViewModel(this@OnboardingViewModel))
-        add(PaceIdItemViewModel(this@OnboardingViewModel))
-        add(paceAuthorisationItemViewModel)
-        add(PaymentMethodItemViewModel(this@OnboardingViewModel))
-        add(fuelTypeSelectionItemViewModel)
-    }
-
-    val showBackButton = ObservableBoolean(false)
-
-    val selectedPage = object : ObservableInt(0) {
-        override fun set(value: Int) {
-            val didGoForward = value > get()
-            super.set(value)
-            showBackButton.set(value > 0)
-            handleEvent(DismissSnackbars())
-            // check if the current step can be skipped, but only if the user did not just go back
-            initStep(didGoForward)
-        }
-    }
-
-    private fun initStep(skipIfRedundant: Boolean) {
-        pagerItems[selectedPage.get()].onInit(skipIfRedundant)
-    }
-
-
-    /**
-     * advances to the next onboarding step or finishes onboarding when the last step has been reached
-     */
-    fun next() {
-        if (selectedPage.get() < pagerItems.size - 1) {
-            selectedPage.increase()
-        } else {
-            userDataRepository.onboardingDone = true
-            handleEvent(NavigateToHomeEvent())
-        }
-    }
-
-    fun previous() {
-        if (loading.get() == 0) selectedPage.decrease()
-    }
-
-    /**
-     * gets called from the [OnboardingFragment] when a response is available
-     * e.g. the fingerprint authorisation has been set up or the location permission has been granted
-     * or denied. The response is forwarded to [OnboardingItemViewModel.onResponse] for the
-     * currently active item viewmodel
-     */
-    fun onResponse(response: FragmentEvent) {
-        pagerItems[selectedPage.get()].onResponse(response)
-    }
-
-    init {
-        initStep(true)
     }
 }

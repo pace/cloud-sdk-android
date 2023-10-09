@@ -1,43 +1,27 @@
 package car.pace.cofu.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val LightColors = lightColorScheme(
     primary = PACEBlue,
-    onPrimary = Title,
+    onPrimary = Color.White,
     secondary = LightGray,
-    onSecondary = Subtitle,
+    onSecondary = Color.Black,
     background = Color.White,
-    onBackground = Title,
+    onBackground = Color.Black,
     surface = Color.White,
-    onSurface = Title,
-    error = Error
-)
-
-val DarkColors = darkColorScheme(
-    primary = PACEBlue,
-    onPrimary = Title,
-    secondary = DarkGray,
-    onSecondary = Subtitle,
-    background = Title,
-    onBackground = Color.White,
-    surface = Title,
-    onSurface = Color.White,
+    onSurface = Color.Black,
+    surfaceVariant = LightGray,
     error = Error
 )
 
 @Composable
-fun AppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
-) {
+fun AppTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = if (darkTheme) DarkColors else LightColors,
+        colorScheme = LightColors,
         typography = Typography,
         content = content
     )

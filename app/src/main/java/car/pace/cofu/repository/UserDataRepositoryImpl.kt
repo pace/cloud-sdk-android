@@ -3,6 +3,8 @@ package car.pace.cofu.repository
 import android.app.Application
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_FUEL_TYPE
+import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_ONBOARDING_DONE
 import javax.inject.Inject
 
 class UserDataRepositoryImpl @Inject constructor(private val app: Application) :
@@ -34,10 +36,4 @@ class UserDataRepositoryImpl @Inject constructor(private val app: Application) :
     override fun clear() {
         sharedPreferences.edit().clear().apply()
     }
-
-    companion object {
-        private const val PREF_KEY_ONBOARDING_DONE = "onboardingDone"
-        private const val PREF_KEY_FUEL_TYPE = "fuelType"
-    }
-
 }

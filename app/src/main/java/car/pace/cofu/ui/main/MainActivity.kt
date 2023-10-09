@@ -38,7 +38,7 @@ class MainActivity : BaseMainActivity() {
             (supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment)
         val inflater = navHostFragment.navController.navInflater
         val graph = inflater.inflate(R.navigation.nav_graph_main)
-        graph.setStartDestination(if (viewModel.onboardingDone) R.id.fragment_home else R.id.fragment_onboarding)
+        graph.setStartDestination(R.id.fragment_home)
         navHostFragment.navController.graph = graph
     }
 

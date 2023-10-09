@@ -2,8 +2,8 @@ package car.pace.cofu.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -21,20 +21,22 @@ object Destinations {
 }
 
 @Composable
-fun AppContent() {
+fun AppContent(
+    viewModel: AppContentViewModel = hiltViewModel()
+) {
     AppTheme {
         val navController = rememberNavController()
-        val onboardingComplete by remember {
-            // TODO: Get and set onboarding state
-            mutableStateOf(true)
-        }
+        val onboardingDone by viewModel.onboardingDone.collectAsStateWithLifecycle()
 
         NavHost(
             navController = navController,
-            startDestination = if (onboardingComplete) Destinations.HOME_ROUTE else Destinations.ONBOARDING_ROUTE
+            startDestination = if (onboardingDone) Destinations.HOME_ROUTE else Destinations.ONBOARDING_ROUTE
         ) {
             composable(Destinations.ONBOARDING_ROUTE) {
-                Onboarding()
+                Onboarding {
+                    viewModel.onboardingDone()
+                    navController.navigate(Destinations.HOME_ROUTE)
+                }
             }
             composable(Destinations.HOME_ROUTE) {
                 Home()
