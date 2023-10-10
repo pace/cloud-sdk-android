@@ -1,6 +1,5 @@
 package cloud.pace.sdk.api.meta
 
-import android.content.Context
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -20,7 +19,7 @@ class MetaCollector(isEnabled: Boolean) : CloudSDKKoinComponent, DefaultLifecycl
     private val data by lazy {
         MetaCollectorData(
             deviceId = DeviceUtils.getDeviceId(),
-            clientId = PACECloudSDK.configuration.oidConfiguration?.clientId ?: get<Context>().packageName,
+            clientId = PACECloudSDK.configuration.clientId,
             locale = Locale.getDefault().toLanguageTag(),
             services = listOf(
                 MetaCollectorService(PACECloudSDK.configuration.clientAppName, "${PACECloudSDK.configuration.clientAppVersion}_${PACECloudSDK.configuration.clientAppBuild}"),

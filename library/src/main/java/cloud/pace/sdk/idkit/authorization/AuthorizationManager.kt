@@ -60,12 +60,14 @@ internal class AuthorizationManager(
     private val userInfoApi: UserInfoApiClient
 ) : CloudSDKKoinComponent, DefaultLifecycleObserver {
 
+    private lateinit var clientId: String
     private lateinit var configuration: OIDConfiguration
     private lateinit var authorizationRequest: AuthorizationRequest
 
-    internal fun setup(configuration: OIDConfiguration) {
+    internal fun setup(clientId: String, configuration: OIDConfiguration) {
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 
+        this.clientId = clientId
         this.configuration = configuration.apply {
             additionalParameters = getMergedParameters(additionalParameters ?: emptyMap())
         }
@@ -339,7 +341,7 @@ internal class AuthorizationManager(
 
     private fun createAuthorizationRequest() {
         val serviceConfiguration = configuration.toAuthorizationServiceConfiguration()
-        authorizationRequest = AuthorizationRequest.Builder(serviceConfiguration, configuration.clientId, configuration.responseType, Uri.parse(configuration.redirectUri))
+        authorizationRequest = AuthorizationRequest.Builder(serviceConfiguration, clientId, configuration.responseType, Uri.parse(configuration.redirectUri))
             .setScopes(configuration.scopes?.plus("openid") ?: listOf("openid")) // Make sure that 'openid' is passed as scope so that the idToken for the end session request is returned
             .setAdditionalParameters(configuration.additionalParameters)
             .build()

@@ -14,13 +14,14 @@ class CloudSDKApplication : Application() {
         PACECloudSDK.setup(
             this,
             Configuration(
+                clientId = "cloud-sdk-example-app",
                 clientAppName = "PACECloudSDKExample",
                 clientAppVersion = BuildConfig.VERSION_NAME,
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),
                 apiKey = "YOUR_API_KEY",
                 environment = Environment.DEVELOPMENT,
                 geoAppsScope = "pace-drive-android",
-                oidConfiguration = CustomOIDConfiguration(clientId = "cloud-sdk-example-app", redirectUri = "cloud-sdk-example://callback")
+                oidConfiguration = CustomOIDConfiguration(redirectUri = "cloud-sdk-example://callback")
             )
         )
     }

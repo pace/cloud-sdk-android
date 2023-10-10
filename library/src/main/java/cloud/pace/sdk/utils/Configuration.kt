@@ -3,6 +3,7 @@ package cloud.pace.sdk.utils
 import cloud.pace.sdk.idkit.model.CustomOIDConfiguration
 
 data class Configuration @JvmOverloads constructor(
+    var clientId: String,
     var clientAppName: String,
     var clientAppVersion: String,
     var clientAppBuild: String,
@@ -14,7 +15,7 @@ data class Configuration @JvmOverloads constructor(
     var domainACL: List<String> = listOf("pace.cloud", "fuel.site"),
     var locationAccuracy: Int? = null,
     var speedThresholdInKmPerHour: Int = 50,
-    var geoAppsScope: String = "pace-min",
+    var geoAppsScope: String = clientId,
     var appsDistanceThresholdInMeters: Int = 150,
     var oidConfiguration: CustomOIDConfiguration? = null,
     var isMetaCollectorEnabled: Boolean = true

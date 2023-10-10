@@ -46,8 +46,8 @@ object IDKit : CloudSDKKoinComponent {
      *
      * @param context The context.
      */
-    internal fun setup(context: Context, configuration: OIDConfiguration) {
-        authorizationManager.setup(configuration)
+    internal fun setup(context: Context, clientId: String, configuration: OIDConfiguration) {
+        authorizationManager.setup(clientId, configuration)
         isInitialized = true
 
         SetupLogger.appAuthRedirectScheme = DeviceUtils.getAppAuthRedirectScheme(context)

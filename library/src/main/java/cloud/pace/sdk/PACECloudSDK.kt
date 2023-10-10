@@ -119,7 +119,7 @@ object PACECloudSDK {
 
         val oidConfiguration = configuration.oidConfiguration
         if (oidConfiguration != null) {
-            IDKit.setup(context, oidConfiguration.oidConfiguration(configuration.environment))
+            IDKit.setup(context, configuration.clientId, oidConfiguration.oidConfiguration(configuration.environment))
         }
 
         API.setup(configuration.environment, configuration.apiKey)
