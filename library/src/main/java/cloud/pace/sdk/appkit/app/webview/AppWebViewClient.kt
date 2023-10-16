@@ -1,12 +1,10 @@
 package cloud.pace.sdk.appkit.app.webview
 
-import android.annotation.TargetApi
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -67,14 +65,8 @@ class AppWebViewClient(var url: String, val callback: WebClientCallback, val con
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.N)
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
         return intercept(view, request?.url)
-    }
-
-    @Suppress("DEPRECATION")
-    override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-        return intercept(view, url?.let { Uri.parse(it) })
     }
 
     private fun injectFeatureFlags(view: WebView?) {

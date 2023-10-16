@@ -2,7 +2,6 @@ package cloud.pace.sdk.appkit.persistence
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Build
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import cloud.pace.sdk.appkit.model.Car
@@ -218,11 +217,7 @@ class SharedPreferencesImpl(
         fun removeUserPreferences(context: Context, accessToken: String?) {
             val userId = accessToken?.let { JWTUtils.getUserIDFromToken(it) } ?: return
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                context.deleteSharedPreferences(userId)
-            } else {
-                getPreferences(context, userId).edit(true) { clear() }
-            }
+            context.deleteSharedPreferences(userId)
         }
     }
 }

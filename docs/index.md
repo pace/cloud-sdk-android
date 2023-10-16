@@ -169,6 +169,7 @@ The `GasStations` properties `paymentMethods`, `amenities`, `foods`, `loyaltyPro
 
 ### From 20.x.x to 21.x.x
 - We have refactored our `Configuration` object that is used in the `PACECloudSDK.setup(...)` function: We have added `clientID` as property to `Configuration` and removed it from `CustomOIDConfiguration`.
+- We have raised the min sdk version to 26 (Android 8).
 
 ## SDK API Docs
 

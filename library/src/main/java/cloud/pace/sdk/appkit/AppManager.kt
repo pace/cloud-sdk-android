@@ -3,7 +3,6 @@ package cloud.pace.sdk.appkit
 import android.content.Context
 import android.content.Intent
 import android.location.Location
-import android.os.Build
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.appkit.app.AppActivity
 import cloud.pace.sdk.appkit.app.api.AppRepository
@@ -116,13 +115,9 @@ internal class AppManager(private val dispatchers: DispatcherProvider = DefaultD
 
     private fun isSpeedValid(location: Location): Boolean {
         val metersPerSecond = PACECloudSDK.configuration.speedThresholdInKmPerHour / 3.6
-        var isSpeedValid = location.speed < metersPerSecond
+        val isSpeedValid = location.speed < metersPerSecond
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            isSpeedValid = isSpeedValid && location.speedAccuracyMetersPerSecond < SPEED_ACCURACY_THRESHOLD
-        }
-
-        return isSpeedValid
+        return isSpeedValid && location.speedAccuracyMetersPerSecond < SPEED_ACCURACY_THRESHOLD
     }
 
     private fun filterNotDisabledApps(apps: List<App>): List<App> {
