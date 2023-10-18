@@ -5,7 +5,7 @@ object Versions {
 
     const val COMPILE_SDK = 34
     const val TARGET_SDK = 34
-    const val MIN_SDK = 23
+    const val MIN_SDK = 26
 
     const val APPAUTH = "0.11.1"
     const val ANDROID_GRADLE_PLUGIN = "7.4.2"

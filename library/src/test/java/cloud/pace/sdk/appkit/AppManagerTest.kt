@@ -116,6 +116,60 @@ class AppManagerTest : CloudSDKKoinComponent {
     }
 
     @Test
+    fun `no app due to invalid speed accuracy`() {
+        `when`(mockLocation.speed).then { 10f }
+        `when`(mockLocation.speedAccuracyMetersPerSecond).then { 4f }
+
+        val app1 = App(
+            url = "http://test1",
+            name = "App #1",
+            shortName = "Connected Fueling",
+            description = "Subtitle app #1",
+            iconUrl = null,
+            distance = null
+        )
+
+        val appRepository = object : TestAppRepository() {
+            override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
+                return Success(listOf(app1))
+            }
+        }
+
+        val testModule = module {
+            single<LocationProvider> {
+                TestLocationProvider(mockLocation)
+            }
+
+            single<AppRepository> {
+                appRepository
+            }
+
+            single<SharedPreferencesModel> {
+                TestSharedPreferencesModel()
+            }
+
+            single<AppEventManager> {
+                TestAppEventManager()
+            }
+
+            single<AppModel> {
+                AppModelImpl(mockContext, coroutineTestRule.testDispatcherProvider)
+            }
+        }
+
+        setupKoinForTests(testModule)
+
+        val future = CompletableFuture<Throwable>()
+        appManager.requestLocalApps {
+            if (it is Failure) {
+                future.complete(it.throwable)
+            }
+        }
+
+        assertEquals(InvalidSpeed, future.get())
+    }
+
+    @Test
     fun `no app due to missing location permissions`() {
         val testModule = module {
             single<LocationProvider> {
@@ -242,6 +296,7 @@ class AppManagerTest : CloudSDKKoinComponent {
         every { location.latitude } returns 49.012722
         every { location.longitude } returns 8.427326
         every { location.speed } returns 3f
+        every { location.speedAccuracyMetersPerSecond } returns 2f
 
         val testModule = module {
             single<LocationProvider> {
