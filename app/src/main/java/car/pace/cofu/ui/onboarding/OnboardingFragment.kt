@@ -188,7 +188,7 @@ class OnboardingFragment : BaseOnboardingFragment(), FragmentResultable {
         }).authenticate(
             BiometricPrompt.PromptInfo.Builder()
                 .setTitle(getString(R.string.ONBOARDING_AUTHORIZATION_REQUEST_FINGERPRINT))
-                .setNegativeButtonText(getString(R.string.ONBOARDING_BACK))
+                .setNegativeButtonText(getString(R.string.ONBOARDING_ACTIONS_BACK))
                 .build()
         )
     }
@@ -268,7 +268,7 @@ class OnboardingFragment : BaseOnboardingFragment(), FragmentResultable {
     private fun showNoFingerprintsSavedDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.ONBOARDING_FINGERPRINT_NONE_SAVED_TITLE)
-            .setNegativeButton(R.string.ONBOARDING_BACK) { dialog, _ -> dialog.dismiss() }
+            .setNegativeButton(R.string.ONBOARDING_ACTIONS_BACK) { dialog, _ -> dialog.dismiss() }
             .setPositiveButton(R.string.ONBOARDING_FINGERPRINT_SAVE) { _, _ ->
                 val intent = when {
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> Intent(Settings.ACTION_BIOMETRIC_ENROLL)
@@ -294,11 +294,9 @@ class OnboardingFragment : BaseOnboardingFragment(), FragmentResultable {
             )
         } else {
             lifecycleScope.launch(Dispatchers.Main) {
-                IDKit.authorize(this@OnboardingFragment) {
-                    when (it) {
-                        is Success -> viewModel.onResponse(PaceIdRegistrationSuccessful())
-                        is Failure -> viewModel.onResponse(PaceIdRegistrationFailed(it.throwable))
-                    }
+                when (val it = IDKit.authorize(this@OnboardingFragment)) {
+                    is Success -> viewModel.onResponse(PaceIdRegistrationSuccessful())
+                    is Failure -> viewModel.onResponse(PaceIdRegistrationFailed(it.throwable))
                 }
             }
         }

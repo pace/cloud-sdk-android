@@ -23,13 +23,13 @@
             <TextView
                 style="@style/Text.Onboarding.Title"
                 android:text="@{viewModel.title}"
-                tools:text="@string/onboarding_enter_pin" />
+                tools:text="@string/ONBOARDING.CREATE_PIN.TITLE" />
 
             <TextView
                 style="@style/Text.Onboarding"
                 android:labelFor="@id/editText"
                 android:text="@{viewModel.description}"
-                tools:text="@string/onboarding_enter_pin_description" />
+                tools:text="@string/ONBOARDING.CREATE_PIN.DESCRIPTION" />
 
             <EditText
                 android:id="@+id/editText"
@@ -45,7 +45,7 @@
                 android:layout_marginBottom="@dimen/half_padding"
                 android:text="@{viewModel.errorText}"
                 bind:visibleIfGreaterThan0="@{viewModel.errorText}"
-                tools:text="@string/onboarding_authorisation_password_wrong" />
+                tools:text="@string/ONBOARDING.PIN.ERROR.INVALID_LENGTH" />
 
             <Button
                 style="@style/Button.Primary"

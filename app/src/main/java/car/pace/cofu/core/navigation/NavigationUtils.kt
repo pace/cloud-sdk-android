@@ -90,10 +90,10 @@ object NavigationUtils {
     private fun setAnims(animType: AnimType, builder: NavOptions.Builder) {
         when (animType) {
             AnimType.DEFAULT -> builder.apply {
-                setEnterAnim(R.anim.nav_default_enter_anim)
-                setExitAnim(R.anim.nav_default_exit_anim)
-                setPopEnterAnim(R.anim.nav_default_pop_enter_anim)
-                setPopExitAnim(R.anim.nav_default_pop_exit_anim)
+                setEnterAnim(androidx.navigation.ui.R.anim.nav_default_enter_anim)
+                setExitAnim(androidx.navigation.ui.R.anim.nav_default_exit_anim)
+                setPopEnterAnim(androidx.navigation.ui.R.anim.nav_default_pop_enter_anim)
+                setPopExitAnim(androidx.navigation.ui.R.anim.nav_default_pop_exit_anim)
             }
 //            AnimType.MODAL -> builder.apply {
 //                setEnterAnim(R.anim.alternative_enter_anim)

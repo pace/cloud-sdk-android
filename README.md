@@ -64,6 +64,15 @@ When building via Gitlab CI, the properties need to be set in Settings > CI/CD >
 The project is localized for following languages:
 * English
 * German
+* Spanish 
+* Czech
+* French
+* Italian
+* Dutch
+* Polish
+* Portuguese
+* Romanian
+* Russian
 
 ## License
 This project is licensed under the terms of the MIT license. See the [LICENSE](./LICENSE.md) file.
