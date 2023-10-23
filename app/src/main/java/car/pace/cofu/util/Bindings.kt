@@ -18,6 +18,7 @@ import car.pace.cofu.core.mvvm.BaseItemViewModel
 import car.pace.cofu.core.mvvm.BaseRecyclerAdapter
 import com.google.android.material.button.MaterialButton
 import jp.wasabeef.recyclerview.animators.LandingAnimator
+import java.util.Locale
 
 @BindingAdapter("android:text")
 fun TextView.setTextRes(textRes: Int) {
@@ -113,7 +114,7 @@ fun loadFromUrl(view: WebView, url: String?) {
         if (url.startsWith("http")) {
             view.loadUrl(url)
         } else {
-            val lang = view.context.getString(R.string.ASSETS_DIRECTORY_NAME)
+            val lang = if (Locale.getDefault().language == "de") "de" else "en"
             view.loadUrl("file:///android_asset/$lang/$url")
         }
     }

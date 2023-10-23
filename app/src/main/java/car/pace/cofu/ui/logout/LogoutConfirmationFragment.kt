@@ -39,11 +39,9 @@ class LogoutConfirmationFragment : BaseLogoutConfirmationFragment() {
 
         lifecycleScope.launch(Dispatchers.Main) {
             viewModel.isLoading.set(false)
-            IDKit.endSession(this@LogoutConfirmationFragment) {
-                when (it) {
-                    is Success -> onLogoutSuccessful()
-                    is Failure -> handleEvent(ShowSnack(messageRes = R.string.ONBOARDING_NETWORK_ERROR))
-                }
+            when (IDKit.endSession(this@LogoutConfirmationFragment)) {
+                is Success -> onLogoutSuccessful()
+                is Failure -> handleEvent(ShowSnack(messageRes = R.string.ONBOARDING_NETWORK_ERROR))
             }
         }
     }
