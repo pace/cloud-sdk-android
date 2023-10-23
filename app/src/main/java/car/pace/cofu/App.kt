@@ -7,11 +7,21 @@ import cloud.pace.sdk.utils.AuthenticationMode
 import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.Environment
 import dagger.hilt.android.HiltAndroidApp
+import io.sentry.android.core.SentryAndroid
 
 @HiltAndroidApp
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
+
+        // Note: This needs to be done first because Sentry SDK can catch errors and crashes only after it is initialized
+        if (BuildConfig.SENTRY_ENABLED) {
+            // Setup Sentry
+            SentryAndroid.init(this) { options ->
+                options.dsn = BuildConfig.SENTRY_DSN
+                options.isAttachScreenshot = false
+            }
+        }
 
         PACECloudSDK.setup(
             this,

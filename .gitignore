@@ -25,6 +25,8 @@ local.properties
 config.json
 keystore.jks
 localise.properties
+google-services.json
+sentry.properties
 
 # Log Files
 *.log
