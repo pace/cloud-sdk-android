@@ -4,7 +4,7 @@ import android.content.ContextWrapper
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.BindingAdapter
 import car.pace.cofu.R
-import car.pace.cofu.ui.main.MainActivity
+import car.pace.cofu.ui.main.MainActivityOld
 
 enum class ToolbarAction {
     NONE,
@@ -16,8 +16,8 @@ enum class ToolbarAction {
 @BindingAdapter("navigationAction")
 fun setNavigationAction(toolbar: Toolbar, navigationAction: ToolbarAction) {
     val baseActivity = when (val ctx = toolbar.context) {
-        is MainActivity -> ctx
-        is ContextWrapper -> ctx.baseContext as? MainActivity
+        is MainActivityOld -> ctx
+        is ContextWrapper -> ctx.baseContext as? MainActivityOld
         else -> null
     } ?: return
 
@@ -25,6 +25,7 @@ fun setNavigationAction(toolbar: Toolbar, navigationAction: ToolbarAction) {
         ToolbarAction.NONE -> {
             baseActivity.menuSwipingActive = false
         }
+
         ToolbarAction.BACK -> {
             baseActivity.menuSwipingActive = false
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
@@ -32,6 +33,7 @@ fun setNavigationAction(toolbar: Toolbar, navigationAction: ToolbarAction) {
                 baseActivity.onBackPressed()
             }
         }
+
         ToolbarAction.MENU -> {
             baseActivity.menuSwipingActive = true
             toolbar.setNavigationIcon(R.drawable.ic_menu_filled)

@@ -10,10 +10,13 @@
     <string name="DASHBOARD.EMPTY_VIEW.TITLE">Pas de station-service près de chez toi</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Nous recherchons les stations-service les plus proches de chez toi. Cela peut prendre un certain temps.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Recherche stations-service...</string>
+    <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Les paramètres de localisation n\'ont pas pu être ouverts. Veuillez activer les services de localisation manuellement dans les paramètres du système.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL">ANNULER</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">S\'INSCRIRE</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">Tes données sont toujours enregistrées dans ton compte PACE-ID.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Tu veux vraiment te désinscrire ?</string>
+    <string name="DASHBOARD.NAVIGATION.ERROR">Aucune application de navigation trouvée</string>
+    <string name="DASHBOARD.PERMISSION.SETTINGS_ERROR">Les paramètres d\'autorisation n\'ont pas pu être ouverts. Veuillez autoriser l\'accès à votre lieu manuellement dans les paramètres du système.</string>
     <string name="DASHBOARD.SECTIONS.NEAREST_GAS_STATION">Station-service la plus proche</string>
     <string name="DASHBOARD.SECTIONS.OTHER_GAS_STATIONS">Autres stations-service</string>
     <string name="FUEL_TYPE.DIESEL">DIESEL</string>
@@ -57,7 +60,8 @@
     <string name="ONBOARDING.ENTER_ONE_TIME_PASSWORD.DESCRIPTION">Veuillez autoriser la modification à l\'aide du code de confirmation figurant dans votre boîte aux lettres électronique.</string>
     <string name="ONBOARDING.ENTER_ONE_TIME_PASSWORD.TITLE">Saisir le code de confirmation</string>
     <string name="ONBOARDING.ERROR_AUTHORISATION">Votre saisie n\'a pas pu être vérifiée. Essayer à nouveau.</string>
-    <string name="ONBOARDING.FINGERPRINT_ERROR">Erreur de reconnaissance de l\'empreinte digitale :</string>
+    <string name="ONBOARDING.FINGERPRINT.SETUP_ERROR">Les paramètres de l\'empreinte digitale n\'ont pas pu être ouverts. Veuillez ajouter une empreinte digitale manuellement dans les paramètres du système.</string>
+    <string name="ONBOARDING.FINGERPRINT_ERROR">Erreur de reconnaissance de l\'empreinte digitale : %s</string>
     <string name="ONBOARDING.FINGERPRINT_NONE_SAVED_TITLE">Actuellement, aucune empreinte digitale n’est enregistrée !</string>
     <string name="ONBOARDING.FINGERPRINT_SAVE">Ajouter maintenant</string>
     <string name="ONBOARDING.FUEL_TYPE.DESCRIPTION">Et pour finir : Quels prix de carburant devrions-nous t\'indiquer ?</string>
@@ -86,4 +90,5 @@
     <string name="ONBOARDING.VERIFY_PIN.TITLE">Confirmer le code PIN</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Partager</string>
+    <string name="currency_format">%2$s%1$s</string>
 </resources>

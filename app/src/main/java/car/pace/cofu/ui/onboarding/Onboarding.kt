@@ -16,6 +16,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,21 +25,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import car.pace.cofu.ui.AppScaffold
+import car.pace.cofu.ui.fueltype.FuelType
 import car.pace.cofu.ui.onboarding.authentication.AuthenticationPage
 import car.pace.cofu.ui.onboarding.fueltype.FuelTypePage
 import car.pace.cofu.ui.onboarding.paymentmethod.PaymentMethodPage
 import car.pace.cofu.ui.onboarding.permission.LocationPermissionPage
 import car.pace.cofu.ui.onboarding.twofactor.TwoFactorPage
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.util.SnackbarData
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Onboarding(
     viewModel: OnboardingViewModel = hiltViewModel(),
+    snackbarHostState: SnackbarHostState,
+    showSnackbar: (SnackbarData) -> Unit,
     onDone: () -> Unit
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
-
     AppScaffold(
         snackbarHostState = snackbarHostState,
         snackbarBottomPadding = 110.dp
@@ -46,21 +51,32 @@ fun Onboarding(
         Column {
             val pages = remember { OnboardingPage.values() }
             val pagerState = rememberPagerState { pages.size }
+            val coroutineScope = rememberCoroutineScope()
             val context = LocalContext.current
 
-            LaunchedEffect(pagerState) {
-                snapshotFlow { viewModel.currentIndex }.collect {
-                    if (it < pages.size) {
-                        pagerState.animateScrollToPage(it)
-                    } else {
-                        onDone()
-                    }
+            fun nextStep() {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
                 }
             }
 
+            fun navigateToAuthorization() {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(OnboardingPage.AUTHENTICATION.ordinal)
+                }
+            }
+
+            fun setFuelType(fuelType: FuelType) {
+                viewModel.setFuelType(fuelType)
+                onDone()
+            }
+
             LaunchedEffect(pagerState) {
-                snapshotFlow { pagerState.currentPage }.collect {
-                    viewModel.skipPageIfNeeded(pages.getOrNull(it), context)
+                snapshotFlow { pagerState.currentPage }.collectLatest {
+                    val canSkipPage = viewModel.canSkipPage(pages.getOrNull(it), context)
+                    if (canSkipPage) {
+                        nextStep()
+                    }
                 }
             }
 
@@ -70,11 +86,11 @@ fun Onboarding(
                 userScrollEnabled = false
             ) { index ->
                 when (pages.getOrNull(index)) {
-                    OnboardingPage.LOCATION_PERMISSION -> LocationPermissionPage(onNext = viewModel::nextStep)
-                    OnboardingPage.AUTHENTICATION -> AuthenticationPage(snackbarHostState = snackbarHostState, onNext = viewModel::nextStep)
-                    OnboardingPage.TWO_FACTOR -> TwoFactorPage(snackbarHostState = snackbarHostState, onAuthorization = viewModel::navigateToAuthorization, onNext = viewModel::nextStep)
-                    OnboardingPage.PAYMENT_METHOD -> PaymentMethodPage(onNext = viewModel::nextStep)
-                    OnboardingPage.FUEL_TYPE -> FuelTypePage(onNext = viewModel::setFuelType)
+                    OnboardingPage.LOCATION_PERMISSION -> LocationPermissionPage(onNext = ::nextStep)
+                    OnboardingPage.AUTHENTICATION -> AuthenticationPage(showSnackbar = showSnackbar, onNext = ::nextStep)
+                    OnboardingPage.TWO_FACTOR -> TwoFactorPage(showSnackbar = showSnackbar, onAuthorization = ::navigateToAuthorization, onNext = ::nextStep)
+                    OnboardingPage.PAYMENT_METHOD -> PaymentMethodPage(onNext = ::nextStep)
+                    OnboardingPage.FUEL_TYPE -> FuelTypePage(onNext = ::setFuelType)
                     else -> {}
                 }
             }
@@ -112,7 +128,12 @@ fun PageIndicator(modifier: Modifier = Modifier, pageCount: Int, currentPageInde
 @Composable
 fun OnboardingPreview() {
     AppTheme {
-        Onboarding {}
+        val snackbarHostState = remember { SnackbarHostState() }
+        Onboarding(
+            snackbarHostState = snackbarHostState,
+            showSnackbar = {},
+            onDone = {}
+        )
     }
 }
 

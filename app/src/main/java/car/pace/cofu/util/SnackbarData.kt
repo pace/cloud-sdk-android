@@ -10,7 +10,7 @@ class SnackbarData(
     @StringRes val messageRes: Int,
     vararg val messageFormatArgs: Any? = emptyArray(),
     @StringRes val actionLabelRes: Int? = null,
-    val withDismissAction: Boolean = false,
+    val withDismissAction: Boolean = true,
     val duration: SnackbarDuration = if (actionLabelRes == null) SnackbarDuration.Short else SnackbarDuration.Indefinite,
     val onDismissed: () -> Unit = {},
     val onActionPerformed: () -> Unit = {}

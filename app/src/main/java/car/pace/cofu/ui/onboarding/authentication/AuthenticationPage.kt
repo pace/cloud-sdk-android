@@ -1,10 +1,7 @@
 package car.pace.cofu.ui.onboarding.authentication
 
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -12,6 +9,7 @@ import car.pace.cofu.R
 import car.pace.cofu.ui.onboarding.PageScaffold
 import car.pace.cofu.ui.onboarding.twofactor.biometric.findActivity
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.util.SnackbarData
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
@@ -19,7 +17,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun AuthenticationPage(
-    snackbarHostState: SnackbarHostState,
+    showSnackbar: (SnackbarData) -> Unit,
     onNext: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -31,12 +29,11 @@ fun AuthenticationPage(
             when (IDKit.authorize(activity)) {
                 is Success -> onNext()
                 is Failure -> {
-                    val result = snackbarHostState.showSnackbar(
-                        message = context.getString(R.string.ONBOARDING_LOG_IN_UNSUCCESSFUL)
+                    val snackbarData = SnackbarData(
+                        messageRes = R.string.ONBOARDING_LOG_IN_UNSUCCESSFUL,
+                        onActionPerformed = ::login
                     )
-                    if (result == SnackbarResult.ActionPerformed) {
-                        login()
-                    }
+                    showSnackbar(snackbarData)
                 }
             }
         }
@@ -55,7 +52,9 @@ fun AuthenticationPage(
 @Composable
 fun AuthenticationPagePreview() {
     AppTheme {
-        val snackbarHostState = remember { SnackbarHostState() }
-        AuthenticationPage(snackbarHostState = snackbarHostState) {}
+        AuthenticationPage(
+            showSnackbar = {},
+            onNext = {}
+        )
     }
 }

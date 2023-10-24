@@ -14,21 +14,20 @@ import car.pace.cofu.core.events.ActivityEvent
 import car.pace.cofu.core.events.CloseDrawer
 import car.pace.cofu.core.events.ShowSnack
 import car.pace.cofu.core.mvvm.BaseActivity
-import car.pace.cofu.databinding.ActivityMainBinding
-import car.pace.cofu.ui.home.HomeFragmentDirections
+import car.pace.cofu.databinding.ActivityMainOldBinding
 import cloud.pace.sdk.appkit.AppKit
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 // Workaround for https://github.com/google/dagger/issues/1904
-abstract class BaseMainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(
-    R.layout.activity_main,
+abstract class BaseMainActivity : BaseActivity<ActivityMainOldBinding, MainViewModel>(
+    R.layout.activity_main_old,
     MainViewModel::class
 )
 
 @AndroidEntryPoint
-class MainActivity : BaseMainActivity() {
+class MainActivityOld : BaseMainActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,11 +37,11 @@ class MainActivity : BaseMainActivity() {
             (supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment)
         val inflater = navHostFragment.navController.navInflater
         val graph = inflater.inflate(R.navigation.nav_graph_main)
-        graph.setStartDestination(R.id.fragment_home)
+        graph.setStartDestination(R.id.fragment_webview)
         navHostFragment.navController.graph = graph
     }
 
-    inline val binding get() = getBinding<ActivityMainBinding>()
+    inline val binding get() = getBinding<ActivityMainOldBinding>()
 
     override fun onBackPressed() {
         if (binding?.drawerLayout?.isDrawerOpen(GravityCompat.START) == true) {
@@ -110,17 +109,11 @@ class MainActivity : BaseMainActivity() {
             return findNavController(fragmentContainer.id)
         }
 
-    private fun showLogoutConfirmation() {
-        navController?.navigate(HomeFragmentDirections.openLogoutConfirmation())
-    }
+    private fun showLogoutConfirmation() {}
 
-    private fun openFuelTypeSettings() {
-        navController?.navigate(HomeFragmentDirections.openFuelTypeSettings())
-    }
+    private fun openFuelTypeSettings() {}
 
-    private fun openWebView(filename: String) {
-        navController?.navigate(HomeFragmentDirections.openWebview(filename))
-    }
+    private fun openWebView(filename: String) {}
 
     private fun showLicenseScreen() {
         startActivity(Intent(this, OssLicensesMenuActivity::class.java))
@@ -129,7 +122,7 @@ class MainActivity : BaseMainActivity() {
     private var currentSnackbar: Snackbar? = null
 
     override fun onShowMessage(showSnack: ShowSnack) {
-        val host = getBinding<ActivityMainBinding>()?.coordinator ?: return
+        val host = getBinding<ActivityMainOldBinding>()?.coordinator ?: return
         val text = showSnack.messageRes?.let { getString(it) } ?: showSnack.message ?: return
         currentSnackbar?.dismiss()
 

@@ -1,4 +1,4 @@
-package car.pace.cofu.repository
+package car.pace.cofu.ui.fueltype
 
 import androidx.annotation.StringRes
 import car.pace.cofu.R
@@ -13,11 +13,4 @@ enum class FuelType(val identifier: String, @StringRes val stringRes: Int) {
     SUPER("ron95e5", R.string.FUEL_TYPE_SUPER),
     E10("ron95e10", R.string.FUEL_TYPE_SUPER_E10),
     SUPER_PLUS("ron98e5", R.string.FUEL_TYPE_SUPER_PLUS);
-
-    companion object {
-        private val map = values().associateBy { it.identifier }
-        fun byIdentifier(identifier: String): FuelType? {
-            return map[identifier]
-        }
-    }
 }

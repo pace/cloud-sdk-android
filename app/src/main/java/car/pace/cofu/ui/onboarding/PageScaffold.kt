@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import car.pace.cofu.R
 import car.pace.cofu.ui.component.DefaultButton
+import car.pace.cofu.ui.component.Description
+import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.theme.AppTheme
 
 @Composable
@@ -45,7 +45,7 @@ fun PageScaffold(
                 .padding(horizontal = 35.dp)
         ) {
             val (image, title, description, contentWrapper) = createRefs()
-            val guideline = createGuidelineFromTop(0.10f)
+            val guideline = createGuidelineFromTop(0.1f)
 
             Image(
                 painter = painterResource(id = imageRes),
@@ -58,23 +58,21 @@ fun PageScaffold(
                         end.linkTo(parent.end)
                     }
             )
-            Text(
+            Title(
                 text = stringResource(id = titleRes),
                 modifier = Modifier.constrainAs(title) {
                     top.linkTo(anchor = image.bottom, margin = 40.dp)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
-                },
-                style = MaterialTheme.typography.titleLarge
+                }
             )
-            Text(
+            Description(
                 text = stringResource(id = descriptionRes),
                 modifier = Modifier.constrainAs(description) {
                     top.linkTo(anchor = title.bottom, margin = 14.dp)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
-                },
-                style = MaterialTheme.typography.bodyLarge
+                }
             )
             Column(
                 modifier = Modifier.constrainAs(contentWrapper) {

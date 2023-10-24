@@ -23,7 +23,7 @@
         android:theme="@style/Theme.App">
 
         <activity
-            android:name=".ui.MainActivity2"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

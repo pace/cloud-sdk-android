@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_FUEL_TYPE
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_ONBOARDING_DONE
+import car.pace.cofu.ui.fueltype.FuelType
 import javax.inject.Inject
 
 class UserDataRepositoryImpl @Inject constructor(private val app: Application) :

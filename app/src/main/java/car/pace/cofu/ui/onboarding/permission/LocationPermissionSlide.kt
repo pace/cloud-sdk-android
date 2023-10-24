@@ -1,6 +1,5 @@
 package car.pace.cofu.ui.onboarding.permission
 
-import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
@@ -8,6 +7,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import car.pace.cofu.R
 import car.pace.cofu.ui.onboarding.PageScaffold
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.util.PermissionUtils
 
 @Composable
 fun LocationPermissionPage(
@@ -23,8 +23,7 @@ fun LocationPermissionPage(
         descriptionRes = R.string.ONBOARDING_PERMISSION_DESCRIPTION,
         nextButtonTextRes = R.string.ONBOARDING_ACTIONS_SHARE_LOCATION,
         onNextButtonClick = {
-            val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-            launcher.launch(permissions)
+            launcher.launch(PermissionUtils.locationPermissions)
         }
     )
 }

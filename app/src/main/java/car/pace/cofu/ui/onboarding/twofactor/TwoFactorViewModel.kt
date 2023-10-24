@@ -98,24 +98,7 @@ class TwoFactorViewModel @Inject constructor(
             }
     }
 
-    private suspend fun startBiometrySetup() {
-        loading = true
-        userRepository.sendMailOTP()
-            .onSuccess {
-                twoFactorSetup = BiometrySetup
-            }
-            .onFailure {
-                loading = false
-                Timber.e(it, "Failed to send OTP mail")
-                showSnackbar(it)
-            }
-    }
-
-    private fun startPinSetup() {
-        twoFactorSetup = PinSetup.PinInput
-    }
-
-    private fun showSnackbar(
+    fun showSnackbar(
         throwable: Throwable? = null,
         @StringRes generalMessageRes: Int = R.string.ONBOARDING_UNKNOWN_ERROR,
         vararg generalMessageFormatArgs: Any? = emptyArray(),
@@ -149,6 +132,23 @@ class TwoFactorViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    private suspend fun startBiometrySetup() {
+        loading = true
+        userRepository.sendMailOTP()
+            .onSuccess {
+                twoFactorSetup = BiometrySetup
+            }
+            .onFailure {
+                loading = false
+                Timber.e(it, "Failed to send OTP mail")
+                showSnackbar(it)
+            }
+    }
+
+    private fun startPinSetup() {
+        twoFactorSetup = PinSetup.PinInput
     }
 
     private fun finish() {

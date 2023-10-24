@@ -10,10 +10,13 @@
     <string name="DASHBOARD.EMPTY_VIEW.TITLE">Nu există stații de benzină în apropierea dumneavoastră</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Vom căuta cele mai apropiate stații de benzină din zona dumneavoastră. Acest lucru poate dura un moment.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Căutați benzinării...</string>
+    <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Setările de locație nu au putut fi deschise. Vă rugăm să activați manual serviciile de localizare în setările sistemului.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL">CANCELARE</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">ÎNREGISTRARE</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">Datele dumneavoastră sunt stocate în continuare în contul dumneavoastră PACE-ID.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Chiar vreți să vă retrageți?</string>
+    <string name="DASHBOARD.NAVIGATION.ERROR">Nu s-a găsit nicio aplicație de navigare</string>
+    <string name="DASHBOARD.PERMISSION.SETTINGS_ERROR">Setările de permisiune nu au putut fi deschise. Vă rugăm să permiteți manual accesul la locația dvs. în setările sistemului.</string>
     <string name="DASHBOARD.SECTIONS.NEAREST_GAS_STATION">Cea mai apropiată stație de benzină</string>
     <string name="DASHBOARD.SECTIONS.OTHER_GAS_STATIONS">Mai multe benzinării</string>
     <string name="FUEL_TYPE.DIESEL">DIESEL</string>
@@ -57,7 +60,8 @@
     <string name="ONBOARDING.ENTER_ONE_TIME_PASSWORD.DESCRIPTION">Vă rugăm să autorizați modificarea cu ajutorul codului de confirmare din căsuța dvs. de e-mail.</string>
     <string name="ONBOARDING.ENTER_ONE_TIME_PASSWORD.TITLE">Introduceți codul de confirmare</string>
     <string name="ONBOARDING.ERROR_AUTHORISATION">Intrarea dvs. nu a putut fi verificată. Încearcă din nou.</string>
-    <string name="ONBOARDING.FINGERPRINT_ERROR">Eroare la recunoașterea amprentei:</string>
+    <string name="ONBOARDING.FINGERPRINT.SETUP_ERROR">Setările privind amprentele digitale nu au putut fi deschise. Vă rugăm să adăugați manual o amprentă digitală în setările sistemului.</string>
+    <string name="ONBOARDING.FINGERPRINT_ERROR">Eroare la recunoașterea amprentei: %s</string>
     <string name="ONBOARDING.FINGERPRINT_NONE_SAVED_TITLE">Momentan nu există amprente salvate!</string>
     <string name="ONBOARDING.FINGERPRINT_SAVE">Adăugați acum</string>
     <string name="ONBOARDING.FUEL_TYPE.DESCRIPTION">Și în final: Ce prețuri la carburanți ar trebui să vă arătăm?</string>
@@ -86,4 +90,5 @@
     <string name="ONBOARDING.VERIFY_PIN.TITLE">Confirmați PIN-ul</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Acțiune</string>
+    <string name="currency_format"></string>
 </resources>

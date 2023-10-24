@@ -3,34 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_main"
-    app:startDestination="@id/fragment_home">
-
-    <fragment
-        android:id="@+id/fragment_home"
-        android:name="car.pace.cofu.ui.home.HomeFragment"
-        tools:layout="@layout/fragment_home">
-
-        <action
-            android:id="@+id/locationDisabledDialog"
-            app:destination="@id/fragment_location_disabled_dialog" />
-
-        <action
-            android:id="@+id/locationPermissionDialog"
-            app:destination="@id/fragment_location_permission_dialog" />
-
-        <action
-            android:id="@+id/openWebview"
-            app:destination="@id/fragment_webview" />
-
-        <action
-            android:id="@+id/openFuelTypeSettings"
-            app:destination="@id/fragment_select_fuel_type" />
-
-        <action
-            android:id="@+id/openLogoutConfirmation"
-            app:destination="@id/fragment_logout_confirmation" />
-
-    </fragment>
+    app:startDestination="@id/fragment_webview">
 
     <fragment
         android:id="@+id/fragment_webview"
@@ -42,16 +15,6 @@
             app:argType="string" />
 
     </fragment>
-
-    <dialog
-        android:id="@+id/fragment_location_disabled_dialog"
-        android:name="car.pace.cofu.ui.home.dialog.LocationDisabledDialogFragment"
-        tools:layout="@layout/fragment_dialog" />
-
-    <dialog
-        android:id="@+id/fragment_location_permission_dialog"
-        android:name="car.pace.cofu.ui.home.dialog.LocationPermissionDialogFragment"
-        tools:layout="@layout/fragment_dialog" />
 
     <dialog
         android:id="@+id/fragment_select_fuel_type"

@@ -22,9 +22,9 @@
             android:id="@+id/coordinator"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".ui.main.MainActivity">
+            tools:context=".ui.main.MainActivityOld">
 
-            <!-- Nav Graph set in MainActivity code -->
+            <!-- Nav Graph set in MainActivityOld code -->
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/fragment_container"
                 android:name="androidx.navigation.fragment.NavHostFragment"

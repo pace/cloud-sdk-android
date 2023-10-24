@@ -10,10 +10,13 @@
     <string name="DASHBOARD.EMPTY_VIEW.TITLE">Рядом с вами нет автозаправочных станций</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Мы выполним поиск ближайших АЗС в вашем регионе. Это может занять некоторое время.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Поиск автозаправочных станций...</string>
+    <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Не удалось открыть настройки местоположения. Пожалуйста, активируйте службы определения местоположения вручную в системных настройках.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL">ОТМЕНИТЬ</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">РЕГИСТРАЦИЯ</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">Ваши данные по-прежнему хранятся в вашей учетной записи PACE-ID.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Вы действительно хотите выписаться?</string>
+    <string name="DASHBOARD.NAVIGATION.ERROR">Навигационное приложение не найдено</string>
+    <string name="DASHBOARD.PERMISSION.SETTINGS_ERROR">Не удалось открыть настройки разрешения. Пожалуйста, разрешите доступ к вашему местоположению вручную в настройках системы.</string>
     <string name="DASHBOARD.SECTIONS.NEAREST_GAS_STATION">Ближайшая автозаправочная станция</string>
     <string name="DASHBOARD.SECTIONS.OTHER_GAS_STATIONS">Больше автозаправочных станций</string>
     <string name="FUEL_TYPE.DIESEL">ДИЗЕЛЬ</string>
@@ -57,7 +60,8 @@
     <string name="ONBOARDING.ENTER_ONE_TIME_PASSWORD.DESCRIPTION">Пожалуйста, авторизуйте изменение с помощью кода подтверждения из вашего электронного почтового ящика.</string>
     <string name="ONBOARDING.ENTER_ONE_TIME_PASSWORD.TITLE">Введите код подтверждения</string>
     <string name="ONBOARDING.ERROR_AUTHORISATION">Ваш ввод не может быть проверен. Попробуйте еще раз.</string>
-    <string name="ONBOARDING.FINGERPRINT_ERROR">Ошибка распознавания отпечатка пальца:</string>
+    <string name="ONBOARDING.FINGERPRINT.SETUP_ERROR">Не удалось открыть настройки отпечатков пальцев. Пожалуйста, добавьте отпечаток пальца вручную в системных настройках.</string>
+    <string name="ONBOARDING.FINGERPRINT_ERROR">Ошибка распознавания отпечатка пальца: %s</string>
     <string name="ONBOARDING.FINGERPRINT_NONE_SAVED_TITLE">На данный момент сохраненных отпечатков пальцев нет!</string>
     <string name="ONBOARDING.FINGERPRINT_SAVE">Добавить сейчас</string>
     <string name="ONBOARDING.FUEL_TYPE.DESCRIPTION">И наконец: Какие цены на топливо мы должны вам показать?</string>
@@ -86,4 +90,5 @@
     <string name="ONBOARDING.VERIFY_PIN.TITLE">Подтверждение PIN-кода</string>
     <string name="PRICE.NOT_AVAILABLE">н. в.</string>
     <string name="SHARE_TITLE">Делиться</string>
+    <string name="currency_format"></string>
 </resources>

@@ -1,6 +1,5 @@
 package car.pace.cofu.ui.component
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -27,10 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import car.pace.cofu.R
-import car.pace.cofu.repository.FuelType
+import car.pace.cofu.ui.fueltype.FuelType
 import car.pace.cofu.ui.theme.AppTheme
 
 @Composable
@@ -94,14 +94,13 @@ fun <T> RadioGroup(
                         .weight(1f)
                         .padding(end = size), // Center it over the entire row
                     color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.labelLarge,
                 )
             }
         }
     }
 }
-
-data class RadioGroupItem<T>(val identifier: T, @StringRes val textRes: Int)
 
 @Preview
 @Composable

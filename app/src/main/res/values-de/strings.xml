@@ -10,10 +10,13 @@
     <string name="DASHBOARD.EMPTY_VIEW.TITLE">Keine Tankstellen in deiner Nähe</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Wir suchen die nächstgelegenen Tankstellen in deiner Nähe. Dies kann einen Moment dauern.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Suche Tankstellen...</string>
+    <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Die Standorteinstellungen konnten nicht geöffnet werden. Bitte aktiviere die Ortungsdienste manuell in den Systemeinstellungen.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL">ABBRECHEN</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">ABMELDEN</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">Deine Daten sind weiterhin in deinem PACE-ID Account gespeichert.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Willst du dich wirklich abmelden?</string>
+    <string name="DASHBOARD.NAVIGATION.ERROR">Keine Navigations-App gefunden</string>
+    <string name="DASHBOARD.PERMISSION.SETTINGS_ERROR">Die Berechtigungseinstellungen konnten nicht geöffnet werden. Bitte erlaube den Zugriff auf deinen Standort manuell in den Systemeinstellungen.</string>
     <string name="DASHBOARD.SECTIONS.NEAREST_GAS_STATION">Nächstgelegene Tankstelle</string>
     <string name="DASHBOARD.SECTIONS.OTHER_GAS_STATIONS">Weitere Tankstellen</string>
     <string name="FUEL_TYPE.DIESEL">DIESEL</string>
@@ -57,7 +60,8 @@
     <string name="ONBOARDING.ENTER_ONE_TIME_PASSWORD.DESCRIPTION">Bitte autorisiere die Änderung mit dem Bestätigungscode aus deinem E-Mail Postfach.</string>
     <string name="ONBOARDING.ENTER_ONE_TIME_PASSWORD.TITLE">Bestätigungscode eingeben</string>
     <string name="ONBOARDING.ERROR_AUTHORISATION">Ihre Eingabe konnte nicht verifiziert werden. Versuchen Sie es nochmal.</string>
-    <string name="ONBOARDING.FINGERPRINT_ERROR">Fehler beim Erkennen des Fingerabdrucks:</string>
+    <string name="ONBOARDING.FINGERPRINT.SETUP_ERROR">Die Fingerabdruckeinstellungen konnten nicht geöffnet werden. Bitte füge einen Fingerabdruck manuell in den Systemeinstellungen hinzu.</string>
+    <string name="ONBOARDING.FINGERPRINT_ERROR">Fehler beim Erkennen des Fingerabdrucks: %s</string>
     <string name="ONBOARDING.FINGERPRINT_NONE_SAVED_TITLE">Derzeit sind keine Fingerabdrücke gespeichert!</string>
     <string name="ONBOARDING.FINGERPRINT_SAVE">Jetzt hinzufügen</string>
     <string name="ONBOARDING.FUEL_TYPE.DESCRIPTION">Und zum Schluss: Welche Kraftstoffpreise sollen wir dir anzeigen?</string>
@@ -86,4 +90,5 @@
     <string name="ONBOARDING.VERIFY_PIN.TITLE">PIN bestätigen</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Teilen</string>
+    <string name="currency_format">%1$s%2$s</string>
 </resources>

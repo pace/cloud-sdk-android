@@ -6,12 +6,12 @@ import android.provider.Settings
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -31,18 +31,19 @@ import car.pace.cofu.ui.onboarding.twofactor.setup.PinSetup
 import car.pace.cofu.ui.onboarding.twofactor.setup.biometry.BiometrySetup
 import car.pace.cofu.ui.onboarding.twofactor.setup.pin.PinSetup
 import car.pace.cofu.ui.theme.AppTheme
-import car.pace.cofu.util.showSnackbar
+import car.pace.cofu.util.SnackbarData
 import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 @Composable
 fun TwoFactorPage(
     viewModel: TwoFactorViewModel = hiltViewModel(),
-    snackbarHostState: SnackbarHostState,
+    showSnackbar: (SnackbarData) -> Unit,
     onAuthorization: () -> Unit,
     onNext: () -> Unit
 ) {
     val context = LocalContext.current
-    var openBiometricSetupDialog by remember { mutableStateOf(false) }
+    var showBiometricSetupDialog by remember { mutableStateOf(false) }
     val biometricManager = rememberBiometricManager()
     val canAuthenticate = remember {
         val allowedStates = arrayOf(BiometricManager.BIOMETRIC_SUCCESS, BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE, BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED)
@@ -54,16 +55,19 @@ fun TwoFactorPage(
         },
         onError = { errorCode, errString ->
             if (errorCode == BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED) {
-                openBiometricSetupDialog = true
+                showBiometricSetupDialog = true
             } else {
                 viewModel.onBiometricPromptError(errString)
             }
         }
     )
 
-    LaunchedEffect(snackbarHostState) {
+    val currentShowSnackbar by rememberUpdatedState(showSnackbar)
+    LaunchedEffect(Unit) {
         viewModel.snackbar.collectLatest {
-            it?.showSnackbar(context, snackbarHostState)
+            if (it != null) {
+                currentShowSnackbar(it)
+            }
         }
     }
 
@@ -97,6 +101,7 @@ fun TwoFactorPage(
             if (canAuthenticate) {
                 DefaultTextButton(
                     text = stringResource(id = R.string.ONBOARDING_TWO_FACTOR_AUTHENTICATION_PIN).uppercase(),
+                    modifier = Modifier.padding(bottom = 10.dp),
                     enabled = !viewModel.loading,
                     onClick = viewModel::isPinSet
                 )
@@ -116,10 +121,10 @@ fun TwoFactorPage(
         else -> {}
     }
 
-    if (openBiometricSetupDialog) {
+    if (showBiometricSetupDialog) {
         BiometricSetupDialog(
             onConfirmation = {
-                openBiometricSetupDialog = false
+                showBiometricSetupDialog = false
 
                 try {
                     val intent = when {
@@ -129,11 +134,16 @@ fun TwoFactorPage(
                     }
                     context.startActivity(intent)
                 } catch (e: Exception) {
-                    context.startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS))
+                    try {
+                        context.startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS))
+                    } catch (e: Exception) {
+                        Timber.e(e, "Could not launch biometry setup settings")
+                        viewModel.showSnackbar(e, R.string.ONBOARDING_FINGERPRINT_SETUP_ERROR)
+                    }
                 }
             },
             onDismiss = {
-                openBiometricSetupDialog = false
+                showBiometricSetupDialog = false
             }
         )
     }
@@ -143,9 +153,8 @@ fun TwoFactorPage(
 @Composable
 fun TwoFactorPagePreview() {
     AppTheme {
-        val snackbarHostState = remember { SnackbarHostState() }
         TwoFactorPage(
-            snackbarHostState = snackbarHostState,
+            showSnackbar = {},
             onAuthorization = {},
             onNext = {}
         )

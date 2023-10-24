@@ -14,7 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
  * Use [AppCompatActivity] instead of [FragmentActivity] because [IDKit.authorize] requires an [AppCompatActivity].
  */
 @AndroidEntryPoint
-class MainActivity2 : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

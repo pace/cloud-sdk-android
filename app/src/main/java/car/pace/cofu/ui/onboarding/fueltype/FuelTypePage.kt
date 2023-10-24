@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import car.pace.cofu.R
-import car.pace.cofu.repository.FuelType
 import car.pace.cofu.ui.component.RadioGroup
+import car.pace.cofu.ui.fueltype.FuelType
 import car.pace.cofu.ui.onboarding.PageScaffold
 import car.pace.cofu.ui.theme.AppTheme
 

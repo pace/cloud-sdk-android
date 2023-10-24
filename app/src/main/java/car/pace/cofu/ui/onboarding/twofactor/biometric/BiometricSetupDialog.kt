@@ -1,6 +1,5 @@
 package car.pace.cofu.ui.onboarding.twofactor.biometric
 
-import androidx.compose.material.Text
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -8,6 +7,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import car.pace.cofu.R
 import car.pace.cofu.ui.component.DefaultTextButton
+import car.pace.cofu.ui.component.Description
 import car.pace.cofu.ui.theme.AppTheme
 
 @Composable
@@ -19,7 +19,7 @@ fun BiometricSetupDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             DefaultTextButton(
-                text = stringResource(id = R.string.ONBOARDING_FINGERPRINT_SAVE),
+                text = stringResource(id = R.string.ONBOARDING_FINGERPRINT_SAVE).uppercase(),
                 color = MaterialTheme.colorScheme.primary,
                 onClick = onConfirmation
             )
@@ -31,11 +31,11 @@ fun BiometricSetupDialog(
                 onClick = onDismiss
             )
         },
-        title = {
-            Text(
+        text = {
+            Description(
                 text = stringResource(id = R.string.ONBOARDING_FINGERPRINT_NONE_SAVED_TITLE)
             )
-        },
+        }
     )
 }
 
@@ -44,7 +44,7 @@ fun BiometricSetupDialog(
 fun BiometricSetupDialogPreview() {
     AppTheme {
         BiometricSetupDialog(
-            onConfirmation = { },
+            onConfirmation = {},
             onDismiss = {}
         )
     }
