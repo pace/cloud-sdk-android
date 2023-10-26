@@ -11,7 +11,7 @@ object NavigationUtils {
      * Lists all possible animation types for navigation destinations.
      */
     enum class AnimType {
-        DEFAULT,
+        DEFAULT
 //        MODAL,
 //        SLIDE,
 //        NONE

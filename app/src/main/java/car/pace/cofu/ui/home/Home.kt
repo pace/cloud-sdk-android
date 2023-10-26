@@ -81,8 +81,8 @@ import cloud.pace.sdk.poikit.poi.Address
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.Price
 import com.google.android.gms.maps.model.LatLng
-import timber.log.Timber
 import java.util.UUID
+import timber.log.Timber
 
 private const val NEAREST_GAS_STATION_TITLE_KEY = "NearestGasStation"
 private const val OTHER_GAS_STATIONS_TITLE_KEY = "OtherGasStations"
@@ -569,7 +569,6 @@ fun EmptyPreview() {
         Empty()
     }
 }
-
 
 @Preview
 @Composable

@@ -3,7 +3,11 @@ package car.pace.cofu.core.mvvm
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
 import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AlertDialog
@@ -15,12 +19,17 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import car.pace.cofu.BR
 import car.pace.cofu.R
-import car.pace.cofu.core.events.*
+import car.pace.cofu.core.events.ActivityEvent
+import car.pace.cofu.core.events.ConsumeFragmentBackPress
+import car.pace.cofu.core.events.Event
+import car.pace.cofu.core.events.FragmentEvent
+import car.pace.cofu.core.events.FragmentResultable
+import car.pace.cofu.core.events.OpenFromFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import timber.log.Timber
 import kotlin.reflect.KClass
+import timber.log.Timber
 
 /**
  * Represents a base dialog fragment. Extending fragments should always be combined with a viewModel,
@@ -90,7 +99,7 @@ abstract class BaseDialogFragment<out T : ViewDataBinding, E : BaseViewModel>(
         savedInstanceState
     )
         .also { dialog ->
-            //Fix to expand the bottomsheet when it is shown
+            // Fix to expand the bottomsheet when it is shown
             dialog.setOnShowListener { showingDialog ->
                 if (showingDialog is BottomSheetDialog) {
                     val bottomSheet: FrameLayout = showingDialog

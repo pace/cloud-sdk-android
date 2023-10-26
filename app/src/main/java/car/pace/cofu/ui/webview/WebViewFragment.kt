@@ -36,10 +36,9 @@ class WebViewFragment : BaseWebViewFragment() {
     }
 
     override fun onHandleFragmentEvent(event: FragmentEvent) {
-        when(event) {
+        when (event) {
             is WebViewViewModel.ReloadWebView -> webView?.reload()
             else -> super.onHandleFragmentEvent(event)
         }
     }
 }
-

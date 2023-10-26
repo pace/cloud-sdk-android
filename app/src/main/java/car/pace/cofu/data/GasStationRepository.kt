@@ -3,8 +3,8 @@ package car.pace.cofu.data
 import android.location.Location
 import car.pace.cofu.util.resume
 import cloud.pace.sdk.poikit.POIKit
-import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 class GasStationRepository @Inject constructor() {
 

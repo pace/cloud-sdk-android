@@ -191,9 +191,7 @@ class Snacker @JvmOverloads constructor(
         }
     }
 
-    ///
     // Reveal animations
-    ///
 
     // caution: these are one shot animations, they can not be reused / stopped / paused!
     private fun createCenteredReveal(view: View) {
@@ -238,10 +236,7 @@ class Snacker @JvmOverloads constructor(
         }
     }
 
-    ///
     // Slide animations
-    ///
-
     private fun slidedShow() {
         translationY = (height * 2).toFloat()
         alpha = 0.0f

@@ -1,10 +1,8 @@
 package car.pace.cofu
 
 import car.pace.cofu.core.util.formattedAsMeter
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
-
 
 class NumberFormatTest {
     @Test

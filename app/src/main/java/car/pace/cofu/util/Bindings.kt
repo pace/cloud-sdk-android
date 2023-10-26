@@ -13,12 +13,11 @@ import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import car.pace.cofu.R
 import car.pace.cofu.core.mvvm.BaseItemViewModel
 import car.pace.cofu.core.mvvm.BaseRecyclerAdapter
 import com.google.android.material.button.MaterialButton
-import jp.wasabeef.recyclerview.animators.LandingAnimator
 import java.util.Locale
+import jp.wasabeef.recyclerview.animators.LandingAnimator
 
 @BindingAdapter("android:text")
 fun TextView.setTextRes(textRes: Int) {
@@ -37,7 +36,6 @@ fun TextView.setStartDrawableRes(drawableRes: Int) {
     setCompoundDrawablesWithIntrinsicBounds(ContextCompat.getDrawable(context, drawableRes), null, null, null)
 }
 
-
 @BindingAdapter("visible", "invisibleInsteadOfGone", requireAll = false)
 fun setVisibility(view: View, visible: Boolean, invisibleInsteadOfGone: Boolean = false) {
     view.visibility = when {
@@ -53,7 +51,6 @@ fun setVisibility(view: View, visible: Boolean, invisibleInsteadOfGone: Boolean 
 fun setVisibilityForInts(view: View, compareInt: Int, invisibleInsteadOfGone: Boolean = false) {
     setVisibility(view, compareInt > 0, invisibleInsteadOfGone)
 }
-
 
 @BindingAdapter("imageRes")
 fun ImageView.setImageByResource(@DrawableRes res: Int) {
@@ -106,9 +103,7 @@ fun loadFromUrl(view: WebView, url: String?) {
         view.isScrollbarFadingEnabled = true
     }
 
-    view.webViewClient = object : WebViewClient() {
-
-    }
+    view.webViewClient = object : WebViewClient() {}
 
     if (!url.isNullOrBlank()) {
         if (url.startsWith("http")) {

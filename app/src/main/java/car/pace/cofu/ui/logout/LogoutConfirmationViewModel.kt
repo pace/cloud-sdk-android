@@ -29,5 +29,4 @@ class LogoutConfirmationViewModel @Inject constructor(internal val userDataRepos
 
     class DismissDialogEvent : FragmentEvent()
     class LogoutEvent : FragmentEvent()
-
 }

@@ -127,8 +127,9 @@ class MainActivityOld : BaseMainActivity() {
         currentSnackbar?.dismiss()
 
         val snackBar = Snackbar.make(
-            host, text, if (showSnack.actionListener != null)
-                Snackbar.LENGTH_INDEFINITE else Snackbar.LENGTH_LONG
+            host,
+            text,
+            if (showSnack.actionListener != null) Snackbar.LENGTH_INDEFINITE else Snackbar.LENGTH_LONG
         )
 
         val textView =

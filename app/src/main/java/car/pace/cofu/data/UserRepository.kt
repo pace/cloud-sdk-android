@@ -6,8 +6,8 @@ import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
 import cloud.pace.sdk.utils.resumeIfActive
-import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 class UserRepository @Inject constructor() {
 

@@ -13,9 +13,14 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import car.pace.cofu.BR
-import car.pace.cofu.core.events.*
-import timber.log.Timber
+import car.pace.cofu.core.events.ActivityEvent
+import car.pace.cofu.core.events.ConsumeFragmentBackPress
+import car.pace.cofu.core.events.Event
+import car.pace.cofu.core.events.FragmentEvent
+import car.pace.cofu.core.events.FragmentResultable
+import car.pace.cofu.core.events.OpenFromFragment
 import kotlin.reflect.KClass
+import timber.log.Timber
 
 /**
  * Represents a base fragment. Extending fragments should always be combined with a viewModel,
@@ -96,7 +101,8 @@ abstract class BaseFragment<out T : ViewDataBinding, E : BaseViewModel>(
                         isEnabled = true
                     }
                 }
-            })
+            }
+        )
 
         return binding?.root
     }

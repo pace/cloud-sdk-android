@@ -4,7 +4,6 @@ import car.pace.cofu.util.PinChecker
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-
 class PinCheckerTest {
     @Test
     fun pinCheck() {

@@ -37,7 +37,6 @@ abstract class BaseViewModel : ViewModel() {
      */
     val events = QueueLiveEvent<Event>()
 
-
     /**
      * This takes the [event] and let's the currently active lifecycle observers
      * handle ot. Active lifecycle observers may include an Activity and/or Fragments.
@@ -48,5 +47,4 @@ abstract class BaseViewModel : ViewModel() {
     fun handleEvent(event: Event) {
         events.queueValue(event)
     }
-
 }

@@ -1,11 +1,6 @@
 package car.pace.cofu.core.util
 
-import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import androidx.core.content.FileProvider
 import androidx.databinding.ObservableInt
-import java.io.File
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -31,8 +26,12 @@ fun ObservableInt.decrease(by: Int = 1) {
 val Double.formattedAsMeter: String
     get() = when {
         this < 1000 -> "${this.toInt()}m"
-        this < 10000 -> if (abs((this / 1000).roundToInt() - (this / 1000)) < 0.00001)
-            "${(this / 1000).roundToInt()}km" else
-            "${"%.1f".format(this / 1000)}km"
+        this < 10000 -> {
+            if (abs((this / 1000).roundToInt() - (this / 1000)) < 0.00001) {
+                "${(this / 1000).roundToInt()}km"
+            } else {
+                "${"%.1f".format(this / 1000)}km"
+            }
+        }
         else -> "${(this / 1000).roundToInt()}km"
     }

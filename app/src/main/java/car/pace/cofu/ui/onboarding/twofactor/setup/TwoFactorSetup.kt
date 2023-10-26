@@ -6,7 +6,7 @@ import car.pace.cofu.R
 sealed class TwoFactorSetup(
     @StringRes open val titleRes: Int,
     @StringRes open val descriptionRes: Int,
-    @StringRes open val buttonTextRes: Int,
+    @StringRes open val buttonTextRes: Int
 )
 
 data object BiometrySetup : TwoFactorSetup(
