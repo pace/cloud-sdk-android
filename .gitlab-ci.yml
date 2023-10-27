@@ -1,0 +1,6 @@
+trigger_github_mirroring:
+  interruptible: true
+  script:
+    - ./scripts/github_mirroring.sh
+  rules:
+    - if: $SCHEDULED_JOB == "connectedfueling-app-github-mirroring"
