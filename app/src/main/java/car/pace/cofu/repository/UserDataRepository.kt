@@ -1,5 +1,7 @@
 package car.pace.cofu.repository
 
+import car.pace.cofu.ui.fueltype.FuelType
+
 /**
  * Repository to access data that is locally stored on the device (independant from the PACE-ID account)
  * It includes the check whether the onboarding is completed, if it's not, the currently displayed page

@@ -10,10 +10,13 @@
     <string name="DASHBOARD.EMPTY_VIEW.TITLE">No hay gasolineras cerca de usted</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Buscaremos las gasolineras más cercanas en su zona. Esto puede llevar un momento.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Buscar gasolineras...</string>
+    <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">No se han podido abrir los ajustes de localización. Por favor, activa los servicios de localización manualmente en los ajustes del sistema.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL">CANCELAR</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">REGISTRO</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">Sus datos siguen almacenados en su cuenta PACE-ID.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">¿Realmente quieres firmar la salida?</string>
+    <string name="DASHBOARD.NAVIGATION.ERROR">No se ha encontrado ninguna aplicación de navegación</string>
+    <string name="DASHBOARD.PERMISSION.SETTINGS_ERROR">No se ha podido abrir la configuración de permisos. Por favor, permite el acceso a tu ubicación manualmente en los ajustes del sistema.</string>
     <string name="DASHBOARD.SECTIONS.NEAREST_GAS_STATION">Gasolinera más cercana</string>
     <string name="DASHBOARD.SECTIONS.OTHER_GAS_STATIONS">Más gasolineras</string>
     <string name="FUEL_TYPE.DIESEL">DIESEL</string>
@@ -57,7 +60,8 @@
     <string name="ONBOARDING.ENTER_ONE_TIME_PASSWORD.DESCRIPTION">Por favor, autorice el cambio con el código de confirmación de su buzón de correo electrónico.</string>
     <string name="ONBOARDING.ENTER_ONE_TIME_PASSWORD.TITLE">Introduzca el código de confirmación</string>
     <string name="ONBOARDING.ERROR_AUTHORISATION">No se pudo verificar su entrada. Intentar otra vez.</string>
-    <string name="ONBOARDING.FINGERPRINT_ERROR">Error al reconocer la huella digital:</string>
+    <string name="ONBOARDING.FINGERPRINT.SETUP_ERROR">No se ha podido abrir la configuración de huellas dactilares. Por favor, añada una huella dactilar manualmente en los ajustes del sistema.</string>
+    <string name="ONBOARDING.FINGERPRINT_ERROR">Error al reconocer la huella digital: %s</string>
     <string name="ONBOARDING.FINGERPRINT_NONE_SAVED_TITLE">¡Actualmente no hay huellas dactilares guardadas!</string>
     <string name="ONBOARDING.FINGERPRINT_SAVE">Añadir ahora</string>
     <string name="ONBOARDING.FUEL_TYPE.DESCRIPTION">Y por último: ¿Qué precios de combustible debemos mostrar?</string>
@@ -86,4 +90,5 @@
     <string name="ONBOARDING.VERIFY_PIN.TITLE">Confirmar PIN</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Compartir</string>
+    <string name="currency_format"></string>
 </resources>

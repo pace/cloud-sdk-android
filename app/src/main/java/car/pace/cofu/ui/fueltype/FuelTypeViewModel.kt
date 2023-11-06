@@ -3,7 +3,6 @@ package car.pace.cofu.ui.fueltype
 import car.pace.cofu.core.events.FragmentEvent
 import car.pace.cofu.core.mvvm.BaseItemViewModel
 import car.pace.cofu.core.mvvm.BaseViewModel
-import car.pace.cofu.repository.FuelType
 import car.pace.cofu.repository.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

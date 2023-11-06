@@ -10,10 +10,13 @@
     <string name="DASHBOARD.EMPTY_VIEW.TITLE">Nenhuma estação de serviço perto de si</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Procuraremos as estações de serviço mais próximas na sua área. Isto pode demorar um momento.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Pesquisar postos de gasolina...</string>
+    <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Não foi possível abrir as definições de localização. Active os serviços de localização manualmente nas definições do sistema.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL">CANCELA</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">INSCREVA-SE</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">Os seus dados ainda são armazenados na sua conta PACE-ID.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Quer mesmo assinar a saída?</string>
+    <string name="DASHBOARD.NAVIGATION.ERROR">Nenhuma aplicação de navegação encontrada</string>
+    <string name="DASHBOARD.PERMISSION.SETTINGS_ERROR">Não foi possível abrir as definições de permissão. Permita o acesso à sua localização manualmente nas definições do sistema.</string>
     <string name="DASHBOARD.SECTIONS.NEAREST_GAS_STATION">Estação de serviço mais próxima</string>
     <string name="DASHBOARD.SECTIONS.OTHER_GAS_STATIONS">Mais estações de serviço</string>
     <string name="FUEL_TYPE.DIESEL">DIESEL</string>
@@ -57,7 +60,8 @@
     <string name="ONBOARDING.ENTER_ONE_TIME_PASSWORD.DESCRIPTION">Por favor autorize a alteração com o código de confirmação da sua caixa de correio electrónico.</string>
     <string name="ONBOARDING.ENTER_ONE_TIME_PASSWORD.TITLE">Introduza o código de confirmação</string>
     <string name="ONBOARDING.ERROR_AUTHORISATION">Não foi possível verificar sua entrada. Tente novamente.</string>
-    <string name="ONBOARDING.FINGERPRINT_ERROR">Erro ao reconhecer impressão digital:</string>
+    <string name="ONBOARDING.FINGERPRINT.SETUP_ERROR">Não foi possível abrir as definições de impressões digitais. Adicione uma impressão digital manualmente nas definições do sistema.</string>
+    <string name="ONBOARDING.FINGERPRINT_ERROR">Erro ao reconhecer impressão digital: %s</string>
     <string name="ONBOARDING.FINGERPRINT_NONE_SAVED_TITLE">Atualmente não há impressões digitais salvas!</string>
     <string name="ONBOARDING.FINGERPRINT_SAVE">Adicione agora</string>
     <string name="ONBOARDING.FUEL_TYPE.DESCRIPTION">E finalmente: Que preços de combustível devemos mostrar-lhe?</string>
@@ -86,4 +90,5 @@
     <string name="ONBOARDING.VERIFY_PIN.TITLE">Confirmar PIN</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Compartilhar</string>
+    <string name="currency_format"></string>
 </resources>

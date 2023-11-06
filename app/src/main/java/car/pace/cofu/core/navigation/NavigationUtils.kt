@@ -2,7 +2,6 @@ package car.pace.cofu.core.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
-import car.pace.cofu.R
 import car.pace.cofu.core.events.NavigateToDirection
 import timber.log.Timber
 

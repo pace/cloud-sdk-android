@@ -3,10 +3,8 @@ package car.pace.cofu.ui.logout
 import androidx.lifecycle.lifecycleScope
 import car.pace.cofu.R
 import car.pace.cofu.core.events.FragmentEvent
-import car.pace.cofu.core.events.NavigateToDirection
 import car.pace.cofu.core.events.ShowSnack
 import car.pace.cofu.core.mvvm.BaseDialogFragment
-import car.pace.cofu.core.navigation.navigate
 import car.pace.cofu.databinding.FragmentLogoutConfirmationBinding
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.utils.Failure
@@ -48,12 +46,6 @@ class LogoutConfirmationFragment : BaseLogoutConfirmationFragment() {
 
     private fun onLogoutSuccessful() {
         viewModel.resetAppData()
-        navigate(
-            NavigateToDirection(
-                LogoutConfirmationFragmentDirections.redirectBackToOnboarding(true),
-                clearBackStack = true
-            )
-        )
     }
 }
 

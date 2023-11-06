@@ -13,8 +13,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val environment = Environment.SANDBOX
-
         PACECloudSDK.setup(
             this, Configuration(
                 clientAppName = BuildConfig.PACE_APP_NAME,
@@ -22,9 +20,8 @@ class App : Application() {
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),
                 apiKey = BuildConfig.CLOUD_API_KEY,
                 authenticationMode = AuthenticationMode.NATIVE,
-                environment = environment,
-                domainACL = listOf(BuildConfig.DOMAIN_ACL),
-                geoAppsScope = BuildConfig.GEO_APPS_SCOPE,
+                environment = Environment.DEVELOPMENT,
+                geoAppsScope = BuildConfig.PACE_CLIENT_ID,
                 oidConfiguration = CustomOIDConfiguration(
                     clientId = BuildConfig.PACE_CLIENT_ID,
                     redirectUri = BuildConfig.PACE_REDIRECT_URL

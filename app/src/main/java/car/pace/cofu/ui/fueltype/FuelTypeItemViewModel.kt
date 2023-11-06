@@ -2,7 +2,6 @@ package car.pace.cofu.ui.fueltype
 
 import car.pace.cofu.R
 import car.pace.cofu.core.mvvm.BaseItemViewModel
-import car.pace.cofu.repository.FuelType
 
 class FuelTypeItemViewModel(
     private val onClick: (FuelType) -> Unit,

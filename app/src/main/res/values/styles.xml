@@ -82,11 +82,9 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/fontSizeDefault</item>
         <item name="android:textColor">@color/textColorDefault</item>
-        <item name="android:fontFamily">@font/montserrat_medium</item>
     </style>
 
     <style name="Text.Title">
-        <item name="android:fontFamily">@font/montserrat_semibold</item>
         <item name="android:textSize">@dimen/fontSizeTitle</item>
     </style>
 
@@ -105,7 +103,6 @@
 
     <style name="Text.Onboarding.Title">
         <item name="android:textSize">@dimen/fontSizeTitle</item>
-        <item name="android:fontFamily">@font/montserrat_semibold</item>
     </style>
 
     <style name="Toolbar" parent="Widget.AppCompat.Toolbar">
@@ -129,7 +126,6 @@
         <item name="android:textColor">?attr/colorOnSecondary</item>
         <item name="backgroundTint">?attr/colorAccent</item>
         <item name="cornerRadius">@dimen/button_small_corner_radius</item>
-        <item name="android:fontFamily">@font/montserrat_semibold</item>
         <item name="android:outlineSpotShadowColor" tools:ignore="NewApi">#40005a6a</item>
         <item name="android:outlineAmbientShadowColor" tools:ignore="NewApi">#40005a6a</item>
     </style>
@@ -156,7 +152,6 @@
         <item name="android:textColor">?attr/colorOnSecondary</item>
         <item name="backgroundTint">?attr/colorAccent</item>
         <item name="cornerRadius">@dimen/button_corner_radius</item>
-        <item name="android:fontFamily">@font/montserrat_semibold</item>
         <item name="android:outlineSpotShadowColor" tools:ignore="NewApi">#40005a6a</item>
         <item name="android:outlineAmbientShadowColor" tools:ignore="NewApi">#40005a6a</item>
     </style>

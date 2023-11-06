@@ -1,9 +1,8 @@
 package car.pace.cofu
 
-import car.pace.cofu.ui.onboarding.dialog.PinChecker
+import car.pace.cofu.util.PinChecker
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 
 
 class PinCheckerTest {

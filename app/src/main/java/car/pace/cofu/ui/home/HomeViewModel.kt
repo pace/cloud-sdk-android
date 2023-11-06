@@ -1,135 +1,110 @@
 package car.pace.cofu.ui.home
 
-import android.location.Location
-import android.util.Log
-import androidx.databinding.ObservableArrayList
-import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableInt
-import car.pace.cofu.R
-import car.pace.cofu.core.events.FragmentEvent
-import car.pace.cofu.core.events.ShowSnack
-import car.pace.cofu.core.mvvm.BaseItemViewModel
-import car.pace.cofu.core.mvvm.BaseViewModel
-import car.pace.cofu.core.resources.ResourcesProvider
-import car.pace.cofu.repository.UserDataRepository
-import cloud.pace.sdk.poikit.POIKit
-import cloud.pace.sdk.poikit.poi.GasStation
-import cloud.pace.sdk.utils.Failure
-import cloud.pace.sdk.utils.Success
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import car.pace.cofu.data.GasStationRepository
+import car.pace.cofu.data.SharedPreferencesRepository
+import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_FUEL_TYPE
+import car.pace.cofu.ui.fueltype.FuelType
+import car.pace.cofu.util.UiState
+import cloud.pace.sdk.poikit.utils.distanceTo
+import cloud.pace.sdk.utils.LocationProvider
+import cloud.pace.sdk.utils.LocationProviderImpl.Companion.DEFAULT_LOCATION_REQUEST
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.Priority
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val resourceProvider: ResourcesProvider,
-    private val userDataRepository: UserDataRepository
-) : BaseViewModel() {
+    locationProvider: LocationProvider,
+    sharedPreferencesRepository: SharedPreferencesRepository,
+    private val gasStationRepository: GasStationRepository
+) : ViewModel() {
 
-    private var loadingCount = 0
-        set(value) {
-            field = value
-            swipeRefreshLayoutRefreshing.set(value > 0)
-            // only show big loading screen when there are no results yet
-            // the loading indicator of the swipe refresh layout is always shown
-            if (value == 0 || items.size == 0) showInfo.set(value > 0)
-        }
+    private val locationRequest = LocationRequest.Builder(DEFAULT_LOCATION_REQUEST)
+        .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+        .setMinUpdateDistanceMeters(LOCATION_UPDATE_DISTANCE_METERS)
+        .build()
 
-    val swipeRefreshLayoutRefreshing = ObservableBoolean(true)
-    val showInfo = ObservableBoolean(true)
-    val infoTitle = ObservableInt(R.string.HOME_LOOKING_FOR_LOCATION_TITLE)
-    val infoText = ObservableInt(R.string.HOME_LOOKING_FOR_LOCATION_TEXT)
-    val infoImageNoResults = ObservableBoolean(false)
-
-    val items = ObservableArrayList<BaseItemViewModel>()
-
-    var currentLocation: Location? = null
-        set(value) {
-            if (field == null && value != null) {
-                // first location fix, load stations now
-                field = value
-                loadPetrolStations()
-            } else if (value != null) {
-                // location updated, update distances
-                items.forEach {
-                    (it as? PetrolStationItemViewModel)?.updateLocation(value)
-                }
-            }
-
-            field = value
-        }
-
-    fun reload() {
-        loadPetrolStations()
+    private val location = locationProvider.locationFlow(locationRequest)
+    private val refresh = MutableSharedFlow<Unit>(replay = 1).apply {
+        tryEmit(Unit)
     }
 
-    private fun loadPetrolStations() {
-        val location = currentLocation ?: return
-        infoTitle.set(R.string.DASHBOARD_LOADING_VIEW_TITLE)
-        infoImageNoResults.set(false)
-        infoText.set(R.string.DASHBOARD_LOADING_VIEW_DESCRIPTION)
-        loadingCount += 1
-        POIKit.requestCofuGasStations(location, 10000) {
-            loadingCount -= 1
-            when (it) {
-                is Success -> setPetrolStations(it.result, location)
-                is Failure -> setLoadingError(it.throwable)
+    var showPullRefreshIndicator by mutableStateOf(false)
+    var showSnackbarError = MutableSharedFlow<Boolean>()
+    private var dataAvailable = false
+
+    val uiState = location
+        .combine(refresh) { location, _ ->
+            val gasStations = gasStationRepository.requestCofuGasStations(location, GAS_STATION_SEARCH_RADIUS).getOrElse {
+                return@combine UiState.Error(it)
+            }
+            val latLng = LatLng(location.latitude, location.longitude)
+            val sortedGasStations = gasStations.sortedBy { it.center?.toLatLn()?.distanceTo(latLng) }
+
+            dataAvailable = sortedGasStations.isNotEmpty()
+            UiState.Success(sortedGasStations)
+        }
+        .onEach {
+            showPullRefreshIndicator = false
+        }
+        .transform {
+            // Skip fullscreen error if data is already visible - show a snackbar instead
+            if (it is UiState.Error && dataAvailable) {
+                showSnackbarError.emit(true)
+            } else {
+                showSnackbarError.emit(false)
+                emit(it)
             }
         }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = UiState.Loading
+        )
 
-    }
+    val fuelType = sharedPreferencesRepository.getValue(PREF_KEY_FUEL_TYPE, -1)
+        .filter { it != -1 }
+        .map { FuelType.values().getOrNull(it) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT_MILLIS),
+            initialValue = null
+        )
 
-    private fun setLoadingError(throwable: Throwable) {
-        Log.w("ConnectedFueling", throwable)
-        // do not show big error screen but just a snackbar when there were results previously
-        if (items.size > 0) {
-            handleEvent(ShowSnack(resourceProvider.getString(R.string.HOME_LOADING_FAILED_TEXT)))
-            return
-        }
-        showInfo.set(true)
-        infoTitle.set(R.string.HOME_LOADING_FAILED)
-        infoImageNoResults.set(true)
-        infoText.set(R.string.HOME_LOADING_FAILED_TEXT)
-    }
+    val userLocation = location
+        .map { LatLng(it.latitude, it.longitude) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT_MILLIS),
+            initialValue = null
+        )
 
-    private fun setPetrolStations(gasStations: List<GasStation>, location: Location) {
-        items.clear()
-
-        if (gasStations.isEmpty()) {
-            showInfo.set(true)
-            infoTitle.set(R.string.DASHBOARD_EMPTY_VIEW_TITLE)
-            infoImageNoResults.set(true)
-            infoText.set(R.string.DASHBOARD_EMPTY_VIEW_DESCRIPTION)
-            return
-        }
-
-        val viewModels = gasStations.map {
-            PetrolStationItemViewModel(
-                it,
-                userDataRepository.fuelType?.identifier,
-                resourceProvider,
-                this,
-                location
-            )
-        }.sortedBy { it.distance }
-
-        viewModels.forEachIndexed { index, viewModel ->
-            when (index) {
-                0 -> items.add(SimpleTextItemViewModel(resourceProvider.getString(R.string.DASHBOARD_SECTIONS_NEAREST_GAS_STATION)))
-                1 -> items.add(SimpleTextItemViewModel(resourceProvider.getString(R.string.DASHBOARD_SECTIONS_OTHER_GAS_STATIONS)))
-            }
-            items.add(viewModel)
+    fun onRefresh() {
+        viewModelScope.launch {
+            showPullRefreshIndicator = true
+            refresh.emit(Unit)
         }
     }
 
-    fun updateFuelType() {
-        val identifier = userDataRepository.fuelType?.identifier
-        items.forEach {
-            (it as? PetrolStationItemViewModel)?.fuelTypeIdentifier = identifier
-        }
+    companion object {
+        private const val DEFAULT_TIMEOUT_MILLIS = 5000L
+        private const val LOCATION_UPDATE_DISTANCE_METERS = 500f
+        private const val GAS_STATION_SEARCH_RADIUS = 10000
     }
-
-
-    class StartNavigationEvent(val gasStation: GasStation) : FragmentEvent()
-    class FuelUpEvent(val gasStation: GasStation) : FragmentEvent()
-
 }

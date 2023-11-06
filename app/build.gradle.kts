@@ -40,8 +40,6 @@ android {
         buildConfigField("String", "PACE_CLIENT_ID", "\"" + secretsProperties["paceCloudClientId"] as String + "\"")
         buildConfigField("String", "PACE_REDIRECT_URL", "\"" + secretsProperties["paceCloudRedirectUrl"] as String + "\"")
         buildConfigField("String", "PACE_APP_NAME", "\"" + secretsProperties["paceCloudAppName"] as String + "\"")
-        buildConfigField("String", "DOMAIN_ACL", "\"" + secretsProperties["paceCloudDomainACL"] as String + "\"")
-        buildConfigField("String", "GEO_APPS_SCOPE", "\"" + secretsProperties["paceCloudGeoAppsScope"] as String + "\"")
 
         // appAuthRedirectScheme is needed for AppAuth in IDKit and pace_redirect_scheme is needed for deep linking in AppKit
         manifestPlaceholders["appAuthRedirectScheme"] = secretsProperties["paceCloudRedirectScheme"] as String // e.g. reverse domain name notation: cloud.pace.app
@@ -54,7 +52,7 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules-release.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("config")
         }
     }
@@ -101,7 +99,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0-alpha02")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0-alpha03")
 
     // Google support and design libraries
     implementation("androidx.appcompat:appcompat:1.6.1")

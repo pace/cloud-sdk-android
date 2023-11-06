@@ -3,34 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_main"
-    app:startDestination="@id/fragment_onboarding">
-
-    <fragment
-        android:id="@+id/fragment_home"
-        android:name="car.pace.cofu.ui.home.HomeFragment"
-        tools:layout="@layout/fragment_home">
-
-        <action
-            android:id="@+id/locationDisabledDialog"
-            app:destination="@id/fragment_location_disabled_dialog" />
-
-        <action
-            android:id="@+id/locationPermissionDialog"
-            app:destination="@id/fragment_location_permission_dialog" />
-
-        <action
-            android:id="@+id/openWebview"
-            app:destination="@id/fragment_webview" />
-
-        <action
-            android:id="@+id/openFuelTypeSettings"
-            app:destination="@id/fragment_select_fuel_type" />
-
-        <action
-            android:id="@+id/openLogoutConfirmation"
-            app:destination="@id/fragment_logout_confirmation" />
-
-    </fragment>
+    app:startDestination="@id/fragment_webview">
 
     <fragment
         android:id="@+id/fragment_webview"
@@ -43,48 +16,6 @@
 
     </fragment>
 
-    <fragment
-        android:id="@+id/fragment_onboarding"
-        android:name="car.pace.cofu.ui.onboarding.OnboardingFragment"
-        tools:layout="@layout/fragment_onboarding">
-
-        <argument
-            android:name="logoutComplete"
-            app:argType="boolean"
-            android:defaultValue="false" />
-
-        <action
-            android:id="@+id/onboardingConfigureBiometry"
-            app:destination="@id/fragment_configure_bio" />
-        <action
-            android:id="@+id/onboardingConfigurePin"
-            app:destination="@id/fragment_configure_pin" />
-        <action
-            android:id="@+id/onboardingToHome"
-            app:destination="@id/fragment_home" />
-
-    </fragment>
-
-    <dialog
-        android:id="@+id/fragment_configure_bio"
-        android:name="car.pace.cofu.ui.onboarding.dialog.ConfigureBiometricAuthFragment"
-        tools:layout="@layout/fragment_onboarding_bottom_sheet" />
-
-    <dialog
-        android:id="@+id/fragment_configure_pin"
-        android:name="car.pace.cofu.ui.onboarding.dialog.ConfigurePinAuthFragment"
-        tools:layout="@layout/fragment_onboarding_bottom_sheet" />
-
-    <dialog
-        android:id="@+id/fragment_location_disabled_dialog"
-        android:name="car.pace.cofu.ui.home.dialog.LocationDisabledDialogFragment"
-        tools:layout="@layout/fragment_dialog" />
-
-    <dialog
-        android:id="@+id/fragment_location_permission_dialog"
-        android:name="car.pace.cofu.ui.home.dialog.LocationPermissionDialogFragment"
-        tools:layout="@layout/fragment_dialog" />
-
     <dialog
         android:id="@+id/fragment_select_fuel_type"
         android:name="car.pace.cofu.ui.fueltype.FuelTypeFragment"
@@ -93,12 +24,6 @@
     <dialog
         android:id="@+id/fragment_logout_confirmation"
         android:name="car.pace.cofu.ui.logout.LogoutConfirmationFragment"
-        tools:layout="@layout/fragment_logout_confirmation">
-
-        <action
-            android:id="@+id/redirectBackToOnboarding"
-            app:destination="@id/fragment_onboarding" />
-
-    </dialog>
+        tools:layout="@layout/fragment_logout_confirmation" />
 
 </navigation>

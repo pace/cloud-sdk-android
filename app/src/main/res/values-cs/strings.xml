@@ -10,10 +10,13 @@
     <string name="DASHBOARD.EMPTY_VIEW.TITLE">Žádné čerpací stanice ve vašem okolí</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Vyhledáme nejbližší čerpací stanice ve vaší oblasti. To může chvíli trvat.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Hledání čerpacích stanic...</string>
+    <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Nastavení umístění se nepodařilo otevřít. Aktivujte služby určování polohy ručně v nastavení systému.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL">CANCEL</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">REGISTRACE</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">Vaše údaje jsou stále uloženy na vašem účtu PACE-ID.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Opravdu se chcete odhlásit?</string>
+    <string name="DASHBOARD.NAVIGATION.ERROR">Nebyla nalezena žádná navigační aplikace</string>
+    <string name="DASHBOARD.PERMISSION.SETTINGS_ERROR">Nastavení oprávnění nebylo možné otevřít. Povolte prosím přístup k poloze ručně v nastavení systému.</string>
     <string name="DASHBOARD.SECTIONS.NEAREST_GAS_STATION">Nejbližší čerpací stanice</string>
     <string name="DASHBOARD.SECTIONS.OTHER_GAS_STATIONS">Více čerpacích stanic</string>
     <string name="FUEL_TYPE.DIESEL">DIESEL</string>
@@ -57,7 +60,8 @@
     <string name="ONBOARDING.ENTER_ONE_TIME_PASSWORD.DESCRIPTION">Změnu autorizujte pomocí potvrzovacího kódu ze své e-mailové schránky.</string>
     <string name="ONBOARDING.ENTER_ONE_TIME_PASSWORD.TITLE">Zadejte potvrzovací kód</string>
     <string name="ONBOARDING.ERROR_AUTHORISATION">Váš vstup se nepodařilo ověřit. Zkus to znovu.</string>
-    <string name="ONBOARDING.FINGERPRINT_ERROR">Chyba při rozpoznání otisku prstu:</string>
+    <string name="ONBOARDING.FINGERPRINT.SETUP_ERROR">Nastavení otisků prstů nebylo možné otevřít. Přidejte otisk prstu ručně v nastavení systému.</string>
+    <string name="ONBOARDING.FINGERPRINT_ERROR">Chyba při rozpoznání otisku prstu: %s</string>
     <string name="ONBOARDING.FINGERPRINT_NONE_SAVED_TITLE">Momentálně nejsou uloženy žádné otisky prstů!</string>
     <string name="ONBOARDING.FINGERPRINT_SAVE">Přidat nyní</string>
     <string name="ONBOARDING.FUEL_TYPE.DESCRIPTION">A nakonec: Jaké ceny pohonných hmot bychom vám měli ukázat?</string>
@@ -86,4 +90,5 @@
     <string name="ONBOARDING.VERIFY_PIN.TITLE">Potvrzení kódu PIN</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Podíl</string>
+    <string name="currency_format"></string>
 </resources>
