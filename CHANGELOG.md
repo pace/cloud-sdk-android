@@ -1,3 +1,22 @@
+21.0.0 Release notes (2023-11-07)
+=============================================================
+
+### Breaking Changes
+
+* Set min SDK version to Android 8
+* Add clientId as requirement for SDK setup
+
+### Fixes
+
+* Regenerate API files to fix relationship and type generation
+* Use git tags instead of GitLab tags to retrieve last tag to construct the snapshot version
+* Add suffix to API filenames to avoid filenames that are reserved on Windows
+
+### Internal
+
+* Also publish the SDK as snapshot release
+* TargetSdk and compileSdk to Android 14
+
 20.1.0 Release notes (2023-08-09)
 =============================================================
 
