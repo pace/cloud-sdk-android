@@ -19,7 +19,6 @@ import kotlin.reflect.KClass
  * - Navigate to the same screen with a deeplink which contains a token -> Arguments
  **/
 
-
 /**
  * Returns a [Lazy] delegate to access the Fragment's arguments as an optional [Args] instance.
  *
@@ -39,8 +38,6 @@ import kotlin.reflect.KClass
 @MainThread
 inline fun <reified Args : NavArgs> Fragment.optionalNavArgs(): Lazy<Args?> =
     OptionalNavArgsLazy(Args::class) { arguments }
-
-
 
 internal val methodSignature = arrayOf(Bundle::class.java)
 internal val methodMap = ArrayMap<KClass<out NavArgs>, Method>()

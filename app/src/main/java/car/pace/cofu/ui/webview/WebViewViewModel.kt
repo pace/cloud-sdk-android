@@ -32,5 +32,5 @@ class WebViewViewModel : BaseViewModel() {
         handleEvent(ReloadWebView())
     }
 
-    class ReloadWebView: FragmentEvent()
+    class ReloadWebView : FragmentEvent()
 }

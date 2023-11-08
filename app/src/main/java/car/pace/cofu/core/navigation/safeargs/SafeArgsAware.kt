@@ -22,6 +22,6 @@ import androidx.navigation.NavArgs
  *  @see <a href="https://developer.android.com/guide/navigation/navigation-pass-data#Safe-args">Android Developer Reference</a>
  *  @see <a href="https://medium.com/androiddevelopers/navigating-with-safeargs-bf26c17b1269">Medium Article</a>
  */
-interface SafeArgsAware<Args: NavArgs> {
+interface SafeArgsAware<Args : NavArgs> {
     val args: Args?
 }

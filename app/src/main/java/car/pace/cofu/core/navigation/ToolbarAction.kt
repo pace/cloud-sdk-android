@@ -12,7 +12,6 @@ enum class ToolbarAction {
     MENU
 }
 
-
 @BindingAdapter("navigationAction")
 fun setNavigationAction(toolbar: Toolbar, navigationAction: ToolbarAction) {
     val baseActivity = when (val ctx = toolbar.context) {

@@ -17,7 +17,7 @@ fun AppContent() {
         val coroutineScope = rememberCoroutineScope()
 
         AppNavigation(
-            snackbarHostState = snackbarHostState,
+            snackbarHostState = snackbarHostState
         ) {
             coroutineScope.launch {
                 it.showSnackbar(context, snackbarHostState)

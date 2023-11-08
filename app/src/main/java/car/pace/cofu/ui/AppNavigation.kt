@@ -51,18 +51,10 @@ fun AppNavigation(
                     showSnackbar = showSnackbar
                 )
             }
-            composable(Destinations.FUEL_TYPE_ROUTE) {
-
-            }
-            composable(Destinations.IMPRINT_ROUTE) {
-
-            }
-            composable(Destinations.PRIVACY_POLICY_ROUTE) {
-
-            }
-            composable(Destinations.LICENSES_ROUTE) {
-
-            }
+            composable(Destinations.FUEL_TYPE_ROUTE) {}
+            composable(Destinations.IMPRINT_ROUTE) {}
+            composable(Destinations.PRIVACY_POLICY_ROUTE) {}
+            composable(Destinations.LICENSES_ROUTE) {}
         }
     }
 }

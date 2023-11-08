@@ -7,9 +7,10 @@ import androidx.annotation.MainThread
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import timber.log.Timber
-import java.util.*
+import java.util.ArrayDeque
+import java.util.Queue
 import java.util.concurrent.atomic.AtomicBoolean
+import timber.log.Timber
 
 /**
  * A special implementation of [MutableLiveData] that allows queuing of objects. If the
@@ -30,11 +31,14 @@ class QueueLiveEvent<T> : MutableLiveData<T>() {
             Timber.w("Multiple observers registered but only one will be notified of changes.")
         }
 
-        super.observe(owner, Observer<T> { t ->
-            if (mPending.compareAndSet(true, false)) {
-                onChanged(t)
+        super.observe(
+            owner,
+            Observer<T> { t ->
+                if (mPending.compareAndSet(true, false)) {
+                    onChanged(t)
+                }
             }
-        })
+        )
     }
 
     @MainThread
@@ -43,11 +47,14 @@ class QueueLiveEvent<T> : MutableLiveData<T>() {
             Timber.w("Multiple observers registered but only one will be notified of changes.")
         }
 
-        super.observe(owner, Observer { t ->
-            if (mPending.compareAndSet(true, false)) {
-                observer.onChanged(t)
+        super.observe(
+            owner,
+            Observer { t ->
+                if (mPending.compareAndSet(true, false)) {
+                    observer.onChanged(t)
+                }
             }
-        })
+        )
     }
 
     @MainThread
@@ -123,6 +130,4 @@ class QueueLiveEvent<T> : MutableLiveData<T>() {
         val handler = Handler(Looper.getMainLooper())
         val mainThread: Thread = Looper.getMainLooper().thread
     }
-
 }
-

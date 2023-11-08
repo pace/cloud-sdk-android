@@ -17,5 +17,4 @@ interface FragmentResultable {
      * Called if there has been any result with the given [resultBundle] on a called fragment.
      */
     fun onFragmentResult(resultBundle: Bundle)
-
 }

@@ -25,7 +25,6 @@ class FuelTypeViewModel @Inject constructor(internal val userDataRepository: Use
                 )
             )
         }
-
     }
 
     private fun onSelectFuelType(fuelType: FuelType) {

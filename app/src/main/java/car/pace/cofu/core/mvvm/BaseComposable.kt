@@ -28,7 +28,6 @@ interface BaseComposable {
  */
 fun Fragment.openUp(open: OpenFromFragment) {
     if (open.clazz != null) {
-
         val intent = Intent(activity, open.clazz.java)
 
         open.args?.let {

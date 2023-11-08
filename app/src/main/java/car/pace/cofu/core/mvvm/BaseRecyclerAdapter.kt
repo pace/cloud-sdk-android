@@ -12,8 +12,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import car.pace.cofu.R
 import java.util.*
-import kotlin.collections.ArrayList
-
 
 /**
  * This is a implementation of a very basic base adapter.
@@ -41,7 +39,6 @@ open class BaseRecyclerAdapter : RecyclerView.Adapter<BindableViewHolder>() {
             @SuppressLint("DiffUtilEquals")
             override fun areContentsTheSame(item1: BaseItemViewModel, item2: BaseItemViewModel) =
                 item1.item.equals(item2.item)
-
         }
     private val differ: AsyncListDiffer<BaseItemViewModel> = AsyncListDiffer(this, diffCallback)
 
@@ -110,7 +107,6 @@ open class BaseRecyclerAdapter : RecyclerView.Adapter<BindableViewHolder>() {
     }
 }
 
-
 /**
  * A base view holder is capable of setting flags for letting a item touch helper know, if the holder should be able
  * to be swiped and/or dragged. If [isDraggable] is set to true, make sure to also set a valid [swipeableView] of the
@@ -149,6 +145,4 @@ open class BindableViewHolder(private val binding: ViewDataBinding) :
             it.translationX = 0.0f
         }
     }
-
 }
-

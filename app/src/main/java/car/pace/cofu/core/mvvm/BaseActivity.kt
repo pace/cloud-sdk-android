@@ -9,7 +9,13 @@ import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import car.pace.cofu.BR
-import car.pace.cofu.core.events.*
+import car.pace.cofu.core.events.ActivityEvent
+import car.pace.cofu.core.events.Close
+import car.pace.cofu.core.events.ConsumeActivityBackPress
+import car.pace.cofu.core.events.DismissSnackbars
+import car.pace.cofu.core.events.ShowAlertDialog
+import car.pace.cofu.core.events.ShowSnack
+import car.pace.cofu.core.events.ShowToast
 import kotlin.reflect.KClass
 
 /**
@@ -150,4 +156,3 @@ abstract class BaseActivity<out T : ViewDataBinding, E : BaseViewModel>(
         // to be implemented in sub class
     }
 }
-

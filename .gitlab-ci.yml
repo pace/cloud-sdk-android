@@ -1,3 +1,57 @@
+image: softartdev/android-fastlane
+
+before_script:
+    - echo $SECRETS | tr ' ' '\r\n' > secrets.properties
+
+after_script:
+    - rm secrets.properties || true
+
+stages:
+  - test
+  - build
+  - publish
+
+.only_merge_requests: &only_merge_requests
+  interruptible: true
+  only:
+    refs:
+      - merge_requests
+
+.docker_image:
+  tags:
+    - docker
+  retry: 2
+
+.runner_tags:
+  tags:
+    - android-latest
+  retry: 2
+
+.testing_with_emulator:
+  extends: .runner_tags
+  stage: test
+  retry: 2
+  <<: *only_merge_requests
+
+code_style:
+  extends: .docker_image
+  script:
+    - ./gradlew clean app:ktlintCheck
+  <<: *only_merge_requests
+
+unit_test:
+  extends: .docker_image
+  script:
+    - ./gradlew clean testDebugUnitTest
+  <<: *only_merge_requests
+
+android_test:
+  extends: .testing_with_emulator
+  script:
+    - "/usr/local/share/android-sdk/tools/emulator -avd api28 > /dev/null 2>&1 -skin 480x854 -no-audio -no-boot-anim -no-snapshot -memory 2048 &"
+    - "/usr/local/share/android-sdk/platform-tools/adb wait-for-device"
+    - ./gradlew clean connectedDebugAndroidTest
+
 trigger_github_mirroring:
   interruptible: true
   script:

@@ -105,12 +105,12 @@ data class ShowSnack(
 /**
  * Dismisses all currently displayed snackbars
  */
-class DismissSnackbars: ActivityEvent()
+class DismissSnackbars : ActivityEvent()
 
 /**
  * Closes the navigation drawer
  */
-class CloseDrawer: ActivityEvent()
+class CloseDrawer : ActivityEvent()
 
 /**
  * An event for showing a un-styled alert dialog with the following options.
@@ -130,5 +130,3 @@ data class ShowAlertDialog(
     val view: View? = null,
     val onPositiveClicked: () -> Unit
 ) : ActivityEvent()
-
-

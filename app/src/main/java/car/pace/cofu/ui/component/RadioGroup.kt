@@ -52,7 +52,7 @@ fun <T> RadioGroup(
                     .selectable(
                         selected = selected,
                         role = Role.RadioButton,
-                        onClick = { onItemSelected(identifier) },
+                        onClick = { onItemSelected(identifier) }
                     )
                     .border(
                         width = 2.dp,
@@ -95,7 +95,7 @@ fun <T> RadioGroup(
                         .padding(end = size), // Center it over the entire row
                     color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.labelLarge
                 )
             }
         }

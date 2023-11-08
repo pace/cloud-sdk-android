@@ -1,13 +1,34 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
+
 plugins {
-    id("com.android.application") version "8.1.2" apply false
+    id("com.android.application") version "7.4.2" apply false
     kotlin("android") version "1.9.10" apply false
     id("com.google.dagger.hilt.android") version "2.48.1" apply false
+    id("org.jlleitschuh.gradle.ktlint-idea") version "11.6.1"
 }
 
 buildscript {
     dependencies {
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.7.4")
+        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3")
         classpath("com.google.android.gms:oss-licenses-plugin:0.10.6")
+    }
+}
+
+subprojects {
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+        debug.set(false)
+        verbose.set(false)
+        android.set(true)
+        outputToConsole.set(true)
+        ignoreFailures.set(false)
+        reporters {
+            reporter(ReporterType.PLAIN)
+            reporter(ReporterType.CHECKSTYLE)
+        }
+        filter {
+            exclude("**/build.gradle.kts")
+        }
     }
 }

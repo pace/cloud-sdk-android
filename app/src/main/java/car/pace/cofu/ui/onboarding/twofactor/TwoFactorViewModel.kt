@@ -15,15 +15,15 @@ import car.pace.cofu.util.SnackbarData
 import car.pace.cofu.util.UserCanceledException
 import cloud.pace.sdk.idkit.model.InvalidSession
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
-import javax.inject.Inject
 
 @HiltViewModel
 class TwoFactorViewModel @Inject constructor(

@@ -14,7 +14,8 @@ class App : Application() {
         super.onCreate()
 
         PACECloudSDK.setup(
-            this, Configuration(
+            this,
+            Configuration(
                 clientAppName = BuildConfig.PACE_APP_NAME,
                 clientAppVersion = BuildConfig.VERSION_NAME,
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),

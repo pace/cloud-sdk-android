@@ -10,11 +10,11 @@ import car.pace.cofu.util.UserCanceledException
 import car.pace.cofu.util.errorTextRes
 import cloud.pace.sdk.idkit.model.InternalError
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltViewModel
 class BiometrySetupViewModel @Inject constructor(
