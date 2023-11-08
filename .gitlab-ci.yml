@@ -1,10 +1,10 @@
 image: softartdev/android-fastlane
 
 before_script:
-    - echo $SECRETS | tr ' ' '\r\n' > secrets.properties
+    - echo $DEFAULT_CONFIG | tr ' ' '\r\n' > config.json
 
 after_script:
-    - rm secrets.properties || true
+    - rm config.json || true
 
 stages:
   - test
