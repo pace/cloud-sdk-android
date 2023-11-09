@@ -19,20 +19,25 @@ of [PACE Cloud SDK](https://github.com/pace/cloud-sdk-android) integration.
 ## Setup
 
 - Add a keystore and store it in the root directory as `keystore.jks`.
-- Add a file `secrets.properties` (or duplicate the available `secrets.sample.properties` file)
-  and add the following properties:
+- Add a file `config.json` and add the following properties:
 
-```properties
-signingKeyPath=../keystore.jks -> path to the keystore that is used for signing.
-signingKeyPassword=123456 -> key store password
-signingKeyAlias=my-alias -> key store alias
-signingKeyAliasPassword=123456 -> key alias password
-paceCloudApiKey=12345678-1234-5678-1234-1234567890ab -> 36-digit api key, contact PACE to obtain one
-paceCloudClientId=my-pace-app -> your pace cloud app id, contact PACE to obtain one
-paceCloudRedirectUrl=my-app://callback -> the pace cloud api callback url, contact PACE to obtain one
-paceCloudRedirectScheme=my-app -> only the scheme of the redirect url
-paceCloudUniqueId=pace.8c5c2735-8778-4686-aa1d-94345ccb1a8e -> a self-chosen unique id for your app in the format pace.UUID
-paceCloudAppName=My App -> The user-readable name of your app
+```json
+{
+  "appName": "Connected Fueling App",
+  "signing": {
+    "keyPath": "../keystore.jks",
+    "keyPassword": "YOUR_KEYSTORE_PASSWORD",
+    "keyAlias": "YOUR_ALIAS",
+    "keyAliasPassword": "YOUR_KEY_PASSWORD"
+  },
+  "sdk": {
+    "apiKey": "YOUR_API_KEY",
+    "clientId": "YOUR_CLIENT_ID",
+    "redirectUrl": "YOUR_REDIRECT_URL",
+    "redirectScheme": "YOUR_REDIRECT_SCHEME",
+    "uniqueId": "YOUR_UUID"
+  }
+}
 ```
 
 ### Local Builds

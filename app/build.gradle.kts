@@ -1,9 +1,7 @@
-import java.io.FileInputStream
-import java.util.Properties
+import com.google.gson.Gson
 
-val secretsPropertiesFile = rootProject.file("secrets.properties")
-val secretsProperties = Properties()
-secretsProperties.load(FileInputStream(secretsPropertiesFile))
+val configFileReader = rootProject.file("config.json").reader()
+val configJson: Config = Gson().fromJson(configFileReader, Config::class.java)
 
 plugins {
     id("com.android.application")
@@ -20,10 +18,10 @@ android {
 
     signingConfigs {
         create("config") {
-            keyAlias = secretsProperties["signingKeyAlias"] as String
-            keyPassword = secretsProperties["signingKeyAliasPassword"] as String
-            storeFile = file(secretsProperties["signingKeyPath"] as String)
-            storePassword = secretsProperties["signingKeyPassword"] as String
+            keyAlias = configJson.signing.keyAlias
+            keyPassword = configJson.signing.keyAliasPassword
+            storeFile = file(configJson.signing.keyPath)
+            storePassword = configJson.signing.keyPassword
         }
     }
 
@@ -36,14 +34,15 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "CLOUD_API_KEY", "\"" + secretsProperties["paceCloudApiKey"] as String + "\"")
-        buildConfigField("String", "PACE_CLIENT_ID", "\"" + secretsProperties["paceCloudClientId"] as String + "\"")
-        buildConfigField("String", "PACE_REDIRECT_URL", "\"" + secretsProperties["paceCloudRedirectUrl"] as String + "\"")
-        buildConfigField("String", "PACE_APP_NAME", "\"" + secretsProperties["paceCloudAppName"] as String + "\"")
+        buildConfigField("String", "CLOUD_API_KEY", "\"" + configJson.sdk.apiKey + "\"")
+        buildConfigField("String", "PACE_CLIENT_ID", "\"" + configJson.sdk.clientId + "\"")
+        buildConfigField("String", "PACE_REDIRECT_URL", "\"" + configJson.sdk.redirectUrl + "\"")
 
         // appAuthRedirectScheme is needed for AppAuth in IDKit and pace_redirect_scheme is needed for deep linking in AppKit
-        manifestPlaceholders["appAuthRedirectScheme"] = secretsProperties["paceCloudRedirectScheme"] as String // e.g. reverse domain name notation: cloud.pace.app
-        manifestPlaceholders["pace_redirect_scheme"] = secretsProperties["paceCloudUniqueId"] as String // e.g. pace.ad50262a-9c88-4a5f-bc55-00dc31b81e5a
+        manifestPlaceholders["appAuthRedirectScheme"] = configJson.sdk.redirectScheme // e.g. reverse domain name notation: cloud.pace.app
+        manifestPlaceholders["pace_redirect_scheme"] = configJson.sdk.uniqueId // e.g. pace.ad50262a-9c88-4a5f-bc55-00dc31b81e5a
+
+        resValue("string", "app_name", configJson.appName)
 
         resourceConfigurations += arrayOf("en", "cs", "de", "es", "fr", "it", "nl", "pl", "pt", "ro", "ru")
     }

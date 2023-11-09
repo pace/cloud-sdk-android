@@ -16,7 +16,7 @@ class App : Application() {
         PACECloudSDK.setup(
             this,
             Configuration(
-                clientAppName = BuildConfig.PACE_APP_NAME,
+                clientAppName = applicationContext.getString(R.string.app_name),
                 clientAppVersion = BuildConfig.VERSION_NAME,
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),
                 apiKey = BuildConfig.CLOUD_API_KEY,
