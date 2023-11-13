@@ -42,7 +42,7 @@ class TilesResponseBodyConverter : Converter<ResponseBody, List<GasStation>> {
                         it.apply {
                             updatedAt = Date()
                             isOnlineCoFuGasStation = cofuGasStationsMap[it.id]?.let { cofuGasStation ->
-                                cofuGasStation.connectedFuelingStatus == ConnectedFuelingStatus.ONLINE
+                                cofuGasStation.connectedFuelingStatus == ConnectedFuelingStatus.ONLINE && cofuGasStation.properties["pacePay"] == true
                             }
                         }
                     }
