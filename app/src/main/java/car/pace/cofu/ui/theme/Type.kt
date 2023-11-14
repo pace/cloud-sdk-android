@@ -9,24 +9,29 @@ val Typography = Typography(
     titleLarge = TextStyle(
         fontSize = 20.sp,
         fontWeight = FontWeight.Bold,
-        letterSpacing = 0.4.sp,
-        lineHeight = 24.sp
+        lineHeight = 22.sp
+    ),
+    titleSmall = TextStyle(
+        fontSize = 18.sp,
+        fontWeight = FontWeight(510),
+        lineHeight = 22.sp
     ),
     bodyLarge = TextStyle(
         fontSize = 16.sp,
-        letterSpacing = 0.5.sp,
-        lineHeight = 19.sp
+        lineHeight = 22.sp
+    ),
+    bodySmall = TextStyle(
+        fontSize = 14.sp,
+        lineHeight = 22.sp
     ),
     labelLarge = TextStyle(
         fontSize = 14.sp,
         fontWeight = FontWeight.Medium,
-        letterSpacing = 0.44.sp,
         lineHeight = 16.sp
     ),
     labelMedium = TextStyle(
         fontSize = 12.sp,
         fontWeight = FontWeight.Medium,
-        letterSpacing = 0.38.sp,
         lineHeight = 20.sp
     )
 )

@@ -25,14 +25,9 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -59,7 +54,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import car.pace.cofu.R
 import car.pace.cofu.core.util.isLocationEnabled
 import car.pace.cofu.core.util.listenForLocationEnabledChanges
-import car.pace.cofu.ui.AppScaffold
 import car.pace.cofu.ui.component.DefaultButton
 import car.pace.cofu.ui.component.DefaultCircularProgressIndicator
 import car.pace.cofu.ui.component.DefaultOutlinedButton
@@ -91,152 +85,134 @@ private const val GAS_STATION_CONTENT_TYPE = "GasStation"
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun Home(
+fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    snackbarHostState: SnackbarHostState,
     showSnackbar: (SnackbarData) -> Unit
 ) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = viewModel.showPullRefreshIndicator,
+        onRefresh = viewModel::onRefresh
+    )
 
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet {
-                // TODO: Drawer content or other menu component?
-                Text(text = "Drawer content")
-            }
-        }
+    Box(
+        modifier = Modifier.pullRefresh(state = pullRefreshState)
     ) {
-        AppScaffold(
-            drawerState = drawerState,
-            snackbarHostState = snackbarHostState
-        ) {
-            val pullRefreshState = rememberPullRefreshState(
-                refreshing = viewModel.showPullRefreshIndicator,
-                onRefresh = viewModel::onRefresh
-            )
+        val context = LocalContext.current
+        val lifecycleOwner = LocalLifecycleOwner.current
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle(minActiveState = Lifecycle.State.RESUMED)
+        val fuelType by viewModel.fuelType.collectAsStateWithLifecycle()
+        val userLocation by viewModel.userLocation.collectAsStateWithLifecycle()
 
-            Box(
-                modifier = Modifier.pullRefresh(state = pullRefreshState)
-            ) {
-                val context = LocalContext.current
-                val lifecycleOwner = LocalLifecycleOwner.current
-                val uiState by viewModel.uiState.collectAsStateWithLifecycle(minActiveState = Lifecycle.State.RESUMED)
-                val fuelType by viewModel.fuelType.collectAsStateWithLifecycle()
-                val userLocation by viewModel.userLocation.collectAsStateWithLifecycle()
+        var showLocationPermissionDialog by remember { mutableStateOf(false) }
+        var showLocationDisabledDialog by remember { mutableStateOf(false) }
 
-                var showLocationPermissionDialog by remember { mutableStateOf(false) }
-                var showLocationDisabledDialog by remember { mutableStateOf(false) }
+        LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
+            showLocationPermissionDialog = !PermissionUtils.locationPermissionsGranted(context)
+            showLocationDisabledDialog = !context.isLocationEnabled
+        }
 
-                LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
-                    showLocationPermissionDialog = !PermissionUtils.locationPermissionsGranted(context)
+        DisposableEffect(lifecycleOwner) {
+            val locationEnabledListener = object : BroadcastReceiver() {
+                override fun onReceive(ctx: Context?, intent: Intent?) {
                     showLocationDisabledDialog = !context.isLocationEnabled
                 }
+            }
+            context.listenForLocationEnabledChanges(locationEnabledListener)
 
-                DisposableEffect(lifecycleOwner) {
-                    val locationEnabledListener = object : BroadcastReceiver() {
-                        override fun onReceive(ctx: Context?, intent: Intent?) {
-                            showLocationDisabledDialog = !context.isLocationEnabled
-                        }
-                    }
-                    context.listenForLocationEnabledChanges(locationEnabledListener)
+            onDispose {
+                context.unregisterReceiver(locationEnabledListener)
+            }
+        }
 
-                    onDispose {
-                        context.unregisterReceiver(locationEnabledListener)
-                    }
-                }
-
-                LaunchedEffect(Unit) {
-                    viewModel.showSnackbarError.collect {
-                        if (it) {
-                            showSnackbar(SnackbarData(R.string.HOME_LOADING_FAILED_TEXT))
-                        }
-                    }
-                }
-
-                when (val state = uiState) {
-                    is UiState.Loading -> Loading()
-                    is UiState.Success -> {
-                        val gasStations = state.data
-                        if (gasStations.isNotEmpty()) {
-                            GasStationList(
-                                gasStations = gasStations,
-                                fuelType = fuelType,
-                                userLocation = userLocation,
-                                onStartFueling = {
-                                    AppKit.openFuelingApp(context, it.id)
-                                },
-                                onStartNavigation = {
-                                    try {
-                                        // If Google Maps is installed, launch navigation directly
-                                        val uri = Uri.parse("google.navigation:q=${it.latitude},${it.longitude}")
-                                        val mapsIntent = Intent(Intent.ACTION_VIEW, uri).setPackage("com.google.android.apps.maps")
-                                        val activities = context.packageManager.queryIntentActivities(mapsIntent, PackageManager.MATCH_DEFAULT_ONLY)
-                                        if (activities.size > 0) {
-                                            context.startActivity(mapsIntent)
-                                        } else {
-                                            // No Google Maps installed - fallback to regular geo URI
-                                            val intent = Intent(Intent.ACTION_VIEW)
-                                            val address = it.address?.let { address ->
-                                                "${address.street} ${address.houseNumber}, ${address.postalCode} ${address.city}"
-                                            }
-                                            intent.data = Uri.parse("geo:${it.latitude},${it.longitude}?q=$address")
-                                            context.startActivity(intent)
-                                        }
-                                    } catch (e: Exception) {
-                                        Timber.e(e, "Could not launch navigation app")
-                                        showSnackbar(SnackbarData(R.string.DASHBOARD_NAVIGATION_ERROR))
-                                    }
-                                }
-                            )
-                        } else {
-                            Empty()
-                        }
-                    }
-
-                    is UiState.Error -> Error()
-                }
-
-                PullRefreshIndicator(
-                    refreshing = viewModel.showPullRefreshIndicator,
-                    state = pullRefreshState,
-                    modifier = Modifier.align(Alignment.TopCenter)
-                )
-
-                if (showLocationPermissionDialog) {
-                    LocationPermissionDialog(
-                        onConfirmation = {
-                            try {
-                                val uri = Uri.fromParts("package", context.packageName, null)
-                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri)
-                                context.startActivity(intent)
-                            } catch (e: Exception) {
-                                Timber.e(e, "Could not launch permission settings")
-                                showLocationPermissionDialog = false
-                                showSnackbar(SnackbarData(R.string.DASHBOARD_PERMISSION_SETTINGS_ERROR))
-                            }
-                        },
-                        onDismiss = {
-                            showLocationPermissionDialog = false
-                        }
-                    )
-                } else if (showLocationDisabledDialog) {
-                    LocationDisabledDialog(
-                        onConfirmation = {
-                            try {
-                                context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-                            } catch (e: Exception) {
-                                Timber.e(e, "Could not launch location settings")
-                                showLocationDisabledDialog = false
-                                showSnackbar(SnackbarData(R.string.DASHBOARD_LOCATION_SETTINGS_ERROR))
-                            }
-                        },
-                        onDismiss = {
-                            showLocationDisabledDialog = false
-                        }
-                    )
+        LaunchedEffect(Unit) {
+            viewModel.showSnackbarError.collect {
+                if (it) {
+                    showSnackbar(SnackbarData(R.string.HOME_LOADING_FAILED_TEXT))
                 }
             }
+        }
+
+        when (val state = uiState) {
+            is UiState.Loading -> Loading()
+            is UiState.Success -> {
+                val gasStations = state.data
+                if (gasStations.isNotEmpty()) {
+                    GasStationList(
+                        gasStations = gasStations,
+                        fuelType = fuelType,
+                        userLocation = userLocation,
+                        onStartFueling = {
+                            AppKit.openFuelingApp(context, it.id)
+                        },
+                        onStartNavigation = {
+                            try {
+                                // If Google Maps is installed, launch navigation directly
+                                val uri = Uri.parse("google.navigation:q=${it.latitude},${it.longitude}")
+                                val mapsIntent = Intent(Intent.ACTION_VIEW, uri).setPackage("com.google.android.apps.maps")
+                                val activities = context.packageManager.queryIntentActivities(mapsIntent, PackageManager.MATCH_DEFAULT_ONLY)
+                                if (activities.size > 0) {
+                                    context.startActivity(mapsIntent)
+                                } else {
+                                    // No Google Maps installed - fallback to regular geo URI
+                                    val intent = Intent(Intent.ACTION_VIEW)
+                                    val address = it.address?.let { address ->
+                                        "${address.street} ${address.houseNumber}, ${address.postalCode} ${address.city}"
+                                    }
+                                    intent.data = Uri.parse("geo:${it.latitude},${it.longitude}?q=$address")
+                                    context.startActivity(intent)
+                                }
+                            } catch (e: Exception) {
+                                Timber.e(e, "Could not launch navigation app")
+                                showSnackbar(SnackbarData(R.string.DASHBOARD_NAVIGATION_ERROR))
+                            }
+                        }
+                    )
+                } else {
+                    Empty()
+                }
+            }
+
+            is UiState.Error -> Error()
+        }
+
+        PullRefreshIndicator(
+            refreshing = viewModel.showPullRefreshIndicator,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
+
+        if (showLocationPermissionDialog) {
+            LocationPermissionDialog(
+                onConfirmation = {
+                    try {
+                        val uri = Uri.fromParts("package", context.packageName, null)
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri)
+                        context.startActivity(intent)
+                    } catch (e: Exception) {
+                        Timber.e(e, "Could not launch permission settings")
+                        showLocationPermissionDialog = false
+                        showSnackbar(SnackbarData(R.string.DASHBOARD_PERMISSION_SETTINGS_ERROR))
+                    }
+                },
+                onDismiss = {
+                    showLocationPermissionDialog = false
+                }
+            )
+        } else if (showLocationDisabledDialog) {
+            LocationDisabledDialog(
+                onConfirmation = {
+                    try {
+                        context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                    } catch (e: Exception) {
+                        Timber.e(e, "Could not launch location settings")
+                        showLocationDisabledDialog = false
+                        showSnackbar(SnackbarData(R.string.DASHBOARD_LOCATION_SETTINGS_ERROR))
+                    }
+                },
+                onDismiss = {
+                    showLocationDisabledDialog = false
+                }
+            )
         }
     }
 }
@@ -481,13 +457,9 @@ fun NoContent(
 
 @Preview
 @Composable
-fun HomePreview() {
+fun HomeScreenPreview() {
     AppTheme {
-        val snackbarHostState = remember { SnackbarHostState() }
-        Home(
-            snackbarHostState = snackbarHostState,
-            showSnackbar = {}
-        )
+        HomeScreen {}
     }
 }
 

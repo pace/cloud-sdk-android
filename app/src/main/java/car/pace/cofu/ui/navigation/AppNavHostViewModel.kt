@@ -1,4 +1,4 @@
-package car.pace.cofu.ui
+package car.pace.cofu.ui.navigation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel
-class AppContentViewModel @Inject constructor(
+class AppNavHostViewModel @Inject constructor(
     private val sharedPreferencesRepository: SharedPreferencesRepository
 ) : ViewModel() {
 

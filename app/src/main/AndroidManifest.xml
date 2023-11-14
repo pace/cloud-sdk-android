@@ -25,7 +25,7 @@
         <meta-data android:name="io.sentry.auto-init" android:value="false" />
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

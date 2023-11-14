@@ -91,4 +91,11 @@
     <string name="PRICE.NOT_AVAILABLE">n. a.</string>
     <string name="SHARE_TITLE">Share</string>
     <string name="currency_format">%2$s%1$s</string>
+    <string name="list_tab_label">List</string>
+    <string name="wallet_tab_label">Wallet</string>
+    <string name="more_tab_label">More</string>
+    <string name="methods_list_item">Methods</string>
+    <string name="transactions_list_item">Transactions</string>
+    <string name="fuel_type_list_item">Fuel type selection</string>
+    <string name="wallet_user_header_text">You are logged in as</string>
 </resources>
