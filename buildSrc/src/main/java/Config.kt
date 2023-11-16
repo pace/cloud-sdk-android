@@ -1,7 +1,9 @@
 data class Config(
     val appName: String,
     val signing: Signing,
-    val sdk: Sdk
+    val sdk: Sdk,
+    val sentry: Sentry,
+    val crashlyticsEnabled: Boolean
 )
 
 data class Signing(
@@ -17,4 +19,9 @@ data class Sdk(
     val redirectUrl: String,
     val redirectScheme: String,
     val uniqueId: String
+)
+
+data class Sentry(
+    val enabled: Boolean,
+    val dsn: String
 )

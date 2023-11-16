@@ -10,6 +10,7 @@ plugins {
     id("androidx.navigation.safeargs.kotlin")
     id("com.google.dagger.hilt.android")
     id("com.google.android.gms.oss-licenses-plugin")
+    id("io.sentry.android.gradle") version "3.14.0"
 }
 
 android {
@@ -45,6 +46,17 @@ android {
         resValue("string", "app_name", configJson.appName)
 
         resourceConfigurations += arrayOf("en", "cs", "de", "es", "fr", "it", "nl", "pl", "pt", "ro", "ru")
+
+        // Setup crash reporting
+        buildConfigField("Boolean", "SENTRY_ENABLED", configJson.sentry.enabled.toString())
+        buildConfigField("String", "SENTRY_DSN", "\"" + configJson.sentry.dsn as? String + "\"")
+
+        val crashlyticsEnabled = configJson.crashlyticsEnabled
+        buildConfigField("Boolean", "FIREBASE_ENABLED", crashlyticsEnabled.toString())
+        if (crashlyticsEnabled) {
+            apply(plugin = "com.google.gms.google-services")
+            apply(plugin = "com.google.firebase.crashlytics")
+        }
     }
 
     buildTypes {
@@ -121,4 +133,8 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     testImplementation("com.google.dagger:hilt-android-testing:2.48.1")
     kaptTest("com.google.dagger:hilt-android-compiler:2.48.1")
+
+    // Crash reporting
+    implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
+    implementation("com.google.firebase:firebase-crashlytics-ktx")
 }
