@@ -79,7 +79,7 @@ fun InputBottomSheet(
                     }
                 )
             )
-            DefaultButton(
+            PrimaryButton(
                 text = buttonText,
                 modifier = Modifier.padding(top = 25.dp),
                 enabled = !loading,

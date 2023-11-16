@@ -5,33 +5,49 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import car.pace.cofu.ui.app.AppState
-import car.pace.cofu.ui.navigation.graph.Destination
+import car.pace.cofu.ui.animation.ScaleTransitionDirection
+import car.pace.cofu.ui.animation.scaleIntoContainer
+import car.pace.cofu.ui.animation.scaleOutOfContainer
+import car.pace.cofu.ui.navigation.graph.Graph
+import car.pace.cofu.ui.navigation.graph.Route
 import car.pace.cofu.ui.navigation.graph.homeGraph
 import car.pace.cofu.ui.navigation.graph.moreGraph
+import car.pace.cofu.ui.navigation.graph.navigate
 import car.pace.cofu.ui.navigation.graph.onboardingGraph
 import car.pace.cofu.ui.navigation.graph.walletGraph
 import car.pace.cofu.util.SnackbarData
 
 @Composable
 fun AppNavHost(
-    appState: AppState,
+    navController: NavHostController,
     modifier: Modifier = Modifier,
     viewModel: AppNavHostViewModel = hiltViewModel(),
     showSnackbar: (SnackbarData) -> Unit
 ) {
-    val navController = appState.navController
     val onboardingDone by viewModel.onboardingDone.collectAsStateWithLifecycle()
 
     NavHost(
         navController = navController,
-        startDestination = if (onboardingDone) Destination.Home.route else Destination.Onboarding.route,
-        modifier = modifier
+        startDestination = if (onboardingDone) Graph.HOME.route else Route.ONBOARDING.route,
+        modifier = modifier,
+        enterTransition = {
+            scaleIntoContainer()
+        },
+        exitTransition = {
+            scaleOutOfContainer(direction = ScaleTransitionDirection.INWARDS)
+        },
+        popEnterTransition = {
+            scaleIntoContainer(direction = ScaleTransitionDirection.OUTWARDS)
+        },
+        popExitTransition = {
+            scaleOutOfContainer()
+        }
     ) {
         onboardingGraph(showSnackbar = showSnackbar) {
             viewModel.onboardingDone()
-            navController.navigate(Destination.Home.route)
+            navController.navigate(Route.HOME)
         }
         homeGraph(showSnackbar = showSnackbar)
         walletGraph {

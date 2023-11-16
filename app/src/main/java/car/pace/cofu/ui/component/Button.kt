@@ -1,13 +1,11 @@
 package car.pace.cofu.ui.component
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -21,7 +19,7 @@ import car.pace.cofu.R
 import car.pace.cofu.ui.theme.AppTheme
 
 @Composable
-fun DefaultButton(
+fun PrimaryButton(
     text: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -31,7 +29,33 @@ fun DefaultButton(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(12.dp),
+        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 8.dp)
+    ) {
+        Text(
+            text = text,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.labelLarge
+        )
+    }
+}
+
+@Composable
+fun SecondaryButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        enabled = enabled,
+        shape = RoundedCornerShape(12.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.onSecondary
+        ),
         contentPadding = PaddingValues(vertical = 16.dp, horizontal = 8.dp)
     ) {
         Text(
@@ -65,34 +89,19 @@ fun DefaultTextButton(
     }
 }
 
+@Preview
 @Composable
-fun DefaultOutlinedButton(
-    text: String,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    onClick: () -> Unit
-) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
-        enabled = enabled,
-        shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
-        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 8.dp)
-    ) {
-        Text(
-            text = text,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.labelLarge
-        )
+fun PrimaryButtonPreview() {
+    AppTheme {
+        PrimaryButton(text = "Start fueling") {}
     }
 }
 
 @Preview
 @Composable
-fun DefaultButtonPreview() {
+fun SecondaryButtonPreview() {
     AppTheme {
-        DefaultButton(text = stringResource(id = R.string.ONBOARDING_ACTIONS_NEXT)) {}
+        SecondaryButton(text = "Start navigation") {}
     }
 }
 
@@ -101,13 +110,5 @@ fun DefaultButtonPreview() {
 fun DefaultTextButtonPreview() {
     AppTheme {
         DefaultTextButton(text = stringResource(id = R.string.ONBOARDING_CREATE_PIN_TITLE)) {}
-    }
-}
-
-@Preview
-@Composable
-fun DefaultOutlinedButtonPreview() {
-    AppTheme {
-        DefaultOutlinedButton(text = stringResource(id = R.string.DASHBOARD_ACTIONS_NAVIGATE)) {}
     }
 }

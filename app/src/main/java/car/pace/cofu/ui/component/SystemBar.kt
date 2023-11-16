@@ -23,31 +23,42 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import car.pace.cofu.R
-import car.pace.cofu.ui.navigation.graph.BottomBarItem
-import car.pace.cofu.ui.navigation.graph.Destination
+import car.pace.cofu.ui.navigation.graph.Graph
+import car.pace.cofu.ui.navigation.graph.Route
 import car.pace.cofu.ui.theme.AppTheme
-import car.pace.cofu.ui.theme.Gray
 
 @Composable
-fun TopBar(currentDestination: String?) {
-    when (currentDestination) {
-        Destination.Onboarding.route, Destination.Home.List.route -> {
+fun TopBar(
+    currentRoute: Route?,
+    onNavigateUp: () -> Unit
+) {
+    when (currentRoute) {
+        Route.ONBOARDING, Route.HOME -> {
             LogoTopBar()
         }
 
-        Destination.Wallet.List.route -> {
+        Route.WALLET, Route.MORE -> {
             TextTopBar(
-                text = stringResource(id = BottomBarItem.WALLET.labelRes),
+                text = currentRoute.graph?.labelRes?.let { stringResource(id = it) }.orEmpty(),
                 backIcon = null
             )
         }
 
-        Destination.More.List.route -> {
+        Route.METHODS, Route.FUEL_TYPE -> {
             TextTopBar(
-                text = stringResource(id = BottomBarItem.MORE.labelRes),
-                backIcon = null
+                text = currentRoute.labelRes?.let { stringResource(id = it) }.orEmpty(),
+                onNavigateUp = onNavigateUp
             )
         }
+
+        Route.TRANSACTIONS -> TODO()
+        Route.DETAIL -> TODO()
+        Route.TERMS -> TODO()
+        Route.PRIVACY -> TODO()
+        Route.CONTACT -> TODO()
+        Route.IMPRINT -> TODO()
+        Route.LIBRARIES -> TODO()
+        null -> {}
     }
 }
 
@@ -70,7 +81,7 @@ fun LogoTopBar() {
 fun TextTopBar(
     text: String,
     backIcon: ImageVector? = Icons.Filled.ArrowBack,
-    onBackPress: () -> Unit = {}
+    onNavigateUp: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         title = {
@@ -83,7 +94,7 @@ fun TextTopBar(
         },
         navigationIcon = {
             if (backIcon != null) {
-                IconButton(onClick = onBackPress) {
+                IconButton(onClick = onNavigateUp) {
                     Icon(
                         imageVector = backIcon,
                         contentDescription = null
@@ -96,17 +107,17 @@ fun TextTopBar(
 
 @Composable
 fun BottomBar(
-    destinations: Array<BottomBarItem>,
-    currentDestination: String?,
-    onNavigateToDestination: (BottomBarItem) -> Unit
+    destinations: Array<Graph>,
+    currentGraph: Graph?,
+    onNavigateToGraph: (Graph) -> Unit
 ) {
     Column {
         Divider()
         NavigationBar(tonalElevation = 0.dp) {
             destinations.forEach {
                 NavigationBarItem(
-                    selected = it.route == currentDestination,
-                    onClick = { onNavigateToDestination(it) },
+                    selected = it == currentGraph,
+                    onClick = { onNavigateToGraph(it) },
                     icon = {
                         Icon(
                             imageVector = it.icon,
@@ -119,9 +130,9 @@ fun BottomBar(
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = MaterialTheme.colorScheme.primary,
                         selectedTextColor = MaterialTheme.colorScheme.primary,
-                        indicatorColor = MaterialTheme.colorScheme.surface,
-                        unselectedIconColor = Gray,
-                        unselectedTextColor = Gray
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 )
             }
@@ -150,9 +161,9 @@ fun TextTopBarPreview() {
 fun BottomBarPreview() {
     AppTheme {
         BottomBar(
-            destinations = BottomBarItem.values(),
-            currentDestination = BottomBarItem.HOME.route,
-            onNavigateToDestination = {}
+            destinations = Graph.values(),
+            currentGraph = Graph.WALLET,
+            onNavigateToGraph = {}
         )
     }
 }

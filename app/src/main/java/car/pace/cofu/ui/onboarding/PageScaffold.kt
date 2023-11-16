@@ -19,8 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import car.pace.cofu.R
-import car.pace.cofu.ui.component.DefaultButton
 import car.pace.cofu.ui.component.Description
+import car.pace.cofu.ui.component.PrimaryButton
 import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.theme.AppTheme
 
@@ -87,7 +87,7 @@ fun PageScaffold(
 
         footerContent()
 
-        DefaultButton(
+        PrimaryButton(
             text = stringResource(id = nextButtonTextRes),
             modifier = Modifier.padding(horizontal = 35.dp),
             enabled = nextButtonEnabled,

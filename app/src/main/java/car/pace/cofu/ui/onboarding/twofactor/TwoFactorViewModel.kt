@@ -120,7 +120,7 @@ class TwoFactorViewModel @Inject constructor(
             is UnknownHostException, is SocketTimeoutException -> {
                 SnackbarData(
                     messageRes = R.string.ONBOARDING_NETWORK_ERROR,
-                    actionLabelRes = R.string.COMMON_RETRY,
+                    actionLabelRes = R.string.common_retry,
                     onActionPerformed = onActionPerformed
                 )
             }

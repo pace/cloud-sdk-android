@@ -37,8 +37,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -54,15 +52,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import car.pace.cofu.R
 import car.pace.cofu.core.util.isLocationEnabled
 import car.pace.cofu.core.util.listenForLocationEnabledChanges
-import car.pace.cofu.ui.component.DefaultButton
 import car.pace.cofu.ui.component.DefaultCircularProgressIndicator
-import car.pace.cofu.ui.component.DefaultOutlinedButton
 import car.pace.cofu.ui.component.Description
+import car.pace.cofu.ui.component.PrimaryButton
+import car.pace.cofu.ui.component.SecondaryButton
 import car.pace.cofu.ui.component.Title
+import car.pace.cofu.ui.component.dropShadow
 import car.pace.cofu.ui.fueltype.FuelType
 import car.pace.cofu.ui.home.dialog.LocationDisabledDialog
 import car.pace.cofu.ui.home.dialog.LocationPermissionDialog
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.util.Constants.GAS_STATION_CONTENT_TYPE
+import car.pace.cofu.util.Constants.NEAREST_GAS_STATION_TITLE_KEY
+import car.pace.cofu.util.Constants.OTHER_GAS_STATIONS_TITLE_KEY
+import car.pace.cofu.util.Constants.TITLE_CONTENT_TYPE
 import car.pace.cofu.util.PermissionUtils
 import car.pace.cofu.util.SnackbarData
 import car.pace.cofu.util.UiState
@@ -78,11 +81,6 @@ import com.google.android.gms.maps.model.LatLng
 import java.util.UUID
 import timber.log.Timber
 
-private const val NEAREST_GAS_STATION_TITLE_KEY = "NearestGasStation"
-private const val OTHER_GAS_STATIONS_TITLE_KEY = "OtherGasStations"
-private const val TITLE_CONTENT_TYPE = "Title"
-private const val GAS_STATION_CONTENT_TYPE = "GasStation"
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
@@ -95,7 +93,9 @@ fun HomeScreen(
     )
 
     Box(
-        modifier = Modifier.pullRefresh(state = pullRefreshState)
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .pullRefresh(state = pullRefreshState)
     ) {
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
@@ -297,7 +297,7 @@ fun GasStationRow(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .shadow(elevation = 8.dp, shape = RoundedCornerShape(8.dp), ambientColor = Color.Black.copy(alpha = 0.2f))
+            .dropShadow()
             .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(8.dp))
             .padding(20.dp)
     ) {
@@ -340,13 +340,14 @@ fun GasStationRow(
             Column(
                 modifier = Modifier
                     .padding(start = 5.dp)
-                    .background(color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(8.dp))
+                    .background(color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(8.dp))
                     .padding(horizontal = 17.dp, vertical = 5.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 fuelType?.let {
                     Text(
                         text = stringResource(id = it.stringRes),
+                        color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.labelMedium
                     )
@@ -361,13 +362,13 @@ fun GasStationRow(
 
         val buttonModifier = Modifier.padding(top = 19.dp)
         if (gasStation.canStartFueling(userLocation)) {
-            DefaultButton(
+            PrimaryButton(
                 text = stringResource(id = R.string.DASHBOARD_ACTIONS_START_FUELING),
                 modifier = buttonModifier,
                 onClick = onStartFueling
             )
         } else {
-            DefaultOutlinedButton(
+            SecondaryButton(
                 text = stringResource(id = R.string.DASHBOARD_ACTIONS_NAVIGATE),
                 modifier = buttonModifier,
                 onClick = onStartNavigation
@@ -398,7 +399,7 @@ fun Empty() {
 fun Error() {
     NoContent(
         isLoading = false,
-        title = stringResource(id = R.string.HOME_LOADING_FAILED),
+        title = stringResource(id = R.string.general_error_title),
         description = stringResource(id = R.string.HOME_LOADING_FAILED_TEXT)
     )
 }

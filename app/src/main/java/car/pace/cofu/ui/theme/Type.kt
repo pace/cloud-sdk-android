@@ -18,6 +18,11 @@ val Typography = Typography(
     ),
     bodyLarge = TextStyle(
         fontSize = 16.sp,
+        fontWeight = FontWeight(510),
+        lineHeight = 22.sp
+    ),
+    bodyMedium = TextStyle(
+        fontSize = 16.sp,
         lineHeight = 22.sp
     ),
     bodySmall = TextStyle(
@@ -25,13 +30,12 @@ val Typography = Typography(
         lineHeight = 22.sp
     ),
     labelLarge = TextStyle(
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Medium,
-        lineHeight = 16.sp
+        fontSize = 16.sp,
+        fontWeight = FontWeight(590),
+        lineHeight = 20.sp
     ),
     labelMedium = TextStyle(
-        fontSize = 12.sp,
-        fontWeight = FontWeight.Medium,
-        lineHeight = 20.sp
+        fontSize = 14.sp,
+        lineHeight = 22.sp
     )
 )

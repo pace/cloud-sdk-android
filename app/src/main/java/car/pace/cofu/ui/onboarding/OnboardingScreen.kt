@@ -103,7 +103,7 @@ fun PageIndicator(modifier: Modifier = Modifier, pageCount: Int, currentPageInde
         horizontalArrangement = Arrangement.Center
     ) {
         repeat(pageCount) {
-            val color = if (currentPageIndex == it) MaterialTheme.colorScheme.onSecondary else MaterialTheme.colorScheme.secondary
+            val color = if (currentPageIndex == it) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
             Box(
                 modifier = Modifier
                     .padding(horizontal = 5.dp)

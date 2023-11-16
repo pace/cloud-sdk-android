@@ -3,7 +3,6 @@
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Deschideți setările</string>
     <string name="ALERT.LOCATION_PERMISSION.DESCRIPTION">Pentru a vă arăta cea mai apropiată benzinărie, avem nevoie de acces la locația dvs. actuală.</string>
     <string name="ALERT.LOCATION_PERMISSION.TITLE">Locația nu a fost publicată</string>
-    <string name="COMMON.RETRY">Încearcă din nou</string>
     <string name="DASHBOARD.ACTIONS.NAVIGATE">RUTĂ DE PORNIRE</string>
     <string name="DASHBOARD.ACTIONS.START_FUELING">COMPLETAȚI AICI</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Nu au fost găsite stații de benzină în apropierea dumneavoastră.</string>
@@ -11,7 +10,6 @@
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Vom căuta cele mai apropiate stații de benzină din zona dumneavoastră. Acest lucru poate dura un moment.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Căutați benzinării...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Setările de locație nu au putut fi deschise. Vă rugăm să activați manual serviciile de localizare în setările sistemului.</string>
-    <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL">CANCELARE</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">ÎNREGISTRARE</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">Datele dumneavoastră sunt stocate în continuare în contul dumneavoastră PACE-ID.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Chiar vreți să vă retrageți?</string>
@@ -25,7 +23,6 @@
     <string name="FUEL_TYPE.SUPER_PLUS">SUPER PLUS</string>
     <string name="FUEL_TYPE_SELECTION">Ce prețuri de combustibil ar trebui să vă arătăm?</string>
     <string name="GLOBAL.ACTIONS.CLOSE">Închideți</string>
-    <string name="HOME.LOADING_FAILED">Încărcarea nu a reușit</string>
     <string name="HOME.LOADING_FAILED_TEXT">Benzinăriile nu au putut fi încărcate. Verifică-ți conexiunea!</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TEXT">În prezent vă găsim. Acest lucru ar putea dura un moment.</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TITLE">Caut locatie...</string>
@@ -34,6 +31,7 @@
     <string name="LOCATION_DIALOG.DISABLED_TITLE">Servicii de localizare dezactivate</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TEXT">Pentru a vă arăta cea mai apropiată benzinărie, avem nevoie de acces la locația dvs. actuală.</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TITLE">Permisiunea de locație nu a fost acordată</string>
+    <string name="MENU.ITEMS.CONTACT">Contactaţi-ne</string>
     <string name="MENU.ITEMS.FUEL_TYPE">Schimbarea tipului de combustibil</string>
     <string name="MENU.ITEMS.IMPRINT">Imprimare</string>
     <string name="MENU.ITEMS.LICENCES">Licențe</string>
@@ -41,7 +39,8 @@
     <string name="MENU.ITEMS.PAYMENT_HISTORY">Afișați istoricul plăților</string>
     <string name="MENU.ITEMS.PAYMENT_METHODS">Editați metodele de plată</string>
     <string name="MENU.ITEMS.PRIVACY">Politica de confidențialitate</string>
-    <string name="MENU.TITLE.PLACEHOLDER">Alimentarea conectată PACE</string>
+    <string name="MENU.ITEMS.TERMS">Termeni de utilizare</string>
+    <string name="MENU.TITLE.PLACEHOLDER">PACE Connected Fueling</string>
     <string name="ONBOARDING.ACTIONS.ADD_PAYMENT_METHOD">CONFIGURAȚI METODA DE PLATĂ</string>
     <string name="ONBOARDING.ACTIONS.AUTHENTICATE">CONECTAȚI-VĂ SAU ÎNREGISTRAȚI-VĂ</string>
     <string name="ONBOARDING.ACTIONS.BACK">ÎNAPOI</string>
@@ -90,5 +89,33 @@
     <string name="ONBOARDING.VERIFY_PIN.TITLE">Confirmați PIN-ul</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Acțiune</string>
+    <string name="common_cancel">Anulează</string>
+    <string name="common_retry">Încearcă din nou</string>
     <string name="currency_format"></string>
+    <string name="fuel_group_diesel">Diesel</string>
+    <string name="fuel_group_petrol">Benzină</string>
+    <string name="fuel_selection_title">Selectarea combustibilului</string>
+    <string name="general_error_title">Încărcarea nu a reușit</string>
+    <string name="list_tab_label">Lista</string>
+    <string name="more_tab_label">Mai mult</string>
+    <string name="payment_method_kind_credit_card">Card de credit</string>
+    <string name="payment_method_kind_creditcard">Card de credit</string>
+    <string name="payment_method_kind_dkv">Card DKV</string>
+    <string name="payment_method_kind_fuel_card">Card de combustibil</string>
+    <string name="payment_method_kind_giropay">giropay</string>
+    <string name="payment_method_kind_googlepay">Google Pay</string>
+    <string name="payment_method_kind_hoyer">HoyerCard</string>
+    <string name="payment_method_kind_paypal">PayPal</string>
+    <string name="payment_method_kind_sepa">Debitul direct SEPA</string>
+    <string name="payment_method_kind_zgm">Card ZGM</string>
+    <string name="payment_methods_add_button">Adăugați</string>
+    <string name="payment_methods_empty_description">Adăugați o metodă de plată sau un card de combustibil pentru a putea începe primul proces de realimentare cu combustibil</string>
+    <string name="payment_methods_empty_title">Nu există metode de plată sau carduri de combustibil</string>
+    <string name="payment_methods_error_description">Metodele de plată și cardurile de combustibil nu au putut fi încărcate. Verificați conexiunea!</string>
+    <string name="payment_methods_loading_description">Vă încărcăm metodele de plată și cardurile de combustibil. Vă rugăm să așteptați un moment.</string>
+    <string name="payment_methods_loading_title">Încărcarea metodelor de plată și a cardurilor de combustibil...</string>
+    <string name="payment_methods_title">Metode de plată și carduri de combustibil</string>
+    <string name="transactions_title">Tranzacții</string>
+    <string name="wallet_header_text">Sunteți autentificat ca</string>
+    <string name="wallet_tab_label">Portofel</string>
 </resources>

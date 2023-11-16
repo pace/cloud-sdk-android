@@ -10,17 +10,19 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 
 val LightColors = lightColorScheme(
-    primary = PACEBlue,
-    onPrimary = Color.White,
-    secondary = Gray,
-    onSecondary = Color.Black,
-    background = Color.White,
-    onBackground = Color.Black,
-    surface = Color.White,
-    onSurface = Color.Black,
-    surfaceVariant = Gray.copy(alpha = 0.2f),
+    primary = Primary,
+    onPrimary = OnPrimary,
+    primaryContainer = Surface,
+    secondary = Secondary,
+    onSecondary = Primary,
+    background = Surface,
+    onBackground = OnSurface,
+    surface = Surface,
+    onSurface = OnSurface,
+    surfaceVariant = Secondary,
+    onSurfaceVariant = OnSurfaceVariant,
     error = Error,
-    outlineVariant = LightGray
+    outlineVariant = Secondary
 )
 
 @Composable
@@ -40,16 +42,16 @@ private object AppRippleTheme : RippleTheme {
 
     @Composable
     override fun defaultColor(): Color {
-        return MaterialTheme.colorScheme.primary
+        return MaterialTheme.colorScheme.onPrimary
     }
 
     @Composable
     override fun rippleAlpha(): RippleAlpha {
         return RippleAlpha(
-            pressedAlpha = 0.34f,
-            focusedAlpha = 0.34f,
-            draggedAlpha = 0.2f,
-            hoveredAlpha = 0.1f
+            pressedAlpha = 0.24f,
+            focusedAlpha = 0.24f,
+            draggedAlpha = 0.16f,
+            hoveredAlpha = 0.08f
         )
     }
 }

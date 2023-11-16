@@ -28,14 +28,17 @@ fun AppContent() {
 
         Scaffold(
             topBar = {
-                TopBar(appState.currentDestination?.route)
+                TopBar(
+                    currentRoute = appState.currentRoute,
+                    onNavigateUp = appState::navigateUp
+                )
             },
             bottomBar = {
                 if (appState.shouldShowBottomBar) {
                     BottomBar(
                         destinations = appState.bottomBarItems,
-                        currentDestination = appState.currentDestination?.route,
-                        onNavigateToDestination = appState::navigateToBottomBarItem
+                        currentGraph = appState.currentGraph,
+                        onNavigateToGraph = appState::navigateToGraph
                     )
                 }
             },
@@ -47,7 +50,7 @@ fun AppContent() {
             val coroutineScope = rememberCoroutineScope()
 
             AppNavHost(
-                appState = appState,
+                navController = appState.navController,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)

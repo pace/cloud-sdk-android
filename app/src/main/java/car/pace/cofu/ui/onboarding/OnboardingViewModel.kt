@@ -43,7 +43,7 @@ class OnboardingViewModel @Inject constructor(
             }
 
             OnboardingPage.PAYMENT_METHOD -> {
-                val hasPaymentMethods = !paymentMethodRepository.getPaymentMethods().getOrNull().isNullOrEmpty()
+                val hasPaymentMethods = !paymentMethodRepository.getPaymentMethods(true)?.getOrNull().isNullOrEmpty()
                 if (hasPaymentMethods) {
                     return true
                 }

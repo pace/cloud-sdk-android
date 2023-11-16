@@ -3,7 +3,6 @@
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Open instellingen</string>
     <string name="ALERT.LOCATION_PERMISSION.DESCRIPTION">Om u het dichtstbijzijnde tankstation te tonen, hebben we toegang nodig tot uw huidige locatie.</string>
     <string name="ALERT.LOCATION_PERMISSION.TITLE">Locatie niet vrijgegeven</string>
-    <string name="COMMON.RETRY">Probeer het nog eens</string>
     <string name="DASHBOARD.ACTIONS.NAVIGATE">START ROUTE</string>
     <string name="DASHBOARD.ACTIONS.START_FUELING">VUL HIER IN</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Er werden geen benzinestations in uw buurt gevonden.</string>
@@ -11,7 +10,6 @@
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Wij zoeken de dichtstbijzijnde benzinestations in uw buurt. Dit kan even duren.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Zoek benzinestations...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">De locatie-instellingen konden niet worden geopend. Activeer de locatiediensten handmatig in de systeeminstellingen.</string>
-    <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL">CANCEL</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">REGISTER</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">Uw gegevens worden nog steeds opgeslagen in uw PACE-ID account.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Wil je je echt afmelden?</string>
@@ -25,7 +23,6 @@
     <string name="FUEL_TYPE.SUPER_PLUS">SUPER PLUS</string>
     <string name="FUEL_TYPE_SELECTION">Welke brandstofprijzen moeten we u laten zien?</string>
     <string name="GLOBAL.ACTIONS.CLOSE">Sluiten</string>
-    <string name="HOME.LOADING_FAILED">Laden mislukt</string>
     <string name="HOME.LOADING_FAILED_TEXT">Benzinestations konden niet worden geladen. Controleer uw verbinding!</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TEXT">We zijn u momenteel aan het lokaliseren. Dit kan even duren.</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TITLE">Op zoek naar locatie…</string>
@@ -34,6 +31,7 @@
     <string name="LOCATION_DIALOG.DISABLED_TITLE">Locatieservices uitgeschakeld</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TEXT">Om u het dichtstbijzijnde tankstation te kunnen tonen, hebben wij toegang tot uw huidige locatie nodig.</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TITLE">Locatietoestemming niet verleend</string>
+    <string name="MENU.ITEMS.CONTACT">Neem contact met ons op</string>
     <string name="MENU.ITEMS.FUEL_TYPE">Brandstofsoort wijzigen</string>
     <string name="MENU.ITEMS.IMPRINT">Afdruk</string>
     <string name="MENU.ITEMS.LICENCES">Licenties</string>
@@ -41,7 +39,8 @@
     <string name="MENU.ITEMS.PAYMENT_HISTORY">Betalingsgeschiedenis tonen</string>
     <string name="MENU.ITEMS.PAYMENT_METHODS">Betaalmethoden wijzigen</string>
     <string name="MENU.ITEMS.PRIVACY">Privacybeleid</string>
-    <string name="MENU.TITLE.PLACEHOLDER">PACE aangesloten tanken</string>
+    <string name="MENU.ITEMS.TERMS">Gebruiksvoorwaarden</string>
+    <string name="MENU.TITLE.PLACEHOLDER">PACE Connected Fueling</string>
     <string name="ONBOARDING.ACTIONS.ADD_PAYMENT_METHOD">BETAALMETHODE INSTELLEN</string>
     <string name="ONBOARDING.ACTIONS.AUTHENTICATE">LOG IN OF REGISTREER</string>
     <string name="ONBOARDING.ACTIONS.BACK">RUG</string>
@@ -90,5 +89,33 @@
     <string name="ONBOARDING.VERIFY_PIN.TITLE">Bevestig PIN</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Deel</string>
+    <string name="common_cancel">Annuleren</string>
+    <string name="common_retry">Probeer het nog eens.</string>
     <string name="currency_format"></string>
+    <string name="fuel_group_diesel">Diesel</string>
+    <string name="fuel_group_petrol">Benzine</string>
+    <string name="fuel_selection_title">Brandstof selecteren</string>
+    <string name="general_error_title">Laden mislukt</string>
+    <string name="list_tab_label">Lijst</string>
+    <string name="more_tab_label">Meer</string>
+    <string name="payment_method_kind_credit_card">Creditcard</string>
+    <string name="payment_method_kind_creditcard">Creditcard</string>
+    <string name="payment_method_kind_dkv">DKV Card</string>
+    <string name="payment_method_kind_fuel_card">Tankkaart</string>
+    <string name="payment_method_kind_giropay">giropay</string>
+    <string name="payment_method_kind_googlepay">Google Pay</string>
+    <string name="payment_method_kind_hoyer">HoyerCard</string>
+    <string name="payment_method_kind_paypal">PayPal</string>
+    <string name="payment_method_kind_sepa">SEPA-incasso</string>
+    <string name="payment_method_kind_zgm">ZGM Card</string>
+    <string name="payment_methods_add_button">Toevoegen</string>
+    <string name="payment_methods_empty_description">Voeg een betaalmethode of tankkaart toe zodat u uw eerste tankbeurt kunt beginnen</string>
+    <string name="payment_methods_empty_title">Geen betaalmethoden of tankkaarten</string>
+    <string name="payment_methods_error_description">Je betaalmethoden en tankkaarten konden niet worden geladen. Controleer uw verbinding!</string>
+    <string name="payment_methods_loading_description">We laden je betaalmethoden en tankkaarten. Een ogenblik geduld alstublieft.</string>
+    <string name="payment_methods_loading_title">Betaalmethoden en tankkaarten laden...</string>
+    <string name="payment_methods_title">Betaalmethoden &amp; tankkaarten</string>
+    <string name="transactions_title">Transacties</string>
+    <string name="wallet_header_text">U bent aangemeld als</string>
+    <string name="wallet_tab_label">Portemonnee</string>
 </resources>

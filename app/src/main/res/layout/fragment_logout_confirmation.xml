@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_marginBottom="@dimen/tiny_padding"
                 android:onClick="@{()->viewModel.cancel()}"
-                android:text="@string/DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL" />
+                android:text="@string/common_cancel" />
 
         </LinearLayout>
 

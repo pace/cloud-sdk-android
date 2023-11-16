@@ -1,5 +1,6 @@
 package car.pace.cofu.ui.wallet
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -13,49 +14,56 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.LocalGasStation
-import androidx.compose.material.icons.outlined.ReceiptLong
+import androidx.compose.material.icons.outlined.Logout
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import car.pace.cofu.R
-import car.pace.cofu.ui.component.DEFAULT_LIST_ITEM_CONTENT_TYPE
 import car.pace.cofu.ui.component.DefaultListItem
-import car.pace.cofu.ui.component.ListItem
+import car.pace.cofu.ui.component.Description
+import car.pace.cofu.ui.component.PrimaryButton
+import car.pace.cofu.ui.component.SecondaryButton
+import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.component.dropShadow
-import car.pace.cofu.ui.navigation.graph.Destination
+import car.pace.cofu.ui.navigation.graph.Route
+import car.pace.cofu.ui.onboarding.twofactor.biometric.findActivity
 import car.pace.cofu.ui.theme.AppTheme
-import car.pace.cofu.ui.theme.DarkGray
-import car.pace.cofu.ui.theme.Gray
-import car.pace.cofu.ui.theme.LightGray
-
-private const val USER_HEADER_KEY = "UserHeader"
-private const val USER_HEADER_CONTENT_TYPE = "UserHeader"
-private const val SPACER_KEY = "Spacer"
-private const val SPACER_CONTENT_TYPE = "Spacer"
+import car.pace.cofu.util.Constants.DEFAULT_LIST_ITEM_CONTENT_TYPE
+import car.pace.cofu.util.Constants.SPACER_CONTENT_TYPE
+import car.pace.cofu.util.Constants.SPACER_KEY
+import car.pace.cofu.util.Constants.USER_HEADER_CONTENT_TYPE
+import car.pace.cofu.util.Constants.USER_HEADER_KEY
+import car.pace.cofu.util.JWTUtils
+import cloud.pace.sdk.appkit.AppKit
+import cloud.pace.sdk.idkit.IDKit
+import kotlinx.coroutines.launch
 
 @Composable
 fun WalletScreen(
-    onNavigate: (String) -> Unit
+    viewModel: WalletViewModel = hiltViewModel(),
+    onNavigate: (Route) -> Unit
 ) {
     val items = remember {
-        listOf(
-            ListItem(Destination.Wallet.Methods.route, Icons.Outlined.AccountBalanceWallet, R.string.methods_list_item),
-            ListItem(Destination.Wallet.Transactions.route, Icons.Outlined.ReceiptLong, R.string.transactions_list_item),
-            ListItem(Destination.Wallet.FuelType.route, Icons.Outlined.LocalGasStation, R.string.fuel_type_list_item)
-        )
+        listOf(Route.METHODS, Route.TRANSACTIONS, Route.FUEL_TYPE)
+    }
+    val email = remember {
+        JWTUtils.getUserEMailFromToken(IDKit.cachedToken()).orEmpty()
     }
 
     LazyColumn(
@@ -65,8 +73,17 @@ fun WalletScreen(
             key = USER_HEADER_KEY,
             contentType = USER_HEADER_CONTENT_TYPE
         ) {
-            // TODO: email
-            UserHeader(email = "melissa@pace.car")
+            val coroutineScope = rememberCoroutineScope()
+            val context = LocalContext.current
+
+            UserHeader(email = email) {
+                coroutineScope.launch {
+                    val activity = context.findActivity<AppCompatActivity>()
+                    IDKit.endSession(activity)
+                    viewModel.resetAppData()
+                    onNavigate(Route.ONBOARDING)
+                }
+            }
         }
 
         item(
@@ -78,31 +95,42 @@ fun WalletScreen(
 
         items(
             items = items,
-            key = ListItem::id,
+            key = Route::route,
             contentType = { DEFAULT_LIST_ITEM_CONTENT_TYPE }
         ) {
+            val context = LocalContext.current
+
             DefaultListItem(
                 modifier = Modifier.clickable(
                     role = Role.Button,
-                    onClick = { onNavigate(it.id) }
+                    onClick = {
+                        if (it == Route.TRANSACTIONS) {
+                            AppKit.openTransactions(context)
+                        } else {
+                            onNavigate(it)
+                        }
+                    }
                 ),
                 icon = it.icon,
-                text = stringResource(id = it.textRes)
+                text = it.labelRes?.let { res -> stringResource(id = res) }.orEmpty()
             )
         }
     }
 }
 
 @Composable
-fun UserHeader(email: String) {
+fun UserHeader(
+    email: String,
+    modifier: Modifier = Modifier,
+    onLogout: () -> Unit
+) {
+    var openDialog by remember { mutableStateOf(false) }
+
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .dropShadow(
-                color = Color.Gray.copy(alpha = 0.3f),
-                blurRadius = 10.dp
-            )
-            .background(color = MaterialTheme.colorScheme.background, shape = RoundedCornerShape(12.dp))
+            .dropShadow()
+            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp))
             .padding(15.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -110,42 +138,90 @@ fun UserHeader(email: String) {
             imageVector = Icons.Outlined.AccountCircle,
             contentDescription = null,
             modifier = Modifier.size(40.dp),
-            tint = LightGray
+            tint = MaterialTheme.colorScheme.secondary
         )
 
         Column(
             modifier = Modifier.padding(start = 12.dp)
         ) {
             Text(
-                text = stringResource(id = R.string.wallet_user_header_text),
-                color = Gray,
+                text = stringResource(id = R.string.wallet_header_text),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
                 text = email,
-                modifier = Modifier.padding(top = 2.dp),
-                color = DarkGray,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight(510)
-                )
+                modifier = Modifier.padding(top = 3.dp),
+                color = MaterialTheme.colorScheme.onPrimary,
+                style = MaterialTheme.typography.bodyLarge
             )
             Text(
                 text = stringResource(id = R.string.MENU_ITEMS_LOGOUT),
                 modifier = Modifier
                     .clickable(
                         onClickLabel = stringResource(id = R.string.MENU_ITEMS_LOGOUT),
-                        role = Role.Button
-                    ) {
-                        // TODO: logout
-                    }
-                    .padding(top = 2.dp),
+                        role = Role.Button,
+                        onClick = { openDialog = true }
+                    )
+                    .padding(top = 3.dp),
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight(510)
-                )
+                style = MaterialTheme.typography.bodyLarge
             )
         }
     }
+
+    if (openDialog) {
+        LogoutDialog(
+            onLogout = {
+                openDialog = false
+                onLogout()
+            },
+            onDismiss = {
+                openDialog = false
+            }
+        )
+    }
+}
+
+@Composable
+fun LogoutDialog(
+    onLogout: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            PrimaryButton(
+                text = stringResource(id = R.string.MENU_ITEMS_LOGOUT),
+                onClick = onLogout
+            )
+        },
+        dismissButton = {
+            SecondaryButton(
+                text = stringResource(id = R.string.common_cancel),
+                onClick = onDismiss
+            )
+        },
+        icon = {
+            Icon(
+                imageVector = Icons.Outlined.Logout,
+                contentDescription = null,
+                modifier = Modifier.size(40.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        },
+        title = {
+            Title(
+                text = stringResource(id = R.string.DASHBOARD_LOGOUT_CONFIRM_TITLE)
+            )
+        },
+        text = {
+            Description(
+                text = stringResource(id = R.string.DASHBOARD_LOGOUT_CONFIRM_DESCRIPTION)
+            )
+        },
+        tonalElevation = 0.dp
+    )
 }
 
 @Preview
@@ -160,6 +236,21 @@ fun WalletScreenPreview() {
 @Composable
 fun UserHeaderPreview() {
     AppTheme {
-        UserHeader(email = "user@pace.car")
+        UserHeader(
+            email = "user@pace.car",
+            modifier = Modifier.padding(20.dp),
+            onLogout = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun LogoutDialogPreview() {
+    AppTheme {
+        LogoutDialog(
+            onLogout = {},
+            onDismiss = {}
+        )
     }
 }

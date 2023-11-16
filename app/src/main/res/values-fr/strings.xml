@@ -3,7 +3,6 @@
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Ouvrir les paramètres</string>
     <string name="ALERT.LOCATION_PERMISSION.DESCRIPTION">Pour pouvoir t\'indiquer la station-service la plus proche, nous devons avoir accès à ta position actuelle.</string>
     <string name="ALERT.LOCATION_PERMISSION.TITLE">Site non validé</string>
-    <string name="COMMON.RETRY">Essayer à nouveau</string>
     <string name="DASHBOARD.ACTIONS.NAVIGATE">DÉMARRER UNE ROUTE</string>
     <string name="DASHBOARD.ACTIONS.START_FUELING">FAIRE LE PLEIN ICI</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Aucune station-service n\'a été trouvée près de chez toi.</string>
@@ -11,7 +10,6 @@
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Nous recherchons les stations-service les plus proches de chez toi. Cela peut prendre un certain temps.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Recherche stations-service...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Les paramètres de localisation n\'ont pas pu être ouverts. Veuillez activer les services de localisation manuellement dans les paramètres du système.</string>
-    <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL">ANNULER</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">S\'INSCRIRE</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">Tes données sont toujours enregistrées dans ton compte PACE-ID.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Tu veux vraiment te désinscrire ?</string>
@@ -25,7 +23,6 @@
     <string name="FUEL_TYPE.SUPER_PLUS">SUPER PLUS</string>
     <string name="FUEL_TYPE_SELECTION">Quels prix du carburant devrions-nous vous montrer ?</string>
     <string name="GLOBAL.ACTIONS.CLOSE">Fermer</string>
-    <string name="HOME.LOADING_FAILED">Le chargement a échoué</string>
     <string name="HOME.LOADING_FAILED_TEXT">Les stations-service n\'ont pas pu être chargées. Vérifiez votre connexion !</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TEXT">Nous vous localisons actuellement. Cela peut prendre un moment.</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TITLE">Vous cherchez un emplacement…</string>
@@ -34,6 +31,7 @@
     <string name="LOCATION_DIALOG.DISABLED_TITLE">Services de localisation désactivés</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TEXT">Pour vous montrer la station-service la plus proche, nous avons besoin d\'accéder à votre position actuelle.</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TITLE">Autorisation de localisation non accordée</string>
+    <string name="MENU.ITEMS.CONTACT">Contactez-nous</string>
     <string name="MENU.ITEMS.FUEL_TYPE">Modifier le type de carburant</string>
     <string name="MENU.ITEMS.IMPRINT">Mentions légales</string>
     <string name="MENU.ITEMS.LICENCES">Licences</string>
@@ -41,7 +39,8 @@
     <string name="MENU.ITEMS.PAYMENT_HISTORY">Afficher l\'historique des paiements</string>
     <string name="MENU.ITEMS.PAYMENT_METHODS">Traiter les modes de paiement</string>
     <string name="MENU.ITEMS.PRIVACY">Déclaration de confidentialité</string>
-    <string name="MENU.TITLE.PLACEHOLDER">PACE Carburant connecté</string>
+    <string name="MENU.ITEMS.TERMS">Conditions d\'utilisation</string>
+    <string name="MENU.TITLE.PLACEHOLDER">PACE Connected Fueling</string>
     <string name="ONBOARDING.ACTIONS.ADD_PAYMENT_METHOD">METTRE EN PLACE UN MODE DE PAIEMENT</string>
     <string name="ONBOARDING.ACTIONS.AUTHENTICATE">SE CONNECTER OU S\'INSCRIRE</string>
     <string name="ONBOARDING.ACTIONS.BACK">DOS</string>
@@ -90,5 +89,33 @@
     <string name="ONBOARDING.VERIFY_PIN.TITLE">Confirmer le code PIN</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Partager</string>
+    <string name="common_cancel">Annuler</string>
+    <string name="common_retry">Essayer à nouveau</string>
     <string name="currency_format">%2$s%1$s</string>
+    <string name="fuel_group_diesel">Diesel</string>
+    <string name="fuel_group_petrol">Essence</string>
+    <string name="fuel_selection_title">Sélection du carburant</string>
+    <string name="general_error_title">Le chargement a échoué</string>
+    <string name="list_tab_label">Liste</string>
+    <string name="more_tab_label">Plus</string>
+    <string name="payment_method_kind_credit_card">Carte de crédit</string>
+    <string name="payment_method_kind_creditcard">Carte de crédit</string>
+    <string name="payment_method_kind_dkv">Carte DKV</string>
+    <string name="payment_method_kind_fuel_card">Carte de carburant</string>
+    <string name="payment_method_kind_giropay">giropay</string>
+    <string name="payment_method_kind_googlepay">Google Pay</string>
+    <string name="payment_method_kind_hoyer">Carte Hoyer</string>
+    <string name="payment_method_kind_paypal">PayPal</string>
+    <string name="payment_method_kind_sepa">Prélèvement SEPA</string>
+    <string name="payment_method_kind_zgm">Carte ZGM</string>
+    <string name="payment_methods_add_button">Ajouter</string>
+    <string name="payment_methods_empty_description">Ajoutez une méthode de paiement ou une carte de carburant afin de pouvoir commencer votre première opération de ravitaillement.</string>
+    <string name="payment_methods_empty_title">Pas de moyens de paiement ni de cartes de carburant</string>
+    <string name="payment_methods_error_description">Vos moyens de paiement et cartes de carburant n\'ont pas pu être chargés. Vérifiez votre connexion !</string>
+    <string name="payment_methods_loading_description">Nous chargeons vos moyens de paiement et vos cartes de carburant. Veuillez patienter un moment.</string>
+    <string name="payment_methods_loading_title">Chargement des moyens de paiement et des cartes de carburant...</string>
+    <string name="payment_methods_title">Méthodes de paiement &amp; cartes de carburant</string>
+    <string name="transactions_title">Transactions</string>
+    <string name="wallet_header_text">Vous êtes connecté en tant que</string>
+    <string name="wallet_tab_label">Portefeuille</string>
 </resources>

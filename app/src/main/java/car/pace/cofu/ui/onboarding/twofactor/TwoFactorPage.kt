@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import car.pace.cofu.R
 import car.pace.cofu.ui.component.DefaultCircularProgressIndicator
-import car.pace.cofu.ui.component.DefaultTextButton
+import car.pace.cofu.ui.component.SecondaryButton
 import car.pace.cofu.ui.onboarding.PageScaffold
 import car.pace.cofu.ui.onboarding.twofactor.biometric.BiometricSetupDialog
 import car.pace.cofu.ui.onboarding.twofactor.biometric.rememberBiometricManager
@@ -99,9 +99,9 @@ fun TwoFactorPage(
         },
         footerContent = {
             if (canAuthenticate) {
-                DefaultTextButton(
+                SecondaryButton(
                     text = stringResource(id = R.string.ONBOARDING_TWO_FACTOR_AUTHENTICATION_PIN).uppercase(),
-                    modifier = Modifier.padding(bottom = 10.dp),
+                    modifier = Modifier.padding(start = 35.dp, end = 35.dp, bottom = 10.dp),
                     enabled = !viewModel.loading,
                     onClick = viewModel::isPinSet
                 )

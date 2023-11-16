@@ -9,12 +9,13 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import car.pace.cofu.ui.theme.OnSurfaceVariant
 
 fun Modifier.dropShadow(
-    color: Color = Color.Black,
+    color: Color = OnSurfaceVariant.copy(alpha = 0.3f),
     offsetX: Dp = 0.dp,
     offsetY: Dp = 0.dp,
-    blurRadius: Dp = 0.dp
+    blurRadius: Dp = 10.dp
 ) = then(
     drawBehind {
         drawIntoCanvas { canvas ->

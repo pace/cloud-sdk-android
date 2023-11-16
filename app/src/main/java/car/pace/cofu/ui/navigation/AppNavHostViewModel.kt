@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_ONBOARDING_DONE
+import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,7 +20,7 @@ class AppNavHostViewModel @Inject constructor(
         .getValue(PREF_KEY_ONBOARDING_DONE, initialValue)
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
+            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
             initialValue = initialValue
         )
 

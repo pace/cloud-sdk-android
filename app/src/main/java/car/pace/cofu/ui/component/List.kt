@@ -1,6 +1,5 @@
 package car.pace.cofu.ui.component
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,52 +16,45 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import car.pace.cofu.ui.theme.AppTheme
-import car.pace.cofu.ui.theme.Gray
-
-const val DEFAULT_LIST_ITEM_CONTENT_TYPE = "DefaultListItem"
-
-data class ListItem(
-    val id: String,
-    val icon: ImageVector,
-    @StringRes val textRes: Int
-)
 
 @Composable
 fun DefaultListItem(
     modifier: Modifier = Modifier,
-    icon: ImageVector,
+    icon: ImageVector?,
     text: String
 ) {
-    Column {
+    Column(
+        modifier = modifier
+    ) {
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 15.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-                tint = Gray
-            )
+            if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
             Text(
                 text = text,
                 modifier = Modifier
                     .padding(start = 12.dp)
                     .weight(1f),
+                color = MaterialTheme.colorScheme.onPrimary,
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight(510)
-                )
+                style = MaterialTheme.typography.bodyLarge
             )
             Icon(
                 imageVector = Icons.Outlined.ArrowForwardIos,
@@ -70,7 +62,7 @@ fun DefaultListItem(
                 modifier = Modifier
                     .padding(start = 12.dp)
                     .size(16.dp),
-                tint = Gray
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         Divider()

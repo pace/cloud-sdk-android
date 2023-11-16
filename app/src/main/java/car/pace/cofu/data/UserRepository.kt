@@ -7,8 +7,10 @@ import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
 import cloud.pace.sdk.utils.resumeIfActive
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.suspendCancellableCoroutine
 
+@Singleton
 class UserRepository @Inject constructor() {
 
     fun isAuthorizationValid() = IDKit.isAuthorizationValid()
