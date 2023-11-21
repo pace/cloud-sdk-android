@@ -41,7 +41,7 @@ enum class Route(
 ) {
     ONBOARDING("onboarding_route", null, false),
     HOME("home_route", Graph.HOME, true),
-    DETAIL("detail_route/{id}", null, false),
+    DETAIL("detail_route", null, false),
     WALLET("wallet_route", Graph.WALLET, true),
     METHODS("methods_route", Graph.WALLET, true, Icons.Outlined.AccountBalanceWallet, R.string.payment_methods_title),
     TRANSACTIONS("transactions_route", Graph.WALLET, false, Icons.Outlined.ReceiptLong, R.string.transactions_title),
@@ -54,8 +54,11 @@ enum class Route(
     LIBRARIES("libraries_route", Graph.MORE, false);
 
     companion object {
-        private val map = Route.values().associateBy(Route::route)
 
-        fun fromRoute(route: String?) = map[route]
+        fun fromRoute(route: String?): Route? {
+            return route?.let { value ->
+                Route.values().find { value.contains(it.route) }
+            }
+        }
     }
 }

@@ -49,7 +49,9 @@ fun AppNavHost(
             viewModel.onboardingDone()
             navController.navigate(Route.HOME)
         }
-        homeGraph(showSnackbar = showSnackbar)
+        homeGraph(showSnackbar = showSnackbar) {
+            navController.navigate(it)
+        }
         walletGraph {
             navController.navigate(it)
         }

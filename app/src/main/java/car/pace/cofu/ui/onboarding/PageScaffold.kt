@@ -101,9 +101,9 @@ fun PageScaffoldPreview() {
     AppTheme {
         PageScaffold(
             imageRes = R.drawable.ic_location,
-            titleRes = R.string.ONBOARDING_PERMISSION_TITLE,
-            descriptionRes = R.string.ONBOARDING_PERMISSION_DESCRIPTION,
-            nextButtonTextRes = R.string.ONBOARDING_ACTIONS_SHARE_LOCATION,
+            titleRes = R.string.onboarding_permission_title,
+            descriptionRes = R.string.onboarding_permission_description,
+            nextButtonTextRes = R.string.onboarding_permission_action,
             onNextButtonClick = {}
         )
     }

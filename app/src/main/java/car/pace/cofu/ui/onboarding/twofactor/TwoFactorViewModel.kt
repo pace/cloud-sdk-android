@@ -62,7 +62,7 @@ class TwoFactorViewModel @Inject constructor(
     }
 
     fun onBiometricPromptError(errString: CharSequence) {
-        showSnackbar(generalMessageRes = R.string.ONBOARDING_FINGERPRINT_ERROR, generalMessageFormatArgs = arrayOf(errString))
+        showSnackbar(generalMessageRes = R.string.onboarding_fingerprint_error, generalMessageFormatArgs = arrayOf(errString))
     }
 
     fun isPinSet() {
@@ -100,15 +100,15 @@ class TwoFactorViewModel @Inject constructor(
 
     fun showSnackbar(
         throwable: Throwable? = null,
-        @StringRes generalMessageRes: Int = R.string.ONBOARDING_UNKNOWN_ERROR,
+        @StringRes generalMessageRes: Int = R.string.common_use_unknown_error,
         vararg generalMessageFormatArgs: Any? = emptyArray(),
         onActionPerformed: () -> Unit = {}
     ) {
         _snackbar.value = when (throwable) {
             is InvalidSession -> {
                 SnackbarData(
-                    messageRes = R.string.ONBOARDING_INVALID_SESSION,
-                    actionLabelRes = R.string.ONBOARDING_RETRY_LOGIN,
+                    messageRes = R.string.onboarding_invalid_session,
+                    actionLabelRes = R.string.onboarding_retry_login,
                     onActionPerformed = {
                         viewModelScope.launch {
                             _navigateToAuthorization.emit(Unit)
@@ -119,8 +119,8 @@ class TwoFactorViewModel @Inject constructor(
 
             is UnknownHostException, is SocketTimeoutException -> {
                 SnackbarData(
-                    messageRes = R.string.ONBOARDING_NETWORK_ERROR,
-                    actionLabelRes = R.string.common_retry,
+                    messageRes = R.string.common_use_network_error,
+                    actionLabelRes = R.string.common_use_retry,
                     onActionPerformed = onActionPerformed
                 )
             }

@@ -108,7 +108,7 @@ fun PaymentMethodsScreen(
                 ErrorCard(
                     title = stringResource(id = R.string.general_error_title),
                     description = stringResource(id = R.string.payment_methods_error_description),
-                    buttonText = stringResource(id = R.string.common_retry),
+                    buttonText = stringResource(id = R.string.common_use_retry),
                     onButtonClick = viewModel::refresh
                 )
             }

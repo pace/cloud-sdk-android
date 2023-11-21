@@ -85,14 +85,14 @@ fun TwoFactorPage(
 
     PageScaffold(
         imageRes = R.drawable.ic_scan,
-        titleRes = R.string.ONBOARDING_TWO_FACTOR_AUTHENTICATION_TITLE,
-        descriptionRes = R.string.ONBOARDING_TWO_FACTOR_AUTHENTICATION_DESCRIPTION,
-        nextButtonTextRes = if (canAuthenticate) R.string.ONBOARDING_TWO_FACTOR_AUTHENTICATION_BIOMETRY else R.string.ONBOARDING_TWO_FACTOR_AUTHENTICATION_PIN,
+        titleRes = R.string.onboarding_two_factor_authentication_title,
+        descriptionRes = R.string.onboarding_two_factor_authentication_description,
+        nextButtonTextRes = if (canAuthenticate) R.string.onboarding_two_factor_authentication_biometry else R.string.onboarding_two_factor_authentication_pin,
         nextButtonEnabled = !viewModel.loading,
         onNextButtonClick = {
             val info = BiometricPrompt.PromptInfo.Builder()
-                .setTitle(context.getString(R.string.ONBOARDING_AUTHORIZATION_REQUEST_FINGERPRINT))
-                .setNegativeButtonText(context.getString(R.string.ONBOARDING_ACTIONS_BACK))
+                .setTitle(context.getString(R.string.onboarding_authorization_request_fingerprint))
+                .setNegativeButtonText(context.getString(R.string.common_use_back))
                 .build()
 
             biometricPrompt.authenticate(info)
@@ -100,7 +100,7 @@ fun TwoFactorPage(
         footerContent = {
             if (canAuthenticate) {
                 SecondaryButton(
-                    text = stringResource(id = R.string.ONBOARDING_TWO_FACTOR_AUTHENTICATION_PIN).uppercase(),
+                    text = stringResource(id = R.string.onboarding_two_factor_authentication_pin).uppercase(),
                     modifier = Modifier.padding(start = 35.dp, end = 35.dp, bottom = 10.dp),
                     enabled = !viewModel.loading,
                     onClick = viewModel::isPinSet
@@ -138,7 +138,7 @@ fun TwoFactorPage(
                         context.startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS))
                     } catch (e: Exception) {
                         Timber.e(e, "Could not launch biometry setup settings")
-                        viewModel.showSnackbar(e, R.string.ONBOARDING_FINGERPRINT_SETUP_ERROR)
+                        viewModel.showSnackbar(e, R.string.onboarding_fingerprint_setup_error)
                     }
                 }
             },

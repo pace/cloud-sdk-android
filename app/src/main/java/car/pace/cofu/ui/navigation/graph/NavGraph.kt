@@ -8,6 +8,7 @@ import androidx.navigation.Navigator
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import car.pace.cofu.ui.detail.DetailScreen
 import car.pace.cofu.ui.home.HomeScreen
 import car.pace.cofu.ui.more.MoreScreen
 import car.pace.cofu.ui.onboarding.OnboardingScreen
@@ -29,23 +30,27 @@ fun NavGraphBuilder.onboardingGraph(
 }
 
 fun NavGraphBuilder.homeGraph(
-    showSnackbar: (SnackbarData) -> Unit
+    showSnackbar: (SnackbarData) -> Unit,
+    onNavigate: (String) -> Unit
 ) {
     navigation(
         startDestination = Route.HOME.route,
         route = Graph.HOME.route
     ) {
         composable(Route.HOME.route) {
-            HomeScreen(showSnackbar = showSnackbar)
+            HomeScreen(
+                showSnackbar = showSnackbar
+            ) {
+                onNavigate("${Route.DETAIL.route}/$it")
+            }
         }
         composable(
-            route = Route.DETAIL.route,
+            route = "${Route.DETAIL.route}/{id}",
             arguments = listOf(
                 navArgument("id") { type = NavType.StringType }
             )
         ) {
-            val id = it.arguments?.getString("id")
-            // TODO: DetailScreen
+            DetailScreen()
         }
     }
 }

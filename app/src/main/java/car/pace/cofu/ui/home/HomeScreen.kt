@@ -3,7 +3,6 @@ package car.pace.cofu.ui.home
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
 import androidx.compose.foundation.Image
@@ -27,6 +26,7 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -64,6 +64,7 @@ import car.pace.cofu.util.Constants.GAS_STATION_CONTENT_TYPE
 import car.pace.cofu.util.Constants.NEAREST_GAS_STATION_TITLE_KEY
 import car.pace.cofu.util.Constants.OTHER_GAS_STATIONS_TITLE_KEY
 import car.pace.cofu.util.Constants.TITLE_CONTENT_TYPE
+import car.pace.cofu.util.IntentUtils
 import car.pace.cofu.util.SnackbarData
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.extension.canStartFueling
@@ -85,7 +86,8 @@ import timber.log.Timber
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    showSnackbar: (SnackbarData) -> Unit
+    showSnackbar: (SnackbarData) -> Unit,
+    navigateToDetail: (String) -> Unit
 ) {
     val pullRefreshState = rememberPullRefreshState(
         refreshing = viewModel.showPullRefreshIndicator,
@@ -145,26 +147,10 @@ fun HomeScreen(
                             AppKit.openFuelingApp(context, it.id)
                         },
                         onStartNavigation = {
-                            try {
-                                // If Google Maps is installed, launch navigation directly
-                                val uri = Uri.parse("google.navigation:q=${it.latitude},${it.longitude}")
-                                val mapsIntent = Intent(Intent.ACTION_VIEW, uri).setPackage("com.google.android.apps.maps")
-                                val activities = context.packageManager.queryIntentActivities(mapsIntent, PackageManager.MATCH_DEFAULT_ONLY)
-                                if (activities.size > 0) {
-                                    context.startActivity(mapsIntent)
-                                } else {
-                                    // No Google Maps installed - fallback to regular geo URI
-                                    val intent = Intent(Intent.ACTION_VIEW)
-                                    val address = it.address?.let { address ->
-                                        "${address.street} ${address.houseNumber}, ${address.postalCode} ${address.city}"
-                                    }
-                                    intent.data = Uri.parse("geo:${it.latitude},${it.longitude}?q=$address")
-                                    context.startActivity(intent)
-                                }
-                            } catch (e: Exception) {
-                                Timber.e(e, "Could not launch navigation app")
-                                showSnackbar(SnackbarData(R.string.DASHBOARD_NAVIGATION_ERROR))
-                            }
+                            IntentUtils.startNavigation(context, it)
+                        },
+                        onClick = {
+                            navigateToDetail(it.id)
                         }
                     )
                 } else {
@@ -223,7 +209,8 @@ fun GasStationList(
     fuelType: FuelType?,
     userLocation: LatLng?,
     onStartFueling: (GasStation) -> Unit,
-    onStartNavigation: (GasStation) -> Unit
+    onStartNavigation: (GasStation) -> Unit,
+    onClick: (GasStation) -> Unit
 ) {
     val nearestGasStation = remember(gasStations) { gasStations.firstOrNull() }
     val otherGasStations = remember(gasStations) { gasStations.drop(1) }
@@ -252,7 +239,8 @@ fun GasStationList(
                     userLocation = userLocation,
                     fuelType = fuelType,
                     onStartFueling = { onStartFueling(nearestGasStation) },
-                    onStartNavigation = { onStartNavigation(nearestGasStation) }
+                    onStartNavigation = { onStartNavigation(nearestGasStation) },
+                    onClick = { onClick(nearestGasStation) }
                 )
             }
         }
@@ -279,7 +267,8 @@ fun GasStationList(
                 userLocation = userLocation,
                 fuelType = fuelType,
                 onStartFueling = { onStartFueling(gasStation) },
-                onStartNavigation = { onStartNavigation(gasStation) }
+                onStartNavigation = { onStartNavigation(gasStation) },
+                onClick = { onClick(gasStation) }
             )
         }
     }
@@ -292,87 +281,91 @@ fun GasStationRow(
     userLocation: LatLng?,
     fuelType: FuelType?,
     onStartFueling: () -> Unit,
-    onStartNavigation: () -> Unit
+    onStartNavigation: () -> Unit,
+    onClick: () -> Unit
 ) {
-    Column(
+    Surface(
+        onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
-            .dropShadow()
-            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(8.dp))
-            .padding(20.dp)
+            .dropShadow(),
+        shape = RoundedCornerShape(8.dp)
     ) {
-        Title(
-            text = gasStation.name.orEmpty(),
-            textAlign = TextAlign.Start
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 9.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.padding(20.dp)
         ) {
-            Column {
-                Description(
-                    text = gasStation.twoLineAddress(),
-                    textAlign = TextAlign.Start
-                )
-                gasStation.distanceText(userLocation)?.let {
-                    Row(
-                        modifier = Modifier.padding(top = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_distance_arrow),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Text(
-                            text = it,
-                            modifier = Modifier.padding(start = 9.dp),
-                            color = MaterialTheme.colorScheme.primary,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
+            Title(
+                text = gasStation.name ?: stringResource(id = R.string.gas_station_default_name),
+                textAlign = TextAlign.Start
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 9.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Description(
+                        text = gasStation.address?.twoLineAddress().orEmpty(),
+                        textAlign = TextAlign.Start
+                    )
+                    gasStation.center?.toLatLn()?.distanceText(userLocation)?.let {
+                        Row(
+                            modifier = Modifier.padding(top = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_distance_arrow),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text = it,
+                                modifier = Modifier.padding(start = 9.dp),
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
                     }
                 }
-            }
-            Column(
-                modifier = Modifier
-                    .padding(start = 5.dp)
-                    .background(color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(8.dp))
-                    .padding(horizontal = 17.dp, vertical = 5.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                fuelType?.let {
-                    Text(
-                        text = stringResource(id = it.stringRes),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.labelMedium
+                Column(
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .background(color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(8.dp))
+                        .padding(horizontal = 17.dp, vertical = 5.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    fuelType?.let {
+                        Text(
+                            text = stringResource(id = it.stringRes),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+
+                    val priceText = fuelType?.let { gasStation.formatPrice(fuelType = it) }
+                    Title(
+                        text = priceText ?: stringResource(id = R.string.PRICE_NOT_AVAILABLE)
                     )
                 }
+            }
 
-                val priceText = fuelType?.let { gasStation.formatPrice(fuelType = it) }
-                Title(
-                    text = priceText ?: stringResource(id = R.string.PRICE_NOT_AVAILABLE)
+            val buttonModifier = Modifier.padding(top = 19.dp)
+            if (gasStation.canStartFueling(userLocation)) {
+                PrimaryButton(
+                    text = stringResource(id = R.string.common_start_fueling),
+                    modifier = buttonModifier,
+                    onClick = onStartFueling
+                )
+            } else {
+                SecondaryButton(
+                    text = stringResource(id = R.string.common_start_navigation),
+                    modifier = buttonModifier,
+                    onClick = onStartNavigation
                 )
             }
-        }
-
-        val buttonModifier = Modifier.padding(top = 19.dp)
-        if (gasStation.canStartFueling(userLocation)) {
-            PrimaryButton(
-                text = stringResource(id = R.string.DASHBOARD_ACTIONS_START_FUELING),
-                modifier = buttonModifier,
-                onClick = onStartFueling
-            )
-        } else {
-            SecondaryButton(
-                text = stringResource(id = R.string.DASHBOARD_ACTIONS_NAVIGATE),
-                modifier = buttonModifier,
-                onClick = onStartNavigation
-            )
         }
     }
 }
@@ -460,7 +453,10 @@ fun NoContent(
 @Composable
 fun HomeScreenPreview() {
     AppTheme {
-        HomeScreen {}
+        HomeScreen(
+            showSnackbar = {},
+            navigateToDetail = {}
+        )
     }
 }
 
@@ -496,7 +492,8 @@ fun GasStationListPreview() {
             fuelType = FuelType.DIESEL,
             userLocation = LatLng(49.013513, 8.4018654),
             onStartFueling = {},
-            onStartNavigation = {}
+            onStartNavigation = {},
+            onClick = {}
         )
     }
 }
@@ -518,11 +515,13 @@ fun GasStationRowPreview() {
         }
 
         GasStationRow(
+            modifier = Modifier.padding(20.dp),
             gasStation = gasStation,
             userLocation = LatLng(49.013513, 8.4018654),
             fuelType = FuelType.DIESEL,
             onStartFueling = {},
-            onStartNavigation = {}
+            onStartNavigation = {},
+            onClick = {}
         )
     }
 }

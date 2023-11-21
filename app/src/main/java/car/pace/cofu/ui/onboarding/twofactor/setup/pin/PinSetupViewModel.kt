@@ -78,7 +78,7 @@ class PinSetupViewModel @Inject constructor(
                     }
             } else {
                 Timber.w("The PIN inputs do not match")
-                errorTextRes = R.string.ONBOARDING_PIN_ERROR_MISMATCH
+                errorTextRes = R.string.onboarding_pin_error_mismatch
             }
         }
     }
@@ -99,7 +99,7 @@ class PinSetupViewModel @Inject constructor(
                     loading = false
                     Timber.e(it, "Failed to set PIN with OTP")
                     if (it is PINNotSecure) {
-                        restart(R.string.ONBOARDING_PIN_ERROR_NOT_SECURE)
+                        restart(R.string.onboarding_pin_error_not_secure)
                     } else {
                         errorTextRes = it.errorTextRes()
                     }

@@ -10,9 +10,9 @@ sealed class TwoFactorSetup(
 )
 
 data object BiometrySetup : TwoFactorSetup(
-    titleRes = R.string.ONBOARDING_ENTER_ONE_TIME_PASSWORD_TITLE,
-    descriptionRes = R.string.ONBOARDING_ENTER_ONE_TIME_PASSWORD_DESCRIPTION,
-    buttonTextRes = R.string.ONBOARDING_ACTIONS_NEXT
+    titleRes = R.string.onboarding_enter_one_time_password_title,
+    descriptionRes = R.string.onboarding_enter_one_time_password_description,
+    buttonTextRes = R.string.common_use_next
 )
 
 sealed class PinSetup(
@@ -27,23 +27,23 @@ sealed class PinSetup(
 ) {
 
     data object PinInput : PinSetup(
-        titleRes = R.string.ONBOARDING_CREATE_PIN_TITLE,
-        descriptionRes = R.string.ONBOARDING_CREATE_PIN_DESCRIPTION,
-        buttonTextRes = R.string.ONBOARDING_ACTIONS_NEXT,
+        titleRes = R.string.onboarding_create_pin_title,
+        descriptionRes = R.string.onboarding_create_pin_description,
+        buttonTextRes = R.string.common_use_next,
         nextStep = PinConfirmation
     )
 
     data object PinConfirmation : PinSetup(
-        titleRes = R.string.ONBOARDING_VERIFY_PIN_TITLE,
-        descriptionRes = R.string.ONBOARDING_VERIFY_PIN_DESCRIPTION,
-        buttonTextRes = R.string.ONBOARDING_ACTIONS_NEXT,
+        titleRes = R.string.onboarding_verify_pin_title,
+        descriptionRes = R.string.onboarding_verify_pin_description,
+        buttonTextRes = R.string.common_use_next,
         nextStep = OtpInput
     )
 
     data object OtpInput : PinSetup(
-        titleRes = R.string.ONBOARDING_ENTER_ONE_TIME_PASSWORD_TITLE,
-        descriptionRes = R.string.ONBOARDING_ENTER_ONE_TIME_PASSWORD_DESCRIPTION,
-        buttonTextRes = R.string.ONBOARDING_ACTIONS_NEXT,
+        titleRes = R.string.onboarding_enter_one_time_password_title,
+        descriptionRes = R.string.onboarding_enter_one_time_password_description,
+        buttonTextRes = R.string.common_use_next,
         nextStep = null
     )
 }

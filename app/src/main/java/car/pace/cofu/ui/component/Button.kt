@@ -109,6 +109,6 @@ fun SecondaryButtonPreview() {
 @Composable
 fun DefaultTextButtonPreview() {
     AppTheme {
-        DefaultTextButton(text = stringResource(id = R.string.ONBOARDING_CREATE_PIN_TITLE)) {}
+        DefaultTextButton(text = stringResource(id = R.string.onboarding_create_pin_title)) {}
     }
 }
