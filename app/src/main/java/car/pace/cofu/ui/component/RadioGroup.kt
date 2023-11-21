@@ -26,8 +26,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import car.pace.cofu.ui.fueltype.FuelTypeGroup
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 
 @Composable
 fun <T> RadioGroup(
@@ -38,7 +38,7 @@ fun <T> RadioGroup(
 ) {
     Column(
         modifier = modifier.selectableGroup(),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items.forEach { (id, textRes) ->
             RadioButton(
@@ -65,7 +65,7 @@ fun RadioButton(
                 role = Role.RadioButton,
                 onClick = onClick
             )
-            .background(color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(12.dp))
+            .background(color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(8.dp))
             .padding(horizontal = 20.dp, vertical = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -73,7 +73,7 @@ fun RadioButton(
         Text(
             text = text,
             color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.labelLarge
+            style = MaterialTheme.typography.titleSmall
         )
         Box(
             modifier = Modifier

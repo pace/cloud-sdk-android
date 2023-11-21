@@ -50,29 +50,29 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import car.pace.cofu.R
-import car.pace.cofu.core.util.isLocationEnabled
-import car.pace.cofu.core.util.listenForLocationEnabledChanges
 import car.pace.cofu.ui.component.DefaultCircularProgressIndicator
 import car.pace.cofu.ui.component.Description
 import car.pace.cofu.ui.component.PrimaryButton
 import car.pace.cofu.ui.component.SecondaryButton
 import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.component.dropShadow
-import car.pace.cofu.ui.fueltype.FuelType
 import car.pace.cofu.ui.home.dialog.LocationDisabledDialog
 import car.pace.cofu.ui.home.dialog.LocationPermissionDialog
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.ui.wallet.fueltype.FuelType
 import car.pace.cofu.util.Constants.GAS_STATION_CONTENT_TYPE
 import car.pace.cofu.util.Constants.NEAREST_GAS_STATION_TITLE_KEY
 import car.pace.cofu.util.Constants.OTHER_GAS_STATIONS_TITLE_KEY
 import car.pace.cofu.util.Constants.TITLE_CONTENT_TYPE
-import car.pace.cofu.util.PermissionUtils
 import car.pace.cofu.util.SnackbarData
 import car.pace.cofu.util.UiState
-import car.pace.cofu.util.canStartFueling
-import car.pace.cofu.util.distanceText
-import car.pace.cofu.util.formatPrice
-import car.pace.cofu.util.twoLineAddress
+import car.pace.cofu.util.extension.canStartFueling
+import car.pace.cofu.util.extension.distanceText
+import car.pace.cofu.util.extension.formatPrice
+import car.pace.cofu.util.extension.isLocationEnabled
+import car.pace.cofu.util.extension.isLocationPermissionGranted
+import car.pace.cofu.util.extension.listenForLocationEnabledChanges
+import car.pace.cofu.util.extension.twoLineAddress
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.poikit.poi.Address
 import cloud.pace.sdk.poikit.poi.GasStation
@@ -107,7 +107,7 @@ fun HomeScreen(
         var showLocationDisabledDialog by remember { mutableStateOf(false) }
 
         LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
-            showLocationPermissionDialog = !PermissionUtils.locationPermissionsGranted(context)
+            showLocationPermissionDialog = !context.isLocationPermissionGranted
             showLocationDisabledDialog = !context.isLocationEnabled
         }
 

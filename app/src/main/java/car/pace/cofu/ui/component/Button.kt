@@ -1,11 +1,13 @@
 package car.pace.cofu.ui.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -29,8 +31,8 @@ fun PrimaryButton(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
-        shape = RoundedCornerShape(12.dp),
-        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 8.dp)
+        shape = RoundedCornerShape(8.dp),
+        contentPadding = PaddingValues(vertical = 19.dp, horizontal = 8.dp)
     ) {
         Text(
             text = text,
@@ -47,16 +49,14 @@ fun SecondaryButton(
     enabled: Boolean = true,
     onClick: () -> Unit
 ) {
-    Button(
+    OutlinedButton(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
-        shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary
-        ),
-        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 8.dp)
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primary),
+        contentPadding = PaddingValues(vertical = 19.dp, horizontal = 8.dp)
     ) {
         Text(
             text = text,

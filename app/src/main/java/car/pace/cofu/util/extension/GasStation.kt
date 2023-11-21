@@ -1,4 +1,4 @@
-package car.pace.cofu.util
+package car.pace.cofu.util.extension
 
 import android.icu.number.NumberFormatter
 import android.icu.number.Precision
@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import car.pace.cofu.R
-import car.pace.cofu.ui.fueltype.FuelType
+import car.pace.cofu.ui.wallet.fueltype.FuelType
 import car.pace.cofu.util.price.PriceFormatter
 import car.pace.cofu.util.price.toUnicodeString
 import cloud.pace.sdk.poikit.poi.GasStation

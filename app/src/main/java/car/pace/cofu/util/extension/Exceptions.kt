@@ -1,4 +1,4 @@
-package car.pace.cofu.util
+package car.pace.cofu.util.extension
 
 import androidx.annotation.StringRes
 import car.pace.cofu.R

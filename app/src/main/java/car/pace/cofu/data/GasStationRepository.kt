@@ -1,7 +1,7 @@
 package car.pace.cofu.data
 
 import android.location.Location
-import car.pace.cofu.util.resume
+import car.pace.cofu.util.extension.resume
 import cloud.pace.sdk.poikit.POIKit
 import javax.inject.Inject
 import javax.inject.Singleton

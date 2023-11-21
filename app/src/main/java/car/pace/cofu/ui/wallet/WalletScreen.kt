@@ -67,7 +67,7 @@ fun WalletScreen(
     }
 
     LazyColumn(
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp)
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
     ) {
         item(
             key = USER_HEADER_KEY,
@@ -90,7 +90,7 @@ fun WalletScreen(
             key = SPACER_KEY,
             contentType = SPACER_CONTENT_TYPE
         ) {
-            Spacer(modifier = Modifier.padding(top = 30.dp))
+            Spacer(modifier = Modifier.padding(top = 28.dp))
         }
 
         items(
@@ -131,29 +131,29 @@ fun UserHeader(
             .fillMaxWidth()
             .dropShadow()
             .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp))
-            .padding(15.dp),
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = Icons.Outlined.AccountCircle,
             contentDescription = null,
-            modifier = Modifier.size(40.dp),
+            modifier = Modifier.size(48.dp),
             tint = MaterialTheme.colorScheme.secondary
         )
 
         Column(
-            modifier = Modifier.padding(start = 12.dp)
+            modifier = Modifier.padding(start = 10.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.wallet_header_text),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
                 text = email,
-                modifier = Modifier.padding(top = 3.dp),
-                color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.bodyLarge
+                modifier = Modifier.padding(top = 8.dp),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium
             )
             Text(
                 text = stringResource(id = R.string.MENU_ITEMS_LOGOUT),
@@ -163,9 +163,9 @@ fun UserHeader(
                         role = Role.Button,
                         onClick = { openDialog = true }
                     )
-                    .padding(top = 3.dp),
+                    .padding(top = 8.dp),
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }

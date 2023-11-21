@@ -37,9 +37,9 @@ import car.pace.cofu.ui.component.SecondaryButton
 import car.pace.cofu.ui.component.forwardingPainter
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.util.Constants.METHOD_LIST_ITEM_CONTENT_TYPE
-import car.pace.cofu.util.PaymentMethodItem
-import car.pace.cofu.util.PaymentMethodUtils
 import car.pace.cofu.util.UiState
+import car.pace.cofu.util.extension.PaymentMethodItem
+import car.pace.cofu.util.extension.name
 import cloud.pace.sdk.appkit.AppKit
 import coil.compose.AsyncImage
 
@@ -48,7 +48,7 @@ fun PaymentMethodsScreen(
     viewModel: PaymentMethodsViewModel = hiltViewModel()
 ) {
     Column(
-        modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
+        modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
     ) {
         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
         when (val state = uiState) {
@@ -134,7 +134,7 @@ fun PaymentMethodListItem(
         ) {
             val context = LocalContext.current
             val name = remember(kind) {
-                PaymentMethodUtils.name(context, kind)
+                name(context, kind)
             }
             val fallbackIconPainter = forwardingPainter(
                 painter = rememberVectorPainter(Icons.Outlined.CreditCard),
@@ -150,19 +150,19 @@ fun PaymentMethodListItem(
             )
             Column(
                 modifier = Modifier
-                    .padding(start = 15.dp)
+                    .padding(start = 12.dp)
                     .weight(1f)
             ) {
                 Text(
                     text = name,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.bodySmall
                 )
                 Text(
                     text = alias ?: name,
-                    modifier = Modifier.padding(top = 3.dp),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.bodyLarge
+                    modifier = Modifier.padding(top = 8.dp),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleSmall
                 )
             }
             Icon(

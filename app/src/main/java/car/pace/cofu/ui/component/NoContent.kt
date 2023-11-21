@@ -30,7 +30,7 @@ fun LoadingCard(
         modifier = modifier,
         header = {
             DefaultCircularProgressIndicator(
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(42.dp)
             )
         },
         title = title,
@@ -53,7 +53,7 @@ fun ErrorCard(
             Icon(
                 imageVector = imageVector,
                 contentDescription = null,
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier.size(42.dp),
                 tint = MaterialTheme.colorScheme.error
             )
         },
@@ -78,24 +78,24 @@ fun NoContentCard(
             .fillMaxWidth()
             .dropShadow()
             .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp))
-            .padding(15.dp),
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         header()
 
         Title(
             text = title,
-            modifier = Modifier.padding(top = 10.dp)
+            modifier = Modifier.padding(top = 20.dp)
         )
         Description(
             text = description,
-            modifier = Modifier.padding(top = 10.dp)
+            modifier = Modifier.padding(top = 20.dp)
         )
 
         if (buttonText != null) {
             PrimaryButton(
                 text = buttonText,
-                modifier = Modifier.padding(top = 10.dp),
+                modifier = Modifier.padding(top = 20.dp),
                 onClick = onButtonClick
             )
         }

@@ -1,11 +1,21 @@
-package car.pace.cofu.core.util
+package car.pace.cofu.util.extension
 
+import android.Manifest
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.location.LocationManager
+import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat
+
+val locationPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+
+val Context.isLocationPermissionGranted: Boolean
+    get() = locationPermissions.any {
+        ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+    }
 
 /**
  * Checks whether the location is enabled or not.

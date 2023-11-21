@@ -17,7 +17,7 @@ fun Title(
     Text(
         text = text,
         modifier = modifier,
-        color = MaterialTheme.colorScheme.onSurface,
+        color = MaterialTheme.colorScheme.onPrimary,
         textAlign = textAlign,
         style = MaterialTheme.typography.titleLarge
     )
@@ -32,9 +32,9 @@ fun Description(
     Text(
         text = text,
         modifier = modifier,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        color = MaterialTheme.colorScheme.onPrimary,
         textAlign = textAlign,
-        style = MaterialTheme.typography.bodyMedium
+        style = MaterialTheme.typography.bodyLarge
     )
 }
 

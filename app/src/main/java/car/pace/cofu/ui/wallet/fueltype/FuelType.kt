@@ -1,4 +1,4 @@
-package car.pace.cofu.ui.fueltype
+package car.pace.cofu.ui.wallet.fueltype
 
 import androidx.annotation.StringRes
 import car.pace.cofu.R

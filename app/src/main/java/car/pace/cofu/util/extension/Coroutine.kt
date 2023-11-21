@@ -1,4 +1,4 @@
-package car.pace.cofu.util
+package car.pace.cofu.util.extension
 
 import cloud.pace.sdk.utils.Completion
 import cloud.pace.sdk.utils.Failure

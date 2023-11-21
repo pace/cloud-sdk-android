@@ -1,7 +1,7 @@
 package car.pace.cofu.data
 
-import car.pace.cofu.util.MailNotSentException
-import car.pace.cofu.util.resume
+import car.pace.cofu.util.extension.MailNotSentException
+import car.pace.cofu.util.extension.resume
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success

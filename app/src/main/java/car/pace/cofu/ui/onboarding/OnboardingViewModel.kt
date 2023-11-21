@@ -6,8 +6,8 @@ import car.pace.cofu.data.PaymentMethodRepository
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_FUEL_TYPE
 import car.pace.cofu.data.UserRepository
-import car.pace.cofu.ui.fueltype.FuelType
-import car.pace.cofu.util.PermissionUtils
+import car.pace.cofu.ui.wallet.fueltype.FuelType
+import car.pace.cofu.util.extension.isLocationPermissionGranted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -25,7 +25,7 @@ class OnboardingViewModel @Inject constructor(
     suspend fun canSkipPage(currentPage: OnboardingPage?, context: Context): Boolean {
         when (currentPage) {
             OnboardingPage.LOCATION_PERMISSION -> {
-                if (PermissionUtils.locationPermissionsGranted(context)) {
+                if (context.isLocationPermissionGranted) {
                     return true
                 }
             }

@@ -4,8 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_FUEL_TYPE
-import car.pace.cofu.ui.fueltype.FuelType
-import car.pace.cofu.ui.fueltype.FuelTypeGroup
 import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

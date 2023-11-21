@@ -49,16 +49,10 @@ class PaymentMethodsViewModel @Inject constructor(
             .toString()
     }
 
-    // TODO: payment method kinds?
-    fun paymentMethodCreateUrl(paymentMethodKinds: String? = null): String {
+    fun paymentMethodCreateUrl(): String {
         return Uri.parse(URL.payment)
             .buildUpon()
             .appendPath("payment-create")
-            .apply {
-                if (paymentMethodKinds != null) {
-                    appendQueryParameter("filter", paymentMethodKinds)
-                }
-            }
             .appendQueryParameter("redirect_uri", AppWebViewClient.CLOSE_URI)
             .build()
             .toString()

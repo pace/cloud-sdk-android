@@ -11,7 +11,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import car.pace.cofu.ui.component.RadioGroup
-import car.pace.cofu.ui.fueltype.FuelTypeGroup
 import car.pace.cofu.ui.theme.AppTheme
 
 @Composable
@@ -26,7 +25,7 @@ fun FuelTypeScreen(
         selectedItem = selectedFuelTypeGroup,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 10.dp)
+            .padding(horizontal = 20.dp, vertical = 12.dp)
     ) {
         viewModel.setFuelTypeGroup(it)
     }

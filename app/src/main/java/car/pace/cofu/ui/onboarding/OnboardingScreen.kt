@@ -23,13 +23,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import car.pace.cofu.ui.fueltype.FuelType
 import car.pace.cofu.ui.onboarding.authentication.AuthenticationPage
 import car.pace.cofu.ui.onboarding.fueltype.FuelTypePage
 import car.pace.cofu.ui.onboarding.paymentmethod.PaymentMethodPage
 import car.pace.cofu.ui.onboarding.permission.LocationPermissionPage
 import car.pace.cofu.ui.onboarding.twofactor.TwoFactorPage
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.ui.wallet.fueltype.FuelType
 import car.pace.cofu.util.SnackbarData
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

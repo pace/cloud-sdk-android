@@ -34,7 +34,7 @@ fun DefaultListItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 15.dp),
+                .padding(vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (icon != null) {
@@ -50,11 +50,11 @@ fun DefaultListItem(
                 modifier = Modifier
                     .padding(start = 12.dp)
                     .weight(1f),
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.titleSmall
             )
             Icon(
                 imageVector = Icons.Outlined.ArrowForwardIos,

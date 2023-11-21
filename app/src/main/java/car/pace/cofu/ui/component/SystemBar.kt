@@ -68,7 +68,7 @@ fun LogoTopBar() {
     CenterAlignedTopAppBar(
         title = {
             Image(
-                painter = painterResource(id = R.drawable.ic_logo_connected_fueling_big),
+                painter = painterResource(id = R.drawable.ic_cofu_logo),
                 contentDescription = null
             )
         },
@@ -89,7 +89,7 @@ fun TextTopBar(
                 text = text,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
-                style = MaterialTheme.typography.titleSmall
+                style = MaterialTheme.typography.titleMedium
             )
         },
         navigationIcon = {
