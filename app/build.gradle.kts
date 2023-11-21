@@ -1,13 +1,14 @@
-import car.pace.cofu.config.CONFIG_FILE_NAME
-import car.pace.cofu.config.Config
+import car.pace.cofu.configuration.CONFIGURATION_FILE_NAME
+import car.pace.cofu.configuration.Configuration
 import car.pace.cofu.menu.MenuEntriesGenerator
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.google.gson.Gson
+import java.util.UUID
 
 private val menuEntriesTask = "generateMenuEntries"
 private val menuEntriesDir = File(buildDir, "generated/menu_entries/src/main")
-private val configFileReader = rootProject.file(CONFIG_FILE_NAME).reader()
-private val configJson: Config = Gson().fromJson(configFileReader, Config::class.java)
+private val configurationFileReader = rootProject.file(CONFIGURATION_FILE_NAME).reader()
+private val configuration: Configuration = Gson().fromJson(configurationFileReader, Configuration::class.java)
 
 plugins {
     id("com.android.application")
@@ -26,55 +27,60 @@ task(menuEntriesTask) {
 project.tasks.preBuild.dependsOn(menuEntriesTask)
 
 android {
-    namespace = "car.pace.cofu"
+    namespace = configuration.application_id
     compileSdk = 34
 
     signingConfigs {
         getByName("debug") {
             keyAlias = "debug"
             keyPassword = "123456"
-            storeFile = file(configJson.signing.keyPath)
-            storePassword = configJson.signing.keyPassword
+            storeFile = file("../keystore-debug.jks")
+            storePassword = "123456"
         }
 
         create("release") {
-            keyAlias = configJson.signing.keyAlias
-            keyPassword = configJson.signing.keyAliasPassword
-            storeFile = file(configJson.signing.keyPath)
-            storePassword = configJson.signing.keyPassword
+            keyAlias = configuration.android_signing_key_alias
+            keyPassword = configuration.android_signing_key_password
+            storeFile = file("../keystore-release.jks")
+            storePassword = configuration.android_keystore_password
         }
     }
 
     defaultConfig {
-        applicationId = "car.pace.cofu"
+        applicationId = configuration.application_id
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1"
+        versionCode = properties.getOrDefault("buildNumber", 1)?.toString()?.toIntOrNull()
+        versionName = properties.getOrDefault("versionName", "1")?.toString()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "CLOUD_API_KEY", "\"" + configJson.sdk.apiKey + "\"")
-        buildConfigField("String", "PACE_CLIENT_ID", "\"" + configJson.sdk.clientId + "\"")
-        buildConfigField("String", "PACE_REDIRECT_URL", "\"" + configJson.sdk.redirectUrl + "\"")
-        buildConfigField("Boolean", "HIDE_PRICES", configJson.hidePrices.toString())
-        buildConfigField("Boolean", "ONBOARDING_SHOW_CUSTOM_HEADER", configJson.onboardingShowCustomHeader.toString())
-        buildConfigField("Boolean", "HOME_SHOW_CUSTOM_HEADER", configJson.homeShowCustomHeader.toString())
+        resValue("string", "app_name", configuration.app_name)
+
+        buildConfigField("String", "CLIENT_ID", "\"" + configuration.client_id + "\"")
+        buildConfigField("String", "REDIRECT_URI", "\"cofu-app://callback\"")
+        // TODO: buildConfigField("String", "REDIRECT_URI", "\"${configuration.client_id}://callback\"")
+        buildConfigField("@androidx.annotation.Nullable String", "DEFAULT_IDP", configuration.default_idp?.let { "\"" + it + "\"" }.toString())
+        buildConfigField("Boolean", "HIDE_PRICES", configuration.hide_prices.toString())
+        buildConfigField("Boolean", "ONBOARDING_SHOW_CUSTOM_HEADER", configuration.onboarding_show_custom_header.toString())
+        buildConfigField("Boolean", "HOME_SHOW_CUSTOM_HEADER", configuration.home_show_custom_header.toString())
+        buildConfigField("Boolean", "ANALYTICS_ENABLED", configuration.analytics_enabled.toString())
+        buildConfigField("String", "PRIMARY_COLOR", "\"" + configuration.primary_branding_color + "\"")
+        buildConfigField("String", "SECONDARY_COLOR", "\"" + configuration.secondary_branding_color + "\"")
 
         // appAuthRedirectScheme is needed for AppAuth in IDKit and pace_redirect_scheme is needed for deep linking in AppKit
-        manifestPlaceholders["appAuthRedirectScheme"] = configJson.sdk.redirectScheme // e.g. reverse domain name notation: cloud.pace.app
-        manifestPlaceholders["pace_redirect_scheme"] = configJson.sdk.uniqueId // e.g. pace.ad50262a-9c88-4a5f-bc55-00dc31b81e5a
-        manifestPlaceholders["google_maps_api_key"] = configJson.googleMapsApiKey
-
-        resValue("string", "app_name", configJson.appName)
+        manifestPlaceholders["appAuthRedirectScheme"] = "cofu-app"
+        // TODO: manifestPlaceholders["appAuthRedirectScheme"] = configuration.client_id
+        manifestPlaceholders["pace_redirect_scheme"] = "${configuration.client_id}.${UUID.randomUUID()}"
+        manifestPlaceholders["google_maps_api_key"] = configuration.google_maps_api_key
 
         resourceConfigurations += arrayOf("en", "cs", "de", "es", "fr", "it", "nl", "pl", "pt", "ro", "ru")
 
         // Setup crash reporting
-        buildConfigField("Boolean", "SENTRY_ENABLED", configJson.sentry.enabled.toString())
-        buildConfigField("String", "SENTRY_DSN", "\"" + configJson.sentry.dsn as? String + "\"")
+        buildConfigField("Boolean", "SENTRY_ENABLED", configuration.sentry_enabled.toString())
+        buildConfigField("@androidx.annotation.Nullable String", "SENTRY_DSN", configuration.sentry_dsn_android?.let { "\"" + it + "\"" }.toString())
 
-        val crashlyticsEnabled = configJson.crashlyticsEnabled
+        val crashlyticsEnabled = configuration.crashlytics_enabled
         buildConfigField("Boolean", "FIREBASE_ENABLED", crashlyticsEnabled.toString())
         if (crashlyticsEnabled) {
             apply(plugin = "com.google.gms.google-services")
@@ -171,4 +177,11 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     testImplementation("com.google.dagger:hilt-android-testing:2.48.1")
     kaptTest("com.google.dagger:hilt-android-compiler:2.48.1")
+}
+
+sentry {
+    // This is required for the Sentry Gradle plugin to upload Proguard mappings.
+    // All other configurations required for the upload are stored as CI variables to not expose them here.
+    projectName.set("whitelabel-app") // TODO: change to configuration.sentry_project_name
+    includeProguardMapping.set(configuration.sentry_enabled)
 }

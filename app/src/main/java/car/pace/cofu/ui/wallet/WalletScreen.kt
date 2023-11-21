@@ -50,6 +50,8 @@ import car.pace.cofu.util.Constants.USER_HEADER_KEY
 import car.pace.cofu.util.JWTUtils
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.idkit.IDKit
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.analytics
 import kotlinx.coroutines.launch
 
 @Composable
@@ -79,6 +81,7 @@ fun WalletScreen(
             coroutineScope.launch {
                 val activity = context.findActivity<AppCompatActivity>()
                 IDKit.endSession(activity)
+                Firebase.analytics.setAnalyticsCollectionEnabled(false)
                 viewModel.resetAppData()
                 onNavigate(Route.ONBOARDING)
             }

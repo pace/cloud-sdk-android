@@ -1,8 +1,7 @@
 package car.pace.cofu.menu
 
-import car.pace.cofu.config.CONFIG_FILE_NAME
-import car.pace.cofu.config.Config
-import car.pace.cofu.config.MenuEntry
+import car.pace.cofu.configuration.CONFIGURATION_FILE_NAME
+import car.pace.cofu.configuration.Configuration
 import com.google.gson.Gson
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
@@ -17,24 +16,25 @@ import java.io.File
 
 object MenuEntriesGenerator {
 
-    private lateinit var configJson: Config
+    private lateinit var configuration: Configuration
 
     fun generate(outputDir: File) {
         outputDir.deleteRecursively()
 
-        val configFileReader = File(CONFIG_FILE_NAME).reader()
-        configJson = Gson().fromJson(configFileReader, Config::class.java)
+        val configFileReader = File(CONFIGURATION_FILE_NAME).reader()
+        configuration = Gson().fromJson(configFileReader, Configuration::class.java)
 
         generateStringResources(outputDir)
         generateMenuEntries(outputDir)
 
-        println("MenuEntriesGenerator: Successfully generated ${configJson.menuEntries.size} menu entries")
+        println("MenuEntriesGenerator: Successfully generated ${configuration.menu_entries.size} menu entries")
     }
 
     private fun generateStringResources(outputDir: File) {
-        configJson.menuEntries
+        configuration.menu_entries
+            .map { it.menu_entries_id.menu_entry }
             .flatten()
-            .groupBy(MenuEntry::languageCode)
+            .groupBy { it.languages_code }
             .forEach { (languageCode, menuEntries) ->
                 val xml = xml("resources", "utf-8") {
                     menuEntries.forEachIndexed { index, menuEntry ->
@@ -68,7 +68,7 @@ object MenuEntriesGenerator {
                         PropertySpec.builder("entries", MAP.parameterizedBy(INT, INT))
                             .initializer(
                                 "mapOf(" +
-                                    List(configJson.menuEntries.size) { index ->
+                                    List(configuration.menu_entries.size) { index ->
                                         "$resourceClass.string.${menuLabelName(index)} to $resourceClass.string.${menuUrlName(index)}"
                                     }.joinToString() +
                                     ")"

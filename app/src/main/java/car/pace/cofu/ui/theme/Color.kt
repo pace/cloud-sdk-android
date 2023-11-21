@@ -1,9 +1,10 @@
 package car.pace.cofu.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import car.pace.cofu.BuildConfig
 
-val Primary = Color(0xFF00CCF0)
-val Secondary = Color(0xFFEDF1F2)
+val Primary = BuildConfig.PRIMARY_COLOR.toColor()
+val Secondary = BuildConfig.SECONDARY_COLOR.toColor()
 val OnPrimary = Color(0xFF232729)
 val Surface = Color(0xFFFFFFFF)
 val OnSurface = Color(0xFF000000)
@@ -12,3 +13,5 @@ val Success = Color(0XFF76B532)
 val Warning = Color(0xFFFF9601)
 val Error = Color(0xFFE2001A)
 val Shadow = Color(0x4D000000)
+
+fun String.toColor() = Color(android.graphics.Color.parseColor(this))
