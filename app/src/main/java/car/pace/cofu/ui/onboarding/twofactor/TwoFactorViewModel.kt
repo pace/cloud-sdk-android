@@ -12,7 +12,7 @@ import car.pace.cofu.ui.onboarding.twofactor.setup.BiometrySetup
 import car.pace.cofu.ui.onboarding.twofactor.setup.PinSetup
 import car.pace.cofu.ui.onboarding.twofactor.setup.TwoFactorSetup
 import car.pace.cofu.util.SnackbarData
-import car.pace.cofu.util.UserCanceledException
+import car.pace.cofu.util.extension.UserCanceledException
 import cloud.pace.sdk.idkit.model.InvalidSession
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.net.SocketTimeoutException
@@ -120,7 +120,7 @@ class TwoFactorViewModel @Inject constructor(
             is UnknownHostException, is SocketTimeoutException -> {
                 SnackbarData(
                     messageRes = R.string.ONBOARDING_NETWORK_ERROR,
-                    actionLabelRes = R.string.COMMON_RETRY,
+                    actionLabelRes = R.string.common_retry,
                     onActionPerformed = onActionPerformed
                 )
             }

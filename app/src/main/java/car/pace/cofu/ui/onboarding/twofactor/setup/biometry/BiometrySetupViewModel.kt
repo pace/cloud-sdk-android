@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.UserRepository
-import car.pace.cofu.util.UserCanceledException
-import car.pace.cofu.util.errorTextRes
+import car.pace.cofu.util.extension.UserCanceledException
+import car.pace.cofu.util.extension.errorTextRes
 import cloud.pace.sdk.idkit.model.InternalError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

@@ -13,7 +13,6 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,79 +22,71 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import car.pace.cofu.R
-import car.pace.cofu.ui.fueltype.FuelType
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 
 @Composable
 fun <T> RadioGroup(
     items: Map<T, Int>,
     selectedItem: T?,
     modifier: Modifier = Modifier,
-    onItemSelected: (T) -> Unit
+    onClick: (T) -> Unit
 ) {
     Column(
         modifier = modifier.selectableGroup(),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items.forEach { (identifier, textRes) ->
-            val selected = identifier == selectedItem
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .selectable(
-                        selected = selected,
-                        role = Role.RadioButton,
-                        onClick = { onItemSelected(identifier) }
-                    )
-                    .border(
-                        width = 2.dp,
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(horizontal = 20.dp, vertical = 17.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val size = 25.dp
-                if (selected) {
-                    Box(
-                        modifier = Modifier
-                            .size(size)
-                            .background(color = MaterialTheme.colorScheme.primary, shape = CircleShape)
-                            .padding(3.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_check),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .size(size)
-                            .border(
-                                width = 2.dp,
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = CircleShape
-                            )
-                    )
-                }
+        items.forEach { (id, textRes) ->
+            RadioButton(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(id = textRes),
+                selected = id == selectedItem,
+                onClick = { onClick(id) }
+            )
+        }
+    }
+}
 
-                Text(
-                    text = stringResource(id = textRes).uppercase(),
+@Composable
+fun RadioButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = modifier
+            .selectable(
+                selected = selected,
+                role = Role.RadioButton,
+                onClick = onClick
+            )
+            .background(color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(8.dp))
+            .padding(horizontal = 20.dp, vertical = 10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = text,
+            color = MaterialTheme.colorScheme.onPrimary,
+            style = MaterialTheme.typography.titleSmall
+        )
+        Box(
+            modifier = Modifier
+                .size(30.dp)
+                .background(color = MaterialTheme.colorScheme.primaryContainer, shape = CircleShape)
+                .border(width = 1.dp, color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant, shape = CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            if (selected) {
+                Box(
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(end = size), // Center it over the entire row
-                    color = MaterialTheme.colorScheme.primary,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.labelLarge
+                        .size(16.dp)
+                        .background(color = MaterialTheme.colorScheme.primary, shape = CircleShape)
                 )
             }
         }
@@ -106,14 +97,27 @@ fun <T> RadioGroup(
 @Composable
 fun RadioGroupPreview() {
     AppTheme {
-        val fuelTypes = remember { FuelType.values().associateWith { it.stringRes } }
-        var selectedFuelType: FuelType? by remember { mutableStateOf(null) }
+        val fuelTypeGroups = remember { FuelTypeGroup.values().associateWith { it.stringRes } }
+        var selectedFuelTypeGroup: FuelTypeGroup? by remember { mutableStateOf(null) }
 
         RadioGroup(
-            items = fuelTypes,
-            selectedItem = selectedFuelType
+            items = fuelTypeGroups,
+            selectedItem = selectedFuelTypeGroup
         ) {
-            selectedFuelType = it
+            selectedFuelTypeGroup = it
         }
+    }
+}
+
+@Preview
+@Composable
+fun RadioButtonPreview() {
+    AppTheme {
+        RadioButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = "Diesel",
+            selected = true,
+            onClick = {}
+        )
     }
 }

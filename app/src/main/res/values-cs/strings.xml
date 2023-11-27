@@ -3,7 +3,6 @@
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Otevřít nastavení</string>
     <string name="ALERT.LOCATION_PERMISSION.DESCRIPTION">Abychom vám mohli ukázat nejbližší čerpací stanici, potřebujeme přístup k vaší aktuální poloze.</string>
     <string name="ALERT.LOCATION_PERMISSION.TITLE">Umístění nezveřejněno</string>
-    <string name="COMMON.RETRY">Zkus to znovu</string>
     <string name="DASHBOARD.ACTIONS.NAVIGATE">START TRASY</string>
     <string name="DASHBOARD.ACTIONS.START_FUELING">VYPLŇTE ZDE</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Ve vašem okolí nebyly nalezeny žádné čerpací stanice.</string>
@@ -11,7 +10,6 @@
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Vyhledáme nejbližší čerpací stanice ve vaší oblasti. To může chvíli trvat.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Hledání čerpacích stanic...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Nastavení umístění se nepodařilo otevřít. Aktivujte služby určování polohy ručně v nastavení systému.</string>
-    <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL">CANCEL</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">REGISTRACE</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">Vaše údaje jsou stále uloženy na vašem účtu PACE-ID.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Opravdu se chcete odhlásit?</string>
@@ -25,7 +23,6 @@
     <string name="FUEL_TYPE.SUPER_PLUS">SUPER PLUS</string>
     <string name="FUEL_TYPE_SELECTION">Jaké ceny paliva vám máme ukázat?</string>
     <string name="GLOBAL.ACTIONS.CLOSE">Zavřít</string>
-    <string name="HOME.LOADING_FAILED">Načítání se nezdařilo</string>
     <string name="HOME.LOADING_FAILED_TEXT">Čerpací stanice se nepodařilo načíst. Zkontrolujte připojení!</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TEXT">Momentálně vás hledáme. Může to chvíli trvat.</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TITLE">Hledání umístění…</string>
@@ -34,6 +31,7 @@
     <string name="LOCATION_DIALOG.DISABLED_TITLE">Lokalizační služby jsou zakázány</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TEXT">Abychom vám ukázali nejbližší čerpací stanici, potřebujeme přístup k vaší aktuální poloze.</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TITLE">Oprávnění k poloze nebylo uděleno</string>
+    <string name="MENU.ITEMS.CONTACT">Kontaktujte nás</string>
     <string name="MENU.ITEMS.FUEL_TYPE">Změna typu paliva</string>
     <string name="MENU.ITEMS.IMPRINT">Otisk</string>
     <string name="MENU.ITEMS.LICENCES">licence</string>
@@ -41,6 +39,7 @@
     <string name="MENU.ITEMS.PAYMENT_HISTORY">Zobrazit historii plateb</string>
     <string name="MENU.ITEMS.PAYMENT_METHODS">Upravit způsoby platby</string>
     <string name="MENU.ITEMS.PRIVACY">Zásady ochrany osobních údajů</string>
+    <string name="MENU.ITEMS.TERMS">Podmínky použití</string>
     <string name="MENU.TITLE.PLACEHOLDER">PACE Connected Fueling</string>
     <string name="ONBOARDING.ACTIONS.ADD_PAYMENT_METHOD">NASTAVIT ZPŮSOB PLATBY</string>
     <string name="ONBOARDING.ACTIONS.AUTHENTICATE">PŘIHLASTE SE NEBO SE ZAREGISTRUJTE</string>
@@ -90,5 +89,33 @@
     <string name="ONBOARDING.VERIFY_PIN.TITLE">Potvrzení kódu PIN</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Podíl</string>
+    <string name="common_cancel">Zrušit</string>
+    <string name="common_retry">Zkuste to znovu</string>
     <string name="currency_format"></string>
+    <string name="fuel_group_diesel">Diesel</string>
+    <string name="fuel_group_petrol">Benzín</string>
+    <string name="fuel_selection_title">Výběr paliva</string>
+    <string name="general_error_title">Načítání se nezdařilo</string>
+    <string name="list_tab_label">Seznam</string>
+    <string name="more_tab_label">Více</string>
+    <string name="payment_method_kind_credit_card">Kreditní karta</string>
+    <string name="payment_method_kind_creditcard">Kreditní karta</string>
+    <string name="payment_method_kind_dkv">Karta DKV</string>
+    <string name="payment_method_kind_fuel_card">Palivová karta</string>
+    <string name="payment_method_kind_giropay">giropay</string>
+    <string name="payment_method_kind_googlepay">Google Pay</string>
+    <string name="payment_method_kind_hoyer">HoyerCard</string>
+    <string name="payment_method_kind_paypal">PayPal</string>
+    <string name="payment_method_kind_sepa">Přímé inkaso SEPA</string>
+    <string name="payment_method_kind_zgm">Karta ZGM</string>
+    <string name="payment_methods_add_button">Přidat</string>
+    <string name="payment_methods_empty_description">Přidejte platební metodu nebo palivovou kartu, abyste mohli zahájit první tankování.</string>
+    <string name="payment_methods_empty_title">Žádné platební metody ani palivové karty</string>
+    <string name="payment_methods_error_description">Vaše platební metody a palivové karty nebylo možné načíst. Zkontrolujte své připojení!</string>
+    <string name="payment_methods_loading_description">Načítáme vaše platební metody a palivové karty. Chvíli prosím počkejte.</string>
+    <string name="payment_methods_loading_title">Načítání platebních metod a palivových karet...</string>
+    <string name="payment_methods_title">Platební metody a palivové karty</string>
+    <string name="transactions_title">Transakce</string>
+    <string name="wallet_header_text">Jste přihlášeni jako</string>
+    <string name="wallet_tab_label">Peněženka</string>
 </resources>

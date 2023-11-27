@@ -12,15 +12,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import car.pace.cofu.R
-import car.pace.cofu.ui.component.DefaultButton
 import car.pace.cofu.ui.component.Description
+import car.pace.cofu.ui.component.PrimaryButton
 import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.theme.AppTheme
 
@@ -51,7 +50,7 @@ fun PageScaffold(
                 painter = painterResource(id = imageRes),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(dimensionResource(id = R.dimen.onboardingIconSize))
+                    .size(100.dp)
                     .constrainAs(image) {
                         top.linkTo(guideline)
                         start.linkTo(parent.start)
@@ -87,7 +86,7 @@ fun PageScaffold(
 
         footerContent()
 
-        DefaultButton(
+        PrimaryButton(
             text = stringResource(id = nextButtonTextRes),
             modifier = Modifier.padding(horizontal = 35.dp),
             enabled = nextButtonEnabled,

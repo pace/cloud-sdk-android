@@ -3,7 +3,6 @@
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Einstellungen öffnen</string>
     <string name="ALERT.LOCATION_PERMISSION.DESCRIPTION">Um dir die nächstgelegene Tankstelle anzuzeigen, brauchen wir Zugriff auf deinen aktuellen Standort.</string>
     <string name="ALERT.LOCATION_PERMISSION.TITLE">Standort nicht freigegeben</string>
-    <string name="COMMON.RETRY">Versuchen Sie es nochmal</string>
     <string name="DASHBOARD.ACTIONS.NAVIGATE">ROUTE STARTEN</string>
     <string name="DASHBOARD.ACTIONS.START_FUELING">HIER TANKEN</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Es wurden keine Tankstellen in deiner Nähe gefunden.</string>
@@ -11,7 +10,6 @@
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Wir suchen die nächstgelegenen Tankstellen in deiner Nähe. Dies kann einen Moment dauern.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Suche Tankstellen...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Die Standorteinstellungen konnten nicht geöffnet werden. Bitte aktiviere die Ortungsdienste manuell in den Systemeinstellungen.</string>
-    <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL">ABBRECHEN</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">ABMELDEN</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">Deine Daten sind weiterhin in deinem PACE-ID Account gespeichert.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Willst du dich wirklich abmelden?</string>
@@ -25,7 +23,6 @@
     <string name="FUEL_TYPE.SUPER_PLUS">SUPER PLUS</string>
     <string name="FUEL_TYPE_SELECTION">Welche Kraftstoffpreise sollen wir Ihnen zeigen?</string>
     <string name="GLOBAL.ACTIONS.CLOSE">Schließen</string>
-    <string name="HOME.LOADING_FAILED">Laden fehlgeschlagen</string>
     <string name="HOME.LOADING_FAILED_TEXT">Tankstellen konnten nicht geladen werden. Überprüfen Sie Ihre Verbindung!</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TEXT">Wir suchen Sie gerade. Dies kann einen Moment dauern.</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TITLE">Standort gesucht…</string>
@@ -34,6 +31,7 @@
     <string name="LOCATION_DIALOG.DISABLED_TITLE">Ortungsdienste deaktiviert</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TEXT">Um Ihnen die nächstgelegene Tankstelle anzuzeigen, benötigen wir Zugriff auf Ihren aktuellen Standort.</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TITLE">Standorterlaubnis nicht erteilt</string>
+    <string name="MENU.ITEMS.CONTACT">Kontaktiere uns</string>
     <string name="MENU.ITEMS.FUEL_TYPE">Kraftstofftyp ändern</string>
     <string name="MENU.ITEMS.IMPRINT">Impressum</string>
     <string name="MENU.ITEMS.LICENCES">Lizenzen</string>
@@ -41,6 +39,7 @@
     <string name="MENU.ITEMS.PAYMENT_HISTORY">Zahlungshistorie anzeigen</string>
     <string name="MENU.ITEMS.PAYMENT_METHODS">Zahlungsmethoden bearbeiten</string>
     <string name="MENU.ITEMS.PRIVACY">Datenschutzerklärung</string>
+    <string name="MENU.ITEMS.TERMS">Nutzungsbedingungen</string>
     <string name="MENU.TITLE.PLACEHOLDER">PACE Connected Fueling</string>
     <string name="ONBOARDING.ACTIONS.ADD_PAYMENT_METHOD">ZAHLUNGSMETHODE EINRICHTEN</string>
     <string name="ONBOARDING.ACTIONS.AUTHENTICATE">ANMELDEN ODER REGISTRIEREN</string>
@@ -90,5 +89,33 @@
     <string name="ONBOARDING.VERIFY_PIN.TITLE">PIN bestätigen</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Teilen</string>
+    <string name="common_cancel">Abbrechen</string>
+    <string name="common_retry">Erneut versuchen</string>
     <string name="currency_format">%1$s%2$s</string>
+    <string name="fuel_group_diesel">Diesel</string>
+    <string name="fuel_group_petrol">Benzin</string>
+    <string name="fuel_selection_title">Kraftstoffauswahl</string>
+    <string name="general_error_title">Laden fehlgeschlagen</string>
+    <string name="list_tab_label">Liste</string>
+    <string name="more_tab_label">Mehr</string>
+    <string name="payment_method_kind_credit_card">Kreditkarte</string>
+    <string name="payment_method_kind_creditcard">Kreditkarte</string>
+    <string name="payment_method_kind_dkv">DKV Card</string>
+    <string name="payment_method_kind_fuel_card">Tankkarte</string>
+    <string name="payment_method_kind_giropay">giropay</string>
+    <string name="payment_method_kind_googlepay">Google Pay</string>
+    <string name="payment_method_kind_hoyer">HoyerCard</string>
+    <string name="payment_method_kind_paypal">PayPal</string>
+    <string name="payment_method_kind_sepa">SEPA-Lastschrift</string>
+    <string name="payment_method_kind_zgm">ZGM Card</string>
+    <string name="payment_methods_add_button">Hinzufügen</string>
+    <string name="payment_methods_empty_description">Füge eine Bezahlmethode oder Tankkarte hinzu, damit du deinen ersten Tankvorgang starten kannst</string>
+    <string name="payment_methods_empty_title">Keine Bezahlmethoden oder Tankkarten</string>
+    <string name="payment_methods_error_description">Deine Bezahlmethoden und Tankkarten konnten nicht geladen werden. Überprüfe deine Verbindung!</string>
+    <string name="payment_methods_loading_description">Wir laden deine Bezahlmethoden und Tankkarten. Bitte warte einen Moment.</string>
+    <string name="payment_methods_loading_title">Lade Bezahlmethoden und Tankkarten...</string>
+    <string name="payment_methods_title">Bezahlmethoden &amp; Tankkarten</string>
+    <string name="transactions_title">Transaktionen</string>
+    <string name="wallet_header_text">Du bist angemeldet als</string>
+    <string name="wallet_tab_label">Wallet</string>
 </resources>

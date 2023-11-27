@@ -21,7 +21,7 @@ import car.pace.cofu.R
 import car.pace.cofu.ui.theme.AppTheme
 
 @Composable
-fun DefaultButton(
+fun PrimaryButton(
     text: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -32,7 +32,31 @@ fun DefaultButton(
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
         shape = RoundedCornerShape(8.dp),
-        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 8.dp)
+        contentPadding = PaddingValues(vertical = 19.dp, horizontal = 8.dp)
+    ) {
+        Text(
+            text = text,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.labelLarge
+        )
+    }
+}
+
+@Composable
+fun SecondaryButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    onClick: () -> Unit
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth(),
+        enabled = enabled,
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primary),
+        contentPadding = PaddingValues(vertical = 19.dp, horizontal = 8.dp)
     ) {
         Text(
             text = text,
@@ -65,34 +89,19 @@ fun DefaultTextButton(
     }
 }
 
+@Preview
 @Composable
-fun DefaultOutlinedButton(
-    text: String,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    onClick: () -> Unit
-) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
-        enabled = enabled,
-        shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
-        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 8.dp)
-    ) {
-        Text(
-            text = text,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.labelLarge
-        )
+fun PrimaryButtonPreview() {
+    AppTheme {
+        PrimaryButton(text = "Start fueling") {}
     }
 }
 
 @Preview
 @Composable
-fun DefaultButtonPreview() {
+fun SecondaryButtonPreview() {
     AppTheme {
-        DefaultButton(text = stringResource(id = R.string.ONBOARDING_ACTIONS_NEXT)) {}
+        SecondaryButton(text = "Start navigation") {}
     }
 }
 
@@ -101,13 +110,5 @@ fun DefaultButtonPreview() {
 fun DefaultTextButtonPreview() {
     AppTheme {
         DefaultTextButton(text = stringResource(id = R.string.ONBOARDING_CREATE_PIN_TITLE)) {}
-    }
-}
-
-@Preview
-@Composable
-fun DefaultOutlinedButtonPreview() {
-    AppTheme {
-        DefaultOutlinedButton(text = stringResource(id = R.string.DASHBOARD_ACTIONS_NAVIGATE)) {}
     }
 }

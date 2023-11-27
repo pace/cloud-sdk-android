@@ -5,8 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import car.pace.cofu.R
-import car.pace.cofu.ui.component.DefaultButton
 import car.pace.cofu.ui.component.Description
+import car.pace.cofu.ui.component.PrimaryButton
 import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.theme.AppTheme
 
@@ -49,7 +49,7 @@ fun InsufficientLocationDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            DefaultButton(
+            PrimaryButton(
                 text = buttonText.uppercase(),
                 onClick = onConfirmation
             )

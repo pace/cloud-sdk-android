@@ -3,7 +3,6 @@
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Открытые настройки</string>
     <string name="ALERT.LOCATION_PERMISSION.DESCRIPTION">Чтобы показать вам ближайшую заправочную станцию, нам необходим доступ к вашему текущему местоположению.</string>
     <string name="ALERT.LOCATION_PERMISSION.TITLE">Местонахождение не разглашается</string>
-    <string name="COMMON.RETRY">Попробуйте еще раз</string>
     <string name="DASHBOARD.ACTIONS.NAVIGATE">НАЧАЛЬНЫЙ МАРШРУТ</string>
     <string name="DASHBOARD.ACTIONS.START_FUELING">ЗАПОЛНИТЕ ЗДЕСЬ</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Рядом с вами не найдено ни одной автозаправочной станции.</string>
@@ -11,7 +10,6 @@
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Мы выполним поиск ближайших АЗС в вашем регионе. Это может занять некоторое время.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Поиск автозаправочных станций...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Не удалось открыть настройки местоположения. Пожалуйста, активируйте службы определения местоположения вручную в системных настройках.</string>
-    <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL">ОТМЕНИТЬ</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">РЕГИСТРАЦИЯ</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">Ваши данные по-прежнему хранятся в вашей учетной записи PACE-ID.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Вы действительно хотите выписаться?</string>
@@ -25,7 +23,6 @@
     <string name="FUEL_TYPE.SUPER_PLUS">СУПЕР ПЛЮС</string>
     <string name="FUEL_TYPE_SELECTION">Какие цены на топливо мы должны вам показать?</string>
     <string name="GLOBAL.ACTIONS.CLOSE">Закрыть</string>
-    <string name="HOME.LOADING_FAILED">Загрузка не удалась</string>
     <string name="HOME.LOADING_FAILED_TEXT">Заправки не могли быть загружены. Проверьте свое соединение!</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TEXT">В настоящее время мы находим вас. Это может занять некоторое время.</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TITLE">Ищем место…</string>
@@ -34,6 +31,7 @@
     <string name="LOCATION_DIALOG.DISABLED_TITLE">Службы определения местоположения отключены</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TEXT">Чтобы показать вам ближайшую заправочную станцию, нам нужен доступ к вашему текущему местоположению.</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TITLE">Разрешение на определение местоположения не предоставлено</string>
+    <string name="MENU.ITEMS.CONTACT">Связаться с нами</string>
     <string name="MENU.ITEMS.FUEL_TYPE">Изменить тип топлива</string>
     <string name="MENU.ITEMS.IMPRINT">Оттиск</string>
     <string name="MENU.ITEMS.LICENCES">Лицензии</string>
@@ -41,7 +39,8 @@
     <string name="MENU.ITEMS.PAYMENT_HISTORY">Показать историю платежей</string>
     <string name="MENU.ITEMS.PAYMENT_METHODS">Редактирование способов оплаты</string>
     <string name="MENU.ITEMS.PRIVACY">Политика конфиденциальности</string>
-    <string name="MENU.TITLE.PLACEHOLDER">Подключенные заправки PACE</string>
+    <string name="MENU.ITEMS.TERMS">Условия эксплуатации</string>
+    <string name="MENU.TITLE.PLACEHOLDER">PACE Connected Fueling</string>
     <string name="ONBOARDING.ACTIONS.ADD_PAYMENT_METHOD">УСТАНОВИТЬ СПОСОБ ОПЛАТЫ</string>
     <string name="ONBOARDING.ACTIONS.AUTHENTICATE">ВОЙТИ ИЛИ ЗАРЕГИСТРИРОВАТЬСЯ</string>
     <string name="ONBOARDING.ACTIONS.BACK">НАЗАД</string>
@@ -90,5 +89,33 @@
     <string name="ONBOARDING.VERIFY_PIN.TITLE">Подтверждение PIN-кода</string>
     <string name="PRICE.NOT_AVAILABLE">н. в.</string>
     <string name="SHARE_TITLE">Делиться</string>
+    <string name="common_cancel">Отмена</string>
+    <string name="common_retry">Попробуйте еще раз</string>
     <string name="currency_format"></string>
+    <string name="fuel_group_diesel">Дизель</string>
+    <string name="fuel_group_petrol">Бензин</string>
+    <string name="fuel_selection_title">Выбор топлива</string>
+    <string name="general_error_title">Загрузка не удалась</string>
+    <string name="list_tab_label">Список</string>
+    <string name="more_tab_label">Подробнее</string>
+    <string name="payment_method_kind_credit_card">Кредитная карта</string>
+    <string name="payment_method_kind_creditcard">Кредитная карта</string>
+    <string name="payment_method_kind_dkv">Карта DKV</string>
+    <string name="payment_method_kind_fuel_card">Топливная карта</string>
+    <string name="payment_method_kind_giropay">giropay</string>
+    <string name="payment_method_kind_googlepay">Google Pay</string>
+    <string name="payment_method_kind_hoyer">HoyerCard</string>
+    <string name="payment_method_kind_paypal">PayPal</string>
+    <string name="payment_method_kind_sepa">Прямой дебет SEPA</string>
+    <string name="payment_method_kind_zgm">Карта ЗГМ</string>
+    <string name="payment_methods_add_button">Добавить</string>
+    <string name="payment_methods_empty_description">Добавьте способ оплаты или топливную карту, чтобы можно было начать первую заправку</string>
+    <string name="payment_methods_empty_title">Отсутствие способов оплаты или топливных карт</string>
+    <string name="payment_methods_error_description">Не удалось загрузить ваши способы оплаты и топливные карты. Проверьте свое соединение!</string>
+    <string name="payment_methods_loading_description">Мы загружаем ваши способы оплаты и топливные карты. Пожалуйста, подождите немного.</string>
+    <string name="payment_methods_loading_title">Загрузка способов оплаты и топливных карт...</string>
+    <string name="payment_methods_title">Способы оплаты и топливные карты</string>
+    <string name="transactions_title">Транзакции</string>
+    <string name="wallet_header_text">Вы вошли в систему как</string>
+    <string name="wallet_tab_label">Бумажник</string>
 </resources>

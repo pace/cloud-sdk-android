@@ -7,7 +7,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import car.pace.cofu.R
 import car.pace.cofu.ui.onboarding.PageScaffold
 import car.pace.cofu.ui.theme.AppTheme
-import car.pace.cofu.util.PermissionUtils
+import car.pace.cofu.util.extension.locationPermissions
 
 @Composable
 fun LocationPermissionPage(
@@ -23,7 +23,7 @@ fun LocationPermissionPage(
         descriptionRes = R.string.ONBOARDING_PERMISSION_DESCRIPTION,
         nextButtonTextRes = R.string.ONBOARDING_ACTIONS_SHARE_LOCATION,
         onNextButtonClick = {
-            launcher.launch(PermissionUtils.locationPermissions)
+            launcher.launch(locationPermissions)
         }
     )
 }

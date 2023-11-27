@@ -3,7 +3,6 @@
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Open settings</string>
     <string name="ALERT.LOCATION_PERMISSION.DESCRIPTION">To show you the nearest gas station, we need access to your current location.</string>
     <string name="ALERT.LOCATION_PERMISSION.TITLE">Location permission not granted</string>
-    <string name="COMMON.RETRY">Try again</string>
     <string name="DASHBOARD.ACTIONS.NAVIGATE">NAVIGATE TO</string>
     <string name="DASHBOARD.ACTIONS.START_FUELING">FUEL HERE</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">No gas stations where found nearby your location.</string>
@@ -11,7 +10,6 @@
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">We are searching for the nearest gas stations in your area. This may take a moment.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Searching gas stations...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">The location settings could not be opened. Please activate the location services manually in the system settings.</string>
-    <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL">CANCEL</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">LOGOUT</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">Your data will still be saved in your PACE-ID account.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Do you really want to logout?</string>
@@ -25,7 +23,6 @@
     <string name="FUEL_TYPE.SUPER_PLUS">SUPER PLUS</string>
     <string name="FUEL_TYPE_SELECTION">What fuel prices should we show you?</string>
     <string name="GLOBAL.ACTIONS.CLOSE">Close</string>
-    <string name="HOME.LOADING_FAILED">Loading failed</string>
     <string name="HOME.LOADING_FAILED_TEXT">Gas stations could not be loaded. Check your connection!</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TEXT">We are currently locating you. This might take a moment.</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TITLE">Looking for location…</string>
@@ -34,6 +31,7 @@
     <string name="LOCATION_DIALOG.DISABLED_TITLE">Location services disabled</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TEXT">To show you the nearest gas station, we need access to your current location.</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TITLE">Location permission not granted</string>
+    <string name="MENU.ITEMS.CONTACT">Contact us</string>
     <string name="MENU.ITEMS.FUEL_TYPE">Change fuel type</string>
     <string name="MENU.ITEMS.IMPRINT">Legal Notice</string>
     <string name="MENU.ITEMS.LICENCES">Licenses</string>
@@ -41,6 +39,7 @@
     <string name="MENU.ITEMS.PAYMENT_HISTORY">Show payment history</string>
     <string name="MENU.ITEMS.PAYMENT_METHODS">Edit payment methods</string>
     <string name="MENU.ITEMS.PRIVACY">Privacy Statement</string>
+    <string name="MENU.ITEMS.TERMS">Terms of Use</string>
     <string name="MENU.TITLE.PLACEHOLDER">PACE Connected Fueling</string>
     <string name="ONBOARDING.ACTIONS.ADD_PAYMENT_METHOD">ADD PAYMENT METHOD</string>
     <string name="ONBOARDING.ACTIONS.AUTHENTICATE">LOGIN OR REGISTER</string>
@@ -90,5 +89,33 @@
     <string name="ONBOARDING.VERIFY_PIN.TITLE">Confirm pin</string>
     <string name="PRICE.NOT_AVAILABLE">n. a.</string>
     <string name="SHARE_TITLE">Share</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_retry">Try again</string>
     <string name="currency_format">%2$s%1$s</string>
+    <string name="fuel_group_diesel">Diesel</string>
+    <string name="fuel_group_petrol">Petrol</string>
+    <string name="fuel_selection_title">Fuel selection</string>
+    <string name="general_error_title">Loading failed</string>
+    <string name="list_tab_label">List</string>
+    <string name="more_tab_label">More</string>
+    <string name="payment_method_kind_credit_card">Credit card</string>
+    <string name="payment_method_kind_creditcard">Credit card</string>
+    <string name="payment_method_kind_dkv">DKV Card</string>
+    <string name="payment_method_kind_fuel_card">Fuel card</string>
+    <string name="payment_method_kind_giropay">giropay</string>
+    <string name="payment_method_kind_googlepay">Google Pay</string>
+    <string name="payment_method_kind_hoyer">HoyerCard</string>
+    <string name="payment_method_kind_paypal">PayPal</string>
+    <string name="payment_method_kind_sepa">SEPA direct debit</string>
+    <string name="payment_method_kind_zgm">ZGM Card</string>
+    <string name="payment_methods_add_button">Add</string>
+    <string name="payment_methods_empty_description">Add a payment method or fuel card so that you can start your first refueling process</string>
+    <string name="payment_methods_empty_title">No payment methods or fuel cards</string>
+    <string name="payment_methods_error_description">Your payment methods and fuel cards could not be loaded. Check your connection!</string>
+    <string name="payment_methods_loading_description">We load your payment methods and fuel cards. Please wait a moment.</string>
+    <string name="payment_methods_loading_title">Loading payment methods and fuel cards…</string>
+    <string name="payment_methods_title">Payment methods &amp; fuel cards</string>
+    <string name="transactions_title">Transactions</string>
+    <string name="wallet_header_text">You are logged in as</string>
+    <string name="wallet_tab_label">Wallet</string>
 </resources>

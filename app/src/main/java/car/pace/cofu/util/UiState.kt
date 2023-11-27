@@ -9,6 +9,15 @@ sealed class UiState<out R> {
     data class Error(val throwable: Throwable) : UiState<Nothing>()
     object Loading : UiState<Nothing>()
 
+    fun <T> Result<T>.toUiState() = fold(
+        onSuccess = {
+            Success(it)
+        },
+        onFailure = {
+            Error(it)
+        }
+    )
+
     override fun toString(): String {
         return when (this) {
             is Success<*> -> "Success[data=$data]"

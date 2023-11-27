@@ -3,7 +3,6 @@
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Definições abertas</string>
     <string name="ALERT.LOCATION_PERMISSION.DESCRIPTION">Para lhe mostrar a estação de serviço mais próxima, precisamos de ter acesso à sua localização actual.</string>
     <string name="ALERT.LOCATION_PERMISSION.TITLE">Localização não libertada</string>
-    <string name="COMMON.RETRY">Tente novamente</string>
     <string name="DASHBOARD.ACTIONS.NAVIGATE">ROTA DE ARRANQUE</string>
     <string name="DASHBOARD.ACTIONS.START_FUELING">AQUI AQUI</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Não foram encontradas estações de serviço perto de si.</string>
@@ -11,7 +10,6 @@
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Procuraremos as estações de serviço mais próximas na sua área. Isto pode demorar um momento.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Pesquisar postos de gasolina...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Não foi possível abrir as definições de localização. Active os serviços de localização manualmente nas definições do sistema.</string>
-    <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.CANCEL">CANCELA</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">INSCREVA-SE</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">Os seus dados ainda são armazenados na sua conta PACE-ID.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Quer mesmo assinar a saída?</string>
@@ -25,7 +23,6 @@
     <string name="FUEL_TYPE.SUPER_PLUS">SUPER PLUS</string>
     <string name="FUEL_TYPE_SELECTION">Que preços de combustível devemos mostrar-lhe?</string>
     <string name="GLOBAL.ACTIONS.CLOSE">Fechar</string>
-    <string name="HOME.LOADING_FAILED">Falha no carregamento</string>
     <string name="HOME.LOADING_FAILED_TEXT">Os postos de gasolina não puderam ser carregados. Verifique sua conexão!</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TEXT">No momento estamos localizando você. Isso pode demorar um pouco.</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TITLE">Procurando localização…</string>
@@ -34,6 +31,7 @@
     <string name="LOCATION_DIALOG.DISABLED_TITLE">Serviços de localização desativados</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TEXT">Para lhe mostrar o posto de gasolina mais próximo, precisamos de acesso à sua localização atual.</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TITLE">Permissão de localização não concedida</string>
+    <string name="MENU.ITEMS.CONTACT">Contate-nos</string>
     <string name="MENU.ITEMS.FUEL_TYPE">Mudar o tipo de combustível</string>
     <string name="MENU.ITEMS.IMPRINT">Impressão</string>
     <string name="MENU.ITEMS.LICENCES">Licenças</string>
@@ -41,6 +39,7 @@
     <string name="MENU.ITEMS.PAYMENT_HISTORY">Mostrar histórico de pagamentos</string>
     <string name="MENU.ITEMS.PAYMENT_METHODS">Editar métodos de pagamento</string>
     <string name="MENU.ITEMS.PRIVACY">Política de privacidade</string>
+    <string name="MENU.ITEMS.TERMS">Termos de uso</string>
     <string name="MENU.TITLE.PLACEHOLDER">PACE Connected Fueling</string>
     <string name="ONBOARDING.ACTIONS.ADD_PAYMENT_METHOD">CRIAR UM MÉTODO DE PAGAMENTO</string>
     <string name="ONBOARDING.ACTIONS.AUTHENTICATE">INICIAR SESSÃO OU REGISTAR-SE</string>
@@ -90,5 +89,33 @@
     <string name="ONBOARDING.VERIFY_PIN.TITLE">Confirmar PIN</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Compartilhar</string>
+    <string name="common_cancel">Cancelar</string>
+    <string name="common_retry">Tente novamente</string>
     <string name="currency_format"></string>
+    <string name="fuel_group_diesel">Diesel</string>
+    <string name="fuel_group_petrol">Gasolina</string>
+    <string name="fuel_selection_title">Seleção de combustível</string>
+    <string name="general_error_title">Falha no carregamento</string>
+    <string name="list_tab_label">Lista</string>
+    <string name="more_tab_label">Mais</string>
+    <string name="payment_method_kind_credit_card">Cartão de crédito</string>
+    <string name="payment_method_kind_creditcard">Cartão de crédito</string>
+    <string name="payment_method_kind_dkv">Cartão DKV</string>
+    <string name="payment_method_kind_fuel_card">Cartão de combustível</string>
+    <string name="payment_method_kind_giropay">giropay</string>
+    <string name="payment_method_kind_googlepay">Google Pay</string>
+    <string name="payment_method_kind_hoyer">HoyerCard</string>
+    <string name="payment_method_kind_paypal">PayPal</string>
+    <string name="payment_method_kind_sepa">Débito directo SEPA</string>
+    <string name="payment_method_kind_zgm">Cartão ZGM</string>
+    <string name="payment_methods_add_button">Acrescentar</string>
+    <string name="payment_methods_empty_description">Adicione um método de pagamento ou um cartão de combustível para poder iniciar o seu primeiro processo de reabastecimento</string>
+    <string name="payment_methods_empty_title">Sem métodos de pagamento ou cartões de combustível</string>
+    <string name="payment_methods_error_description">Não foi possível carregar os seus métodos de pagamento e cartões de combustível. Verifique a sua ligação!</string>
+    <string name="payment_methods_loading_description">Carregamos os seus métodos de pagamento e cartões de combustível. Aguarde um momento.</string>
+    <string name="payment_methods_loading_title">Carregamento de métodos de pagamento e cartões de combustível...</string>
+    <string name="payment_methods_title">Métodos de pagamento e cartões de combustível</string>
+    <string name="transactions_title">Transacções</string>
+    <string name="wallet_header_text">Tem sessão iniciada como</string>
+    <string name="wallet_tab_label">Carteira</string>
 </resources>

@@ -8,7 +8,8 @@ import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.GasStationRepository
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_FUEL_TYPE
-import car.pace.cofu.ui.fueltype.FuelType
+import car.pace.cofu.ui.wallet.fueltype.FuelType
+import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
 import car.pace.cofu.util.UiState
 import cloud.pace.sdk.poikit.utils.distanceTo
 import cloud.pace.sdk.utils.LocationProvider
@@ -83,7 +84,7 @@ class HomeViewModel @Inject constructor(
         .map { FuelType.values().getOrNull(it) }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT_MILLIS),
+            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
             initialValue = null
         )
 
@@ -91,7 +92,7 @@ class HomeViewModel @Inject constructor(
         .map { LatLng(it.latitude, it.longitude) }
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT_MILLIS),
+            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
             initialValue = null
         )
 
@@ -103,7 +104,6 @@ class HomeViewModel @Inject constructor(
     }
 
     companion object {
-        private const val DEFAULT_TIMEOUT_MILLIS = 5000L
         private const val LOCATION_UPDATE_DISTANCE_METERS = 500f
         private const val GAS_STATION_SEARCH_RADIUS = 10000
     }

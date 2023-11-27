@@ -10,8 +10,8 @@ import car.pace.cofu.R
 import car.pace.cofu.data.UserRepository
 import car.pace.cofu.ui.onboarding.twofactor.setup.PinSetup
 import car.pace.cofu.util.PinChecker
-import car.pace.cofu.util.UserCanceledException
-import car.pace.cofu.util.errorTextRes
+import car.pace.cofu.util.extension.UserCanceledException
+import car.pace.cofu.util.extension.errorTextRes
 import cloud.pace.sdk.idkit.model.InternalError
 import cloud.pace.sdk.idkit.model.PINNotSecure
 import dagger.hilt.android.lifecycle.HiltViewModel

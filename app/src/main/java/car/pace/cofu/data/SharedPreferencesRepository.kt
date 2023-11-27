@@ -65,6 +65,8 @@ class SharedPreferencesRepository @Inject constructor(
         }
     }
 
+    fun clear() = sharedPreferences.edit { clear() }
+
     companion object {
         const val PREF_KEY_ONBOARDING_DONE = "onboardingDone"
         const val PREF_KEY_FUEL_TYPE = "fuelType"
