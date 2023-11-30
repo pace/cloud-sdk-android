@@ -17,9 +17,9 @@ fun PaymentMethodPage(
 
     PageScaffold(
         imageRes = R.drawable.ic_payment,
-        titleRes = R.string.ONBOARDING_PAYMENT_METHOD_TITLE,
-        descriptionRes = R.string.ONBOARDING_PAYMENT_METHOD_DESCRIPTION,
-        nextButtonTextRes = R.string.ONBOARDING_ACTIONS_ADD_PAYMENT_METHOD,
+        titleRes = R.string.onboarding_payment_method_title,
+        descriptionRes = R.string.onboarding_payment_method_description,
+        nextButtonTextRes = R.string.onboarding_payment_method_action,
         onNextButtonClick = {
             AppKit.openPaymentApp(
                 context = context,

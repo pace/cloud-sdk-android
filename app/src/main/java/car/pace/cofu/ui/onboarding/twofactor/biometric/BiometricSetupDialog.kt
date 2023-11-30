@@ -19,21 +19,21 @@ fun BiometricSetupDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             DefaultTextButton(
-                text = stringResource(id = R.string.ONBOARDING_FINGERPRINT_SAVE).uppercase(),
+                text = stringResource(id = R.string.onboarding_fingerprint_save).uppercase(),
                 color = MaterialTheme.colorScheme.primary,
                 onClick = onConfirmation
             )
         },
         dismissButton = {
             DefaultTextButton(
-                text = stringResource(id = R.string.ONBOARDING_ACTIONS_BACK),
+                text = stringResource(id = R.string.common_use_back),
                 color = MaterialTheme.colorScheme.primary,
                 onClick = onDismiss
             )
         },
         text = {
             Description(
-                text = stringResource(id = R.string.ONBOARDING_FINGERPRINT_NONE_SAVED_TITLE)
+                text = stringResource(id = R.string.onboarding_fingerprint_none_saved_title)
             )
         }
     )

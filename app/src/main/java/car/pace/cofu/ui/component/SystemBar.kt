@@ -37,6 +37,11 @@ fun TopBar(
             LogoTopBar()
         }
 
+        Route.DETAIL -> TextTopBar(
+            text = null,
+            onNavigateUp = onNavigateUp
+        )
+
         Route.WALLET, Route.MORE -> {
             TextTopBar(
                 text = currentRoute.graph?.labelRes?.let { stringResource(id = it) }.orEmpty(),
@@ -52,7 +57,6 @@ fun TopBar(
         }
 
         Route.TRANSACTIONS -> TODO()
-        Route.DETAIL -> TODO()
         Route.TERMS -> TODO()
         Route.PRIVACY -> TODO()
         Route.CONTACT -> TODO()
@@ -79,18 +83,20 @@ fun LogoTopBar() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextTopBar(
-    text: String,
+    text: String?,
     backIcon: ImageVector? = Icons.Filled.ArrowBack,
     onNavigateUp: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         title = {
-            Text(
-                text = text,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-                style = MaterialTheme.typography.titleMedium
-            )
+            if (text != null) {
+                Text(
+                    text = text,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
         },
         navigationIcon = {
             if (backIcon != null) {

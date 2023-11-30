@@ -198,7 +198,7 @@ fun LogoutDialog(
         },
         dismissButton = {
             SecondaryButton(
-                text = stringResource(id = R.string.common_cancel),
+                text = stringResource(id = R.string.common_use_cancel),
                 onClick = onDismiss
             )
         },

@@ -30,7 +30,7 @@ fun AuthenticationPage(
                 is Success -> onNext()
                 is Failure -> {
                     val snackbarData = SnackbarData(
-                        messageRes = R.string.ONBOARDING_LOG_IN_UNSUCCESSFUL,
+                        messageRes = R.string.onboarding_login_unsuccessful,
                         onActionPerformed = ::login
                     )
                     showSnackbar(snackbarData)
@@ -41,9 +41,9 @@ fun AuthenticationPage(
 
     PageScaffold(
         imageRes = R.drawable.ic_profile,
-        titleRes = R.string.ONBOARDING_AUTHENTICATION_TITLE,
-        descriptionRes = R.string.ONBOARDING_AUTHENTICATION_DESCRIPTION,
-        nextButtonTextRes = R.string.ONBOARDING_ACTIONS_AUTHENTICATE,
+        titleRes = R.string.onboarding_authentication_title,
+        descriptionRes = R.string.onboarding_authentication_description,
+        nextButtonTextRes = R.string.onboarding_authentication_action,
         onNextButtonClick = ::login
     )
 }

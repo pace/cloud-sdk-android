@@ -4,6 +4,7 @@ before_script:
     - chmod +x ./gradlew
     - echo $DEFAULT_CONFIG | tr ' ' '\r\n' > config.json
     - echo "$FIREBASE_DEV_JSON" > app/google-services.json
+    - echo "$RELEASE_KEYSTORE" | base64 -d > keystore.jks
 
 after_script:
     - rm config.json || true

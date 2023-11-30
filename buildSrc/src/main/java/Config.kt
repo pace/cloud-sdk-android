@@ -3,7 +3,9 @@ data class Config(
     val signing: Signing,
     val sdk: Sdk,
     val sentry: Sentry,
-    val crashlyticsEnabled: Boolean
+    val crashlyticsEnabled: Boolean,
+    val hidePrices: Boolean,
+    val googleMapsApiKey: String
 )
 
 data class Signing(

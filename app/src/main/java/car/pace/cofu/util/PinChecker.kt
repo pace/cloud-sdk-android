@@ -28,8 +28,8 @@ object PinChecker {
      */
     enum class Result(@StringRes val errorStringRes: Int) {
         OK(0),
-        INVALID_LENGTH(R.string.ONBOARDING_PIN_ERROR_INVALID_LENGTH),
-        TOO_FEW_DIGITS(R.string.ONBOARDING_PIN_ERROR_TOO_FEW_DIGITS),
-        SERIES(R.string.ONBOARDING_PIN_ERROR_SERIES)
+        INVALID_LENGTH(R.string.onboarding_pin_error_invalid_length),
+        TOO_FEW_DIGITS(R.string.onboarding_pin_error_too_few_digits),
+        SERIES(R.string.onboarding_pin_error_series)
     }
 }

@@ -25,9 +25,9 @@ fun FuelTypePage(
 
     PageScaffold(
         imageRes = R.drawable.ic_fuel,
-        titleRes = R.string.ONBOARDING_FUEL_TYPE_TITLE,
-        descriptionRes = R.string.ONBOARDING_FUEL_TYPE_DESCRIPTION,
-        nextButtonTextRes = R.string.ONBOARDING_ACTIONS_NEXT,
+        titleRes = R.string.onboarding_fuel_type_title,
+        descriptionRes = R.string.onboarding_fuel_type_description,
+        nextButtonTextRes = R.string.common_use_next,
         onNextButtonClick = { onNext(selectedFuelType ?: FuelType.DIESEL) },
         nextButtonEnabled = nextButtonEnabled
     ) {

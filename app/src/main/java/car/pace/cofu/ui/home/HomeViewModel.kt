@@ -6,16 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.GasStationRepository
+import car.pace.cofu.data.LocationRepository
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_FUEL_TYPE
 import car.pace.cofu.ui.wallet.fueltype.FuelType
 import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
 import car.pace.cofu.util.UiState
-import cloud.pace.sdk.poikit.utils.distanceTo
-import cloud.pace.sdk.utils.LocationProvider
-import cloud.pace.sdk.utils.LocationProviderImpl.Companion.DEFAULT_LOCATION_REQUEST
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.Priority
+import car.pace.cofu.util.UiState.Loading.toUiState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -31,17 +28,11 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    locationProvider: LocationProvider,
     sharedPreferencesRepository: SharedPreferencesRepository,
-    private val gasStationRepository: GasStationRepository
+    gasStationRepository: GasStationRepository,
+    locationRepository: LocationRepository
 ) : ViewModel() {
 
-    private val locationRequest = LocationRequest.Builder(DEFAULT_LOCATION_REQUEST)
-        .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-        .setMinUpdateDistanceMeters(LOCATION_UPDATE_DISTANCE_METERS)
-        .build()
-
-    private val location = locationProvider.locationFlow(locationRequest)
     private val refresh = MutableSharedFlow<Unit>(replay = 1).apply {
         tryEmit(Unit)
     }
@@ -50,16 +41,15 @@ class HomeViewModel @Inject constructor(
     var showSnackbarError = MutableSharedFlow<Boolean>()
     private var dataAvailable = false
 
-    val uiState = location
+    val uiState = locationRepository.location
         .combine(refresh) { location, _ ->
-            val gasStations = gasStationRepository.requestCofuGasStations(location, GAS_STATION_SEARCH_RADIUS).getOrElse {
-                return@combine UiState.Error(it)
-            }
-            val latLng = LatLng(location.latitude, location.longitude)
-            val sortedGasStations = gasStations.sortedBy { it.center?.toLatLn()?.distanceTo(latLng) }
-
-            dataAvailable = sortedGasStations.isNotEmpty()
-            UiState.Success(sortedGasStations)
+            gasStationRepository.getGasStations(location)
+                .toUiState()
+                .also { state ->
+                    if (state is UiState.Success) {
+                        dataAvailable = state.data.isNotEmpty()
+                    }
+                }
         }
         .onEach {
             showPullRefreshIndicator = false
@@ -88,7 +78,7 @@ class HomeViewModel @Inject constructor(
             initialValue = null
         )
 
-    val userLocation = location
+    val userLocation = locationRepository.location
         .map { LatLng(it.latitude, it.longitude) }
         .stateIn(
             scope = viewModelScope,
@@ -101,10 +91,5 @@ class HomeViewModel @Inject constructor(
             showPullRefreshIndicator = true
             refresh.emit(Unit)
         }
-    }
-
-    companion object {
-        private const val LOCATION_UPDATE_DISTANCE_METERS = 500f
-        private const val GAS_STATION_SEARCH_RADIUS = 10000
     }
 }

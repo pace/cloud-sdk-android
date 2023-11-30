@@ -14,9 +14,9 @@ class MailNotSentException : Exception("Mail could not be sent")
 @StringRes
 fun Throwable.errorTextRes(): Int {
     return when (this) {
-        is InternalError -> R.string.ONBOARDING_ERROR_AUTHORISATION
-        is UnknownHostException, is SocketTimeoutException -> R.string.ONBOARDING_NETWORK_ERROR
-        is ApiException -> if (errorCode == HttpURLConnection.HTTP_FORBIDDEN) R.string.ONBOARDING_ERROR_AUTHORISATION else R.string.ONBOARDING_NETWORK_ERROR
-        else -> R.string.ONBOARDING_UNKNOWN_ERROR
+        is InternalError -> R.string.onboarding_error_authorization
+        is UnknownHostException, is SocketTimeoutException -> R.string.common_use_network_error
+        is ApiException -> if (errorCode == HttpURLConnection.HTTP_FORBIDDEN) R.string.onboarding_error_authorization else R.string.common_use_network_error
+        else -> R.string.common_use_unknown_error
     }
 }
