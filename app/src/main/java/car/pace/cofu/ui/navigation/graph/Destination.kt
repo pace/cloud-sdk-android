@@ -47,11 +47,8 @@ enum class Route(
     TRANSACTIONS("transactions_route", Graph.WALLET, false, Icons.Outlined.ReceiptLong, R.string.transactions_title),
     FUEL_TYPE("fuelType_route", Graph.WALLET, true, Icons.Outlined.LocalGasStation, R.string.fuel_selection_title),
     MORE("more_route", Graph.MORE, true),
-    TERMS("terms_route", Graph.MORE, true),
-    PRIVACY("privacy_route", Graph.MORE, true),
-    CONTACT("contact_route", Graph.MORE, true),
-    IMPRINT("imprint_route", Graph.MORE, true),
-    LIBRARIES("libraries_route", Graph.MORE, false);
+    LOCAL_WEBVIEW_CONTENT("local_webview_content", Graph.MORE, true),
+    LIBRARIES("libraries_route", Graph.MORE, true, null, R.string.MENU_ITEMS_LICENCES);
 
     companion object {
 
