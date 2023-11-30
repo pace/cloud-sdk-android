@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Открытые настройки</string>
-    <string name="ALERT.LOCATION_PERMISSION.DESCRIPTION">Чтобы показать вам ближайшую заправочную станцию, нам необходим доступ к вашему текущему местоположению.</string>
-    <string name="ALERT.LOCATION_PERMISSION.TITLE">Местонахождение не разглашается</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Рядом с вами не найдено ни одной автозаправочной станции.</string>
     <string name="DASHBOARD.EMPTY_VIEW.TITLE">Рядом с вами нет автозаправочных станций</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Мы выполним поиск ближайших АЗС в вашем регионе. Это может занять некоторое время.</string>
@@ -41,13 +39,18 @@
     <string name="MENU.TITLE.PLACEHOLDER">PACE Connected Fueling</string>
     <string name="PRICE.NOT_AVAILABLE">н. в.</string>
     <string name="SHARE_TITLE">Делиться</string>
+    <string name="alert_location_permission_description">Чтобы показать вам ближайшую заправочную станцию, нам необходим доступ к вашему текущему местоположению.</string>
+    <string name="alert_location_permission_title">Местонахождение не разглашается</string>
     <string name="closed_label">ЗАКРЫТО</string>
+    <string name="common_pay_here_now">Оплатите здесь и сейчас!</string>
     <string name="common_start_fueling">Начните заправляться</string>
     <string name="common_start_navigation">Начать навигацию</string>
     <string name="common_use_accept">Принимать</string>
+    <string name="common_use_are_you_sure">Вы уверены?</string>
     <string name="common_use_back">Назад</string>
     <string name="common_use_cancel">Отмена</string>
     <string name="common_use_confirm">Подтвердите</string>
+    <string name="common_use_deactivate">Деактивировать</string>
     <string name="common_use_decline">Снижение</string>
     <string name="common_use_friday">Пятница</string>
     <string name="common_use_monday">Понедельник</string>
@@ -66,7 +69,6 @@
     <string name="currency_format">%2$s%1$s</string>
     <string name="fuel_group_diesel">Дизель</string>
     <string name="fuel_group_petrol">Бензин</string>
-    <string name="fuel_selection_title">Выбор топлива</string>
     <string name="gas_station_closed_hint">В настоящее время автозаправочная станция закрыта.</string>
     <string name="gas_station_default_name">Автозаправочная станция</string>
     <string name="gas_station_error_description">Данные о заправке не удалось загрузить. Проверьте ваше соединение!</string>
@@ -83,6 +85,7 @@
     <string name="gas_station_opening_hours_hint">Часы работы могут отличаться в праздничные дни.</string>
     <string name="gas_station_opening_hours_not_available">Часы работы в настоящее время не указаны.</string>
     <string name="gas_station_opening_hours_title">Часы работы</string>
+    <string name="gasstation_closes_in">Заправочная станция закрывается в %s</string>
     <string name="general_error_title">Загрузка не удалась</string>
     <string name="list_tab_label">Список</string>
     <string name="more_tab_label">Подробнее</string>
@@ -122,8 +125,8 @@
     <string name="onboarding_pin_error_series">PIN-код не должен состоять из ряда возрастающих или убывающих цифр.</string>
     <string name="onboarding_pin_error_too_few_digits">PIN-код должен содержать не менее трех разных цифр.</string>
     <string name="onboarding_retry_login">Попробуйте войти в систему снова</string>
-    <string name="onboarding_tracking_app_tracking">отслеживание приложения</string>
-    <string name="onboarding_tracking_description">Согласитесь на отслеживание приложения, чтобы мы могли оптимизировать его использование для вас.</string>
+    <string name="onboarding_tracking_app_tracking">анализ использования</string>
+    <string name="onboarding_tracking_description">Согласитесь на анализ использования, чтобы мы могли и дальше оптимизировать это приложение для вас.</string>
     <string name="onboarding_tracking_title">Улучшите свой опыт</string>
     <string name="onboarding_two_factor_authentication_biometry">Используйте биометрические данные</string>
     <string name="onboarding_two_factor_authentication_description">Биометрические сканеры - самый быстрый и безопасный способ подтверждения платежных операций.</string>
@@ -147,8 +150,15 @@
     <string name="payment_methods_error_description">Не удалось загрузить ваши способы оплаты и топливные карты. Проверьте свое соединение!</string>
     <string name="payment_methods_loading_description">Мы загружаем ваши способы оплаты и топливные карты. Пожалуйста, подождите немного.</string>
     <string name="payment_methods_loading_title">Загрузка способов оплаты и топливных карт...</string>
-    <string name="payment_methods_title">Способы оплаты и топливные карты</string>
-    <string name="transactions_title">Транзакции</string>
+    <string name="wallet_account_deletion_title">Удалить аккаунт</string>
+    <string name="wallet_fuel_type_selection_title">Выбор топлива</string>
     <string name="wallet_header_text">Вы вошли в систему как</string>
+    <string name="wallet_payment_methods_title">Способы оплаты и топливные карты</string>
     <string name="wallet_tab_label">Бумажник</string>
+    <string name="wallet_transactions_title">Транзакции</string>
+    <string name="wallet_two_factor_authentication_biometry_setup_successful">Биометрия успешно установлена</string>
+    <string name="wallet_two_factor_authentication_biometry_title">Биометрия</string>
+    <string name="wallet_two_factor_authentication_pin_setup_successful">PIN-код установлен успешно</string>
+    <string name="wallet_two_factor_authentication_pin_title">Установите PIN-код</string>
+    <string name="wallet_two_factor_authentication_title">Процедура авторизации</string>
 </resources>

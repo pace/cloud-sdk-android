@@ -169,7 +169,7 @@ fun HomeScreen(
 
         if (showLocationPermissionDialog) {
             LocationPermissionDialog(
-                onConfirmation = {
+                onConfirm = {
                     try {
                         val uri = Uri.fromParts("package", context.packageName, null)
                         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri)
@@ -186,7 +186,7 @@ fun HomeScreen(
             )
         } else if (showLocationDisabledDialog) {
             LocationDisabledDialog(
-                onConfirmation = {
+                onConfirm = {
                     try {
                         context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
                     } catch (e: Exception) {

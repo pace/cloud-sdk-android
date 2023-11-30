@@ -8,12 +8,10 @@ object Constants {
     const val COFU_DISTANCE_METERS = 500
     const val FADE_MAP_DURATION = 300
 
-    const val TITLE_CONTENT_TYPE = "Title"
-    const val GAS_STATION_CONTENT_TYPE = "GasStation"
-    const val USER_HEADER_CONTENT_TYPE = "UserHeader"
-    const val DEFAULT_LIST_ITEM_CONTENT_TYPE = "DefaultListItem"
-    const val SPACER_CONTENT_TYPE = "Spacer"
-    const val METHOD_LIST_ITEM_CONTENT_TYPE = "Method"
+    const val ONBOARDING_IMAGE_KEY = "OnboardingImage"
+    const val ONBOARDING_TITLE_KEY = "OnboardingTitle"
+    const val ONBOARDING_DESCRIPTION_KEY = "OnboardingDescription"
+    const val ONBOARDING_CONTENT_KEY = "OnboardingContent"
 
     const val NEAREST_GAS_STATION_TITLE_KEY = "NearestGasStation"
     const val OTHER_GAS_STATIONS_TITLE_KEY = "OtherGasStations"
@@ -27,6 +25,14 @@ object Constants {
     const val DETAIL_SPACER_TOP_KEY = "DetailSpacerTop"
     const val DETAIL_SPACER_BOTTOM_KEY = "DetailSpacerBottom"
     const val DETAIL_LAST_UPDATED_KEY = "DetailLastUpdated"
+
+    const val TITLE_CONTENT_TYPE = "Title"
+    const val GAS_STATION_CONTENT_TYPE = "GasStation"
+    const val USER_HEADER_CONTENT_TYPE = "UserHeader"
+    const val DEFAULT_LIST_ITEM_CONTENT_TYPE = "DefaultListItem"
+    const val SPACER_CONTENT_TYPE = "Spacer"
+    const val PAYMENT_METHOD_LIST_ITEM_CONTENT_TYPE = "PaymentMethod"
+    const val CONTAINER_CONTENT_TYPE = "Container"
 
     const val DETAIL_TOP_CONTENT_CONTENT_TYPE = "DetailTopContent"
     const val DETAIL_OPENING_HOURS_CONTENT_TYPE = "DetailOpeningHours"

@@ -1,9 +1,14 @@
 package car.pace.cofu.ui.app
 
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -53,7 +58,15 @@ fun AppContent() {
                 navController = appState.navController,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding)
+                    .run {
+                        if (appState.shouldDrawBehindStatusBar) {
+                            // No status bar inset to draw the header image behind the status bar
+                            windowInsetsPadding(WindowInsets.systemBars.exclude(WindowInsets.statusBars))
+                        } else {
+                            // Apply whole padding of Scaffold
+                            padding(padding)
+                        }
+                    }
                     .consumeWindowInsets(padding)
             ) {
                 coroutineScope.launch {

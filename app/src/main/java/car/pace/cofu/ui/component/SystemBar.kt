@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
 import car.pace.cofu.ui.navigation.graph.Graph
 import car.pace.cofu.ui.navigation.graph.Route
@@ -33,31 +34,35 @@ fun TopBar(
     onNavigateUp: () -> Unit
 ) {
     when (currentRoute) {
-        Route.ONBOARDING, Route.HOME -> {
+        Route.ONBOARDING -> {
+            if (!BuildConfig.ONBOARDING_SHOW_CUSTOM_HEADER) {
+                LogoTopBar()
+            }
+        }
+
+        Route.HOME -> {
             LogoTopBar()
         }
 
-        Route.DETAIL, Route.LOCAL_WEBVIEW_CONTENT -> TextTopBar(
-            text = null,
-            onNavigateUp = onNavigateUp
-        )
+        Route.DETAIL, Route.LOCAL_WEBVIEW_CONTENT, Route.ONBOARDING_WEBVIEW_CONTENT -> {
+            TextTopBar(onNavigateUp = onNavigateUp)
+        }
 
         Route.WALLET, Route.MORE -> {
             TextTopBar(
-                text = currentRoute.graph?.labelRes?.let { stringResource(id = it) }.orEmpty(),
+                text = currentRoute.graph?.labelRes?.let { stringResource(id = it) },
                 backIcon = null
             )
         }
 
-        Route.METHODS, Route.FUEL_TYPE, Route.LIBRARIES -> {
+        Route.PAYMENT_METHODS, Route.FUEL_TYPE, Route.LIBRARIES -> {
             TextTopBar(
-                text = currentRoute.labelRes?.let { stringResource(id = it) }.orEmpty(),
+                text = currentRoute.labelRes?.let { stringResource(id = it) },
                 onNavigateUp = onNavigateUp
             )
         }
 
-        Route.TRANSACTIONS -> TODO()
-        null -> {}
+        else -> {}
     }
 }
 
@@ -78,7 +83,7 @@ fun LogoTopBar() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextTopBar(
-    text: String?,
+    text: String? = null,
     backIcon: ImageVector? = Icons.Filled.ArrowBack,
     onNavigateUp: () -> Unit = {}
 ) {

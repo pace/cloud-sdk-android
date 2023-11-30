@@ -2,9 +2,9 @@ package car.pace.cofu
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
-import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
 import car.pace.cofu.ui.app.AppContent
 import cloud.pace.sdk.idkit.IDKit
@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // This is needed to draw the content edge-to-edge (behind system bars)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
 
         setContent {
             AppContent()

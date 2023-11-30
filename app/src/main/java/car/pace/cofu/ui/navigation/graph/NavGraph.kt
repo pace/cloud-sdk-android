@@ -17,22 +17,36 @@ import car.pace.cofu.ui.more.MoreScreen
 import car.pace.cofu.ui.more.WebViewScreen
 import car.pace.cofu.ui.onboarding.OnboardingScreen
 import car.pace.cofu.ui.wallet.WalletScreen
+import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeScreen
 import car.pace.cofu.ui.wallet.paymentmethods.PaymentMethodsScreen
+import car.pace.cofu.util.LegalDocument
 import car.pace.cofu.util.SnackbarData
+import car.pace.cofu.util.extension.encode
 import com.mikepenz.aboutlibraries.ui.compose.LibrariesContainer
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 fun NavGraphBuilder.onboardingGraph(
-    showSnackbar: (SnackbarData) -> Unit,
-    onDone: () -> Unit
+    onLegalDocument: (LegalDocument) -> Unit,
+    onDone: (FuelTypeGroup) -> Unit
 ) {
     composable(Route.ONBOARDING.route) {
         OnboardingScreen(
-            showSnackbar = showSnackbar,
+            onLegalDocument = onLegalDocument,
             onDone = onDone
         )
+    }
+    composable(
+        route = "${Route.ONBOARDING_WEBVIEW_CONTENT.route}/{url}",
+        arguments = listOf(
+            navArgument("url") {
+                type = NavType.StringType
+            }
+        )
+    ) {
+        val url = it.arguments?.getString("url")
+        url?.let {
+            WebViewScreen(url)
+        }
     }
 }
 
@@ -54,7 +68,9 @@ fun NavGraphBuilder.homeGraph(
         composable(
             route = "${Route.DETAIL.route}/{id}",
             arguments = listOf(
-                navArgument("id") { type = NavType.StringType }
+                navArgument("id") {
+                    type = NavType.StringType
+                }
             )
         ) {
             DetailScreen()
@@ -72,7 +88,7 @@ fun NavGraphBuilder.walletGraph(
         composable(Route.WALLET.route) {
             WalletScreen(onNavigate = onNavigate)
         }
-        composable(Route.METHODS.route) {
+        composable(Route.PAYMENT_METHODS.route) {
             PaymentMethodsScreen()
         }
         composable(Route.FUEL_TYPE.route) {
@@ -92,12 +108,13 @@ fun NavGraphBuilder.moreGraph(
             MoreScreen {
                 when (it.action) {
                     is MenuItemAction.LocalContent -> {
-                        val encodedUrl = URLEncoder.encode(it.action.url, StandardCharsets.UTF_8.toString())
-                        onNavigate("${Route.LOCAL_WEBVIEW_CONTENT.route}/$encodedUrl")
+                        onNavigate("${Route.LOCAL_WEBVIEW_CONTENT.route}/${it.action.url.encode()}")
                     }
+
                     is MenuItemAction.Dependencies -> {
                         onNavigate(Route.LIBRARIES.route)
                     }
+
                     else -> {}
                 }
             }

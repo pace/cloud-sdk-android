@@ -36,7 +36,7 @@ import car.pace.cofu.ui.component.LoadingCard
 import car.pace.cofu.ui.component.SecondaryButton
 import car.pace.cofu.ui.component.forwardingPainter
 import car.pace.cofu.ui.theme.AppTheme
-import car.pace.cofu.util.Constants.METHOD_LIST_ITEM_CONTENT_TYPE
+import car.pace.cofu.util.Constants.PAYMENT_METHOD_LIST_ITEM_CONTENT_TYPE
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.extension.PaymentMethodItem
 import car.pace.cofu.util.extension.name
@@ -80,7 +80,7 @@ fun PaymentMethodsScreen(
                         items(
                             items = items,
                             key = PaymentMethodItem::id,
-                            contentType = { METHOD_LIST_ITEM_CONTENT_TYPE }
+                            contentType = { PAYMENT_METHOD_LIST_ITEM_CONTENT_TYPE }
                         ) {
                             PaymentMethodListItem(
                                 modifier = Modifier.clickable(

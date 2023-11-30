@@ -3,7 +3,9 @@ package car.pace.cofu.ui.navigation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.SharedPreferencesRepository
+import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_FUEL_TYPE
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_ONBOARDING_DONE
+import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -24,7 +26,8 @@ class AppNavHostViewModel @Inject constructor(
             initialValue = initialValue
         )
 
-    fun onboardingDone() {
+    fun onboardingDone(fuelTypeGroup: FuelTypeGroup) {
+        sharedPreferencesRepository.putValue(PREF_KEY_FUEL_TYPE, fuelTypeGroup.prefFuelType.ordinal)
         sharedPreferencesRepository.putValue(PREF_KEY_ONBOARDING_DONE, true)
     }
 }

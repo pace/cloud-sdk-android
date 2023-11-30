@@ -1,39 +1,38 @@
 package car.pace.cofu.ui.home.dialog
 
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.LocationOff
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import car.pace.cofu.R
-import car.pace.cofu.ui.component.Description
-import car.pace.cofu.ui.component.PrimaryButton
-import car.pace.cofu.ui.component.Title
+import car.pace.cofu.ui.component.DefaultDialog
 import car.pace.cofu.ui.theme.AppTheme
 
 @Composable
 fun LocationPermissionDialog(
-    onConfirmation: () -> Unit,
+    onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
     InsufficientLocationDialog(
         title = stringResource(id = R.string.LOCATION_DIALOG_PERMISSION_DENIED_TITLE),
         text = stringResource(id = R.string.LOCATION_DIALOG_PERMISSION_DENIED_TEXT),
-        buttonText = stringResource(id = R.string.ALERT_LOCATION_PERMISSION_ACTIONS_OPEN_SETTINGS),
-        onConfirmation = onConfirmation,
+        confirmButtonText = stringResource(id = R.string.ALERT_LOCATION_PERMISSION_ACTIONS_OPEN_SETTINGS),
+        onConfirm = onConfirm,
         onDismiss = onDismiss
     )
 }
 
 @Composable
 fun LocationDisabledDialog(
-    onConfirmation: () -> Unit,
+    onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
     InsufficientLocationDialog(
         title = stringResource(id = R.string.LOCATION_DIALOG_DISABLED_TITLE),
         text = stringResource(id = R.string.LOCATION_DIALOG_DISABLED_TEXT),
-        buttonText = stringResource(id = R.string.ALERT_LOCATION_PERMISSION_ACTIONS_OPEN_SETTINGS),
-        onConfirmation = onConfirmation,
+        confirmButtonText = stringResource(id = R.string.ALERT_LOCATION_PERMISSION_ACTIONS_OPEN_SETTINGS),
+        onConfirm = onConfirm,
         onDismiss = onDismiss
     )
 }
@@ -42,24 +41,18 @@ fun LocationDisabledDialog(
 fun InsufficientLocationDialog(
     title: String,
     text: String,
-    buttonText: String,
-    onConfirmation: () -> Unit,
+    confirmButtonText: String,
+    onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            PrimaryButton(
-                text = buttonText.uppercase(),
-                onClick = onConfirmation
-            )
-        },
-        title = {
-            Title(text = title)
-        },
-        text = {
-            Description(text = text)
-        }
+    DefaultDialog(
+        title = title,
+        text = text,
+        confirmButtonText = confirmButtonText,
+        dismissButtonText = stringResource(id = R.string.common_use_cancel),
+        imageVector = Icons.Outlined.LocationOff,
+        onConfirm = onConfirm,
+        onDismiss = onDismiss
     )
 }
 
@@ -68,7 +61,7 @@ fun InsufficientLocationDialog(
 fun LocationPermissionDialogPreview() {
     AppTheme {
         LocationPermissionDialog(
-            onConfirmation = {},
+            onConfirm = {},
             onDismiss = {}
         )
     }
@@ -79,7 +72,7 @@ fun LocationPermissionDialogPreview() {
 fun LocationDisabledDialogPreview() {
     AppTheme {
         LocationDisabledDialog(
-            onConfirmation = {},
+            onConfirm = {},
             onDismiss = {}
         )
     }

@@ -6,12 +6,14 @@ import android.provider.Settings
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Fingerprint
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -20,25 +22,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import car.pace.cofu.R
-import car.pace.cofu.ui.component.DefaultCircularProgressIndicator
+import car.pace.cofu.ui.component.DefaultDialog
+import car.pace.cofu.ui.component.Description
 import car.pace.cofu.ui.component.SecondaryButton
 import car.pace.cofu.ui.onboarding.PageScaffold
-import car.pace.cofu.ui.onboarding.twofactor.biometric.BiometricSetupDialog
 import car.pace.cofu.ui.onboarding.twofactor.biometric.rememberBiometricManager
 import car.pace.cofu.ui.onboarding.twofactor.biometric.rememberBiometricPrompt
-import car.pace.cofu.ui.onboarding.twofactor.setup.BiometrySetup
-import car.pace.cofu.ui.onboarding.twofactor.setup.PinSetup
-import car.pace.cofu.ui.onboarding.twofactor.setup.biometry.BiometrySetup
-import car.pace.cofu.ui.onboarding.twofactor.setup.pin.PinSetup
+import car.pace.cofu.ui.onboarding.twofactor.setup.TwoFactorSetup
 import car.pace.cofu.ui.theme.AppTheme
-import car.pace.cofu.util.SnackbarData
-import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 
 @Composable
 fun TwoFactorPage(
     viewModel: TwoFactorViewModel = hiltViewModel(),
-    showSnackbar: (SnackbarData) -> Unit,
     onAuthorization: () -> Unit,
     onNext: () -> Unit
 ) {
@@ -51,25 +47,16 @@ fun TwoFactorPage(
     }
     val biometricPrompt = rememberBiometricPrompt(
         onSuccess = {
-            viewModel.enableBiometricAuthentication()
+            viewModel.enableBiometricAuthentication(context)
         },
         onError = { errorCode, errString ->
             if (errorCode == BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED) {
                 showBiometricSetupDialog = true
             } else {
-                viewModel.onBiometricPromptError(errString)
+                viewModel.onBiometricPromptError(context, errString)
             }
         }
     )
-
-    val currentShowSnackbar by rememberUpdatedState(showSnackbar)
-    LaunchedEffect(Unit) {
-        viewModel.snackbar.collectLatest {
-            if (it != null) {
-                currentShowSnackbar(it)
-            }
-        }
-    }
 
     LaunchedEffect(Unit) {
         viewModel.setupFinished.collect {
@@ -84,11 +71,11 @@ fun TwoFactorPage(
     }
 
     PageScaffold(
-        imageRes = R.drawable.ic_scan,
+        imageVector = Icons.Outlined.Lock,
         titleRes = R.string.onboarding_two_factor_authentication_title,
-        descriptionRes = R.string.onboarding_two_factor_authentication_description,
         nextButtonTextRes = if (canAuthenticate) R.string.onboarding_two_factor_authentication_biometry else R.string.onboarding_two_factor_authentication_pin,
-        nextButtonEnabled = !viewModel.loading,
+        nextButtonEnabled = !viewModel.biometryLoading && !viewModel.pinLoading,
+        nextButtonLoading = viewModel.biometryLoading,
         onNextButtonClick = {
             val info = BiometricPrompt.PromptInfo.Builder()
                 .setTitle(context.getString(R.string.onboarding_authorization_request_fingerprint))
@@ -97,33 +84,38 @@ fun TwoFactorPage(
 
             biometricPrompt.authenticate(info)
         },
+        descriptionContent = {
+            Description(
+                text = stringResource(id = R.string.onboarding_two_factor_authentication_description)
+            )
+        },
+        errorText = viewModel.errorText,
         footerContent = {
             if (canAuthenticate) {
                 SecondaryButton(
-                    text = stringResource(id = R.string.onboarding_two_factor_authentication_pin).uppercase(),
-                    modifier = Modifier.padding(start = 35.dp, end = 35.dp, bottom = 10.dp),
-                    enabled = !viewModel.loading,
-                    onClick = viewModel::isPinSet
+                    text = stringResource(id = R.string.onboarding_two_factor_authentication_pin),
+                    modifier = Modifier.padding(start = 20.dp, top = 12.dp, end = 20.dp),
+                    enabled = !viewModel.pinLoading && !viewModel.biometryLoading,
+                    loading = viewModel.pinLoading,
+                    onClick = {
+                        viewModel.isPinSet(context)
+                    }
                 )
             }
         }
-    ) {
-        if (viewModel.loading) {
-            DefaultCircularProgressIndicator(
-                modifier = Modifier.padding(horizontal = 35.dp, vertical = 10.dp)
-            )
-        }
-    }
+    )
 
-    when (viewModel.twoFactorSetup) {
-        is BiometrySetup -> BiometrySetup(onDismiss = viewModel::onTwoFactorSetupFinished)
-        is PinSetup -> PinSetup(onDismiss = viewModel::onTwoFactorSetupFinished)
-        else -> {}
+    val twoFactorSetupType = viewModel.twoFactorSetupType
+    if (twoFactorSetupType != null) {
+        TwoFactorSetup(
+            type = twoFactorSetupType,
+            onResult = viewModel::onTwoFactorSetupFinished
+        )
     }
 
     if (showBiometricSetupDialog) {
         BiometricSetupDialog(
-            onConfirmation = {
+            onConfirm = {
                 showBiometricSetupDialog = false
 
                 try {
@@ -138,7 +130,7 @@ fun TwoFactorPage(
                         context.startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS))
                     } catch (e: Exception) {
                         Timber.e(e, "Could not launch biometry setup settings")
-                        viewModel.showSnackbar(e, R.string.onboarding_fingerprint_setup_error)
+                        viewModel.onFingerprintSettingsNotFound(context)
                     }
                 }
             },
@@ -149,14 +141,40 @@ fun TwoFactorPage(
     }
 }
 
+@Composable
+fun BiometricSetupDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    DefaultDialog(
+        title = stringResource(id = R.string.onboarding_fingerprint_none_saved_title),
+        text = stringResource(id = R.string.onboarding_fingerprint_none_saved_text),
+        confirmButtonText = stringResource(id = R.string.onboarding_fingerprint_save),
+        dismissButtonText = stringResource(id = R.string.common_use_cancel),
+        imageVector = Icons.Outlined.Fingerprint,
+        onConfirm = onConfirm,
+        onDismiss = onDismiss
+    )
+}
+
 @Preview
 @Composable
 fun TwoFactorPagePreview() {
     AppTheme {
         TwoFactorPage(
-            showSnackbar = {},
             onAuthorization = {},
             onNext = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun BiometricSetupDialogPreview() {
+    AppTheme {
+        BiometricSetupDialog(
+            onConfirm = {},
+            onDismiss = {}
         )
     }
 }

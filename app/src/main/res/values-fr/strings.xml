@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Ouvrir les paramètres</string>
-    <string name="ALERT.LOCATION_PERMISSION.DESCRIPTION">Pour pouvoir t\'indiquer la station-service la plus proche, nous devons avoir accès à ta position actuelle.</string>
-    <string name="ALERT.LOCATION_PERMISSION.TITLE">Site non validé</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Aucune station-service n\'a été trouvée près de chez toi.</string>
     <string name="DASHBOARD.EMPTY_VIEW.TITLE">Pas de station-service près de chez toi</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Nous recherchons les stations-service les plus proches de chez toi. Cela peut prendre un certain temps.</string>
@@ -41,13 +39,18 @@
     <string name="MENU.TITLE.PLACEHOLDER">PACE Connected Fueling</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Partager</string>
+    <string name="alert_location_permission_description">Pour pouvoir t\'indiquer la station-service la plus proche, nous devons avoir accès à ta position actuelle.</string>
+    <string name="alert_location_permission_title">Site non validé</string>
     <string name="closed_label">FERMÉ</string>
+    <string name="common_pay_here_now">Payer ici maintenant !</string>
     <string name="common_start_fueling">Commencer à faire le plein</string>
     <string name="common_start_navigation">Démarrer la navigation</string>
     <string name="common_use_accept">Accepter</string>
+    <string name="common_use_are_you_sure">Tu es sûr ?</string>
     <string name="common_use_back">Retour</string>
     <string name="common_use_cancel">Annuler</string>
     <string name="common_use_confirm">Confirmer</string>
+    <string name="common_use_deactivate">Désactiver</string>
     <string name="common_use_decline">Décliner</string>
     <string name="common_use_friday">Vendredi</string>
     <string name="common_use_monday">Lundi</string>
@@ -66,7 +69,6 @@
     <string name="currency_format">%2$s%1$s</string>
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Essence</string>
-    <string name="fuel_selection_title">Sélection du carburant</string>
     <string name="gas_station_closed_hint">La station-service est actuellement fermée.</string>
     <string name="gas_station_default_name">Station-service</string>
     <string name="gas_station_error_description">Les données de la station-service n\'ont pas pu être chargées. Vérifiez votre connexion !</string>
@@ -83,6 +85,7 @@
     <string name="gas_station_opening_hours_hint">Les heures d\'ouverture peuvent différer les jours fériés.</string>
     <string name="gas_station_opening_hours_not_available">Les heures d\'ouverture ne sont pas disponibles actuellement.</string>
     <string name="gas_station_opening_hours_title">Heures d\'ouverture</string>
+    <string name="gasstation_closes_in">La station-service ferme à %s heures</string>
     <string name="general_error_title">Le chargement a échoué</string>
     <string name="list_tab_label">Liste</string>
     <string name="more_tab_label">Plus</string>
@@ -122,8 +125,8 @@
     <string name="onboarding_pin_error_series">Le code PIN ne doit pas être une série de chiffres croissants ou décroissants.</string>
     <string name="onboarding_pin_error_too_few_digits">Le code PIN doit contenir au moins trois chiffres différents.</string>
     <string name="onboarding_retry_login">Réessayer de se connecter</string>
-    <string name="onboarding_tracking_app_tracking">suivi de l\'application</string>
-    <string name="onboarding_tracking_description">Accepte le suivi de l\'application afin que nous puissions continuer à optimiser l\'utilisation de l\'application pour toi.</string>
+    <string name="onboarding_tracking_app_tracking">l\'analyse de l\'utilisation</string>
+    <string name="onboarding_tracking_description">Accepter l\'analyse de l\'utilisation afin que nous puissions optimiser cette application pour vous.</string>
     <string name="onboarding_tracking_title">Améliore ton expérience</string>
     <string name="onboarding_two_factor_authentication_biometry">Utiliser la biométrie</string>
     <string name="onboarding_two_factor_authentication_description">Les scanners biométriques sont la manière la plus rapide et la plus sûre de confirmer tes opérations de paiement.</string>
@@ -147,8 +150,15 @@
     <string name="payment_methods_error_description">Vos moyens de paiement et cartes de carburant n\'ont pas pu être chargés. Vérifiez votre connexion !</string>
     <string name="payment_methods_loading_description">Nous chargeons vos moyens de paiement et vos cartes de carburant. Veuillez patienter un moment.</string>
     <string name="payment_methods_loading_title">Chargement des moyens de paiement et des cartes de carburant...</string>
-    <string name="payment_methods_title">Méthodes de paiement &amp; cartes de carburant</string>
-    <string name="transactions_title">Transactions</string>
+    <string name="wallet_account_deletion_title">Supprimer un compte</string>
+    <string name="wallet_fuel_type_selection_title">Sélection du carburant</string>
     <string name="wallet_header_text">Vous êtes connecté en tant que</string>
+    <string name="wallet_payment_methods_title">Méthodes de paiement &amp; cartes de carburant</string>
     <string name="wallet_tab_label">Portefeuille</string>
+    <string name="wallet_transactions_title">Transactions</string>
+    <string name="wallet_two_factor_authentication_biometry_setup_successful">Biométrie mise en place avec succès</string>
+    <string name="wallet_two_factor_authentication_biometry_title">Biométrie</string>
+    <string name="wallet_two_factor_authentication_pin_setup_successful">PIN défini avec succès</string>
+    <string name="wallet_two_factor_authentication_pin_title">Définir le PIN</string>
+    <string name="wallet_two_factor_authentication_title">Procédure d\'autorisation</string>
 </resources>

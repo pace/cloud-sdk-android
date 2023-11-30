@@ -8,6 +8,7 @@ import androidx.compose.material.icons.outlined.LocalGasStation
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.ui.graphics.vector.ImageVector
+import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
 
 enum class Graph(
@@ -35,20 +36,22 @@ enum class Graph(
 enum class Route(
     val route: String,
     val graph: Graph?,
-    val showBottomBar: Boolean,
+    val drawBehindStatusBar: Boolean = false,
+    val showBottomBar: Boolean = false,
     val icon: ImageVector? = null,
     @StringRes val labelRes: Int? = null
 ) {
-    ONBOARDING("onboarding_route", null, false),
-    HOME("home_route", Graph.HOME, true),
-    DETAIL("detail_route", null, false),
-    WALLET("wallet_route", Graph.WALLET, true),
-    METHODS("methods_route", Graph.WALLET, true, Icons.Outlined.AccountBalanceWallet, R.string.payment_methods_title),
-    TRANSACTIONS("transactions_route", Graph.WALLET, false, Icons.Outlined.ReceiptLong, R.string.transactions_title),
-    FUEL_TYPE("fuelType_route", Graph.WALLET, true, Icons.Outlined.LocalGasStation, R.string.fuel_selection_title),
-    MORE("more_route", Graph.MORE, true),
-    LOCAL_WEBVIEW_CONTENT("local_webview_content", Graph.MORE, true),
-    LIBRARIES("libraries_route", Graph.MORE, true, null, R.string.MENU_ITEMS_LICENCES);
+    ONBOARDING(route = "onboarding_route", graph = null, drawBehindStatusBar = BuildConfig.ONBOARDING_SHOW_CUSTOM_HEADER),
+    ONBOARDING_WEBVIEW_CONTENT(route = "onboarding_webview_content", graph = null), // TODO: refactor
+    HOME(route = "home_route", graph = Graph.HOME, showBottomBar = true),
+    DETAIL(route = "detail_route", graph = null),
+    WALLET(route = "wallet_route", graph = Graph.WALLET, showBottomBar = true),
+    PAYMENT_METHODS(route = "payment_methods_route", graph = Graph.WALLET, showBottomBar = true, icon = Icons.Outlined.AccountBalanceWallet, labelRes = R.string.wallet_payment_methods_title),
+    TRANSACTIONS(route = "transactions_route", graph = Graph.WALLET, icon = Icons.Outlined.ReceiptLong, labelRes = R.string.wallet_transactions_title),
+    FUEL_TYPE(route = "fuelType_route", graph = Graph.WALLET, showBottomBar = true, icon = Icons.Outlined.LocalGasStation, labelRes = R.string.wallet_fuel_type_selection_title),
+    MORE(route = "more_route", graph = Graph.MORE, showBottomBar = true),
+    LOCAL_WEBVIEW_CONTENT(route = "local_webview_content", graph = Graph.MORE, showBottomBar = true),
+    LIBRARIES(route = "libraries_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.MENU_ITEMS_LICENCES);
 
     companion object {
 

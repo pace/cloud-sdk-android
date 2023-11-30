@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Deschideți setările</string>
-    <string name="ALERT.LOCATION_PERMISSION.DESCRIPTION">Pentru a vă arăta cea mai apropiată benzinărie, avem nevoie de acces la locația dvs. actuală.</string>
-    <string name="ALERT.LOCATION_PERMISSION.TITLE">Locația nu a fost publicată</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Nu au fost găsite stații de benzină în apropierea dumneavoastră.</string>
     <string name="DASHBOARD.EMPTY_VIEW.TITLE">Nu există stații de benzină în apropierea dumneavoastră</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Vom căuta cele mai apropiate stații de benzină din zona dumneavoastră. Acest lucru poate dura un moment.</string>
@@ -41,13 +39,18 @@
     <string name="MENU.TITLE.PLACEHOLDER">PACE Connected Fueling</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Acțiune</string>
+    <string name="alert_location_permission_description">Pentru a vă arăta cea mai apropiată benzinărie, avem nevoie de acces la locația dvs. actuală.</string>
+    <string name="alert_location_permission_title">Locația nu a fost publicată</string>
     <string name="closed_label">ÎNCHIS</string>
+    <string name="common_pay_here_now">Plătiți aici acum!</string>
     <string name="common_start_fueling">Începeți să alimentați</string>
     <string name="common_start_navigation">Începeți navigarea</string>
     <string name="common_use_accept">Accept</string>
+    <string name="common_use_are_you_sure">Ești sigur?</string>
     <string name="common_use_back">Înapoi</string>
     <string name="common_use_cancel">Anulează</string>
     <string name="common_use_confirm">Confirmați</string>
+    <string name="common_use_deactivate">Dezactivați</string>
     <string name="common_use_decline">Declin</string>
     <string name="common_use_friday">Vineri</string>
     <string name="common_use_monday">Luni</string>
@@ -66,7 +69,6 @@
     <string name="currency_format">%2$s%1$s</string>
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Benzină</string>
-    <string name="fuel_selection_title">Selectarea combustibilului</string>
     <string name="gas_station_closed_hint">Benzinăria este în prezent închisă.</string>
     <string name="gas_station_default_name">Benzinărie</string>
     <string name="gas_station_error_description">Datele benzinăriei nu au putut fi încărcate. Verificați conexiunea!</string>
@@ -83,6 +85,7 @@
     <string name="gas_station_opening_hours_hint">Orele de deschidere pot fi diferite în zilele de sărbătoare.</string>
     <string name="gas_station_opening_hours_not_available">În prezent, orele de deschidere nu sunt disponibile.</string>
     <string name="gas_station_opening_hours_title">Ore de deschidere</string>
+    <string name="gasstation_closes_in">Benzinăria se închide la %s</string>
     <string name="general_error_title">Încărcarea nu a reușit</string>
     <string name="list_tab_label">Lista</string>
     <string name="more_tab_label">Mai mult</string>
@@ -122,8 +125,8 @@
     <string name="onboarding_pin_error_series">PIN-ul nu trebuie să fie o serie de cifre ascendente sau descendente.</string>
     <string name="onboarding_pin_error_too_few_digits">PIN-ul trebuie să conțină cel puțin trei cifre diferite.</string>
     <string name="onboarding_retry_login">Încercați să vă conectați din nou</string>
-    <string name="onboarding_tracking_app_tracking">urmărirea aplicației</string>
-    <string name="onboarding_tracking_description">Sunteți de acord cu urmărirea aplicației, astfel încât să putem optimiza în continuare utilizarea aplicației pentru dumneavoastră.</string>
+    <string name="onboarding_tracking_app_tracking">analiza de utilizare</string>
+    <string name="onboarding_tracking_description">Acceptați analiza de utilizare, astfel încât să putem optimiza în continuare această aplicație pentru dumneavoastră.</string>
     <string name="onboarding_tracking_title">Îmbunătățiți experiența dvs.</string>
     <string name="onboarding_two_factor_authentication_biometry">Utilizați date biometrice</string>
     <string name="onboarding_two_factor_authentication_description">Scanerele biometrice reprezintă cea mai rapidă și mai sigură modalitate de a confirma tranzacțiile de plată.</string>
@@ -147,8 +150,15 @@
     <string name="payment_methods_error_description">Metodele de plată și cardurile de combustibil nu au putut fi încărcate. Verificați conexiunea!</string>
     <string name="payment_methods_loading_description">Vă încărcăm metodele de plată și cardurile de combustibil. Vă rugăm să așteptați un moment.</string>
     <string name="payment_methods_loading_title">Încărcarea metodelor de plată și a cardurilor de combustibil...</string>
-    <string name="payment_methods_title">Metode de plată și carduri de combustibil</string>
-    <string name="transactions_title">Tranzacții</string>
+    <string name="wallet_account_deletion_title">Ștergeți contul</string>
+    <string name="wallet_fuel_type_selection_title">Selectarea combustibilului</string>
     <string name="wallet_header_text">Sunteți autentificat ca</string>
+    <string name="wallet_payment_methods_title">Metode de plată și carduri de combustibil</string>
     <string name="wallet_tab_label">Portofel</string>
+    <string name="wallet_transactions_title">Tranzacții</string>
+    <string name="wallet_two_factor_authentication_biometry_setup_successful">Biometrie instalată cu succes</string>
+    <string name="wallet_two_factor_authentication_biometry_title">Biometrie</string>
+    <string name="wallet_two_factor_authentication_pin_setup_successful">PIN setat cu succes</string>
+    <string name="wallet_two_factor_authentication_pin_title">Setați PIN-ul</string>
+    <string name="wallet_two_factor_authentication_title">Procedura de autorizare</string>
 </resources>

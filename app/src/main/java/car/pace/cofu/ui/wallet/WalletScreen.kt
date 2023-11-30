@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Logout
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,11 +34,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import car.pace.cofu.R
+import car.pace.cofu.ui.component.DefaultDialog
 import car.pace.cofu.ui.component.DefaultListItem
-import car.pace.cofu.ui.component.Description
-import car.pace.cofu.ui.component.PrimaryButton
-import car.pace.cofu.ui.component.SecondaryButton
-import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.component.dropShadow
 import car.pace.cofu.ui.navigation.graph.Route
 import car.pace.cofu.ui.onboarding.twofactor.biometric.findActivity
@@ -60,7 +56,7 @@ fun WalletScreen(
     onNavigate: (Route) -> Unit
 ) {
     val items = remember {
-        listOf(Route.METHODS, Route.TRANSACTIONS, Route.FUEL_TYPE)
+        listOf(Route.PAYMENT_METHODS, Route.TRANSACTIONS, Route.FUEL_TYPE)
     }
     val email = remember {
         JWTUtils.getUserEMailFromToken(IDKit.cachedToken()).orEmpty()
@@ -188,39 +184,14 @@ fun LogoutDialog(
     onLogout: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            PrimaryButton(
-                text = stringResource(id = R.string.MENU_ITEMS_LOGOUT),
-                onClick = onLogout
-            )
-        },
-        dismissButton = {
-            SecondaryButton(
-                text = stringResource(id = R.string.common_use_cancel),
-                onClick = onDismiss
-            )
-        },
-        icon = {
-            Icon(
-                imageVector = Icons.Outlined.Logout,
-                contentDescription = null,
-                modifier = Modifier.size(40.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        },
-        title = {
-            Title(
-                text = stringResource(id = R.string.DASHBOARD_LOGOUT_CONFIRM_TITLE)
-            )
-        },
-        text = {
-            Description(
-                text = stringResource(id = R.string.DASHBOARD_LOGOUT_CONFIRM_DESCRIPTION)
-            )
-        },
-        tonalElevation = 0.dp
+    DefaultDialog(
+        title = stringResource(id = R.string.DASHBOARD_LOGOUT_CONFIRM_TITLE),
+        text = stringResource(id = R.string.DASHBOARD_LOGOUT_CONFIRM_DESCRIPTION),
+        confirmButtonText = stringResource(id = R.string.MENU_ITEMS_LOGOUT),
+        dismissButtonText = stringResource(id = R.string.common_use_cancel),
+        imageVector = Icons.Outlined.Logout,
+        onConfirm = onLogout,
+        onDismiss = onDismiss
     )
 }
 

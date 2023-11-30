@@ -1,15 +1,22 @@
 package car.pace.cofu.ui.onboarding.authentication
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Group
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import car.pace.cofu.R
+import car.pace.cofu.ui.component.Description
 import car.pace.cofu.ui.onboarding.PageScaffold
 import car.pace.cofu.ui.onboarding.twofactor.biometric.findActivity
 import car.pace.cofu.ui.theme.AppTheme
-import car.pace.cofu.util.SnackbarData
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Success
@@ -17,34 +24,33 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun AuthenticationPage(
-    showSnackbar: (SnackbarData) -> Unit,
     onNext: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    var errorText: String? by remember { mutableStateOf(null) }
 
     fun login() {
         coroutineScope.launch {
             val activity = context.findActivity<AppCompatActivity>()
             when (IDKit.authorize(activity)) {
                 is Success -> onNext()
-                is Failure -> {
-                    val snackbarData = SnackbarData(
-                        messageRes = R.string.onboarding_login_unsuccessful,
-                        onActionPerformed = ::login
-                    )
-                    showSnackbar(snackbarData)
-                }
+                is Failure -> errorText = context.getString(R.string.onboarding_login_unsuccessful)
             }
         }
     }
 
     PageScaffold(
-        imageRes = R.drawable.ic_profile,
+        imageVector = Icons.Outlined.Group,
         titleRes = R.string.onboarding_authentication_title,
-        descriptionRes = R.string.onboarding_authentication_description,
         nextButtonTextRes = R.string.onboarding_authentication_action,
-        onNextButtonClick = ::login
+        onNextButtonClick = ::login,
+        descriptionContent = {
+            Description(
+                text = stringResource(id = R.string.onboarding_authentication_description)
+            )
+        },
+        errorText = errorText
     )
 }
 
@@ -52,9 +58,6 @@ fun AuthenticationPage(
 @Composable
 fun AuthenticationPagePreview() {
     AppTheme {
-        AuthenticationPage(
-            showSnackbar = {},
-            onNext = {}
-        )
+        AuthenticationPage {}
     }
 }

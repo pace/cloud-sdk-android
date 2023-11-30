@@ -18,6 +18,7 @@ import car.pace.cofu.ui.navigation.graph.navigate
 import car.pace.cofu.ui.navigation.graph.onboardingGraph
 import car.pace.cofu.ui.navigation.graph.walletGraph
 import car.pace.cofu.util.SnackbarData
+import car.pace.cofu.util.extension.encode
 
 @Composable
 fun AppNavHost(
@@ -45,10 +46,16 @@ fun AppNavHost(
             scaleOutOfContainer()
         }
     ) {
-        onboardingGraph(showSnackbar = showSnackbar) {
-            viewModel.onboardingDone()
-            navController.navigate(Route.HOME)
-        }
+        onboardingGraph(
+            onLegalDocument = {
+                // TODO: fix weird animation
+                navController.navigate("${Route.ONBOARDING_WEBVIEW_CONTENT.route}/${it.url.encode()}")
+            },
+            onDone = {
+                viewModel.onboardingDone(it)
+                navController.navigate(Route.HOME)
+            }
+        )
         homeGraph(showSnackbar = showSnackbar) {
             navController.navigate(it)
         }

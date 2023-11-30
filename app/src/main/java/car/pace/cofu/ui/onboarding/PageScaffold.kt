@@ -1,97 +1,163 @@
 package car.pace.cofu.ui.onboarding
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.TravelExplore
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
+import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
 import car.pace.cofu.ui.component.Description
 import car.pace.cofu.ui.component.PrimaryButton
 import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.util.Constants.CONTAINER_CONTENT_TYPE
+import car.pace.cofu.util.Constants.ONBOARDING_CONTENT_KEY
+import car.pace.cofu.util.Constants.ONBOARDING_DESCRIPTION_KEY
+import car.pace.cofu.util.Constants.ONBOARDING_IMAGE_KEY
+import car.pace.cofu.util.Constants.ONBOARDING_TITLE_KEY
+import car.pace.cofu.util.Constants.TITLE_CONTENT_TYPE
 
 @Composable
 fun PageScaffold(
-    @DrawableRes imageRes: Int,
+    imageVector: ImageVector,
     @StringRes titleRes: Int,
-    @StringRes descriptionRes: Int,
     @StringRes nextButtonTextRes: Int,
     onNextButtonClick: () -> Unit,
     nextButtonEnabled: Boolean = true,
+    nextButtonLoading: Boolean = false,
+    descriptionContent: @Composable ColumnScope.() -> Unit = {},
+    errorText: String? = null,
     footerContent: @Composable () -> Unit = {},
     content: @Composable ColumnScope.() -> Unit = {}
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter
     ) {
-        ConstraintLayout(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 35.dp)
+        LazyColumn(
+            contentPadding = PaddingValues(bottom = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val (image, title, description, contentWrapper) = createRefs()
-            val guideline = createGuidelineFromTop(0.1f)
+            item(
+                key = ONBOARDING_IMAGE_KEY,
+                contentType = CONTAINER_CONTENT_TYPE
+            ) {
+                Box(
+                    modifier = Modifier.fillParentMaxHeight(0.53f),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    if (BuildConfig.ONBOARDING_SHOW_CUSTOM_HEADER) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_onboarding_header),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(bottom = 47.dp)
+                                .fillMaxSize(),
+                            alignment = Alignment.BottomCenter,
+                            contentScale = ContentScale.Crop
+                        )
 
-            Image(
-                painter = painterResource(id = imageRes),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(100.dp)
-                    .constrainAs(image) {
-                        top.linkTo(guideline)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
+                        Icon(
+                            imageVector = imageVector,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(68.dp)
+                                .background(color = MaterialTheme.colorScheme.primaryContainer, shape = CircleShape)
+                                .padding(13.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    } else {
+                        Icon(
+                            imageVector = imageVector,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(start = 20.dp, top = 12.dp, end = 20.dp)
+                                .size(182.dp),
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
                     }
-            )
-            Title(
-                text = stringResource(id = titleRes),
-                modifier = Modifier.constrainAs(title) {
-                    top.linkTo(anchor = image.bottom, margin = 40.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
                 }
-            )
-            Description(
-                text = stringResource(id = descriptionRes),
-                modifier = Modifier.constrainAs(description) {
-                    top.linkTo(anchor = title.bottom, margin = 14.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-            )
-            Column(
-                modifier = Modifier.constrainAs(contentWrapper) {
-                    top.linkTo(description.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(anchor = parent.bottom, margin = 20.dp)
-                },
-                content = content
-            )
+            }
+            item(
+                key = ONBOARDING_TITLE_KEY,
+                contentType = TITLE_CONTENT_TYPE
+            ) {
+                Title(
+                    text = stringResource(id = titleRes),
+                    modifier = Modifier.padding(start = 20.dp, top = 28.dp, end = 20.dp)
+                )
+            }
+            item(
+                key = ONBOARDING_DESCRIPTION_KEY,
+                contentType = CONTAINER_CONTENT_TYPE
+            ) {
+                Column(
+                    modifier = Modifier.padding(start = 20.dp, top = 20.dp, end = 20.dp),
+                    content = descriptionContent
+                )
+            }
+            item(
+                key = ONBOARDING_CONTENT_KEY,
+                contentType = CONTAINER_CONTENT_TYPE
+            ) {
+                Column(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    content = content
+                )
+            }
         }
 
-        footerContent()
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+        ) {
+            if (errorText != null) {
+                Text(
+                    text = errorText,
+                    modifier = Modifier.padding(start = 20.dp, top = 12.dp, end = 20.dp),
+                    color = MaterialTheme.colorScheme.error,
+                    fontWeight = FontWeight.Normal,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
 
-        PrimaryButton(
-            text = stringResource(id = nextButtonTextRes),
-            modifier = Modifier.padding(horizontal = 35.dp),
-            enabled = nextButtonEnabled,
-            onClick = onNextButtonClick
-        )
+            footerContent()
+
+            PrimaryButton(
+                text = stringResource(id = nextButtonTextRes),
+                modifier = Modifier.padding(start = 20.dp, top = 12.dp, end = 20.dp, bottom = 28.dp),
+                enabled = nextButtonEnabled,
+                loading = nextButtonLoading,
+                onClick = onNextButtonClick
+            )
+        }
     }
 }
 
@@ -100,11 +166,15 @@ fun PageScaffold(
 fun PageScaffoldPreview() {
     AppTheme {
         PageScaffold(
-            imageRes = R.drawable.ic_location,
+            imageVector = Icons.Outlined.TravelExplore,
             titleRes = R.string.onboarding_permission_title,
-            descriptionRes = R.string.onboarding_permission_description,
             nextButtonTextRes = R.string.onboarding_permission_action,
-            onNextButtonClick = {}
+            onNextButtonClick = {},
+            descriptionContent = {
+                Description(
+                    text = stringResource(id = R.string.onboarding_permission_description)
+                )
+            }
         )
     }
 }
