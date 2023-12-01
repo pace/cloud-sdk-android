@@ -1,5 +1,6 @@
 package cloud.pace.sdk.poikit.poi
 
+import cloud.pace.sdk.poikit.geo.CofuGasStation
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_AMENITIES
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_BRAND
 import cloud.pace.sdk.poikit.utils.OSMKeys.OSM_BRAND_ID
@@ -79,6 +80,12 @@ open class GasStation(id: String, geometry: ArrayList<Geometry.CommandGeo>) :
      * Specifies the availability of at least one payment provider for PACE Connected Fueling
      */
     var isConnectedFuelingAvailable: Boolean? = null
+
+    /**
+     * `POIKit.CofuGasStation` object of this gas station
+     *  Null if gas station is no cofu station
+     */
+    var cofuGasStation: CofuGasStation? = null
 
     /**
      * Specifies if this gas station instance is a `POIKit.CoFuGasStation`
