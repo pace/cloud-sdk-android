@@ -37,7 +37,7 @@ fun TopBar(
             LogoTopBar()
         }
 
-        Route.DETAIL -> TextTopBar(
+        Route.DETAIL, Route.LOCAL_WEBVIEW_CONTENT -> TextTopBar(
             text = null,
             onNavigateUp = onNavigateUp
         )
@@ -49,7 +49,7 @@ fun TopBar(
             )
         }
 
-        Route.METHODS, Route.FUEL_TYPE -> {
+        Route.METHODS, Route.FUEL_TYPE, Route.LIBRARIES -> {
             TextTopBar(
                 text = currentRoute.labelRes?.let { stringResource(id = it) }.orEmpty(),
                 onNavigateUp = onNavigateUp
@@ -57,11 +57,6 @@ fun TopBar(
         }
 
         Route.TRANSACTIONS -> TODO()
-        Route.TERMS -> TODO()
-        Route.PRIVACY -> TODO()
-        Route.CONTACT -> TODO()
-        Route.IMPRINT -> TODO()
-        Route.LIBRARIES -> TODO()
         null -> {}
     }
 }

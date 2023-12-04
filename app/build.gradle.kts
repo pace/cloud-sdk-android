@@ -10,6 +10,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("com.google.android.gms.oss-licenses-plugin")
     id("io.sentry.android.gradle") version "3.14.0"
+    id("com.mikepenz.aboutlibraries.plugin")
 }
 
 android {
@@ -136,6 +137,10 @@ dependencies {
     // Crash reporting
     implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
     implementation("com.google.firebase:firebase-crashlytics-ktx")
+
+    // AboutLibraries
+    implementation ("com.mikepenz:aboutlibraries-core:10.9.2")
+    implementation ("com.mikepenz:aboutlibraries-compose:10.9.2")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

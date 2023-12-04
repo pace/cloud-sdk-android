@@ -55,6 +55,8 @@ fun AppNavHost(
         walletGraph {
             navController.navigate(it)
         }
-        moreGraph()
+        moreGraph {
+            navController.navigate(it)
+        }
     }
 }
