@@ -41,9 +41,8 @@ class TilesResponseBodyConverter : Converter<ResponseBody, List<GasStation>> {
                     pois.forEach {
                         it.apply {
                             updatedAt = Date()
-                            isOnlineCoFuGasStation = cofuGasStationsMap[it.id]?.let { cofuGasStation ->
-                                cofuGasStation.connectedFuelingStatus == ConnectedFuelingStatus.ONLINE
-                            }
+                            cofuGasStation = cofuGasStationsMap[it.id]
+                            isOnlineCoFuGasStation = cofuGasStation?.connectedFuelingStatus == ConnectedFuelingStatus.ONLINE
                         }
                     }
                 } catch (e: Exception) {
