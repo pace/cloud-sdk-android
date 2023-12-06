@@ -1,3 +1,11 @@
+21.0.1 Release notes (2023-12-06)
+=============================================================
+
+### Internal
+
+* Add cofu gas station object to gas station
+* Add network security config to example apps
+
 21.0.0 Release notes (2023-11-07)
 =============================================================
 
