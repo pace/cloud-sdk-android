@@ -48,6 +48,7 @@ fun PageScaffold(
     @StringRes titleRes: Int,
     @StringRes nextButtonTextRes: Int,
     onNextButtonClick: () -> Unit,
+    showCustomHeader: Boolean = BuildConfig.ONBOARDING_SHOW_CUSTOM_HEADER,
     nextButtonEnabled: Boolean = true,
     nextButtonLoading: Boolean = false,
     descriptionContent: @Composable ColumnScope.() -> Unit = {},
@@ -71,7 +72,7 @@ fun PageScaffold(
                     modifier = Modifier.fillParentMaxHeight(0.53f),
                     contentAlignment = Alignment.BottomCenter
                 ) {
-                    if (BuildConfig.ONBOARDING_SHOW_CUSTOM_HEADER) {
+                    if (showCustomHeader) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_onboarding_header),
                             contentDescription = null,
@@ -163,13 +164,33 @@ fun PageScaffold(
 
 @Preview
 @Composable
-fun PageScaffoldPreview() {
+fun PageScaffoldCustomHeaderPreview() {
     AppTheme {
         PageScaffold(
             imageVector = Icons.Outlined.TravelExplore,
             titleRes = R.string.onboarding_permission_title,
             nextButtonTextRes = R.string.onboarding_permission_action,
             onNextButtonClick = {},
+            showCustomHeader = true,
+            descriptionContent = {
+                Description(
+                    text = stringResource(id = R.string.onboarding_permission_description)
+                )
+            }
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PageScaffoldDefaultPreview() {
+    AppTheme {
+        PageScaffold(
+            imageVector = Icons.Outlined.TravelExplore,
+            titleRes = R.string.onboarding_permission_title,
+            nextButtonTextRes = R.string.onboarding_permission_action,
+            onNextButtonClick = {},
+            showCustomHeader = false,
             descriptionContent = {
                 Description(
                     text = stringResource(id = R.string.onboarding_permission_description)

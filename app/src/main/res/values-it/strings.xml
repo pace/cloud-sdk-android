@@ -2,7 +2,7 @@
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Impostazioni aperte</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Non sono state trovate stazioni di servizio vicino a voi.</string>
-    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Non ci sono stazioni di servizio nelle vicinanze</string>
+    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Purtroppo non ci sono stazioni di servizio nelle vostre vicinanze</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Cercheremo le stazioni di servizio più vicine alla vostra zona. L\'operazione potrebbe richiedere un attimo.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Ricerca stazioni di servizio...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Non è stato possibile aprire le impostazioni di localizzazione. Attivare manualmente i servizi di localizzazione nelle impostazioni di sistema.</string>
@@ -70,6 +70,7 @@
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Benzina</string>
     <string name="gas_station_closed_hint">La stazione di servizio è attualmente chiusa.</string>
+    <string name="gas_station_closes_soon_hint">La stazione di servizio chiude al %s</string>
     <string name="gas_station_default_name">Stazione di servizio</string>
     <string name="gas_station_error_description">Non è stato possibile caricare i dati della stazione di servizio. Controllare la connessione!</string>
     <string name="gas_station_fuel_prices_not_available">I prezzi del carburante non sono purtroppo disponibili.</string>
@@ -88,6 +89,7 @@
     <string name="gasstation_closes_in">La stazione di servizio chiude al %s</string>
     <string name="general_error_title">Caricamento non riuscito</string>
     <string name="list_tab_label">Elenco</string>
+    <string name="map_tab_label">Mappa</string>
     <string name="more_tab_label">Più</string>
     <string name="no_supported_browser_dialog_title">Nessun browser supportato</string>
     <string name="no_supported_browser_toast">Attivare Google Chrome e riavviare l\'applicazione per continuare.</string>
@@ -101,7 +103,8 @@
     <string name="onboarding_enter_one_time_password_title">Inserire il codice di conferma</string>
     <string name="onboarding_error_authorization">Non è stato possibile verificare la sua iscrizione. Si prega di riprovare.</string>
     <string name="onboarding_fingerprint_error">Errore nel riconoscimento dell\'impronta digitale: %s</string>
-    <string name="onboarding_fingerprint_none_saved_title">Al momento non sono memorizzate impronte digitali!</string>
+    <string name="onboarding_fingerprint_none_saved_text">Al momento non ci sono impronte digitali salvate. Si prega di aggiungere ora un\'impronta digitale.</string>
+    <string name="onboarding_fingerprint_none_saved_title">Volete aggiungere una nuova impronta digitale?</string>
     <string name="onboarding_fingerprint_save">Aggiungi ora</string>
     <string name="onboarding_fingerprint_setup_error">Non è stato possibile aprire le impostazioni dell\'impronta digitale. Aggiungere manualmente un\'impronta digitale nelle impostazioni del sistema.</string>
     <string name="onboarding_fuel_type_description">E infine: Quali prezzi del carburante dovremmo mostrare?</string>
@@ -121,7 +124,7 @@
     <string name="onboarding_permission_title">Le stazioni di servizio più vicine a voi</string>
     <string name="onboarding_pin_error_invalid_length">Il PIN deve essere di quattro cifre.</string>
     <string name="onboarding_pin_error_mismatch">I PIN non corrispondono. Riprovare.</string>
-    <string name="onboarding_pin_error_not_secure">Il PIN è troppo semplice (0000 o 1234 non sono ammessi). Scegliere un PIN diverso</string>
+    <string name="onboarding_pin_error_not_secure">Il PIN è troppo semplice (0000 o 1234 non sono ammessi). Scegliere un PIN diverso.</string>
     <string name="onboarding_pin_error_series">Il PIN non deve essere una serie di cifre ascendenti o discendenti.</string>
     <string name="onboarding_pin_error_too_few_digits">Il PIN deve contenere almeno tre cifre diverse.</string>
     <string name="onboarding_retry_login">Provare ad accedere di nuovo</string>

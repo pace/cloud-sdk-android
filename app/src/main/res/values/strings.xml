@@ -2,7 +2,7 @@
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Open settings</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">No gas stations where found nearby your location.</string>
-    <string name="DASHBOARD.EMPTY_VIEW.TITLE">No gas stations nearby</string>
+    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Unfortunately no gas stations near you</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">We are searching for the nearest gas stations in your area. This may take a moment.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Searching gas stations...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">The location settings could not be opened. Please activate the location services manually in the system settings.</string>
@@ -70,6 +70,7 @@
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Petrol</string>
     <string name="gas_station_closed_hint">The gas station is currently closed.</string>
+    <string name="gas_station_closes_soon_hint">Petrol station closes at %s</string>
     <string name="gas_station_default_name">Gas station</string>
     <string name="gas_station_error_description">The gas station data could not be loaded. Check your connection!</string>
     <string name="gas_station_fuel_prices_not_available">Fuel prices are unfortunately not available.</string>
@@ -88,6 +89,7 @@
     <string name="gasstation_closes_in">Petrol station closes at %s</string>
     <string name="general_error_title">Loading failed</string>
     <string name="list_tab_label">List</string>
+    <string name="map_tab_label">Map</string>
     <string name="more_tab_label">More</string>
     <string name="no_supported_browser_dialog_title">No supported browser</string>
     <string name="no_supported_browser_toast">Enable Google Chrome and restart the app to continue.</string>
@@ -101,8 +103,8 @@
     <string name="onboarding_enter_one_time_password_title">Enter confirmation code</string>
     <string name="onboarding_error_authorization">Your input could not be verified. Please try again.</string>
     <string name="onboarding_fingerprint_error">Error recognizing fingerprint: %s</string>
-    <string name="onboarding_fingerprint_none_saved_title">Do want to setup a new fingerprint?</string> <!-- TODO: string res -->
-    <string name="onboarding_fingerprint_none_saved_text">Currently there are no saved fingerprints. You can add a new one.</string> <!-- TODO: change text and key -->
+    <string name="onboarding_fingerprint_none_saved_text">There are currently no fingerprints saved. Please add a fingerprint now.</string>
+    <string name="onboarding_fingerprint_none_saved_title">Do you want to add a new fingerprint?</string>
     <string name="onboarding_fingerprint_save">Add now</string>
     <string name="onboarding_fingerprint_setup_error">The fingerprint settings could not be opened. Please add a fingerprint manually in the system settings.</string>
     <string name="onboarding_fuel_type_description">And finally: Which fuel prices should we show you?</string>
@@ -122,7 +124,7 @@
     <string name="onboarding_permission_title">Gas stations near you</string>
     <string name="onboarding_pin_error_invalid_length">The PIN must be a 4-digit number.</string>
     <string name="onboarding_pin_error_mismatch">The PINs do not match. Try again.</string>
-    <string name="onboarding_pin_error_not_secure">The PIN is too simple (0000 or 1234 are not allowed). Choose a different PIN</string>
+    <string name="onboarding_pin_error_not_secure">The PIN is too simple (0000 or 1234 are not allowed). Choose a different PIN.</string>
     <string name="onboarding_pin_error_series">The PIN must not be a series of ascending or descending digits.</string>
     <string name="onboarding_pin_error_too_few_digits">The PIN must contain at least three different digits.</string>
     <string name="onboarding_retry_login">Retry login</string>

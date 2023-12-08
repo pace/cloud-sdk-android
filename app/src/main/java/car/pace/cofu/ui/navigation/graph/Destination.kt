@@ -3,13 +3,17 @@ package car.pace.cofu.ui.navigation.graph
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
+import androidx.compose.material.icons.outlined.Domain
+import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.LocalGasStation
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.ui.graphics.vector.ImageVector
-import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
+import car.pace.cofu.ui.icon.DeveloperGuide
+import car.pace.cofu.ui.icon.TwoPager
 
 enum class Graph(
     val route: String,
@@ -41,8 +45,10 @@ enum class Route(
     val icon: ImageVector? = null,
     @StringRes val labelRes: Int? = null
 ) {
-    ONBOARDING(route = "onboarding_route", graph = null, drawBehindStatusBar = BuildConfig.ONBOARDING_SHOW_CUSTOM_HEADER),
-    ONBOARDING_WEBVIEW_CONTENT(route = "onboarding_webview_content", graph = null), // TODO: refactor
+    ONBOARDING(route = "onboarding_route", graph = null, drawBehindStatusBar = true),
+    ONBOARDING_TERMS(route = "onboarding_terms_route", graph = null),
+    ONBOARDING_PRIVACY(route = "onboarding_privacy_route", graph = null),
+    ANALYSIS(route = "analysis_route", graph = null),
     HOME(route = "home_route", graph = Graph.HOME, showBottomBar = true),
     DETAIL(route = "detail_route", graph = null),
     WALLET(route = "wallet_route", graph = Graph.WALLET, showBottomBar = true),
@@ -50,8 +56,11 @@ enum class Route(
     TRANSACTIONS(route = "transactions_route", graph = Graph.WALLET, icon = Icons.Outlined.ReceiptLong, labelRes = R.string.wallet_transactions_title),
     FUEL_TYPE(route = "fuelType_route", graph = Graph.WALLET, showBottomBar = true, icon = Icons.Outlined.LocalGasStation, labelRes = R.string.wallet_fuel_type_selection_title),
     MORE(route = "more_route", graph = Graph.MORE, showBottomBar = true),
-    LOCAL_WEBVIEW_CONTENT(route = "local_webview_content", graph = Graph.MORE, showBottomBar = true),
-    LIBRARIES(route = "libraries_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.MENU_ITEMS_LICENCES);
+    TERMS(route = "terms_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.MENU_ITEMS_TERMS, icon = Icons.Outlined.DeveloperGuide),
+    PRIVACY(route = "privacy_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.MENU_ITEMS_PRIVACY, icon = Icons.Outlined.Lock),
+    IMPRINT(route = "imprint_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.MENU_ITEMS_IMPRINT, icon = Icons.Outlined.Domain),
+    LICENSES(route = "licenses_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.MENU_ITEMS_LICENCES, icon = Icons.Outlined.TwoPager),
+    WEBSITE(route = "website_route", graph = Graph.MORE, icon = Icons.Outlined.Language);
 
     companion object {
 

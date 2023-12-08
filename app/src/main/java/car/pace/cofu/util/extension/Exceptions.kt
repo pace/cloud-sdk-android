@@ -25,7 +25,7 @@ fun Throwable.errorTextRes(): Int {
         is TooFewDigitsException -> R.string.onboarding_pin_error_too_few_digits
         is SeriesNotAllowedException -> R.string.onboarding_pin_error_series
         is PinMismatchException -> R.string.onboarding_pin_error_mismatch
-        is PINNotSecure -> TODO("string res")
+        is PINNotSecure -> R.string.onboarding_pin_error_not_secure
         else -> R.string.common_use_unknown_error
     }
 }

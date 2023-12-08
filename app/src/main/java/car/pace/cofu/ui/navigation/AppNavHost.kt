@@ -18,7 +18,6 @@ import car.pace.cofu.ui.navigation.graph.navigate
 import car.pace.cofu.ui.navigation.graph.onboardingGraph
 import car.pace.cofu.ui.navigation.graph.walletGraph
 import car.pace.cofu.util.SnackbarData
-import car.pace.cofu.util.extension.encode
 
 @Composable
 fun AppNavHost(
@@ -47,9 +46,8 @@ fun AppNavHost(
         }
     ) {
         onboardingGraph(
-            onLegalDocument = {
-                // TODO: fix weird animation
-                navController.navigate("${Route.ONBOARDING_WEBVIEW_CONTENT.route}/${it.url.encode()}")
+            onNavigate = {
+                navController.navigate(it)
             },
             onDone = {
                 viewModel.onboardingDone(it)

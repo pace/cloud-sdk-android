@@ -26,15 +26,14 @@ class App : Application() {
         PACECloudSDK.setup(
             this,
             Configuration(
+                clientId = BuildConfig.PACE_CLIENT_ID,
                 clientAppName = applicationContext.getString(R.string.app_name),
                 clientAppVersion = BuildConfig.VERSION_NAME,
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),
                 apiKey = BuildConfig.CLOUD_API_KEY,
                 authenticationMode = AuthenticationMode.NATIVE,
                 environment = Environment.DEVELOPMENT,
-                geoAppsScope = BuildConfig.PACE_CLIENT_ID,
                 oidConfiguration = CustomOIDConfiguration(
-                    clientId = BuildConfig.PACE_CLIENT_ID,
                     redirectUri = BuildConfig.PACE_REDIRECT_URL
                 )
             )

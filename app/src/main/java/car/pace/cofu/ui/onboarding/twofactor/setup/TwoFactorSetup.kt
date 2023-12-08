@@ -153,11 +153,8 @@ fun TwoFactorSetupContent(
     onButtonClick: () -> Unit
 ) {
     Column {
-        var buttonEnabled by remember { mutableStateOf(true) }
-
-        fun handleValueChange(newValue: String, isValid: Boolean) {
-            buttonEnabled = isValid
-            onValueChange(newValue, isValid)
+        val inputValid by remember(page, value) {
+            mutableStateOf(value.filterNot { it.isWhitespace() }.length == page.cellsCount)
         }
 
         TextTopBar(onNavigateUp = onNavigateUp)
@@ -182,7 +179,7 @@ fun TwoFactorSetupContent(
                         modifier = modifier,
                         isValueInvalid = uiState is UiState.Error,
                         enabled = uiState !is UiState.Loading,
-                        onValueChange = ::handleValueChange
+                        onValueChange = onValueChange
                     )
                 }
 
@@ -192,7 +189,7 @@ fun TwoFactorSetupContent(
                         modifier = modifier,
                         isValueInvalid = uiState is UiState.Error,
                         enabled = uiState !is UiState.Loading,
-                        onValueChange = ::handleValueChange
+                        onValueChange = onValueChange
                     )
                 }
 
@@ -202,7 +199,7 @@ fun TwoFactorSetupContent(
                         modifier = modifier,
                         isValueInvalid = uiState is UiState.Error,
                         enabled = uiState !is UiState.Loading,
-                        onValueChange = ::handleValueChange
+                        onValueChange = onValueChange
                     )
                 }
             }
@@ -221,7 +218,7 @@ fun TwoFactorSetupContent(
             PrimaryButton(
                 text = stringResource(id = page.buttonRes),
                 modifier = Modifier.padding(top = 12.dp),
-                enabled = buttonEnabled,
+                enabled = inputValid && uiState !is UiState.Loading,
                 loading = uiState is UiState.Loading,
                 onClick = onButtonClick
             )

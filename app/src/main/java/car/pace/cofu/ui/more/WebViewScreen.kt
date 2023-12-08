@@ -1,5 +1,6 @@
 package car.pace.cofu.ui.more
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -8,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import car.pace.cofu.ui.component.WebView
 import car.pace.cofu.ui.component.rememberWebViewState
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.util.Constants
 
 @Composable
 fun WebViewScreen(
@@ -24,8 +26,11 @@ fun WebViewScreen(
 
 @Preview
 @Composable
-fun WebViewPreview() {
+fun WebViewScreenPreview() {
     AppTheme {
-        WebViewScreen(url = "file:///android_asset/de/imprint.html")
+        WebViewScreen(
+            url = Constants.IMPRINT_URI,
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }

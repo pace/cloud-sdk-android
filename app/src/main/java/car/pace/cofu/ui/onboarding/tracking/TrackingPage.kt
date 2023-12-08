@@ -17,15 +17,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import car.pace.cofu.R
 import car.pace.cofu.ui.component.SecondaryButton
+import car.pace.cofu.ui.navigation.graph.Route
 import car.pace.cofu.ui.onboarding.PageScaffold
 import car.pace.cofu.ui.theme.AppTheme
-import car.pace.cofu.util.LegalDocument
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.analytics
 
 @Composable
 fun TrackingPage(
-    onLegalDocument: (LegalDocument) -> Unit,
+    onNavigate: (Route) -> Unit,
     onNext: () -> Unit
 ) {
     PageScaffold(
@@ -57,8 +57,8 @@ fun TrackingPage(
                 )
 
                 addStringAnnotation(
-                    tag = LegalDocument.TRACKING.name,
-                    annotation = LegalDocument.TRACKING.name,
+                    tag = Route.ANALYSIS.name,
+                    annotation = Route.ANALYSIS.name,
                     start = trackingStartIndex,
                     end = trackingEndIndex
                 )
@@ -74,8 +74,8 @@ fun TrackingPage(
                 annotatedText
                     .getStringAnnotations(start = it, end = it)
                     .firstOrNull()?.let { annotation ->
-                        val document = LegalDocument.valueOf(annotation.item)
-                        onLegalDocument(document)
+                        val route = Route.valueOf(annotation.item)
+                        onNavigate(route)
                     }
             }
         },
@@ -97,7 +97,7 @@ fun TrackingPage(
 fun TrackingPagePreview() {
     AppTheme {
         TrackingPage(
-            onLegalDocument = {},
+            onNavigate = {},
             onNext = {}
         )
     }

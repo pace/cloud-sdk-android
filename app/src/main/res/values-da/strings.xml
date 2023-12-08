@@ -2,7 +2,7 @@
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Åbn indstillinger</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Der blev ikke fundet nogen tankstationer i nærheden af din placering.</string>
-    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Ingen tankstationer i nærheden</string>
+    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Desværre ingen benzinstationer i nærheden af dig</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Vi søger efter de nærmeste tankstationer i dit område. Det kan tage et øjeblik.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Søger på tankstationer...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Placeringsindstillingerne kunne ikke åbnes. Aktiver venligst placeringstjenesterne manuelt i systemindstillingerne.</string>
@@ -70,6 +70,7 @@
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Benzin</string>
     <string name="gas_station_closed_hint">Tankstationen er i øjeblikket lukket.</string>
+    <string name="gas_station_closes_soon_hint">Tankstationen lukker kl. %s</string>
     <string name="gas_station_default_name">Tankstation</string>
     <string name="gas_station_error_description">Tankstationens data kunne ikke indlæses. Tjek din forbindelse!</string>
     <string name="gas_station_fuel_prices_not_available">Brændstofpriser er desværre ikke tilgængelige.</string>
@@ -88,6 +89,7 @@
     <string name="gasstation_closes_in">Tankstationen lukker kl. %s</string>
     <string name="general_error_title">Indlæsning mislykkedes</string>
     <string name="list_tab_label">Liste</string>
+    <string name="map_tab_label">Kort</string>
     <string name="more_tab_label">Mere</string>
     <string name="no_supported_browser_dialog_title">Ingen understøttet browser</string>
     <string name="no_supported_browser_toast">Aktivér Google Chrome, og genstart appen for at fortsætte.</string>
@@ -101,7 +103,8 @@
     <string name="onboarding_enter_one_time_password_title">Indtast bekræftelseskode</string>
     <string name="onboarding_error_authorization">Din indtastning kunne ikke bekræftes. Prøv venligst igen.</string>
     <string name="onboarding_fingerprint_error">Fejl ved genkendelse af fingeraftryk: %s</string>
-    <string name="onboarding_fingerprint_none_saved_title">Ingen fingeraftryk er gemt i øjeblikket!</string>
+    <string name="onboarding_fingerprint_none_saved_text">Der er i øjeblikket ingen fingeraftryk gemt. Tilføj venligst et fingeraftryk nu.</string>
+    <string name="onboarding_fingerprint_none_saved_title">Vil du gerne tilføje et nyt fingeraftryk?</string>
     <string name="onboarding_fingerprint_save">Tilføj nu</string>
     <string name="onboarding_fingerprint_setup_error">Fingeraftryksindstillingerne kunne ikke åbnes. Tilføj venligst et fingeraftryk manuelt i systemindstillingerne.</string>
     <string name="onboarding_fuel_type_description">Og til sidst: Hvilke brændstofpriser skal vi vise dig?</string>
@@ -121,7 +124,7 @@
     <string name="onboarding_permission_title">Tankstationer nær dig</string>
     <string name="onboarding_pin_error_invalid_length">PIN-koden skal bestå af fire cifre.</string>
     <string name="onboarding_pin_error_mismatch">PIN-koderne stemmer ikke overens. Prøv igen.</string>
-    <string name="onboarding_pin_error_not_secure">PIN-koden er for simpel (0000 eller 1234 er ikke tilladt). Vælg en anden PIN-kode</string>
+    <string name="onboarding_pin_error_not_secure">PIN-koden er for simpel (0000 eller 1234 er ikke tilladt). Vælg en anden PIN-kode.</string>
     <string name="onboarding_pin_error_series">PIN-koden må ikke være en serie af stigende eller faldende cifre.</string>
     <string name="onboarding_pin_error_too_few_digits">PIN-koden skal indeholde mindst tre forskellige cifre.</string>
     <string name="onboarding_retry_login">Prøv at logge ind igen</string>

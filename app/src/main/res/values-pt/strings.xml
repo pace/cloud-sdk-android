@@ -2,7 +2,7 @@
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Definições abertas</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Não foram encontradas estações de serviço perto de si.</string>
-    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Nenhuma estação de serviço perto de si</string>
+    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Infelizmente não há estações de serviço perto de si</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Procuraremos as estações de serviço mais próximas na sua área. Isto pode demorar um momento.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Pesquisar postos de gasolina...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Não foi possível abrir as definições de localização. Active os serviços de localização manualmente nas definições do sistema.</string>
@@ -70,6 +70,7 @@
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Gasolina</string>
     <string name="gas_station_closed_hint">A estação de serviço está actualmente encerrada.</string>
+    <string name="gas_station_closes_soon_hint">A bomba de gasolina fecha a %s</string>
     <string name="gas_station_default_name">Estação de serviço</string>
     <string name="gas_station_error_description">Não foi possível carregar os dados da estação de serviço. Verifique a sua ligação!</string>
     <string name="gas_station_fuel_prices_not_available">Infelizmente, os preços dos combustíveis não estão disponíveis.</string>
@@ -88,6 +89,7 @@
     <string name="gasstation_closes_in">A bomba de gasolina fecha a %s</string>
     <string name="general_error_title">Falha no carregamento</string>
     <string name="list_tab_label">Lista</string>
+    <string name="map_tab_label">Mapa</string>
     <string name="more_tab_label">Mais</string>
     <string name="no_supported_browser_dialog_title">Nenhum navegador suportado</string>
     <string name="no_supported_browser_toast">Ativar o Google Chrome e reiniciar a aplicação para continuar.</string>
@@ -101,7 +103,8 @@
     <string name="onboarding_enter_one_time_password_title">Introduzir o código de confirmação</string>
     <string name="onboarding_error_authorization">A sua entrada não pôde ser verificada. Por favor, tente novamente.</string>
     <string name="onboarding_fingerprint_error">Erro ao reconhecer a impressão digital: %s</string>
-    <string name="onboarding_fingerprint_none_saved_title">Atualmente, não são armazenadas quaisquer impressões digitais!</string>
+    <string name="onboarding_fingerprint_none_saved_text">Atualmente, não existem impressões digitais guardadas. Por favor, adicione uma impressão digital agora.</string>
+    <string name="onboarding_fingerprint_none_saved_title">Gostaria de adicionar uma nova impressão digital?</string>
     <string name="onboarding_fingerprint_save">Adicionar agora</string>
     <string name="onboarding_fingerprint_setup_error">Não foi possível abrir as definições de impressões digitais. Adicione uma impressão digital manualmente nas definições do sistema.</string>
     <string name="onboarding_fuel_type_description">E finalmente: Quais os preços dos combustíveis que lhe devemos mostrar?</string>
@@ -121,7 +124,7 @@
     <string name="onboarding_permission_title">Estações de serviço perto de si</string>
     <string name="onboarding_pin_error_invalid_length">O PIN tem de ter quatro dígitos.</string>
     <string name="onboarding_pin_error_mismatch">Os PINs não coincidem. Tente novamente.</string>
-    <string name="onboarding_pin_error_not_secure">O PIN é demasiado simples (0000 ou 1234 não são permitidos). Escolha um PIN diferente</string>
+    <string name="onboarding_pin_error_not_secure">O PIN é demasiado simples (0000 ou 1234 não são permitidos). Escolha um PIN diferente.</string>
     <string name="onboarding_pin_error_series">O PIN não pode ser uma série de dígitos ascendentes ou descendentes.</string>
     <string name="onboarding_pin_error_too_few_digits">O PIN deve conter pelo menos três dígitos diferentes.</string>
     <string name="onboarding_retry_login">Tentar iniciar sessão novamente</string>

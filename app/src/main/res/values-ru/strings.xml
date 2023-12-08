@@ -2,7 +2,7 @@
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Открытые настройки</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Рядом с вами не найдено ни одной автозаправочной станции.</string>
-    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Рядом с вами нет автозаправочных станций</string>
+    <string name="DASHBOARD.EMPTY_VIEW.TITLE">К сожалению, поблизости нет автозаправочных станций</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Мы выполним поиск ближайших АЗС в вашем регионе. Это может занять некоторое время.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Поиск автозаправочных станций...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Не удалось открыть настройки местоположения. Пожалуйста, активируйте службы определения местоположения вручную в системных настройках.</string>
@@ -70,6 +70,7 @@
     <string name="fuel_group_diesel">Дизель</string>
     <string name="fuel_group_petrol">Бензин</string>
     <string name="gas_station_closed_hint">В настоящее время автозаправочная станция закрыта.</string>
+    <string name="gas_station_closes_soon_hint">Заправочная станция закрывается в %s</string>
     <string name="gas_station_default_name">Автозаправочная станция</string>
     <string name="gas_station_error_description">Данные о заправке не удалось загрузить. Проверьте ваше соединение!</string>
     <string name="gas_station_fuel_prices_not_available">Цены на топливо, к сожалению, недоступны.</string>
@@ -88,6 +89,7 @@
     <string name="gasstation_closes_in">Заправочная станция закрывается в %s</string>
     <string name="general_error_title">Загрузка не удалась</string>
     <string name="list_tab_label">Список</string>
+    <string name="map_tab_label">Карта</string>
     <string name="more_tab_label">Подробнее</string>
     <string name="no_supported_browser_dialog_title">Нет поддерживаемого браузера</string>
     <string name="no_supported_browser_toast">Активируйте Google Chrome и перезапустите приложение, чтобы продолжить работу.</string>
@@ -101,7 +103,8 @@
     <string name="onboarding_enter_one_time_password_title">Введите код подтверждения</string>
     <string name="onboarding_error_authorization">Ваша запись не может быть проверена. Пожалуйста, попробуйте еще раз.</string>
     <string name="onboarding_fingerprint_error">Ошибка при распознавании отпечатка пальца: %s</string>
-    <string name="onboarding_fingerprint_none_saved_title">В настоящее время отпечатки пальцев не хранятся!</string>
+    <string name="onboarding_fingerprint_none_saved_text">В настоящее время отпечатки пальцев не сохранены. Пожалуйста, добавьте отпечаток сейчас.</string>
+    <string name="onboarding_fingerprint_none_saved_title">Хотите добавить новый отпечаток пальца?</string>
     <string name="onboarding_fingerprint_save">Добавить сейчас</string>
     <string name="onboarding_fingerprint_setup_error">Не удалось открыть настройки отпечатков пальцев. Пожалуйста, добавьте отпечаток пальца вручную в системных настройках.</string>
     <string name="onboarding_fuel_type_description">И наконец: Какие цены на топливо мы должны вам показать?</string>
@@ -121,7 +124,7 @@
     <string name="onboarding_permission_title">Автозаправочные станции рядом с вами</string>
     <string name="onboarding_pin_error_invalid_length">PIN-код должен состоять из четырех цифр.</string>
     <string name="onboarding_pin_error_mismatch">PIN-коды не совпадают. Попробуйте еще раз.</string>
-    <string name="onboarding_pin_error_not_secure">Слишком простой PIN-код (0000 или 1234 недопустимы). Выберите другой PIN-код</string>
+    <string name="onboarding_pin_error_not_secure">Слишком простой PIN-код (0000 или 1234 недопустимы). Выберите другой PIN-код.</string>
     <string name="onboarding_pin_error_series">PIN-код не должен состоять из ряда возрастающих или убывающих цифр.</string>
     <string name="onboarding_pin_error_too_few_digits">PIN-код должен содержать не менее трех разных цифр.</string>
     <string name="onboarding_retry_login">Попробуйте войти в систему снова</string>

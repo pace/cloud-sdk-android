@@ -2,7 +2,7 @@
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Einstellungen öffnen</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Es wurden keine Tankstellen in deiner Nähe gefunden.</string>
-    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Keine Tankstellen in deiner Nähe</string>
+    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Leider keine Tankstellen in deiner Nähe</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Wir suchen die nächstgelegenen Tankstellen in deiner Nähe. Dies kann einen Moment dauern.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Suche Tankstellen...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Die Standorteinstellungen konnten nicht geöffnet werden. Bitte aktiviere die Ortungsdienste manuell in den Systemeinstellungen.</string>
@@ -70,6 +70,7 @@
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Benzin</string>
     <string name="gas_station_closed_hint">Die Tankstelle ist aktuell geschlossen.</string>
+    <string name="gas_station_closes_soon_hint">Tankstelle schließt um %s Uhr</string>
     <string name="gas_station_default_name">Tankstelle</string>
     <string name="gas_station_error_description">Die Tankstellendaten konnten nicht geladen werden. Überprüfe deine Verbindung!</string>
     <string name="gas_station_fuel_prices_not_available">Kraftstoffpreise sind leider nicht verfügbar.</string>
@@ -88,6 +89,7 @@
     <string name="gasstation_closes_in">Tankstelle schließt um %s  Uhr</string>
     <string name="general_error_title">Laden fehlgeschlagen</string>
     <string name="list_tab_label">Liste</string>
+    <string name="map_tab_label">Karte</string>
     <string name="more_tab_label">Mehr</string>
     <string name="no_supported_browser_dialog_title">Kein unterstützter Browser</string>
     <string name="no_supported_browser_toast">Aktiviere Google Chrome und starte die App neu, um fortzufahren.</string>
@@ -101,7 +103,8 @@
     <string name="onboarding_enter_one_time_password_title">Bestätigungscode eingeben</string>
     <string name="onboarding_error_authorization">Deine Eingabe konnte nicht verifiziert werden. Bitte versuche es erneut.</string>
     <string name="onboarding_fingerprint_error">Fehler beim Erkennen des Fingerabdrucks: %s</string>
-    <string name="onboarding_fingerprint_none_saved_title">Derzeit sind keine Fingerabdrücke gespeichert!</string>
+    <string name="onboarding_fingerprint_none_saved_text">Es sind derzeit keine Fingerabdrücke gespeichert. Bitte füge jetzt einen Fingerabdruck hinzu.</string>
+    <string name="onboarding_fingerprint_none_saved_title">Möchtest du einen neuen Fingerabdruck hinzufügen?</string>
     <string name="onboarding_fingerprint_save">Jetzt hinzufügen</string>
     <string name="onboarding_fingerprint_setup_error">Die Fingerabdruckeinstellungen konnten nicht geöffnet werden. Bitte füge einen Fingerabdruck manuell in den Systemeinstellungen hinzu.</string>
     <string name="onboarding_fuel_type_description">Und zum Schluss: Welche Kraftstoffpreise sollen wir dir anzeigen?</string>
@@ -121,7 +124,7 @@
     <string name="onboarding_permission_title">Tankstellen in deiner Nähe</string>
     <string name="onboarding_pin_error_invalid_length">Die PIN muss vierstellig sein.</string>
     <string name="onboarding_pin_error_mismatch">Die PINs stimmen nicht überein. Versuche es erneut.</string>
-    <string name="onboarding_pin_error_not_secure">Die PIN ist zu einfach (0000 oder 1234 sind nicht erlaubt). Wähle eine andere PIN</string>
+    <string name="onboarding_pin_error_not_secure">Die PIN ist zu einfach (0000 oder 1234 sind nicht erlaubt). Wähle eine andere PIN.</string>
     <string name="onboarding_pin_error_series">Die PIN darf keine Serie auf- oder absteigender Ziffern sein.</string>
     <string name="onboarding_pin_error_too_few_digits">Die PIN muss mindestens drei unterschiedliche Ziffern enthalten.</string>
     <string name="onboarding_retry_login">Anmeldung erneut versuchen</string>

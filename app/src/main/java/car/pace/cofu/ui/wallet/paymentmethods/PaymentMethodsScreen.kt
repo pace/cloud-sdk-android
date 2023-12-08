@@ -42,16 +42,38 @@ import car.pace.cofu.util.extension.PaymentMethodItem
 import car.pace.cofu.util.extension.name
 import cloud.pace.sdk.appkit.AppKit
 import coil.compose.AsyncImage
+import java.util.UUID
 
 @Composable
 fun PaymentMethodsScreen(
     viewModel: PaymentMethodsViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    PaymentMethodsScreenContent(
+        uiState = uiState,
+        onItemClick = {
+            AppKit.openAppActivity(context, viewModel.paymentMethodUrl(it.id), true)
+        },
+        onAddClick = {
+            AppKit.openAppActivity(context, viewModel.paymentMethodCreateUrl(), true)
+        },
+        onRefresh = viewModel::refresh
+    )
+}
+
+@Composable
+fun PaymentMethodsScreenContent(
+    uiState: UiState<List<PaymentMethodItem>>,
+    onItemClick: (PaymentMethodItem) -> Unit,
+    onAddClick: () -> Unit,
+    onRefresh: () -> Unit
+) {
     Column(
         modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
     ) {
-        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-        when (val state = uiState) {
+        when (uiState) {
             is UiState.Loading -> {
                 LoadingCard(
                     title = stringResource(id = R.string.payment_methods_loading_title),
@@ -60,9 +82,7 @@ fun PaymentMethodsScreen(
             }
 
             is UiState.Success -> {
-                val context = LocalContext.current
-                val items = state.data
-
+                val items = uiState.data
                 if (items.isEmpty()) {
                     Column(
                         modifier = Modifier.weight(1f)
@@ -85,9 +105,7 @@ fun PaymentMethodsScreen(
                             PaymentMethodListItem(
                                 modifier = Modifier.clickable(
                                     role = Role.Button,
-                                    onClick = {
-                                        AppKit.openAppActivity(context, viewModel.paymentMethodUrl(it.id), true)
-                                    }
+                                    onClick = { onItemClick(it) }
                                 ),
                                 imageUrl = it.imageUrl,
                                 kind = it.kind,
@@ -98,10 +116,9 @@ fun PaymentMethodsScreen(
                 }
 
                 SecondaryButton(
-                    text = stringResource(id = R.string.payment_methods_add_button)
-                ) {
-                    AppKit.openAppActivity(context, viewModel.paymentMethodCreateUrl(), true)
-                }
+                    text = stringResource(id = R.string.payment_methods_add_button),
+                    onClick = onAddClick
+                )
             }
 
             is UiState.Error -> {
@@ -109,7 +126,7 @@ fun PaymentMethodsScreen(
                     title = stringResource(id = R.string.general_error_title),
                     description = stringResource(id = R.string.payment_methods_error_description),
                     buttonText = stringResource(id = R.string.common_use_retry),
-                    onButtonClick = viewModel::refresh
+                    onButtonClick = onRefresh
                 )
             }
         }
@@ -180,9 +197,38 @@ fun PaymentMethodListItem(
 
 @Preview
 @Composable
-fun PaymentMethodsScreenPreview() {
+fun PaymentMethodsScreenContentPreview() {
     AppTheme {
-        PaymentMethodsScreen()
+        PaymentMethodsScreenContent(
+            uiState = UiState.Success(
+                listOf(
+                    PaymentMethodItem(
+                        id = UUID.randomUUID().toString(),
+                        vendorId = UUID.randomUUID().toString(),
+                        imageUrl = Uri.parse("https://example.com/paypal.png"),
+                        kind = "paypal",
+                        alias = "user@pace.car"
+                    ),
+                    PaymentMethodItem(
+                        id = UUID.randomUUID().toString(),
+                        vendorId = UUID.randomUUID().toString(),
+                        imageUrl = Uri.parse("https://example.com/giropay.png"),
+                        kind = "giropay",
+                        alias = "giropay"
+                    ),
+                    PaymentMethodItem(
+                        id = UUID.randomUUID().toString(),
+                        vendorId = UUID.randomUUID().toString(),
+                        imageUrl = Uri.parse("https://example.com/visa.png"),
+                        kind = "creditcard",
+                        alias = "Visa card"
+                    )
+                )
+            ),
+            onItemClick = {},
+            onAddClick = {},
+            onRefresh = {}
+        )
     }
 }
 
@@ -191,7 +237,7 @@ fun PaymentMethodsScreenPreview() {
 fun MethodListItemPreview() {
     AppTheme {
         PaymentMethodListItem(
-            imageUrl = Uri.parse("https://cdn.dev.pace.cloud/pay/payment-method-vendors/paypal.png"),
+            imageUrl = Uri.parse("https://example.com/paypal.png"),
             kind = "PayPal",
             alias = "user@pace.car"
         )

@@ -2,7 +2,7 @@
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Deschideți setările</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Nu au fost găsite stații de benzină în apropierea dumneavoastră.</string>
-    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Nu există stații de benzină în apropierea dumneavoastră</string>
+    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Din păcate, nu există stații de benzină în apropierea dumneavoastră</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Vom căuta cele mai apropiate stații de benzină din zona dumneavoastră. Acest lucru poate dura un moment.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Căutați benzinării...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Setările de locație nu au putut fi deschise. Vă rugăm să activați manual serviciile de localizare în setările sistemului.</string>
@@ -70,6 +70,7 @@
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Benzină</string>
     <string name="gas_station_closed_hint">Benzinăria este în prezent închisă.</string>
+    <string name="gas_station_closes_soon_hint">Benzinăria se închide la %s</string>
     <string name="gas_station_default_name">Benzinărie</string>
     <string name="gas_station_error_description">Datele benzinăriei nu au putut fi încărcate. Verificați conexiunea!</string>
     <string name="gas_station_fuel_prices_not_available">Din păcate, prețurile combustibilului nu sunt disponibile.</string>
@@ -88,6 +89,7 @@
     <string name="gasstation_closes_in">Benzinăria se închide la %s</string>
     <string name="general_error_title">Încărcarea nu a reușit</string>
     <string name="list_tab_label">Lista</string>
+    <string name="map_tab_label">Hartă</string>
     <string name="more_tab_label">Mai mult</string>
     <string name="no_supported_browser_dialog_title">Nici un browser acceptat</string>
     <string name="no_supported_browser_toast">Activați Google Chrome și reporniți aplicația pentru a continua.</string>
@@ -101,7 +103,8 @@
     <string name="onboarding_enter_one_time_password_title">Introduceți codul de confirmare</string>
     <string name="onboarding_error_authorization">Intrarea dvs. nu a putut fi verificată. Vă rugăm să încercați din nou.</string>
     <string name="onboarding_fingerprint_error">Eroare de recunoaștere a amprentei digitale: %s</string>
-    <string name="onboarding_fingerprint_none_saved_title">În prezent nu sunt stocate amprente digitale!</string>
+    <string name="onboarding_fingerprint_none_saved_text">În prezent, nu există amprente salvate. Vă rugăm să adăugați o amprentă acum.</string>
+    <string name="onboarding_fingerprint_none_saved_title">Doriți să adăugați o nouă amprentă digitală?</string>
     <string name="onboarding_fingerprint_save">Adaugă acum</string>
     <string name="onboarding_fingerprint_setup_error">Setările privind amprentele digitale nu au putut fi deschise. Vă rugăm să adăugați manual o amprentă digitală în setările sistemului.</string>
     <string name="onboarding_fuel_type_description">Și în final: Ce prețuri la carburanți ar trebui să vă arătăm?</string>
@@ -121,7 +124,7 @@
     <string name="onboarding_permission_title">Benzinării în apropierea dumneavoastră</string>
     <string name="onboarding_pin_error_invalid_length">PIN-ul trebuie să fie format din patru cifre.</string>
     <string name="onboarding_pin_error_mismatch">PIN-urile nu se potrivesc. Încercați din nou.</string>
-    <string name="onboarding_pin_error_not_secure">PIN-ul este prea simplu (0000 sau 1234 nu sunt permise). Alegeți un alt PIN</string>
+    <string name="onboarding_pin_error_not_secure">PIN-ul este prea simplu (0000 sau 1234 nu sunt permise). Alegeți un alt PIN.</string>
     <string name="onboarding_pin_error_series">PIN-ul nu trebuie să fie o serie de cifre ascendente sau descendente.</string>
     <string name="onboarding_pin_error_too_few_digits">PIN-ul trebuie să conțină cel puțin trei cifre diferite.</string>
     <string name="onboarding_retry_login">Încercați să vă conectați din nou</string>

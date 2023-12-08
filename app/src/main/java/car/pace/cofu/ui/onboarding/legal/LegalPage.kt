@@ -13,13 +13,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import car.pace.cofu.R
+import car.pace.cofu.ui.navigation.graph.Route
 import car.pace.cofu.ui.onboarding.PageScaffold
 import car.pace.cofu.ui.theme.AppTheme
-import car.pace.cofu.util.LegalDocument
 
 @Composable
 fun LegalPage(
-    onLegalDocument: (LegalDocument) -> Unit,
+    onNavigate: (Route) -> Unit,
     onNext: () -> Unit
 ) {
     PageScaffold(
@@ -51,8 +51,8 @@ fun LegalPage(
                 )
 
                 addStringAnnotation(
-                    tag = LegalDocument.TERMS.name,
-                    annotation = LegalDocument.TERMS.name,
+                    tag = Route.ONBOARDING_TERMS.name,
+                    annotation = Route.ONBOARDING_TERMS.name,
                     start = termStartIndex,
                     end = termEndIndex
                 )
@@ -68,8 +68,8 @@ fun LegalPage(
                 )
 
                 addStringAnnotation(
-                    tag = LegalDocument.PRIVACY.name,
-                    annotation = LegalDocument.PRIVACY.name,
+                    tag = Route.ONBOARDING_PRIVACY.name,
+                    annotation = Route.ONBOARDING_PRIVACY.name,
                     start = privacyStartIndex,
                     end = privacyEndIndex
                 )
@@ -85,8 +85,8 @@ fun LegalPage(
                 annotatedText
                     .getStringAnnotations(start = it, end = it)
                     .firstOrNull()?.let { annotation ->
-                        val document = LegalDocument.valueOf(annotation.item)
-                        onLegalDocument(document)
+                        val route = Route.valueOf(annotation.item)
+                        onNavigate(route)
                     }
             }
         }
@@ -98,7 +98,7 @@ fun LegalPage(
 fun LegalPagePreview() {
     AppTheme {
         LegalPage(
-            onLegalDocument = {},
+            onNavigate = {},
             onNext = {}
         )
     }

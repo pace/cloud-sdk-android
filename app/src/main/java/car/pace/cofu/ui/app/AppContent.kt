@@ -60,10 +60,10 @@ fun AppContent() {
                     .fillMaxSize()
                     .run {
                         if (appState.shouldDrawBehindStatusBar) {
-                            // No status bar inset to draw the header image behind the status bar
+                            // No status bar inset to draw the content behind the status bar
                             windowInsetsPadding(WindowInsets.systemBars.exclude(WindowInsets.statusBars))
                         } else {
-                            // Apply whole padding of Scaffold
+                            // Apply Scaffold padding to all sides
                             padding(padding)
                         }
                     }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,6 +34,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
 import car.pace.cofu.ui.component.DefaultDialog
 import car.pace.cofu.ui.component.DefaultListItem
@@ -55,31 +57,54 @@ fun WalletScreen(
     viewModel: WalletViewModel = hiltViewModel(),
     onNavigate: (Route) -> Unit
 ) {
-    val items = remember {
-        listOf(Route.PAYMENT_METHODS, Route.TRANSACTIONS, Route.FUEL_TYPE)
-    }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
     val email = remember {
         JWTUtils.getUserEMailFromToken(IDKit.cachedToken()).orEmpty()
     }
+    val items = remember {
+        buildList {
+            addAll(listOf(Route.PAYMENT_METHODS, Route.TRANSACTIONS))
+            if (!BuildConfig.HIDE_PRICES) {
+                add(Route.FUEL_TYPE)
+            }
+        }
+    }
 
+    WalletScreenContent(
+        email = email,
+        items = items,
+        onLogout = {
+            coroutineScope.launch {
+                val activity = context.findActivity<AppCompatActivity>()
+                IDKit.endSession(activity)
+                viewModel.resetAppData()
+                onNavigate(Route.ONBOARDING)
+            }
+        },
+        onNavigate = onNavigate
+    )
+}
+
+@Composable
+fun WalletScreenContent(
+    email: String,
+    items: List<Route>,
+    onLogout: () -> Unit,
+    onNavigate: (Route) -> Unit
+) {
     LazyColumn(
+        modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
     ) {
         item(
             key = USER_HEADER_KEY,
             contentType = USER_HEADER_CONTENT_TYPE
         ) {
-            val coroutineScope = rememberCoroutineScope()
-            val context = LocalContext.current
-
-            UserHeader(email = email) {
-                coroutineScope.launch {
-                    val activity = context.findActivity<AppCompatActivity>()
-                    IDKit.endSession(activity)
-                    viewModel.resetAppData()
-                    onNavigate(Route.ONBOARDING)
-                }
-            }
+            UserHeader(
+                email = email,
+                onLogout = onLogout
+            )
         }
 
         item(
@@ -197,9 +222,14 @@ fun LogoutDialog(
 
 @Preview
 @Composable
-fun WalletScreenPreview() {
+fun WalletScreenContentPreview() {
     AppTheme {
-        WalletScreen {}
+        WalletScreenContent(
+            email = "user@pace.car",
+            items = listOf(Route.PAYMENT_METHODS, Route.TRANSACTIONS, Route.FUEL_TYPE),
+            onLogout = {},
+            onNavigate = {}
+        )
     }
 }
 

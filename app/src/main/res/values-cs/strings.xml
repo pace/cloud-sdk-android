@@ -2,7 +2,7 @@
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Otevřít nastavení</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Ve vašem okolí nebyly nalezeny žádné čerpací stanice.</string>
-    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Žádné čerpací stanice ve vašem okolí</string>
+    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Bohužel ve vaší blízkosti nejsou žádné čerpací stanice</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Vyhledáme nejbližší čerpací stanice ve vaší oblasti. To může chvíli trvat.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Hledání čerpacích stanic...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Nastavení umístění se nepodařilo otevřít. Aktivujte služby určování polohy ručně v nastavení systému.</string>
@@ -70,6 +70,7 @@
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Benzín</string>
     <string name="gas_station_closed_hint">Čerpací stanice je v současné době uzavřena.</string>
+    <string name="gas_station_closes_soon_hint">Čerpací stanice se zavírá v %s</string>
     <string name="gas_station_default_name">Čerpací stanice</string>
     <string name="gas_station_error_description">Data čerpací stanice se nepodařilo načíst. Zkontrolujte připojení!</string>
     <string name="gas_station_fuel_prices_not_available">Ceny pohonných hmot bohužel nejsou k dispozici.</string>
@@ -88,6 +89,7 @@
     <string name="gasstation_closes_in">Čerpací stanice se zavírá v %s</string>
     <string name="general_error_title">Načítání se nezdařilo</string>
     <string name="list_tab_label">Seznam</string>
+    <string name="map_tab_label">Mapa</string>
     <string name="more_tab_label">Více</string>
     <string name="no_supported_browser_dialog_title">Žádný podporovaný prohlížeč</string>
     <string name="no_supported_browser_toast">Aktivujte Google Chrome a restartujte aplikaci, abyste mohli pokračovat.</string>
@@ -101,7 +103,8 @@
     <string name="onboarding_enter_one_time_password_title">Zadejte potvrzovací kód</string>
     <string name="onboarding_error_authorization">Váš záznam se nepodařilo ověřit. Zkuste to prosím znovu.</string>
     <string name="onboarding_fingerprint_error">Chyba při rozpoznávání otisku prstu: %s</string>
-    <string name="onboarding_fingerprint_none_saved_title">V současné době nejsou uloženy žádné otisky prstů!</string>
+    <string name="onboarding_fingerprint_none_saved_text">V současné době nejsou uloženy žádné otisky prstů. Přidejte prosím otisk prstu.</string>
+    <string name="onboarding_fingerprint_none_saved_title">Chcete přidat nový otisk prstu?</string>
     <string name="onboarding_fingerprint_save">Přidat nyní</string>
     <string name="onboarding_fingerprint_setup_error">Nastavení otisků prstů nebylo možné otevřít. Přidejte otisk prstu ručně v nastavení systému.</string>
     <string name="onboarding_fuel_type_description">A nakonec: Jaké ceny pohonných hmot bychom vám měli ukázat?</string>
@@ -121,7 +124,7 @@
     <string name="onboarding_permission_title">Čerpací stanice ve vašem okolí</string>
     <string name="onboarding_pin_error_invalid_length">PIN musí mít čtyři číslice.</string>
     <string name="onboarding_pin_error_mismatch">Kódy PIN se neshodují. Zkuste to znovu.</string>
-    <string name="onboarding_pin_error_not_secure">PIN je příliš jednoduchý (0000 nebo 1234 nejsou povoleny). Zvolte jiný PIN</string>
+    <string name="onboarding_pin_error_not_secure">PIN je příliš jednoduchý (0000 nebo 1234 nejsou povoleny). Zvolte jiný PIN.</string>
     <string name="onboarding_pin_error_series">PIN nesmí být tvořen řadou vzestupných nebo sestupných číslic.</string>
     <string name="onboarding_pin_error_too_few_digits">PIN musí obsahovat alespoň tři různé číslice.</string>
     <string name="onboarding_retry_login">Zkuste se znovu přihlásit</string>
