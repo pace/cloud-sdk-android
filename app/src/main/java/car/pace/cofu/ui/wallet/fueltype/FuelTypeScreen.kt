@@ -1,5 +1,7 @@
 package car.pace.cofu.ui.wallet.fueltype
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -17,24 +19,42 @@ import car.pace.cofu.ui.theme.AppTheme
 fun FuelTypeScreen(
     viewModel: FuelTypeViewModel = hiltViewModel()
 ) {
-    val fuelTypeGroups = remember { FuelTypeGroup.values().associateWith { it.stringRes } }
     val selectedFuelTypeGroup by viewModel.fuelTypeGroup.collectAsStateWithLifecycle()
+
+    FuelTypeScreenContent(
+        selectedFuelTypeGroup = selectedFuelTypeGroup,
+        onFuelTypeGroupClick = viewModel::setFuelTypeGroup
+    )
+}
+
+@Composable
+fun FuelTypeScreenContent(
+    selectedFuelTypeGroup: FuelTypeGroup,
+    onFuelTypeGroupClick: (FuelTypeGroup) -> Unit
+) {
+    val fuelTypeGroups = remember { FuelTypeGroup.values().associateWith { it.stringRes } }
 
     RadioGroup(
         items = fuelTypeGroups,
         selectedItem = selectedFuelTypeGroup,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 12.dp)
-    ) {
-        viewModel.setFuelTypeGroup(it)
-    }
+            .padding(horizontal = 20.dp, vertical = 12.dp),
+        onClick = onFuelTypeGroupClick
+    )
 }
 
 @Preview
 @Composable
-fun FuelTypeScreenPreview() {
+fun FuelTypeScreenContentPreview() {
     AppTheme {
-        FuelTypeScreen()
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            FuelTypeScreenContent(
+                selectedFuelTypeGroup = FuelTypeGroup.DIESEL,
+                onFuelTypeGroupClick = {}
+            )
+        }
     }
 }

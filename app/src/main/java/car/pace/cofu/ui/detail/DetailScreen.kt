@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ErrorOutline
+import androidx.compose.material.icons.outlined.LocalGasStation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -252,6 +253,7 @@ fun DetailScreenContent(
                     title = stringResource(id = R.string.general_error_title),
                     description = stringResource(id = R.string.gas_station_error_description),
                     modifier = Modifier.padding(top = 12.dp),
+                    imageVector = Icons.Outlined.LocalGasStation,
                     buttonText = stringResource(id = R.string.common_use_retry),
                     onButtonClick = onRefresh
                 )

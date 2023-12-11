@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Open instellingen</string>
-    <string name="ALERT.LOCATION_PERMISSION.DESCRIPTION">Om u het dichtstbijzijnde tankstation te tonen, hebben we toegang nodig tot uw huidige locatie.</string>
-    <string name="ALERT.LOCATION_PERMISSION.TITLE">Locatie niet vrijgegeven</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Er werden geen benzinestations in uw buurt gevonden.</string>
-    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Geen benzinestations in uw buurt</string>
+    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Helaas geen tankstations bij jou in de buurt</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Wij zoeken de dichtstbijzijnde benzinestations in uw buurt. Dit kan even duren.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Zoek benzinestations...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">De locatie-instellingen konden niet worden geopend. Activeer de locatiediensten handmatig in de systeeminstellingen.</string>
@@ -41,13 +39,18 @@
     <string name="MENU.TITLE.PLACEHOLDER">PACE Connected Fueling</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Deel</string>
+    <string name="alert_location_permission_description">Om u het dichtstbijzijnde tankstation te tonen, hebben we toegang nodig tot uw huidige locatie.</string>
+    <string name="alert_location_permission_title">Locatie niet vrijgegeven</string>
     <string name="closed_label">GESLOTEN</string>
+    <string name="common_pay_here_now">Betaal nu hier!</string>
     <string name="common_start_fueling">Begin met tanken</string>
     <string name="common_start_navigation">Start navigatie</string>
     <string name="common_use_accept">Aanvaarden</string>
+    <string name="common_use_are_you_sure">Weet je het zeker?</string>
     <string name="common_use_back">Terug</string>
     <string name="common_use_cancel">Annuleren</string>
     <string name="common_use_confirm">Bevestig</string>
+    <string name="common_use_deactivate">Deactiveer</string>
     <string name="common_use_decline">Daling</string>
     <string name="common_use_friday">Vrijdag</string>
     <string name="common_use_monday">Maandag</string>
@@ -66,8 +69,8 @@
     <string name="currency_format">%2$s%1$s</string>
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Benzine</string>
-    <string name="fuel_selection_title">Brandstof selecteren</string>
     <string name="gas_station_closed_hint">Het tankstation is momenteel gesloten.</string>
+    <string name="gas_station_closes_soon_hint">Tankstation sluit om %s</string>
     <string name="gas_station_default_name">Tankstation</string>
     <string name="gas_station_error_description">De gegevens van het tankstation konden niet worden geladen. Controleer uw verbinding!</string>
     <string name="gas_station_fuel_prices_not_available">Brandstofprijzen zijn helaas niet beschikbaar.</string>
@@ -83,8 +86,10 @@
     <string name="gas_station_opening_hours_hint">Op feestdagen kunnen andere openingstijden gelden.</string>
     <string name="gas_station_opening_hours_not_available">De openingstijden zijn momenteel niet bekend.</string>
     <string name="gas_station_opening_hours_title">Openingstijden</string>
+    <string name="gasstation_closes_in">Benzinestation sluit om %s</string>
     <string name="general_error_title">Laden mislukt</string>
     <string name="list_tab_label">Lijst</string>
+    <string name="map_tab_label">Kaart</string>
     <string name="more_tab_label">Meer</string>
     <string name="no_supported_browser_dialog_title">Geen ondersteunde browser</string>
     <string name="no_supported_browser_toast">Activeer Google Chrome en start de app opnieuw op om verder te gaan.</string>
@@ -98,7 +103,8 @@
     <string name="onboarding_enter_one_time_password_title">Bevestigingscode invoeren</string>
     <string name="onboarding_error_authorization">Je invoer kon niet worden geverifieerd. Probeer het opnieuw.</string>
     <string name="onboarding_fingerprint_error">Fout bij het herkennen van de vingerafdruk: %s</string>
-    <string name="onboarding_fingerprint_none_saved_title">Er worden momenteel geen vingerafdrukken opgeslagen!</string>
+    <string name="onboarding_fingerprint_none_saved_text">Er zijn momenteel geen vingerafdrukken opgeslagen. Voeg nu een vingerafdruk toe.</string>
+    <string name="onboarding_fingerprint_none_saved_title">Wil je een nieuwe vingerafdruk toevoegen?</string>
     <string name="onboarding_fingerprint_save">Nu toevoegen</string>
     <string name="onboarding_fingerprint_setup_error">De vingerafdrukinstellingen konden niet worden geopend. Voeg handmatig een vingerafdruk toe in de systeeminstellingen.</string>
     <string name="onboarding_fuel_type_description">En tot slot: Welke brandstofprijzen moeten we je laten zien?</string>
@@ -118,12 +124,12 @@
     <string name="onboarding_permission_title">Tankstations bij jou in de buurt</string>
     <string name="onboarding_pin_error_invalid_length">De PIN-code moet uit vier cijfers bestaan.</string>
     <string name="onboarding_pin_error_mismatch">De pincodes komen niet overeen. Probeer het opnieuw.</string>
-    <string name="onboarding_pin_error_not_secure">De PIN-code is te eenvoudig (0000 of 1234 is niet toegestaan). Kies een andere PIN-code</string>
+    <string name="onboarding_pin_error_not_secure">De PIN-code is te eenvoudig (0000 of 1234 is niet toegestaan). Kies een andere PIN-code.</string>
     <string name="onboarding_pin_error_series">De PIN-code mag geen reeks oplopende of aflopende cijfers zijn.</string>
     <string name="onboarding_pin_error_too_few_digits">De PIN-code moet minstens drie verschillende cijfers bevatten.</string>
     <string name="onboarding_retry_login">Probeer opnieuw in te loggen</string>
-    <string name="onboarding_tracking_app_tracking">app tracking</string>
-    <string name="onboarding_tracking_description">Akkoord gaan met app tracking zodat we het gebruik van de app verder voor je kunnen optimaliseren.</string>
+    <string name="onboarding_tracking_app_tracking">gebruiksanalyse</string>
+    <string name="onboarding_tracking_description">Accepteer de gebruiksanalyse zodat we deze app verder voor je kunnen optimaliseren.</string>
     <string name="onboarding_tracking_title">Verbeter uw ervaring</string>
     <string name="onboarding_two_factor_authentication_biometry">Biometrie gebruiken</string>
     <string name="onboarding_two_factor_authentication_description">Biometrische scanners zijn de snelste en veiligste manier om je betalingstransacties te bevestigen.</string>
@@ -147,8 +153,15 @@
     <string name="payment_methods_error_description">Je betaalmethoden en tankkaarten konden niet worden geladen. Controleer uw verbinding!</string>
     <string name="payment_methods_loading_description">We laden je betaalmethoden en tankkaarten. Een ogenblik geduld alstublieft.</string>
     <string name="payment_methods_loading_title">Betaalmethoden en tankkaarten laden...</string>
-    <string name="payment_methods_title">Betaalmethoden &amp; tankkaarten</string>
-    <string name="transactions_title">Transacties</string>
+    <string name="wallet_account_deletion_title">Account verwijderen</string>
+    <string name="wallet_fuel_type_selection_title">Brandstof selecteren</string>
     <string name="wallet_header_text">U bent aangemeld als</string>
+    <string name="wallet_payment_methods_title">Betaalmethoden &amp; tankkaarten</string>
     <string name="wallet_tab_label">Portemonnee</string>
+    <string name="wallet_transactions_title">Transacties</string>
+    <string name="wallet_two_factor_authentication_biometry_setup_successful">Biometrie succesvol opgezet</string>
+    <string name="wallet_two_factor_authentication_biometry_title">Biometrie</string>
+    <string name="wallet_two_factor_authentication_pin_setup_successful">PIN succesvol ingesteld</string>
+    <string name="wallet_two_factor_authentication_pin_title">PIN instellen</string>
+    <string name="wallet_two_factor_authentication_title">Autorisatieprocedure</string>
 </resources>

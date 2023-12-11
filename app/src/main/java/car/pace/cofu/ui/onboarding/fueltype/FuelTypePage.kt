@@ -1,40 +1,51 @@
 package car.pace.cofu.ui.onboarding.fueltype
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.LocalGasStation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import car.pace.cofu.R
+import car.pace.cofu.ui.component.Description
 import car.pace.cofu.ui.component.RadioGroup
 import car.pace.cofu.ui.onboarding.PageScaffold
 import car.pace.cofu.ui.theme.AppTheme
-import car.pace.cofu.ui.wallet.fueltype.FuelType
+import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 
 @Composable
 fun FuelTypePage(
-    onNext: (FuelType) -> Unit
+    onNext: (FuelTypeGroup) -> Unit
 ) {
-    val fuelTypes = remember { FuelType.values().associateWith { it.stringRes } }
-    var selectedFuelType: FuelType? by remember { mutableStateOf(null) }
+    val fuelTypeGroups = remember { FuelTypeGroup.values().associateWith { it.stringRes } }
+    var selectedFuelType: FuelTypeGroup? by remember { mutableStateOf(null) }
     val nextButtonEnabled = selectedFuelType != null
 
     PageScaffold(
-        imageRes = R.drawable.ic_fuel,
+        imageVector = Icons.Outlined.LocalGasStation,
         titleRes = R.string.onboarding_fuel_type_title,
-        descriptionRes = R.string.onboarding_fuel_type_description,
         nextButtonTextRes = R.string.common_use_next,
-        onNextButtonClick = { onNext(selectedFuelType ?: FuelType.DIESEL) },
-        nextButtonEnabled = nextButtonEnabled
+        onNextButtonClick = { onNext(selectedFuelType ?: FuelTypeGroup.DIESEL) },
+        nextButtonEnabled = nextButtonEnabled,
+        descriptionContent = {
+            Description(
+                text = stringResource(id = R.string.onboarding_fuel_type_description)
+            )
+        }
     ) {
         RadioGroup(
-            items = fuelTypes,
+            items = fuelTypeGroups,
             selectedItem = selectedFuelType,
-            modifier = Modifier.padding(top = 40.dp)
+            modifier = Modifier
+                .padding(top = 28.dp)
+                .fillMaxWidth(0.5f)
         ) {
             selectedFuelType = it
         }

@@ -34,7 +34,10 @@ class AppState(
         @Composable get() = currentRoute?.graph
 
     val shouldShowBottomBar: Boolean
-        @Composable get() = currentDestination?.route?.let { Route.fromRoute(it) }?.showBottomBar == true
+        @Composable get() = currentRoute?.showBottomBar == true
+
+    val shouldDrawBehindStatusBar: Boolean
+        @Composable get() = currentRoute?.drawBehindStatusBar == true
 
     fun navigateToGraph(graph: Graph) {
         navController.navigate(graph.route) {

@@ -35,9 +35,9 @@ const val ZGM = "zgm"
 
 val unsupportedPaymentMethods = listOf(APPLE_PAY)
 
-fun PaymentMethods.toMethodItems() = map { it.toMethodItem() }
+fun PaymentMethods.toPaymentMethodItems() = map { it.toPaymentMethodItem() }
 
-fun PaymentMethod.toMethodItem() = PaymentMethodItem(
+fun PaymentMethod.toPaymentMethodItem() = PaymentMethodItem(
     id = id,
     vendorId = getPaymentMethodVendor().id,
     imageUrl = logoUrl(getPaymentMethodVendor().logo?.href),

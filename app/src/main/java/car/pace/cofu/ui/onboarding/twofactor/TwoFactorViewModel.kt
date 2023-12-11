@@ -1,6 +1,6 @@
 package car.pace.cofu.ui.onboarding.twofactor
 
-import androidx.annotation.StringRes
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,20 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.R
 import car.pace.cofu.data.UserRepository
-import car.pace.cofu.ui.onboarding.twofactor.setup.BiometrySetup
-import car.pace.cofu.ui.onboarding.twofactor.setup.PinSetup
-import car.pace.cofu.ui.onboarding.twofactor.setup.TwoFactorSetup
-import car.pace.cofu.util.SnackbarData
-import car.pace.cofu.util.extension.UserCanceledException
+import car.pace.cofu.ui.onboarding.twofactor.setup.TwoFactorSetupType
+import car.pace.cofu.util.extension.errorTextRes
 import cloud.pace.sdk.idkit.model.InvalidSession
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -36,119 +29,75 @@ class TwoFactorViewModel @Inject constructor(
     private val _navigateToAuthorization = MutableSharedFlow<Unit>()
     val navigateToAuthorization = _navigateToAuthorization.asSharedFlow()
 
-    private val _snackbar = MutableStateFlow<SnackbarData?>(null)
-    val snackbar = _snackbar.asStateFlow()
+    var errorText: String? by mutableStateOf(null)
+    var biometryLoading by mutableStateOf(false)
+    var pinLoading by mutableStateOf(false)
+    var twoFactorSetupType: TwoFactorSetupType? by mutableStateOf(null)
 
-    var loading by mutableStateOf(false)
-    var twoFactorSetup: TwoFactorSetup? by mutableStateOf(null)
-
-    fun enableBiometricAuthentication() {
+    fun enableBiometricAuthentication(context: Context) {
         viewModelScope.launch {
-            loading = true
+            biometryLoading = true
             userRepository.enableBiometricAuthentication()
                 .onSuccess {
+                    biometryLoading = false
                     if (it) {
                         finish()
                     } else {
-                        startBiometrySetup()
+                        twoFactorSetupType = TwoFactorSetupType.BIOMETRY
                     }
                 }
                 .onFailure {
-                    loading = false
+                    biometryLoading = false
                     Timber.e(it, "Failed to enable biometric authentication")
-                    showSnackbar(throwable = it, onActionPerformed = ::enableBiometricAuthentication)
+                    handleError(context, it)
                 }
         }
     }
 
-    fun onBiometricPromptError(errString: CharSequence) {
-        showSnackbar(generalMessageRes = R.string.onboarding_fingerprint_error, generalMessageFormatArgs = arrayOf(errString))
+    fun onBiometricPromptError(context: Context, errString: CharSequence) {
+        errorText = context.getString(R.string.onboarding_fingerprint_error, errString)
     }
 
-    fun isPinSet() {
+    fun onFingerprintSettingsNotFound(context: Context) {
+        errorText = context.getString(R.string.onboarding_fingerprint_setup_error)
+    }
+
+    fun isPinSet(context: Context) {
         viewModelScope.launch {
-            loading = true
+            pinLoading = true
             userRepository.isPINSet()
                 .onSuccess {
+                    pinLoading = false
                     if (it) {
                         finish()
                     } else {
-                        startPinSetup()
+                        twoFactorSetupType = TwoFactorSetupType.PIN
                     }
                 }
                 .onFailure {
-                    loading = false
+                    pinLoading = false
                     Timber.e(it, "Failed to check if PIN is set")
-                    showSnackbar(throwable = it, onActionPerformed = ::isPinSet)
+                    handleError(context, it)
                 }
         }
     }
 
-    fun onTwoFactorSetupFinished(result: Result<Unit>) {
-        twoFactorSetup = null
-        result
-            .onSuccess {
-                finish()
-            }
-            .onFailure {
-                loading = false
-                if (it !is UserCanceledException) {
-                    showSnackbar(it)
-                }
-            }
-    }
+    fun onTwoFactorSetupFinished(successful: Boolean) {
+        twoFactorSetupType = null
 
-    fun showSnackbar(
-        throwable: Throwable? = null,
-        @StringRes generalMessageRes: Int = R.string.common_use_unknown_error,
-        vararg generalMessageFormatArgs: Any? = emptyArray(),
-        onActionPerformed: () -> Unit = {}
-    ) {
-        _snackbar.value = when (throwable) {
-            is InvalidSession -> {
-                SnackbarData(
-                    messageRes = R.string.onboarding_invalid_session,
-                    actionLabelRes = R.string.onboarding_retry_login,
-                    onActionPerformed = {
-                        viewModelScope.launch {
-                            _navigateToAuthorization.emit(Unit)
-                        }
-                    }
-                )
-            }
-
-            is UnknownHostException, is SocketTimeoutException -> {
-                SnackbarData(
-                    messageRes = R.string.common_use_network_error,
-                    actionLabelRes = R.string.common_use_retry,
-                    onActionPerformed = onActionPerformed
-                )
-            }
-
-            else -> {
-                SnackbarData(
-                    messageRes = generalMessageRes,
-                    messageFormatArgs = generalMessageFormatArgs
-                )
-            }
+        if (successful) {
+            finish()
         }
     }
 
-    private suspend fun startBiometrySetup() {
-        loading = true
-        userRepository.sendMailOTP()
-            .onSuccess {
-                twoFactorSetup = BiometrySetup
+    private fun handleError(context: Context, throwable: Throwable) {
+        if (throwable is InvalidSession) {
+            viewModelScope.launch {
+                _navigateToAuthorization.emit(Unit)
             }
-            .onFailure {
-                loading = false
-                Timber.e(it, "Failed to send OTP mail")
-                showSnackbar(it)
-            }
-    }
-
-    private fun startPinSetup() {
-        twoFactorSetup = PinSetup.PinInput
+        } else {
+            errorText = context.getString(throwable.errorTextRes())
+        }
     }
 
     private fun finish() {

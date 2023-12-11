@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Logout
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,12 +34,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
+import car.pace.cofu.ui.component.DefaultDialog
 import car.pace.cofu.ui.component.DefaultListItem
-import car.pace.cofu.ui.component.Description
-import car.pace.cofu.ui.component.PrimaryButton
-import car.pace.cofu.ui.component.SecondaryButton
-import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.component.dropShadow
 import car.pace.cofu.ui.navigation.graph.Route
 import car.pace.cofu.ui.onboarding.twofactor.biometric.findActivity
@@ -59,31 +57,54 @@ fun WalletScreen(
     viewModel: WalletViewModel = hiltViewModel(),
     onNavigate: (Route) -> Unit
 ) {
-    val items = remember {
-        listOf(Route.METHODS, Route.TRANSACTIONS, Route.FUEL_TYPE)
-    }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
     val email = remember {
         JWTUtils.getUserEMailFromToken(IDKit.cachedToken()).orEmpty()
     }
+    val items = remember {
+        buildList {
+            addAll(listOf(Route.PAYMENT_METHODS, Route.TRANSACTIONS))
+            if (!BuildConfig.HIDE_PRICES) {
+                add(Route.FUEL_TYPE)
+            }
+        }
+    }
 
+    WalletScreenContent(
+        email = email,
+        items = items,
+        onLogout = {
+            coroutineScope.launch {
+                val activity = context.findActivity<AppCompatActivity>()
+                IDKit.endSession(activity)
+                viewModel.resetAppData()
+                onNavigate(Route.ONBOARDING)
+            }
+        },
+        onNavigate = onNavigate
+    )
+}
+
+@Composable
+fun WalletScreenContent(
+    email: String,
+    items: List<Route>,
+    onLogout: () -> Unit,
+    onNavigate: (Route) -> Unit
+) {
     LazyColumn(
+        modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
     ) {
         item(
             key = USER_HEADER_KEY,
             contentType = USER_HEADER_CONTENT_TYPE
         ) {
-            val coroutineScope = rememberCoroutineScope()
-            val context = LocalContext.current
-
-            UserHeader(email = email) {
-                coroutineScope.launch {
-                    val activity = context.findActivity<AppCompatActivity>()
-                    IDKit.endSession(activity)
-                    viewModel.resetAppData()
-                    onNavigate(Route.ONBOARDING)
-                }
-            }
+            UserHeader(
+                email = email,
+                onLogout = onLogout
+            )
         }
 
         item(
@@ -188,47 +209,27 @@ fun LogoutDialog(
     onLogout: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            PrimaryButton(
-                text = stringResource(id = R.string.MENU_ITEMS_LOGOUT),
-                onClick = onLogout
-            )
-        },
-        dismissButton = {
-            SecondaryButton(
-                text = stringResource(id = R.string.common_use_cancel),
-                onClick = onDismiss
-            )
-        },
-        icon = {
-            Icon(
-                imageVector = Icons.Outlined.Logout,
-                contentDescription = null,
-                modifier = Modifier.size(40.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        },
-        title = {
-            Title(
-                text = stringResource(id = R.string.DASHBOARD_LOGOUT_CONFIRM_TITLE)
-            )
-        },
-        text = {
-            Description(
-                text = stringResource(id = R.string.DASHBOARD_LOGOUT_CONFIRM_DESCRIPTION)
-            )
-        },
-        tonalElevation = 0.dp
+    DefaultDialog(
+        title = stringResource(id = R.string.DASHBOARD_LOGOUT_CONFIRM_TITLE),
+        text = stringResource(id = R.string.DASHBOARD_LOGOUT_CONFIRM_DESCRIPTION),
+        confirmButtonText = stringResource(id = R.string.MENU_ITEMS_LOGOUT),
+        dismissButtonText = stringResource(id = R.string.common_use_cancel),
+        imageVector = Icons.Outlined.Logout,
+        onConfirm = onLogout,
+        onDismiss = onDismiss
     )
 }
 
 @Preview
 @Composable
-fun WalletScreenPreview() {
+fun WalletScreenContentPreview() {
     AppTheme {
-        WalletScreen {}
+        WalletScreenContent(
+            email = "user@pace.car",
+            items = listOf(Route.PAYMENT_METHODS, Route.TRANSACTIONS, Route.FUEL_TYPE),
+            onLogout = {},
+            onNavigate = {}
+        )
     }
 }
 

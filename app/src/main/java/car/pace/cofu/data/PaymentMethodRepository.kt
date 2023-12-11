@@ -3,7 +3,7 @@ package car.pace.cofu.data
 import car.pace.cofu.di.coroutine.ApplicationScope
 import car.pace.cofu.util.extension.GOOGLE_PAY
 import car.pace.cofu.util.extension.PaymentMethodItem
-import car.pace.cofu.util.extension.toMethodItems
+import car.pace.cofu.util.extension.toPaymentMethodItems
 import car.pace.cofu.util.extension.unsupportedPaymentMethods
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.pay.PayAPI.paymentMethods
@@ -58,7 +58,7 @@ class PaymentMethodRepository @Inject constructor(
                 .filter {
                     it.kind !in unsupportedPaymentMethods && it.kind != GOOGLE_PAY || paymentsClient.isReadyToPay()
                 }
-                .toMethodItems()
+                .toPaymentMethodItems()
                 .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.alias.orEmpty() })
         }
     }

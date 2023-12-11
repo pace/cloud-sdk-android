@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Abrir la configuración</string>
-    <string name="ALERT.LOCATION_PERMISSION.DESCRIPTION">Para mostrarte la gasolinera más cercana, necesitamos acceder a tu ubicación actual.</string>
-    <string name="ALERT.LOCATION_PERMISSION.TITLE">Ubicación no divulgada</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">No se han encontrado gasolineras cerca de usted.</string>
-    <string name="DASHBOARD.EMPTY_VIEW.TITLE">No hay gasolineras cerca de usted</string>
+    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Lamentablemente no hay gasolineras cerca de usted</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Buscaremos las gasolineras más cercanas en su zona. Esto puede llevar un momento.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Buscar gasolineras...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">No se han podido abrir los ajustes de localización. Por favor, activa los servicios de localización manualmente en los ajustes del sistema.</string>
@@ -41,13 +39,18 @@
     <string name="MENU.TITLE.PLACEHOLDER">PACE Connected Fueling</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Compartir</string>
+    <string name="alert_location_permission_description">Para mostrarte la gasolinera más cercana, necesitamos acceder a tu ubicación actual.</string>
+    <string name="alert_location_permission_title">Ubicación no divulgada</string>
     <string name="closed_label">CERRADO</string>
+    <string name="common_pay_here_now">Pague aquí ahora</string>
     <string name="common_start_fueling">Empezar a repostar</string>
     <string name="common_start_navigation">Iniciar la navegación</string>
     <string name="common_use_accept">Aceptar</string>
+    <string name="common_use_are_you_sure">¿Seguro?</string>
     <string name="common_use_back">Volver</string>
     <string name="common_use_cancel">Cancelar</string>
     <string name="common_use_confirm">Confirme</string>
+    <string name="common_use_deactivate">Desactivar</string>
     <string name="common_use_decline">Declinación</string>
     <string name="common_use_friday">Viernes</string>
     <string name="common_use_monday">Lunes</string>
@@ -66,8 +69,8 @@
     <string name="currency_format">%2$s%1$s</string>
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Gasolina</string>
-    <string name="fuel_selection_title">Selección de combustible</string>
     <string name="gas_station_closed_hint">La gasolinera está actualmente cerrada.</string>
+    <string name="gas_station_closes_soon_hint">La gasolinera cierra a las %s</string>
     <string name="gas_station_default_name">Gasolinera</string>
     <string name="gas_station_error_description">No se han podido cargar los datos de la gasolinera. Compruebe su conexión.</string>
     <string name="gas_station_fuel_prices_not_available">Lamentablemente, no se dispone de los precios del combustible.</string>
@@ -83,8 +86,10 @@
     <string name="gas_station_opening_hours_hint">Los horarios de apertura pueden variar en los días festivos.</string>
     <string name="gas_station_opening_hours_not_available">El horario de apertura no está disponible actualmente.</string>
     <string name="gas_station_opening_hours_title">Horarios de apertura</string>
+    <string name="gasstation_closes_in">La gasolinera cierra a las %s</string>
     <string name="general_error_title">Carga fallida</string>
     <string name="list_tab_label">Lista</string>
+    <string name="map_tab_label">Mapa</string>
     <string name="more_tab_label">Más</string>
     <string name="no_supported_browser_dialog_title">Ningún navegador compatible</string>
     <string name="no_supported_browser_toast">Activa Google Chrome y reinicia la aplicación para continuar.</string>
@@ -98,7 +103,8 @@
     <string name="onboarding_enter_one_time_password_title">Introduzca el código de confirmación</string>
     <string name="onboarding_error_authorization">Su entrada no ha podido ser verificada. Por favor, inténtelo de nuevo.</string>
     <string name="onboarding_fingerprint_error">Error al reconocer la huella dactilar: %s</string>
-    <string name="onboarding_fingerprint_none_saved_title">Actualmente no se almacenan huellas dactilares.</string>
+    <string name="onboarding_fingerprint_none_saved_text">Actualmente no hay huellas dactilares guardadas. Por favor, añada una huella ahora.</string>
+    <string name="onboarding_fingerprint_none_saved_title">¿Desea añadir una nueva huella dactilar?</string>
     <string name="onboarding_fingerprint_save">Añadir ahora</string>
     <string name="onboarding_fingerprint_setup_error">No se ha podido abrir la configuración de huellas dactilares. Por favor, añada una huella dactilar manualmente en los ajustes del sistema.</string>
     <string name="onboarding_fuel_type_description">Y por último: ¿Qué precios de combustible debemos mostrarte?</string>
@@ -118,12 +124,12 @@
     <string name="onboarding_permission_title">Gasolineras cercanas</string>
     <string name="onboarding_pin_error_invalid_length">El PIN debe tener cuatro dígitos.</string>
     <string name="onboarding_pin_error_mismatch">Los PIN no coinciden. Inténtelo de nuevo.</string>
-    <string name="onboarding_pin_error_not_secure">El PIN es demasiado simple (0000 o 1234 no están permitidos). Elija un PIN diferente</string>
+    <string name="onboarding_pin_error_not_secure">El PIN es demasiado simple (0000 o 1234 no están permitidos). Elija un PIN diferente.</string>
     <string name="onboarding_pin_error_series">El PIN no debe ser una serie de dígitos ascendentes o descendentes.</string>
     <string name="onboarding_pin_error_too_few_digits">El PIN debe contener al menos tres dígitos diferentes.</string>
     <string name="onboarding_retry_login">Intenta conectarte de nuevo</string>
-    <string name="onboarding_tracking_app_tracking">seguimiento de la aplicación</string>
-    <string name="onboarding_tracking_description">Aceptar el seguimiento de la aplicación para que podamos optimizar aún más el uso de la aplicación para usted.</string>
+    <string name="onboarding_tracking_app_tracking">análisis de uso</string>
+    <string name="onboarding_tracking_description">Acepta el análisis de uso para que podamos optimizar aún más esta aplicación para ti.</string>
     <string name="onboarding_tracking_title">Mejore su experiencia</string>
     <string name="onboarding_two_factor_authentication_biometry">Utilizar la biometría</string>
     <string name="onboarding_two_factor_authentication_description">Los escáneres biométricos son la forma más rápida y segura de confirmar sus transacciones de pago.</string>
@@ -147,8 +153,15 @@
     <string name="payment_methods_error_description">Sus métodos de pago y tarjetas de combustible no se han podido cargar. Compruebe su conexión.</string>
     <string name="payment_methods_loading_description">Cargamos sus métodos de pago y tarjetas de combustible. Por favor, espere un momento.</string>
     <string name="payment_methods_loading_title">Carga de medios de pago y tarjetas de combustible...</string>
-    <string name="payment_methods_title">Métodos de pago y tarjetas de combustible</string>
-    <string name="transactions_title">Transacciones</string>
+    <string name="wallet_account_deletion_title">Eliminar cuenta</string>
+    <string name="wallet_fuel_type_selection_title">Selección de combustible</string>
     <string name="wallet_header_text">Ha iniciado sesión como</string>
+    <string name="wallet_payment_methods_title">Métodos de pago y tarjetas de combustible</string>
     <string name="wallet_tab_label">Cartera</string>
+    <string name="wallet_transactions_title">Transacciones</string>
+    <string name="wallet_two_factor_authentication_biometry_setup_successful">Biometría instalada con éxito</string>
+    <string name="wallet_two_factor_authentication_biometry_title">Biometría</string>
+    <string name="wallet_two_factor_authentication_pin_setup_successful">PIN configurado correctamente</string>
+    <string name="wallet_two_factor_authentication_pin_title">Establecer PIN</string>
+    <string name="wallet_two_factor_authentication_title">Procedimiento de autorización</string>
 </resources>

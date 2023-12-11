@@ -45,10 +45,15 @@ fun AppNavHost(
             scaleOutOfContainer()
         }
     ) {
-        onboardingGraph(showSnackbar = showSnackbar) {
-            viewModel.onboardingDone()
-            navController.navigate(Route.HOME)
-        }
+        onboardingGraph(
+            onNavigate = {
+                navController.navigate(it)
+            },
+            onDone = {
+                viewModel.onboardingDone(it)
+                navController.navigate(Route.HOME)
+            }
+        )
         homeGraph(showSnackbar = showSnackbar) {
             navController.navigate(it)
         }

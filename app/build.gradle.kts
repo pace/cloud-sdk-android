@@ -46,6 +46,7 @@ android {
         buildConfigField("String", "PACE_CLIENT_ID", "\"" + configJson.sdk.clientId + "\"")
         buildConfigField("String", "PACE_REDIRECT_URL", "\"" + configJson.sdk.redirectUrl + "\"")
         buildConfigField("Boolean", "HIDE_PRICES", configJson.hidePrices.toString())
+        buildConfigField("Boolean", "ONBOARDING_SHOW_CUSTOM_HEADER", configJson.onboardingShowCustomHeader.toString())
 
         // appAuthRedirectScheme is needed for AppAuth in IDKit and pace_redirect_scheme is needed for deep linking in AppKit
         manifestPlaceholders["appAuthRedirectScheme"] = configJson.sdk.redirectScheme // e.g. reverse domain name notation: cloud.pace.app
@@ -111,7 +112,7 @@ android {
 
 dependencies {
     // PACE Cloud SDK
-    implementation("cloud.pace:sdk:20.1.0")
+    implementation("cloud.pace:sdk:21.0.1")
 
     // Jetpack Compose
     val composeBom = platform("androidx.compose:compose-bom:2023.10.01")
@@ -124,8 +125,10 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.5")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0-rc01")
+    implementation("androidx.activity:activity-compose:1.8.1")
     implementation("com.google.maps.android:maps-compose:4.3.0")
     implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation("com.github.composeuisuite:ohteepee:1.0.3")
 
     // Google
     implementation("com.google.android.gms:play-services-oss-licenses:17.0.1")
@@ -134,13 +137,14 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.48.1")
     kapt("com.google.dagger:hilt-android-compiler:2.48.1")
 
-    // Crash reporting
-    implementation(platform("com.google.firebase:firebase-bom:32.5.0"))
-    implementation("com.google.firebase:firebase-crashlytics-ktx")
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-analytics")
 
     // AboutLibraries
-    implementation ("com.mikepenz:aboutlibraries-core:10.9.2")
-    implementation ("com.mikepenz:aboutlibraries-compose:10.9.2")
+    implementation("com.mikepenz:aboutlibraries-core:10.9.2")
+    implementation("com.mikepenz:aboutlibraries-compose:10.9.2")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

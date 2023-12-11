@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Ustawienia otwarte</string>
-    <string name="ALERT.LOCATION_PERMISSION.DESCRIPTION">Aby pokazać Ci najbliższą stację benzynową, potrzebujemy dostępu do Twojej aktualnej lokalizacji.</string>
-    <string name="ALERT.LOCATION_PERMISSION.TITLE">Lokalizacja nie została ujawniona</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">W pobliżu nie znaleziono żadnych stacji benzynowych.</string>
-    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Brak stacji benzynowych w pobliżu</string>
+    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Niestety w pobliżu nie ma stacji benzynowych</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Wyszukamy najbliższe stacje benzynowe w Twojej okolicy. Może to zająć chwilę.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Wyszukaj stacje benzynowe...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Nie można otworzyć ustawień lokalizacji. Należy ręcznie aktywować usługi lokalizacji w ustawieniach systemu.</string>
@@ -41,13 +39,18 @@
     <string name="MENU.TITLE.PLACEHOLDER">PACE Connected Fueling</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Udział</string>
+    <string name="alert_location_permission_description">Aby pokazać Ci najbliższą stację benzynową, potrzebujemy dostępu do Twojej aktualnej lokalizacji.</string>
+    <string name="alert_location_permission_title">Lokalizacja nie została ujawniona</string>
     <string name="closed_label">ZAMKNIĘTE</string>
+    <string name="common_pay_here_now">Zapłać tutaj teraz!</string>
     <string name="common_start_fueling">Rozpoczęcie tankowania</string>
     <string name="common_start_navigation">Rozpocznij nawigację</string>
     <string name="common_use_accept">Zaakceptować</string>
+    <string name="common_use_are_you_sure">Jesteś pewien?</string>
     <string name="common_use_back">Powrót</string>
     <string name="common_use_cancel">Anuluj</string>
     <string name="common_use_confirm">Potwierdzenie</string>
+    <string name="common_use_deactivate">Dezaktywuj</string>
     <string name="common_use_decline">Spadek</string>
     <string name="common_use_friday">Piątek</string>
     <string name="common_use_monday">Poniedziałek</string>
@@ -66,8 +69,8 @@
     <string name="currency_format">%2$s%1$s</string>
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Benzyna</string>
-    <string name="fuel_selection_title">Wybór paliwa</string>
     <string name="gas_station_closed_hint">Stacja benzynowa jest obecnie zamknięta.</string>
+    <string name="gas_station_closes_soon_hint">Stacja benzynowa zostanie zamknięta o %s</string>
     <string name="gas_station_default_name">Stacja benzynowa</string>
     <string name="gas_station_error_description">Nie można załadować danych stacji benzynowej. Sprawdź połączenie!</string>
     <string name="gas_station_fuel_prices_not_available">Ceny paliwa nie są niestety dostępne.</string>
@@ -83,8 +86,10 @@
     <string name="gas_station_opening_hours_hint">W święta godziny otwarcia mogą się różnić.</string>
     <string name="gas_station_opening_hours_not_available">Godziny otwarcia nie są obecnie dostępne.</string>
     <string name="gas_station_opening_hours_title">Godziny otwarcia</string>
+    <string name="gasstation_closes_in">Stacja benzynowa zostaje zamknięta o godzinie %s</string>
     <string name="general_error_title">Ładowanie nie powiodło się</string>
     <string name="list_tab_label">Lista</string>
+    <string name="map_tab_label">Mapa</string>
     <string name="more_tab_label">Więcej</string>
     <string name="no_supported_browser_dialog_title">Brak obsługiwanej przeglądarki</string>
     <string name="no_supported_browser_toast">Aktywuj Google Chrome i uruchom ponownie aplikację, aby kontynuować.</string>
@@ -98,7 +103,8 @@
     <string name="onboarding_enter_one_time_password_title">Wprowadź kod potwierdzający</string>
     <string name="onboarding_error_authorization">Twoje zgłoszenie nie mogło zostać zweryfikowane. Spróbuj ponownie.</string>
     <string name="onboarding_fingerprint_error">Błąd rozpoznawania odcisku palca: %s</string>
-    <string name="onboarding_fingerprint_none_saved_title">Odciski palców nie są obecnie przechowywane!</string>
+    <string name="onboarding_fingerprint_none_saved_text">Obecnie nie zapisano żadnych odcisków palców. Dodaj odcisk palca teraz.</string>
+    <string name="onboarding_fingerprint_none_saved_title">Czy chcesz dodać nowy odcisk palca?</string>
     <string name="onboarding_fingerprint_save">Dodaj teraz</string>
     <string name="onboarding_fingerprint_setup_error">Nie można otworzyć ustawień odcisku palca. Dodaj odcisk palca ręcznie w ustawieniach systemu.</string>
     <string name="onboarding_fuel_type_description">I wreszcie: Które ceny paliw powinniśmy pokazać?</string>
@@ -118,12 +124,12 @@
     <string name="onboarding_permission_title">Stacje benzynowe w pobliżu</string>
     <string name="onboarding_pin_error_invalid_length">Kod PIN musi składać się z czterech cyfr.</string>
     <string name="onboarding_pin_error_mismatch">Kody PIN nie są zgodne. Spróbuj ponownie.</string>
-    <string name="onboarding_pin_error_not_secure">Kod PIN jest zbyt prosty (0000 lub 1234 są niedozwolone). Wybierz inny kod PIN</string>
+    <string name="onboarding_pin_error_not_secure">Kod PIN jest zbyt prosty (0000 lub 1234 są niedozwolone). Wybierz inny kod PIN.</string>
     <string name="onboarding_pin_error_series">Kod PIN nie może być ciągiem cyfr rosnących lub malejących.</string>
     <string name="onboarding_pin_error_too_few_digits">Kod PIN musi zawierać co najmniej trzy różne cyfry.</string>
     <string name="onboarding_retry_login">Spróbuj zalogować się ponownie</string>
-    <string name="onboarding_tracking_app_tracking">śledzenie aplikacji</string>
-    <string name="onboarding_tracking_description">Zgoda na śledzenie aplikacji, abyśmy mogli jeszcze bardziej zoptymalizować korzystanie z aplikacji.</string>
+    <string name="onboarding_tracking_app_tracking">analizę użytkowania</string>
+    <string name="onboarding_tracking_description">Zaakceptuj analizę użytkowania, abyśmy mogli dalej optymalizować tę aplikację dla Ciebie.</string>
     <string name="onboarding_tracking_title">Ulepsz swoje doświadczenie</string>
     <string name="onboarding_two_factor_authentication_biometry">Korzystanie z danych biometrycznych</string>
     <string name="onboarding_two_factor_authentication_description">Skanery biometryczne to najszybszy i najbezpieczniejszy sposób potwierdzania transakcji płatniczych.</string>
@@ -147,8 +153,15 @@
     <string name="payment_methods_error_description">Nie można załadować metod płatności i kart paliwowych. Sprawdź połączenie!</string>
     <string name="payment_methods_loading_description">Wczytujemy metody płatności i karty paliwowe. Prosimy o chwilę oczekiwania.</string>
     <string name="payment_methods_loading_title">Ładowanie metod płatności i kart paliwowych...</string>
-    <string name="payment_methods_title">Metody płatności i karty paliwowe</string>
-    <string name="transactions_title">Transakcje</string>
+    <string name="wallet_account_deletion_title">Usuń konto</string>
+    <string name="wallet_fuel_type_selection_title">Wybór paliwa</string>
     <string name="wallet_header_text">Jesteś zalogowany jako</string>
+    <string name="wallet_payment_methods_title">Metody płatności i karty paliwowe</string>
     <string name="wallet_tab_label">Portfel</string>
+    <string name="wallet_transactions_title">Transakcje</string>
+    <string name="wallet_two_factor_authentication_biometry_setup_successful">Pomyślna konfiguracja danych biometrycznych</string>
+    <string name="wallet_two_factor_authentication_biometry_title">Biometria</string>
+    <string name="wallet_two_factor_authentication_pin_setup_successful">Pomyślne ustawienie kodu PIN</string>
+    <string name="wallet_two_factor_authentication_pin_title">Ustaw PIN</string>
+    <string name="wallet_two_factor_authentication_title">Procedura autoryzacji</string>
 </resources>

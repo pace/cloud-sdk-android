@@ -12,27 +12,38 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import car.pace.cofu.ui.detail.DetailScreen
 import car.pace.cofu.ui.home.HomeScreen
-import car.pace.cofu.ui.more.MenuItemAction
 import car.pace.cofu.ui.more.MoreScreen
 import car.pace.cofu.ui.more.WebViewScreen
 import car.pace.cofu.ui.onboarding.OnboardingScreen
 import car.pace.cofu.ui.wallet.WalletScreen
+import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeScreen
 import car.pace.cofu.ui.wallet.paymentmethods.PaymentMethodsScreen
+import car.pace.cofu.util.Constants.ANALYSIS_URI
+import car.pace.cofu.util.Constants.IMPRINT_URI
+import car.pace.cofu.util.Constants.PRIVACY_URI
+import car.pace.cofu.util.Constants.TERMS_URI
 import car.pace.cofu.util.SnackbarData
 import com.mikepenz.aboutlibraries.ui.compose.LibrariesContainer
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 fun NavGraphBuilder.onboardingGraph(
-    showSnackbar: (SnackbarData) -> Unit,
-    onDone: () -> Unit
+    onNavigate: (Route) -> Unit,
+    onDone: (FuelTypeGroup) -> Unit
 ) {
     composable(Route.ONBOARDING.route) {
         OnboardingScreen(
-            showSnackbar = showSnackbar,
+            onNavigate = onNavigate,
             onDone = onDone
         )
+    }
+    composable(Route.ONBOARDING_TERMS.route) {
+        WebViewScreen(url = TERMS_URI)
+    }
+    composable(Route.ONBOARDING_PRIVACY.route) {
+        WebViewScreen(url = PRIVACY_URI)
+    }
+    composable(Route.ANALYSIS.route) {
+        WebViewScreen(url = ANALYSIS_URI)
     }
 }
 
@@ -54,7 +65,9 @@ fun NavGraphBuilder.homeGraph(
         composable(
             route = "${Route.DETAIL.route}/{id}",
             arguments = listOf(
-                navArgument("id") { type = NavType.StringType }
+                navArgument("id") {
+                    type = NavType.StringType
+                }
             )
         ) {
             DetailScreen()
@@ -72,7 +85,7 @@ fun NavGraphBuilder.walletGraph(
         composable(Route.WALLET.route) {
             WalletScreen(onNavigate = onNavigate)
         }
-        composable(Route.METHODS.route) {
+        composable(Route.PAYMENT_METHODS.route) {
             PaymentMethodsScreen()
         }
         composable(Route.FUEL_TYPE.route) {
@@ -82,40 +95,25 @@ fun NavGraphBuilder.walletGraph(
 }
 
 fun NavGraphBuilder.moreGraph(
-    onNavigate: (String) -> Unit
+    onNavigate: (Route) -> Unit
 ) {
     navigation(
         startDestination = Route.MORE.route,
         route = Graph.MORE.route
     ) {
         composable(Route.MORE.route) {
-            MoreScreen {
-                when (it.action) {
-                    is MenuItemAction.LocalContent -> {
-                        val encodedUrl = URLEncoder.encode(it.action.url, StandardCharsets.UTF_8.toString())
-                        onNavigate("${Route.LOCAL_WEBVIEW_CONTENT.route}/$encodedUrl")
-                    }
-                    is MenuItemAction.Dependencies -> {
-                        onNavigate(Route.LIBRARIES.route)
-                    }
-                    else -> {}
-                }
-            }
+            MoreScreen(onNavigate = onNavigate)
         }
-        composable(
-            route = "${Route.LOCAL_WEBVIEW_CONTENT.route}/{url}",
-            arguments = listOf(
-                navArgument("url") {
-                    type = NavType.StringType
-                }
-            )
-        ) {
-            val url = it.arguments?.getString("url")
-            url?.let {
-                WebViewScreen(url)
-            }
+        composable(Route.TERMS.route) {
+            WebViewScreen(url = TERMS_URI)
         }
-        composable(Route.LIBRARIES.route) {
+        composable(Route.PRIVACY.route) {
+            WebViewScreen(url = PRIVACY_URI)
+        }
+        composable(Route.IMPRINT.route) {
+            WebViewScreen(url = IMPRINT_URI)
+        }
+        composable(Route.LICENSES.route) {
             LibrariesContainer(
                 modifier = Modifier.fillMaxSize()
             )
@@ -129,12 +127,4 @@ fun NavHostController.navigate(
     navigatorExtras: Navigator.Extras? = null
 ) {
     navigate(route.route, navOptions, navigatorExtras)
-}
-
-fun NavHostController.navigate(
-    graph: Graph,
-    navOptions: NavOptions? = null,
-    navigatorExtras: Navigator.Extras? = null
-) {
-    navigate(graph.route, navOptions, navigatorExtras)
 }

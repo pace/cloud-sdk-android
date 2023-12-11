@@ -5,7 +5,8 @@ data class Config(
     val sentry: Sentry,
     val crashlyticsEnabled: Boolean,
     val hidePrices: Boolean,
-    val googleMapsApiKey: String
+    val googleMapsApiKey: String,
+    val onboardingShowCustomHeader: Boolean
 )
 
 data class Signing(

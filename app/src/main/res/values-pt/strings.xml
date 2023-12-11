@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Definições abertas</string>
-    <string name="ALERT.LOCATION_PERMISSION.DESCRIPTION">Para lhe mostrar a estação de serviço mais próxima, precisamos de ter acesso à sua localização actual.</string>
-    <string name="ALERT.LOCATION_PERMISSION.TITLE">Localização não libertada</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Não foram encontradas estações de serviço perto de si.</string>
-    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Nenhuma estação de serviço perto de si</string>
+    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Infelizmente não há estações de serviço perto de si</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Procuraremos as estações de serviço mais próximas na sua área. Isto pode demorar um momento.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Pesquisar postos de gasolina...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Não foi possível abrir as definições de localização. Active os serviços de localização manualmente nas definições do sistema.</string>
@@ -41,13 +39,18 @@
     <string name="MENU.TITLE.PLACEHOLDER">PACE Connected Fueling</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Compartilhar</string>
+    <string name="alert_location_permission_description">Para lhe mostrar a estação de serviço mais próxima, precisamos de ter acesso à sua localização actual.</string>
+    <string name="alert_location_permission_title">Localização não libertada</string>
     <string name="closed_label">FECHADO</string>
+    <string name="common_pay_here_now">Pague aqui agora!</string>
     <string name="common_start_fueling">Começar a abastecer</string>
     <string name="common_start_navigation">Iniciar navegação</string>
     <string name="common_use_accept">Aceitar</string>
+    <string name="common_use_are_you_sure">Tens a certeza?</string>
     <string name="common_use_back">Voltar</string>
     <string name="common_use_cancel">Cancelar</string>
     <string name="common_use_confirm">Confirmar</string>
+    <string name="common_use_deactivate">Desativar</string>
     <string name="common_use_decline">Declínio</string>
     <string name="common_use_friday">Sexta-feira</string>
     <string name="common_use_monday">Segunda-feira</string>
@@ -66,8 +69,8 @@
     <string name="currency_format">%2$s%1$s</string>
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Gasolina</string>
-    <string name="fuel_selection_title">Seleção de combustível</string>
     <string name="gas_station_closed_hint">A estação de serviço está actualmente encerrada.</string>
+    <string name="gas_station_closes_soon_hint">A bomba de gasolina fecha a %s</string>
     <string name="gas_station_default_name">Estação de serviço</string>
     <string name="gas_station_error_description">Não foi possível carregar os dados da estação de serviço. Verifique a sua ligação!</string>
     <string name="gas_station_fuel_prices_not_available">Infelizmente, os preços dos combustíveis não estão disponíveis.</string>
@@ -83,8 +86,10 @@
     <string name="gas_station_opening_hours_hint">O horário de abertura pode ser diferente nos feriados.</string>
     <string name="gas_station_opening_hours_not_available">O horário de abertura não está actualmente disponível.</string>
     <string name="gas_station_opening_hours_title">Horário de abertura</string>
+    <string name="gasstation_closes_in">A bomba de gasolina fecha a %s</string>
     <string name="general_error_title">Falha no carregamento</string>
     <string name="list_tab_label">Lista</string>
+    <string name="map_tab_label">Mapa</string>
     <string name="more_tab_label">Mais</string>
     <string name="no_supported_browser_dialog_title">Nenhum navegador suportado</string>
     <string name="no_supported_browser_toast">Ativar o Google Chrome e reiniciar a aplicação para continuar.</string>
@@ -98,7 +103,8 @@
     <string name="onboarding_enter_one_time_password_title">Introduzir o código de confirmação</string>
     <string name="onboarding_error_authorization">A sua entrada não pôde ser verificada. Por favor, tente novamente.</string>
     <string name="onboarding_fingerprint_error">Erro ao reconhecer a impressão digital: %s</string>
-    <string name="onboarding_fingerprint_none_saved_title">Atualmente, não são armazenadas quaisquer impressões digitais!</string>
+    <string name="onboarding_fingerprint_none_saved_text">Atualmente, não existem impressões digitais guardadas. Por favor, adicione uma impressão digital agora.</string>
+    <string name="onboarding_fingerprint_none_saved_title">Gostaria de adicionar uma nova impressão digital?</string>
     <string name="onboarding_fingerprint_save">Adicionar agora</string>
     <string name="onboarding_fingerprint_setup_error">Não foi possível abrir as definições de impressões digitais. Adicione uma impressão digital manualmente nas definições do sistema.</string>
     <string name="onboarding_fuel_type_description">E finalmente: Quais os preços dos combustíveis que lhe devemos mostrar?</string>
@@ -118,12 +124,12 @@
     <string name="onboarding_permission_title">Estações de serviço perto de si</string>
     <string name="onboarding_pin_error_invalid_length">O PIN tem de ter quatro dígitos.</string>
     <string name="onboarding_pin_error_mismatch">Os PINs não coincidem. Tente novamente.</string>
-    <string name="onboarding_pin_error_not_secure">O PIN é demasiado simples (0000 ou 1234 não são permitidos). Escolha um PIN diferente</string>
+    <string name="onboarding_pin_error_not_secure">O PIN é demasiado simples (0000 ou 1234 não são permitidos). Escolha um PIN diferente.</string>
     <string name="onboarding_pin_error_series">O PIN não pode ser uma série de dígitos ascendentes ou descendentes.</string>
     <string name="onboarding_pin_error_too_few_digits">O PIN deve conter pelo menos três dígitos diferentes.</string>
     <string name="onboarding_retry_login">Tentar iniciar sessão novamente</string>
-    <string name="onboarding_tracking_app_tracking">rastreio da aplicação</string>
-    <string name="onboarding_tracking_description">Concordar com o rastreio da aplicação para que possamos otimizar ainda mais a utilização da aplicação para si.</string>
+    <string name="onboarding_tracking_app_tracking">análise de utilização</string>
+    <string name="onboarding_tracking_description">Aceitar a análise de utilização para que possamos otimizar ainda mais esta aplicação para si.</string>
     <string name="onboarding_tracking_title">Melhorar a sua experiência</string>
     <string name="onboarding_two_factor_authentication_biometry">Utilizar dados biométricos</string>
     <string name="onboarding_two_factor_authentication_description">Os scanners biométricos são a forma mais rápida e segura de confirmar as suas transacções de pagamento.</string>
@@ -147,8 +153,15 @@
     <string name="payment_methods_error_description">Não foi possível carregar os seus métodos de pagamento e cartões de combustível. Verifique a sua ligação!</string>
     <string name="payment_methods_loading_description">Carregamos os seus métodos de pagamento e cartões de combustível. Aguarde um momento.</string>
     <string name="payment_methods_loading_title">Carregamento de métodos de pagamento e cartões de combustível...</string>
-    <string name="payment_methods_title">Métodos de pagamento e cartões de combustível</string>
-    <string name="transactions_title">Transacções</string>
+    <string name="wallet_account_deletion_title">Eliminar a conta</string>
+    <string name="wallet_fuel_type_selection_title">Seleção de combustível</string>
     <string name="wallet_header_text">Tem sessão iniciada como</string>
+    <string name="wallet_payment_methods_title">Métodos de pagamento e cartões de combustível</string>
     <string name="wallet_tab_label">Carteira</string>
+    <string name="wallet_transactions_title">Transacções</string>
+    <string name="wallet_two_factor_authentication_biometry_setup_successful">Biometria instalada com sucesso</string>
+    <string name="wallet_two_factor_authentication_biometry_title">Biometria</string>
+    <string name="wallet_two_factor_authentication_pin_setup_successful">PIN definido com êxito</string>
+    <string name="wallet_two_factor_authentication_pin_title">Definir PIN</string>
+    <string name="wallet_two_factor_authentication_title">Procedimento de autorização</string>
 </resources>

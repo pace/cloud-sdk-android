@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Otevřít nastavení</string>
-    <string name="ALERT.LOCATION_PERMISSION.DESCRIPTION">Abychom vám mohli ukázat nejbližší čerpací stanici, potřebujeme přístup k vaší aktuální poloze.</string>
-    <string name="ALERT.LOCATION_PERMISSION.TITLE">Umístění nezveřejněno</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Ve vašem okolí nebyly nalezeny žádné čerpací stanice.</string>
-    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Žádné čerpací stanice ve vašem okolí</string>
+    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Bohužel ve vaší blízkosti nejsou žádné čerpací stanice</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Vyhledáme nejbližší čerpací stanice ve vaší oblasti. To může chvíli trvat.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Hledání čerpacích stanic...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Nastavení umístění se nepodařilo otevřít. Aktivujte služby určování polohy ručně v nastavení systému.</string>
@@ -41,13 +39,18 @@
     <string name="MENU.TITLE.PLACEHOLDER">PACE Connected Fueling</string>
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Podíl</string>
+    <string name="alert_location_permission_description">Abychom vám mohli ukázat nejbližší čerpací stanici, potřebujeme přístup k vaší aktuální poloze.</string>
+    <string name="alert_location_permission_title">Umístění nezveřejněno</string>
     <string name="closed_label">UZAVŘENO</string>
+    <string name="common_pay_here_now">Zaplaťte zde hned!</string>
     <string name="common_start_fueling">Zahájení tankování</string>
     <string name="common_start_navigation">Spuštění navigace</string>
     <string name="common_use_accept">Akceptovat</string>
+    <string name="common_use_are_you_sure">Jste si jistý?</string>
     <string name="common_use_back">Zpět</string>
     <string name="common_use_cancel">Zrušit</string>
     <string name="common_use_confirm">Potvrďte</string>
+    <string name="common_use_deactivate">Deaktivace</string>
     <string name="common_use_decline">Pokles</string>
     <string name="common_use_friday">Pátek</string>
     <string name="common_use_monday">Pondělí</string>
@@ -66,8 +69,8 @@
     <string name="currency_format">%2$s%1$s</string>
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Benzín</string>
-    <string name="fuel_selection_title">Výběr paliva</string>
     <string name="gas_station_closed_hint">Čerpací stanice je v současné době uzavřena.</string>
+    <string name="gas_station_closes_soon_hint">Čerpací stanice se zavírá v %s</string>
     <string name="gas_station_default_name">Čerpací stanice</string>
     <string name="gas_station_error_description">Data čerpací stanice se nepodařilo načíst. Zkontrolujte připojení!</string>
     <string name="gas_station_fuel_prices_not_available">Ceny pohonných hmot bohužel nejsou k dispozici.</string>
@@ -83,8 +86,10 @@
     <string name="gas_station_opening_hours_hint">Otevírací doba se může o svátcích lišit.</string>
     <string name="gas_station_opening_hours_not_available">Otevírací doba není v současné době k dispozici.</string>
     <string name="gas_station_opening_hours_title">Otevírací doba</string>
+    <string name="gasstation_closes_in">Čerpací stanice se zavírá v %s</string>
     <string name="general_error_title">Načítání se nezdařilo</string>
     <string name="list_tab_label">Seznam</string>
+    <string name="map_tab_label">Mapa</string>
     <string name="more_tab_label">Více</string>
     <string name="no_supported_browser_dialog_title">Žádný podporovaný prohlížeč</string>
     <string name="no_supported_browser_toast">Aktivujte Google Chrome a restartujte aplikaci, abyste mohli pokračovat.</string>
@@ -98,7 +103,8 @@
     <string name="onboarding_enter_one_time_password_title">Zadejte potvrzovací kód</string>
     <string name="onboarding_error_authorization">Váš záznam se nepodařilo ověřit. Zkuste to prosím znovu.</string>
     <string name="onboarding_fingerprint_error">Chyba při rozpoznávání otisku prstu: %s</string>
-    <string name="onboarding_fingerprint_none_saved_title">V současné době nejsou uloženy žádné otisky prstů!</string>
+    <string name="onboarding_fingerprint_none_saved_text">V současné době nejsou uloženy žádné otisky prstů. Přidejte prosím otisk prstu.</string>
+    <string name="onboarding_fingerprint_none_saved_title">Chcete přidat nový otisk prstu?</string>
     <string name="onboarding_fingerprint_save">Přidat nyní</string>
     <string name="onboarding_fingerprint_setup_error">Nastavení otisků prstů nebylo možné otevřít. Přidejte otisk prstu ručně v nastavení systému.</string>
     <string name="onboarding_fuel_type_description">A nakonec: Jaké ceny pohonných hmot bychom vám měli ukázat?</string>
@@ -118,12 +124,12 @@
     <string name="onboarding_permission_title">Čerpací stanice ve vašem okolí</string>
     <string name="onboarding_pin_error_invalid_length">PIN musí mít čtyři číslice.</string>
     <string name="onboarding_pin_error_mismatch">Kódy PIN se neshodují. Zkuste to znovu.</string>
-    <string name="onboarding_pin_error_not_secure">PIN je příliš jednoduchý (0000 nebo 1234 nejsou povoleny). Zvolte jiný PIN</string>
+    <string name="onboarding_pin_error_not_secure">PIN je příliš jednoduchý (0000 nebo 1234 nejsou povoleny). Zvolte jiný PIN.</string>
     <string name="onboarding_pin_error_series">PIN nesmí být tvořen řadou vzestupných nebo sestupných číslic.</string>
     <string name="onboarding_pin_error_too_few_digits">PIN musí obsahovat alespoň tři různé číslice.</string>
     <string name="onboarding_retry_login">Zkuste se znovu přihlásit</string>
-    <string name="onboarding_tracking_app_tracking">sledování aplikací</string>
-    <string name="onboarding_tracking_description">Souhlas se sledováním aplikace, abychom pro vás mohli dále optimalizovat její používání.</string>
+    <string name="onboarding_tracking_app_tracking">analýzu používání</string>
+    <string name="onboarding_tracking_description">Přijměte analýzu používání, abychom pro vás mohli tuto aplikaci dále optimalizovat.</string>
     <string name="onboarding_tracking_title">Zlepšete své zkušenosti</string>
     <string name="onboarding_two_factor_authentication_biometry">Použití biometrických údajů</string>
     <string name="onboarding_two_factor_authentication_description">Biometrické skenery představují nejrychlejší a nejbezpečnější způsob potvrzování platebních transakcí.</string>
@@ -147,8 +153,15 @@
     <string name="payment_methods_error_description">Vaše platební metody a palivové karty nebylo možné načíst. Zkontrolujte své připojení!</string>
     <string name="payment_methods_loading_description">Načítáme vaše platební metody a palivové karty. Chvíli prosím počkejte.</string>
     <string name="payment_methods_loading_title">Načítání platebních metod a palivových karet...</string>
-    <string name="payment_methods_title">Platební metody a palivové karty</string>
-    <string name="transactions_title">Transakce</string>
+    <string name="wallet_account_deletion_title">Odstranění účtu</string>
+    <string name="wallet_fuel_type_selection_title">Výběr paliva</string>
     <string name="wallet_header_text">Jste přihlášeni jako</string>
+    <string name="wallet_payment_methods_title">Platební metody a palivové karty</string>
     <string name="wallet_tab_label">Peněženka</string>
+    <string name="wallet_transactions_title">Transakce</string>
+    <string name="wallet_two_factor_authentication_biometry_setup_successful">Úspěšné nastavení biometrických údajů</string>
+    <string name="wallet_two_factor_authentication_biometry_title">Biometrické údaje</string>
+    <string name="wallet_two_factor_authentication_pin_setup_successful">Úspěšné nastavení kódu PIN</string>
+    <string name="wallet_two_factor_authentication_pin_title">Nastavení kódu PIN</string>
+    <string name="wallet_two_factor_authentication_title">Autorizační postup</string>
 </resources>
