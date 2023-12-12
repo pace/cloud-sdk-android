@@ -57,7 +57,7 @@ fun AppNavHost(
         homeGraph(showSnackbar = showSnackbar) {
             navController.navigate(it)
         }
-        walletGraph {
+        walletGraph(showSnackbar = showSnackbar) {
             navController.navigate(it)
         }
         moreGraph {

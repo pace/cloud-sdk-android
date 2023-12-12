@@ -16,6 +16,7 @@ class UserRepository @Inject constructor() {
     fun isAuthorizationValid() = IDKit.isAuthorizationValid()
 
     fun isBiometricAuthenticationEnabled() = IDKit.isBiometricAuthenticationEnabled()
+    fun disableBiometricAuthentication() = IDKit.disableBiometricAuthentication()
 
     suspend fun enableBiometricAuthentication() = suspendCancellableCoroutine {
         IDKit.enableBiometricAuthentication(it::resume)

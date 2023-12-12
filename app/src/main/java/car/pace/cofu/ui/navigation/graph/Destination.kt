@@ -9,10 +9,12 @@ import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.LocalGasStation
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.MoreHoriz
+import androidx.compose.material.icons.outlined.PersonRemove
 import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.ui.graphics.vector.ImageVector
 import car.pace.cofu.R
 import car.pace.cofu.ui.icon.DeveloperGuide
+import car.pace.cofu.ui.icon.Signature
 import car.pace.cofu.ui.icon.TwoPager
 
 enum class Graph(
@@ -60,7 +62,9 @@ enum class Route(
     PRIVACY(route = "privacy_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.MENU_ITEMS_PRIVACY, icon = Icons.Outlined.Lock),
     IMPRINT(route = "imprint_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.MENU_ITEMS_IMPRINT, icon = Icons.Outlined.Domain),
     LICENSES(route = "licenses_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.MENU_ITEMS_LICENCES, icon = Icons.Outlined.TwoPager),
-    WEBSITE(route = "website_route", graph = Graph.MORE, icon = Icons.Outlined.Language);
+    WEBSITE(route = "website_route", graph = Graph.MORE, icon = Icons.Outlined.Language),
+    AUTHORIZATION(route = "authorization_route", graph = Graph.WALLET, showBottomBar = true, icon = Icons.Outlined.Signature, labelRes = R.string.wallet_two_factor_authentication_title),
+    DELETE_ACCOUNT("delete_account", Graph.WALLET, showBottomBar = true, icon = Icons.Outlined.PersonRemove, labelRes = R.string.wallet_account_deletion_title);
 
     companion object {
 

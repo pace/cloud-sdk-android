@@ -55,7 +55,7 @@ fun TopBar(
             )
         }
 
-        Route.PAYMENT_METHODS, Route.FUEL_TYPE, Route.LICENSES -> {
+        Route.PAYMENT_METHODS, Route.FUEL_TYPE, Route.LICENSES, Route.AUTHORIZATION -> {
             TextTopBar(
                 text = currentRoute.labelRes?.let { stringResource(id = it) },
                 onNavigateUp = onNavigateUp

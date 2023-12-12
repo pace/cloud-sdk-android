@@ -59,14 +59,15 @@ fun WalletScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+
     val email = remember {
         JWTUtils.getUserEMailFromToken(IDKit.cachedToken()).orEmpty()
     }
     val items = remember {
         buildList {
-            addAll(listOf(Route.PAYMENT_METHODS, Route.TRANSACTIONS))
-            if (!BuildConfig.HIDE_PRICES) {
-                add(Route.FUEL_TYPE)
+            addAll(listOf(Route.PAYMENT_METHODS, Route.TRANSACTIONS, Route.FUEL_TYPE, Route.AUTHORIZATION, Route.DELETE_ACCOUNT))
+            if (BuildConfig.HIDE_PRICES) {
+                remove(Route.FUEL_TYPE)
             }
         }
     }
@@ -125,10 +126,10 @@ fun WalletScreenContent(
                 modifier = Modifier.clickable(
                     role = Role.Button,
                     onClick = {
-                        if (it == Route.TRANSACTIONS) {
-                            AppKit.openTransactions(context)
-                        } else {
-                            onNavigate(it)
+                        when (it) {
+                            Route.TRANSACTIONS -> AppKit.openTransactions(context)
+                            Route.DELETE_ACCOUNT -> AppKit.openPaceID(context)
+                            else -> onNavigate(it)
                         }
                     }
                 ),
@@ -172,7 +173,7 @@ fun UserHeader(
             )
             Text(
                 text = email,
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier.padding(top = 2.dp),
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -184,7 +185,7 @@ fun UserHeader(
                         role = Role.Button,
                         onClick = { openDialog = true }
                     )
-                    .padding(top = 8.dp),
+                    .padding(top = 2.dp),
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.bodyMedium
             )

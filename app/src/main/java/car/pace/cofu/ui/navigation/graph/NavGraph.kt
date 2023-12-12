@@ -16,6 +16,7 @@ import car.pace.cofu.ui.more.MoreScreen
 import car.pace.cofu.ui.more.WebViewScreen
 import car.pace.cofu.ui.onboarding.OnboardingScreen
 import car.pace.cofu.ui.wallet.WalletScreen
+import car.pace.cofu.ui.wallet.authorization.AuthorisationScreen
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeScreen
 import car.pace.cofu.ui.wallet.paymentmethods.PaymentMethodsScreen
@@ -76,6 +77,7 @@ fun NavGraphBuilder.homeGraph(
 }
 
 fun NavGraphBuilder.walletGraph(
+    showSnackbar: (SnackbarData) -> Unit,
     onNavigate: (Route) -> Unit
 ) {
     navigation(
@@ -90,6 +92,9 @@ fun NavGraphBuilder.walletGraph(
         }
         composable(Route.FUEL_TYPE.route) {
             FuelTypeScreen()
+        }
+        composable(Route.AUTHORIZATION.route) {
+            AuthorisationScreen(showSnackbar = showSnackbar)
         }
     }
 }

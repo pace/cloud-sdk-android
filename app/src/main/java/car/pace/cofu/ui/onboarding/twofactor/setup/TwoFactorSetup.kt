@@ -82,9 +82,7 @@ fun TwoFactorSetup(
                 coroutineScope.launch {
                     sheetState.hide()
                 }.invokeOnCompletion {
-                    if (!sheetState.isVisible) {
-                        onResult(increase)
-                    }
+                    onResult(increase)
                 }
             }
         }
