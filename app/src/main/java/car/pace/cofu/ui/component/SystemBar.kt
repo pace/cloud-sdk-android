@@ -41,7 +41,9 @@ fun TopBar(
         }
 
         Route.HOME -> {
-            LogoTopBar()
+            if (!BuildConfig.HOME_SHOW_CUSTOM_HEADER) {
+                LogoTopBar()
+            }
         }
 
         Route.DETAIL, Route.TERMS, Route.PRIVACY, Route.IMPRINT, Route.ONBOARDING_TERMS, Route.ONBOARDING_PRIVACY, Route.ANALYSIS -> {

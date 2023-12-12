@@ -1,8 +1,5 @@
 package car.pace.cofu.ui.home
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.GasStationRepository
@@ -16,15 +13,13 @@ import car.pace.cofu.util.UiState.Loading.toUiState
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.transform
-import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -33,45 +28,39 @@ class HomeViewModel @Inject constructor(
     locationRepository: LocationRepository
 ) : ViewModel() {
 
-    private val refresh = MutableSharedFlow<Unit>(replay = 1).apply {
-        tryEmit(Unit)
-    }
+    private val refresh = MutableStateFlow(false)
+    private var locationPermissionEnabled = MutableStateFlow<Boolean?>(null)
+    private var locationEnabled = MutableStateFlow<Boolean?>(null)
+    private var location = locationRepository.location.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = null
+    )
 
-    var showPullRefreshIndicator by mutableStateOf(false)
-    var showSnackbarError = MutableSharedFlow<Boolean>()
-    private var dataAvailable = false
-
-    val uiState = locationRepository.location
-        .combine(refresh) { location, _ ->
-            gasStationRepository.getGasStations(location)
-                .toUiState()
-                .also { state ->
-                    if (state is UiState.Success) {
-                        dataAvailable = state.data.isNotEmpty()
-                    }
+    val uiState = combineTransform(locationEnabled, locationPermissionEnabled, location, refresh) { locationEnabled, locationPermission, location, refresh ->
+        when {
+            locationPermission == false -> emit(UiState.Error(LocationPermissionDenied()))
+            locationEnabled == false -> emit(UiState.Error(LocationDisabled()))
+            location == null -> emit(UiState.Loading)
+            else -> {
+                if (refresh) {
+                    emit(UiState.Loading)
                 }
-        }
-        .onEach {
-            showPullRefreshIndicator = false
-        }
-        .transform {
-            // Skip fullscreen error if data is already visible - show a snackbar instead
-            if (it is UiState.Error && dataAvailable) {
-                showSnackbarError.emit(true)
-            } else {
-                showSnackbarError.emit(false)
-                emit(it)
+                val gasStations = gasStationRepository.getGasStations(location).toUiState()
+                emit(gasStations)
             }
         }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = UiState.Loading
-        )
+    }.onEach {
+        refresh.value = false
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = UiState.Loading
+    )
 
     val fuelType = sharedPreferencesRepository.getValue(PREF_KEY_FUEL_TYPE, -1)
         .filter { it != -1 }
-        .map { FuelType.values().getOrNull(it) }
+        .map { FuelType.entries.getOrNull(it) }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
@@ -86,10 +75,17 @@ class HomeViewModel @Inject constructor(
             initialValue = null
         )
 
-    fun onRefresh() {
-        viewModelScope.launch {
-            showPullRefreshIndicator = true
-            refresh.emit(Unit)
-        }
+    fun onLocationPermissionChanged(enabled: Boolean) {
+        locationPermissionEnabled.value = enabled
     }
+    fun onLocationEnabledChanged(enabled: Boolean) {
+        locationEnabled.value = enabled
+    }
+
+    fun refresh() {
+        refresh.value = true
+    }
+
+    class LocationPermissionDenied : Throwable()
+    class LocationDisabled : Throwable()
 }

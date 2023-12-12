@@ -49,7 +49,6 @@ fun NavGraphBuilder.onboardingGraph(
 }
 
 fun NavGraphBuilder.homeGraph(
-    showSnackbar: (SnackbarData) -> Unit,
     onNavigate: (String) -> Unit
 ) {
     navigation(
@@ -57,9 +56,7 @@ fun NavGraphBuilder.homeGraph(
         route = Graph.HOME.route
     ) {
         composable(Route.HOME.route) {
-            HomeScreen(
-                showSnackbar = showSnackbar
-            ) {
+            HomeScreen {
                 onNavigate("${Route.DETAIL.route}/$it")
             }
         }

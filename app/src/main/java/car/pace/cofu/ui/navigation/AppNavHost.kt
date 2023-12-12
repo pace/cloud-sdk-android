@@ -54,7 +54,7 @@ fun AppNavHost(
                 navController.navigate(Route.HOME)
             }
         )
-        homeGraph(showSnackbar = showSnackbar) {
+        homeGraph {
             navController.navigate(it)
         }
         walletGraph(showSnackbar = showSnackbar) {

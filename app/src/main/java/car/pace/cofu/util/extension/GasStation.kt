@@ -36,6 +36,17 @@ fun Address.twoLineAddress() = remember {
     }
 }.orEmpty()
 
+@Composable
+fun Address.oneLineAddress() = remember {
+    if (street == null) {
+        ""
+    } else {
+        val firstLineAddress = firstLineAddress()
+        val secondLineAddress = secondLineAddress()
+        if (secondLineAddress.isNullOrEmpty()) firstLineAddress else "$firstLineAddress, $secondLineAddress"
+    }
+}.orEmpty()
+
 private fun Address.firstLineAddress(): String? {
     return if (street == null) {
         ""
