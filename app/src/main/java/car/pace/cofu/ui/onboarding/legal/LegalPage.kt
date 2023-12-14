@@ -42,7 +42,7 @@ fun LegalPage(
 
                 addStyle(
                     style = SpanStyle(
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.secondary,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal
                     ),
@@ -59,7 +59,7 @@ fun LegalPage(
 
                 addStyle(
                     style = SpanStyle(
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.secondary,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal
                     ),

@@ -109,7 +109,12 @@ fun TextTopBar(
                     )
                 }
             }
-        }
+        },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.background,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary
+        )
     )
 }
 
@@ -121,7 +126,10 @@ fun BottomBar(
 ) {
     Column {
         Divider()
-        NavigationBar(tonalElevation = 0.dp) {
+        NavigationBar(
+            containerColor = MaterialTheme.colorScheme.background,
+            tonalElevation = 0.dp
+        ) {
             destinations.forEach {
                 NavigationBarItem(
                     selected = it == currentGraph,
@@ -139,8 +147,8 @@ fun BottomBar(
                         selectedIconColor = MaterialTheme.colorScheme.primary,
                         selectedTextColor = MaterialTheme.colorScheme.primary,
                         indicatorColor = MaterialTheme.colorScheme.primaryContainer,
-                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurface,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurface
                     )
                 )
             }

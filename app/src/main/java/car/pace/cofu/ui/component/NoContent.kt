@@ -80,7 +80,7 @@ fun NoContentCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .dropShadow()
-                .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp))
+                .background(color = MaterialTheme.colorScheme.background, shape = RoundedCornerShape(12.dp))
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

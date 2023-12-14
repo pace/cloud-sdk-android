@@ -58,8 +58,7 @@ android {
         resValue("string", "app_name", configuration.app_name)
 
         buildConfigField("String", "CLIENT_ID", "\"" + configuration.client_id + "\"")
-        buildConfigField("String", "REDIRECT_URI", "\"cofu-app://callback\"")
-        // TODO: buildConfigField("String", "REDIRECT_URI", "\"${configuration.client_id}://callback\"")
+        buildConfigField("String", "REDIRECT_URI", "\"${configuration.client_id}://callback\"")
         buildConfigField("@androidx.annotation.Nullable String", "DEFAULT_IDP", configuration.default_idp?.let { "\"" + it + "\"" }.toString())
         buildConfigField("Boolean", "HIDE_PRICES", configuration.hide_prices.toString())
         buildConfigField("Boolean", "ONBOARDING_SHOW_CUSTOM_HEADER", configuration.onboarding_show_custom_header.toString())
@@ -69,8 +68,7 @@ android {
         buildConfigField("String", "SECONDARY_COLOR", "\"" + configuration.secondary_branding_color + "\"")
 
         // appAuthRedirectScheme is needed for AppAuth in IDKit and pace_redirect_scheme is needed for deep linking in AppKit
-        manifestPlaceholders["appAuthRedirectScheme"] = "cofu-app"
-        // TODO: manifestPlaceholders["appAuthRedirectScheme"] = configuration.client_id
+        manifestPlaceholders["appAuthRedirectScheme"] = configuration.client_id
         manifestPlaceholders["pace_redirect_scheme"] = "${configuration.client_id}.${UUID.randomUUID()}"
         manifestPlaceholders["google_maps_api_key"] = configuration.google_maps_api_key
 
@@ -182,6 +180,6 @@ dependencies {
 sentry {
     // This is required for the Sentry Gradle plugin to upload Proguard mappings.
     // All other configurations required for the upload are stored as CI variables to not expose them here.
-    projectName.set("whitelabel-app") // TODO: change to configuration.sentry_project_name
+    projectName.set(configuration.sentry_project_name)
     includeProguardMapping.set(configuration.sentry_enabled)
 }

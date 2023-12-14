@@ -217,7 +217,7 @@ fun GasStationRow(
         modifier = modifier
             .fillMaxWidth()
             .dropShadow()
-            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(8.dp))
+            .background(color = MaterialTheme.colorScheme.background, shape = RoundedCornerShape(8.dp))
             .clickable { onClick() }
     ) {
         val canStartFueling = gasStation.canStartFueling(userLocation)
@@ -271,7 +271,7 @@ fun GasStationRow(
                     Column(
                         modifier = Modifier
                             .padding(start = 5.dp, top = 5.dp)
-                            .background(color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(8.dp))
+                            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(8.dp))
                             .padding(horizontal = 17.dp, vertical = 5.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top

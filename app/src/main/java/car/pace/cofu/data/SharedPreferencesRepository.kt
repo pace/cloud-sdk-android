@@ -3,12 +3,12 @@ package car.pace.cofu.data
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import cloud.pace.sdk.utils.asSetOfType
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class SharedPreferencesRepository @Inject constructor(

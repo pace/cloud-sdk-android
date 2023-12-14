@@ -35,7 +35,7 @@ fun OtpInput(
         configurations = OhTeePeeConfigurations.withDefaults(
             cellsCount = cellsCount,
             emptyCellConfig = defaultCellConfig.copy(
-                borderColor = MaterialTheme.colorScheme.onSurfaceVariant
+                borderColor = MaterialTheme.colorScheme.onSurface
             ),
             activeCellConfig = defaultCellConfig,
             errorCellConfig = defaultCellConfig.copy(

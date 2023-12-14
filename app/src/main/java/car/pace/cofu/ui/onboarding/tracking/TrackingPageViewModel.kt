@@ -15,12 +15,8 @@ class TrackingPageViewModel @Inject constructor(
 ) : ViewModel() {
 
     fun enableAnalytics() {
-        if (BuildConfig.ANALYTICS_ENABLED) {
-            Firebase.analytics.setAnalyticsCollectionEnabled(true)
-            sharedPreferencesRepository.putValue(PREF_KEY_TRACKING_ENABLED, true)
-        } else {
-            Firebase.analytics.setAnalyticsCollectionEnabled(false)
-        }
+        Firebase.analytics.setAnalyticsCollectionEnabled(BuildConfig.ANALYTICS_ENABLED)
+        sharedPreferencesRepository.putValue(PREF_KEY_TRACKING_ENABLED, true)
     }
 
     fun disableAnalytics() {

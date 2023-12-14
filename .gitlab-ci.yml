@@ -3,7 +3,7 @@ image: softartdev/android-fastlane
 before_script:
     - export GRADLE_USER_HOME=$(pwd)/.gradle
     - chmod +x ./gradlew
-    - echo $DEFAULT_CONFIGURATION | tr ' ' '\r\n' > configuration.json # TODO: Delete old DEFAULT_CONFIG CI variable
+    - echo $DEFAULT_CONFIGURATION | tr ' ' '\r\n' > configuration.json
     - echo "$FIREBASE_DEV_JSON" > app/google-services.json
     - export TAG_COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
     - echo "CI_COMMIT_SHA:" $CI_COMMIT_SHA
@@ -21,7 +21,6 @@ stages:
     - publish
 
 .only_merge_requests: &only_merge_requests
-    interruptible: true
     only:
         refs:
             - merge_requests
@@ -29,11 +28,13 @@ stages:
 .docker_image:
     tags:
         - docker
+    interruptible: true
     retry: 2
 
 .runner_tags:
     tags:
         - android-latest
+    interruptible: true
     retry: 2
 
 .testing_with_emulator:
@@ -100,12 +101,6 @@ fetch_config:
     script:
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/pace/mobile/common.git tmp/common
         - pip3 install -r tmp/common/scripts/metadata/requirements.txt
-        # TODO: remove switch to feature branch if script is merged
-        - cd tmp/common
-        - git fetch --all
-        - git checkout -b '397-add-script-to-fetch-white-label-app-configuration-and-assets' 'origin/397-add-script-to-fetch-white-label-app-configuration-and-assets'
-        # TODO: set prod base URL, whitelabel app id and access token in CI variable
-        - cd -
         - python3 tmp/common/scripts/whitelabel-app/fetch_configuration.py --whitelabel-app-id $WHITELABEL_APP_ID --platform android --configuration-base-url $DIRECTUS_BASE_URL --access-token $DIRECTUS_ACCESS_TOKEN
     artifacts:
         name: App configuration
@@ -150,7 +145,7 @@ build_app:
             done
         - ./gradlew clean app:bundleRelease -PbuildNumber=$BUILD_NUMBER -PversionName=$VERSION_NAME
     artifacts:
-        name: $(git show -s --format=%ct $CI_COMMIT_SHA)
+        name: App build
         expire_in: 30 days
         paths:
             - app/build/outputs
@@ -162,6 +157,7 @@ publish_app:
     stage: publish
     <<: *tag_rule
     dependencies:
+        - fetch_config
         - build_app
     script:
         - >-
@@ -170,4 +166,4 @@ publish_app:
             aab_file:app/build/outputs/bundle/release/app-release.aab
             credentials_file:configuration/assets/android_play_store_credentials.json
             package_name:$(grep -oP '(?<="application_id": ")[^"]*' configuration/configuration.json)
-            mapping_file:build/outputs/mapping/release/mapping.txt
+            mapping_file:app/build/outputs/mapping/release/mapping.txt

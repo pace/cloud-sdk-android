@@ -42,7 +42,7 @@ fun DefaultDialog(
                 imageVector = imageVector,
                 contentDescription = null,
                 modifier = Modifier.size(40.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                tint = MaterialTheme.colorScheme.onSurface
             )
         },
         title = {

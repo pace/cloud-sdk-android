@@ -23,8 +23,8 @@ data class Configuration(
     val automatic_production_updates_enabled: Boolean,
     val native_fuelcard_management_enabled: Boolean,
     val vehicle_integration_enabled: Boolean,
-    val onboarding_show_custom_header: Boolean = false, // TODO: set to true if images not found (follow up)
-    val home_show_custom_header: Boolean = false, // TODO: set to true if images not found (follow up)
+    val onboarding_show_custom_header: Boolean = false, // TODO: set to true if images are found (follow up https://git.pace.cloud/pace/mobile/android/connectedfueling-app/-/issues/42)
+    val home_show_custom_header: Boolean = false, // TODO: set to true if images are found (follow up https://git.pace.cloud/pace/mobile/android/connectedfueling-app/-/issues/42)
     val menu_entries: List<MenuEntry>
 )
 

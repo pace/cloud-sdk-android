@@ -50,6 +50,7 @@ fun TwoFactorSetup(
         onDismissRequest = { onResult(false) },
         sheetState = sheetState,
         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        containerColor = MaterialTheme.colorScheme.background,
         tonalElevation = 0.dp,
         dragHandle = null
     ) {

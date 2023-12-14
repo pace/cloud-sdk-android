@@ -50,8 +50,6 @@ import car.pace.cofu.util.Constants.USER_HEADER_KEY
 import car.pace.cofu.util.JWTUtils
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.idkit.IDKit
-import com.google.firebase.Firebase
-import com.google.firebase.analytics.analytics
 import kotlinx.coroutines.launch
 
 @Composable
@@ -80,9 +78,7 @@ fun WalletScreen(
         onLogout = {
             coroutineScope.launch {
                 val activity = context.findActivity<AppCompatActivity>()
-                IDKit.endSession(activity)
-                Firebase.analytics.setAnalyticsCollectionEnabled(false)
-                viewModel.resetAppData()
+                viewModel.resetAppData(activity)
                 onNavigate(Route.ONBOARDING)
             }
         },
@@ -155,7 +151,7 @@ fun UserHeader(
         modifier = modifier
             .fillMaxWidth()
             .dropShadow()
-            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp))
+            .background(color = MaterialTheme.colorScheme.background, shape = RoundedCornerShape(12.dp))
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -163,7 +159,7 @@ fun UserHeader(
             imageVector = Icons.Outlined.AccountCircle,
             contentDescription = null,
             modifier = Modifier.size(48.dp),
-            tint = MaterialTheme.colorScheme.secondary
+            tint = MaterialTheme.colorScheme.surface
         )
 
         Column(
@@ -177,7 +173,7 @@ fun UserHeader(
             Text(
                 text = email,
                 modifier = Modifier.padding(top = 2.dp),
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(

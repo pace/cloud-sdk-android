@@ -99,7 +99,7 @@ fun PageScaffold(
                             modifier = Modifier
                                 .padding(start = 20.dp, top = 12.dp, end = 20.dp)
                                 .size(182.dp),
-                            tint = MaterialTheme.colorScheme.secondary
+                            tint = MaterialTheme.colorScheme.surface
                         )
                     }
                 }
