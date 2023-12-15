@@ -75,29 +75,33 @@ fun NoContentCard(
 ) {
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .dropShadow()
-            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp))
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        header()
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .dropShadow()
+                .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp))
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            header()
 
-        Title(
-            text = title,
-            modifier = Modifier.padding(top = 20.dp)
-        )
-        Description(
-            text = description,
-            modifier = Modifier.padding(top = 20.dp)
-        )
-
-        if (buttonText != null) {
-            PrimaryButton(
-                text = buttonText,
-                modifier = Modifier.padding(top = 20.dp),
-                onClick = onButtonClick
+            Title(
+                text = title,
+                modifier = Modifier.padding(top = 20.dp)
             )
+            Description(
+                text = description,
+                modifier = Modifier.padding(top = 20.dp)
+            )
+
+            if (buttonText != null) {
+                PrimaryButton(
+                    text = buttonText,
+                    modifier = Modifier.padding(top = 20.dp),
+                    onClick = onButtonClick
+                )
+            }
         }
     }
 }

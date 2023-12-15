@@ -92,7 +92,6 @@ import car.pace.cofu.util.extension.lastUpdatedText
 import car.pace.cofu.util.extension.twoLineAddress
 import car.pace.cofu.util.openinghours.OpeningHoursStatus
 import car.pace.cofu.util.openinghours.format
-import car.pace.cofu.util.openinghours.isClosed
 import car.pace.cofu.util.openinghours.openingHoursStatus
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.poikit.poi.Address
@@ -143,7 +142,7 @@ fun DetailScreenContent(
                 LoadingCard(
                     title = stringResource(id = R.string.gas_station_loading_title),
                     description = stringResource(id = R.string.gas_station_loading_description),
-                    modifier = Modifier.padding(top = 12.dp)
+                    modifier = Modifier.padding(vertical = 12.dp)
                 )
             }
 
@@ -255,7 +254,7 @@ fun DetailScreenContent(
                 ErrorCard(
                     title = stringResource(id = R.string.general_error_title),
                     description = stringResource(id = R.string.gas_station_error_description),
-                    modifier = Modifier.padding(top = 12.dp),
+                    modifier = Modifier.padding(vertical = 12.dp),
                     imageVector = Icons.Outlined.LocalGasStation,
                     buttonText = stringResource(id = R.string.common_use_retry),
                     onButtonClick = onRefresh
@@ -417,7 +416,11 @@ fun AddressRow(
                 textAlign = TextAlign.Start
             )
             gasStationLocation?.distanceText(userLocation)?.let {
-                DistanceLabel(distanceText = it, canStartFueling = canStartFueling, isClosed = closedOrClosesSoon)
+                DistanceLabel(
+                    distanceText = it,
+                    canStartFueling = canStartFueling,
+                    isClosed = closedOrClosesSoon
+                )
             }
         }
         Image(

@@ -6,7 +6,7 @@ import car.pace.cofu.data.GasStationRepository
 import car.pace.cofu.data.LocationRepository
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_FUEL_TYPE
-import car.pace.cofu.ui.wallet.fueltype.FuelType
+import car.pace.cofu.ui.wallet.fueltype.toFuelTypeGroup
 import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.UiState.Loading.toUiState
@@ -16,7 +16,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combineTransform
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -58,13 +57,14 @@ class HomeViewModel @Inject constructor(
         initialValue = UiState.Loading
     )
 
-    val fuelType = sharedPreferencesRepository.getValue(PREF_KEY_FUEL_TYPE, -1)
-        .filter { it != -1 }
-        .map { FuelType.entries.getOrNull(it) }
+    private val initialValue = sharedPreferencesRepository.getInt(PREF_KEY_FUEL_TYPE, -1)
+    val fuelTypeGroup = sharedPreferencesRepository
+        .getValue(PREF_KEY_FUEL_TYPE, initialValue)
+        .map { it.toFuelTypeGroup() }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-            initialValue = null
+            initialValue = initialValue.toFuelTypeGroup()
         )
 
     val userLocation = locationRepository.location
@@ -78,6 +78,7 @@ class HomeViewModel @Inject constructor(
     fun onLocationPermissionChanged(enabled: Boolean) {
         locationPermissionEnabled.value = enabled
     }
+
     fun onLocationEnabledChanged(enabled: Boolean) {
         locationEnabled.value = enabled
     }

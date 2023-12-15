@@ -9,15 +9,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.LocalGasStation
@@ -54,7 +53,7 @@ import car.pace.cofu.ui.detail.ClosedHint
 import car.pace.cofu.ui.detail.DistanceLabel
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.ui.theme.Success
-import car.pace.cofu.ui.wallet.fueltype.FuelType
+import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 import car.pace.cofu.util.Constants.GAS_STATION_CONTENT_TYPE
 import car.pace.cofu.util.IntentUtils
 import car.pace.cofu.util.UiState
@@ -82,78 +81,92 @@ fun HomeScreen(
     navigateToDetail: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle(minActiveState = Lifecycle.State.RESUMED)
-    val fuelType by viewModel.fuelType.collectAsStateWithLifecycle()
+    val fuelTypeGroup by viewModel.fuelTypeGroup.collectAsStateWithLifecycle()
     val userLocation by viewModel.userLocation.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    Box(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+    LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
+        viewModel.onLocationPermissionChanged(context.isLocationPermissionGranted)
+        viewModel.onLocationEnabledChanged(context.isLocationEnabled)
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val locationEnabledListener = object : BroadcastReceiver() {
+            override fun onReceive(ctx: Context?, intent: Intent?) {
+                viewModel.onLocationEnabledChanged(context.isLocationEnabled)
+            }
+        }
+        context.listenForLocationEnabledChanges(locationEnabledListener)
+
+        onDispose {
+            context.unregisterReceiver(locationEnabledListener)
+        }
+    }
+
+    HomeScreenContent(
+        uiState = uiState,
+        fuelTypeGroup = fuelTypeGroup,
+        userLocation = userLocation,
+        refresh = viewModel::refresh,
+        navigateToDetail = navigateToDetail
+    )
+}
+
+@Composable
+fun HomeScreenContent(
+    uiState: UiState<List<GasStation>>,
+    fuelTypeGroup: FuelTypeGroup,
+    userLocation: LatLng?,
+    refresh: () -> Unit,
+    navigateToDetail: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
-        val context = LocalContext.current
-        val lifecycleOwner = LocalLifecycleOwner.current
-
-        LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
-            viewModel.onLocationPermissionChanged(context.isLocationPermissionGranted)
-            viewModel.onLocationEnabledChanged(context.isLocationEnabled)
+        if (BuildConfig.HOME_SHOW_CUSTOM_HEADER) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_home_header),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.25f),
+                contentDescription = null,
+                alignment = Alignment.BottomCenter,
+                contentScale = ContentScale.Crop
+            )
         }
 
-        DisposableEffect(lifecycleOwner) {
-            val locationEnabledListener = object : BroadcastReceiver() {
-                override fun onReceive(ctx: Context?, intent: Intent?) {
-                    viewModel.onLocationEnabledChanged(context.isLocationEnabled)
+        when (uiState) {
+            is UiState.Loading -> LoadingContent()
+            is UiState.Success -> {
+                val gasStations = uiState.data
+                if (gasStations.isNotEmpty()) {
+                    val context = LocalContext.current
+
+                    GasStationList(
+                        gasStations = gasStations,
+                        fuelTypeGroup = fuelTypeGroup,
+                        userLocation = userLocation,
+                        onStartFueling = {
+                            AppKit.openFuelingApp(context, it.id)
+                        },
+                        onStartNavigation = {
+                            IntentUtils.startNavigation(context, it)
+                        },
+                        onClick = {
+                            navigateToDetail(it.id)
+                        }
+                    )
+                } else {
+                    EmptyContent()
                 }
             }
-            context.listenForLocationEnabledChanges(locationEnabledListener)
 
-            onDispose {
-                context.unregisterReceiver(locationEnabledListener)
-            }
-        }
-
-        Column {
-            if (BuildConfig.HOME_SHOW_CUSTOM_HEADER) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_home_header),
-                    modifier = Modifier
-                        .fillMaxHeight(0.25f)
-                        .fillMaxSize(),
-                    contentDescription = null,
-                    alignment = Alignment.BottomCenter,
-                    contentScale = ContentScale.Crop
-                )
-            }
-
-            Column(Modifier.padding(20.dp)) {
-                when (val state = uiState) {
-                    is UiState.Loading -> Loading()
-                    is UiState.Success -> {
-                        val gasStations = state.data
-                        if (gasStations.isNotEmpty()) {
-                            GasStationList(
-                                gasStations = gasStations,
-                                fuelType = fuelType,
-                                userLocation = userLocation,
-                                onStartFueling = {
-                                    AppKit.openFuelingApp(context, it.id)
-                                },
-                                onStartNavigation = {
-                                    IntentUtils.startNavigation(context, it)
-                                },
-                                onClick = {
-                                    navigateToDetail(it.id)
-                                }
-                            )
-                        } else {
-                            Empty()
-                        }
-                    }
-                    is UiState.Error -> {
-                        when (state.throwable) {
-                            is HomeViewModel.LocationPermissionDenied -> LocationPermissionDenied(context)
-                            is HomeViewModel.LocationDisabled -> LocationDisabled(context)
-                            else -> LoadingError(viewModel::refresh)
-                        }
-                    }
+            is UiState.Error -> {
+                when (uiState.throwable) {
+                    is HomeViewModel.LocationPermissionDenied -> LocationPermissionDenied()
+                    is HomeViewModel.LocationDisabled -> LocationDisabled()
+                    else -> LoadingError(refresh)
                 }
             }
         }
@@ -163,27 +176,28 @@ fun HomeScreen(
 @Composable
 fun GasStationList(
     gasStations: List<GasStation>,
-    fuelType: FuelType?,
+    fuelTypeGroup: FuelTypeGroup,
     userLocation: LatLng?,
     onStartFueling: (GasStation) -> Unit,
     onStartNavigation: (GasStation) -> Unit,
     onClick: (GasStation) -> Unit
 ) {
     LazyColumn(
+        contentPadding = PaddingValues(20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        itemsIndexed(
+        items(
             items = gasStations,
-            key = { _, gasStation -> gasStation.id },
-            contentType = { _, _ -> GAS_STATION_CONTENT_TYPE }
-        ) { index, gasStation ->
+            key = GasStation::id,
+            contentType = { GAS_STATION_CONTENT_TYPE }
+        ) {
             GasStationRow(
-                gasStation = gasStation,
+                gasStation = it,
                 userLocation = userLocation,
-                fuelType = fuelType,
-                onStartFueling = { onStartFueling(gasStation) },
-                onStartNavigation = { onStartNavigation(gasStation) },
-                onClick = { onClick(gasStation) }
+                fuelTypeGroup = fuelTypeGroup,
+                onStartFueling = { onStartFueling(it) },
+                onStartNavigation = { onStartNavigation(it) },
+                onClick = { onClick(it) }
             )
         }
     }
@@ -194,7 +208,7 @@ fun GasStationRow(
     modifier: Modifier = Modifier,
     gasStation: GasStation,
     userLocation: LatLng?,
-    fuelType: FuelType?,
+    fuelTypeGroup: FuelTypeGroup,
     onStartFueling: () -> Unit,
     onStartNavigation: () -> Unit,
     onClick: () -> Unit
@@ -219,7 +233,7 @@ fun GasStationRow(
                 style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Success, shape = RoundedCornerShape(8.dp, 8.dp, 0.dp, 0.dp))
+                    .background(color = Success, shape = RoundedCornerShape(8.dp, 8.dp, 0.dp, 0.dp))
                     .padding(8.dp)
             )
         }
@@ -246,7 +260,11 @@ fun GasStationRow(
                         modifier = Modifier.padding(top = 12.dp)
                     )
                     gasStation.center?.toLatLn()?.distanceText(userLocation)?.let {
-                        DistanceLabel(distanceText = it, canStartFueling = canStartFueling, isClosed = openingHoursStatus != OpeningHoursStatus.Open)
+                        DistanceLabel(
+                            distanceText = it,
+                            canStartFueling = canStartFueling,
+                            isClosed = openingHoursStatus != OpeningHoursStatus.Open
+                        )
                     }
                 }
                 if (showPrices) {
@@ -258,17 +276,14 @@ fun GasStationRow(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top
                     ) {
-                        fuelType?.let {
-                            Text(
-                                text = stringResource(id = it.stringRes),
-                                textAlign = TextAlign.Center,
-                                style = MaterialTheme.typography.labelMedium
-                            )
-                        }
+                        Text(
+                            text = stringResource(id = fuelTypeGroup.stringRes),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.labelMedium
+                        )
 
-                        val priceText = fuelType?.let { gasStation.formatPrice(fuelType = it) }
                         Title(
-                            text = priceText ?: stringResource(id = R.string.PRICE_NOT_AVAILABLE)
+                            text = gasStation.formatPrice(fuelTypeGroup = fuelTypeGroup) ?: stringResource(id = R.string.PRICE_NOT_AVAILABLE)
                         )
                     }
                 }
@@ -291,7 +306,7 @@ fun GasStationRow(
 
             if (openingHoursStatus != OpeningHoursStatus.Open) {
                 ClosedHint(
-                    Modifier.padding(top = 16.dp),
+                    modifier = Modifier.padding(top = 16.dp),
                     centerHorizontal = true,
                     closesAt = (openingHoursStatus as? OpeningHoursStatus.ClosesSoon)?.closesAt
                 )
@@ -301,18 +316,20 @@ fun GasStationRow(
 }
 
 @Composable
-fun Loading() {
+fun LoadingContent() {
     LoadingCard(
         title = stringResource(id = R.string.DASHBOARD_LOADING_VIEW_TITLE),
-        description = stringResource(id = R.string.DASHBOARD_LOADING_VIEW_DESCRIPTION)
+        description = stringResource(id = R.string.DASHBOARD_LOADING_VIEW_DESCRIPTION),
+        modifier = Modifier.padding(20.dp)
     )
 }
 
 @Composable
-fun Empty() {
+fun EmptyContent() {
     ErrorCard(
         title = stringResource(id = R.string.DASHBOARD_EMPTY_VIEW_TITLE),
         description = stringResource(id = R.string.DASHBOARD_EMPTY_VIEW_DESCRIPTION),
+        modifier = Modifier.padding(20.dp),
         imageVector = Icons.Outlined.LocalGasStation
     )
 }
@@ -322,16 +339,19 @@ fun LoadingError(onRetryButtonClick: () -> Unit) {
     ErrorCard(
         title = stringResource(id = R.string.general_error_title),
         description = stringResource(id = R.string.HOME_LOADING_FAILED_TEXT),
+        modifier = Modifier.padding(20.dp),
         buttonText = stringResource(id = R.string.common_use_retry),
         onButtonClick = onRetryButtonClick
     )
 }
 
 @Composable
-fun LocationDisabled(context: Context) {
+fun LocationDisabled() {
+    val context = LocalContext.current
     ErrorCard(
         title = stringResource(id = R.string.LOCATION_DIALOG_DISABLED_TITLE),
         description = stringResource(id = R.string.LOCATION_DIALOG_DISABLED_TEXT),
+        modifier = Modifier.padding(20.dp),
         buttonText = stringResource(id = R.string.ALERT_LOCATION_PERMISSION_ACTIONS_OPEN_SETTINGS)
     ) {
         openLocationSettings(context)
@@ -339,10 +359,12 @@ fun LocationDisabled(context: Context) {
 }
 
 @Composable
-fun LocationPermissionDenied(context: Context) {
+fun LocationPermissionDenied() {
+    val context = LocalContext.current
     ErrorCard(
         title = stringResource(id = R.string.LOCATION_DIALOG_PERMISSION_DENIED_TITLE),
         description = stringResource(id = R.string.LOCATION_DIALOG_PERMISSION_DENIED_TEXT),
+        modifier = Modifier.padding(20.dp),
         buttonText = stringResource(id = R.string.ALERT_LOCATION_PERMISSION_ACTIONS_OPEN_SETTINGS)
     ) {
         openLocationPermissionSettings(context)
@@ -369,48 +391,35 @@ private fun openLocationSettings(context: Context) {
 
 @Preview
 @Composable
-fun HomeScreenPreview() {
+fun HomeScreenContentPreview() {
     AppTheme {
-        HomeScreen(
-            navigateToDetail = {}
-        )
-    }
-}
-
-@Preview
-@Composable
-fun GasStationListPreview() {
-    AppTheme {
-        val gasStations = remember {
-            listOf(
-                GasStation(UUID.randomUUID().toString(), arrayListOf()).apply {
-                    name = "Gas what"
-                    address = Address("c=de;l=Karlsruhe;pc=76131;s=Haid-und-Neu-Straße;hn=18")
-                    latitude = 49.012440
-                    longitude = 8.4018654
-                    prices = mutableListOf(Price("diesel", "Diesel", 1.337))
-                    currency = "EUR"
-                    priceFormat = "d.dds"
-                },
-                GasStation(UUID.randomUUID().toString(), arrayListOf()).apply {
-                    name = "Tanke Emma"
-                    address = Address("c=de;l=Karlsruhe;pc=76131;s=Haid-und-Neu-Straße;hn=18")
-                    latitude = 49.013513
-                    longitude = 8.426530
-                    prices = mutableListOf(Price("diesel", "Diesel", 1.337))
-                    currency = "EUR"
-                    priceFormat = "d.dds"
-                }
-            )
-        }
-
-        GasStationList(
-            gasStations = gasStations,
-            fuelType = FuelType.DIESEL,
+        HomeScreenContent(
+            uiState = UiState.Success(
+                listOf(
+                    GasStation(UUID.randomUUID().toString(), arrayListOf()).apply {
+                        name = "Gas what"
+                        address = Address("c=de;l=Karlsruhe;pc=76131;s=Haid-und-Neu-Straße;hn=18")
+                        latitude = 49.012440
+                        longitude = 8.4018654
+                        prices = mutableListOf(Price("diesel", "Diesel", 1.337))
+                        currency = "EUR"
+                        priceFormat = "d.dds"
+                    },
+                    GasStation(UUID.randomUUID().toString(), arrayListOf()).apply {
+                        name = "Tanke Emma"
+                        address = Address("c=de;l=Karlsruhe;pc=76131;s=Haid-und-Neu-Straße;hn=18")
+                        latitude = 49.013513
+                        longitude = 8.426530
+                        prices = mutableListOf(Price("ron95e5", "Petrol", 1.537))
+                        currency = "EUR"
+                        priceFormat = "d.dds"
+                    }
+                )
+            ),
+            fuelTypeGroup = FuelTypeGroup.DIESEL,
             userLocation = LatLng(49.013513, 8.4018654),
-            onStartFueling = {},
-            onStartNavigation = {},
-            onClick = {}
+            refresh = {},
+            navigateToDetail = {}
         )
     }
 }
@@ -425,7 +434,7 @@ fun GasStationRowPreview() {
                 address = Address("c=de;l=Karlsruhe;pc=76131;s=Haid-und-Neu-Straße;hn=18")
                 latitude = 49.012440
                 longitude = 8.426530
-                prices = mutableListOf(Price("diesel", "Diesel", 1.337))
+                prices = mutableListOf(Price("ron95e5", "Petrol", 1.537))
                 currency = "EUR"
                 priceFormat = "d.dds"
             }
@@ -435,7 +444,7 @@ fun GasStationRowPreview() {
             modifier = Modifier.padding(20.dp),
             gasStation = gasStation,
             userLocation = LatLng(49.013513, 8.4018654),
-            fuelType = FuelType.DIESEL,
+            fuelTypeGroup = FuelTypeGroup.PETROL,
             onStartFueling = {},
             onStartNavigation = {},
             onClick = {}
@@ -445,24 +454,40 @@ fun GasStationRowPreview() {
 
 @Preview
 @Composable
-fun LoadingPreview() {
+fun LoadingContentPreview() {
     AppTheme {
-        Loading()
+        LoadingContent()
     }
 }
 
 @Preview
 @Composable
-fun EmptyPreview() {
+fun EmptyContentPreview() {
     AppTheme {
-        Empty()
+        EmptyContent()
     }
 }
 
 @Preview
 @Composable
-fun ErrorPreview() {
+fun LoadingErrorPreview() {
     AppTheme {
-        Error()
+        LoadingError {}
+    }
+}
+
+@Preview
+@Composable
+fun LocationDisabledPreview() {
+    AppTheme {
+        LocationDisabled()
+    }
+}
+
+@Preview
+@Composable
+fun LocationPermissionDeniedPreview() {
+    AppTheme {
+        LocationPermissionDenied()
     }
 }

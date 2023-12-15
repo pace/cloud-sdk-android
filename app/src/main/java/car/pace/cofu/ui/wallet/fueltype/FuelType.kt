@@ -20,9 +20,17 @@ enum class FuelType(val identifier: String, @StringRes val stringRes: Int) {
     DIESEL_PREMIUM("dieselPremium", R.string.fuel_group_diesel),
     DIESEL_GTL("dieselGtl", R.string.fuel_group_diesel),
     DIESEL_B0("dieselB0", R.string.fuel_group_diesel);
+
+    fun toFuelTypeGroup(): FuelTypeGroup {
+        return FuelTypeGroup.values().find { this in it.fuelTypes } ?: FuelTypeGroup.PETROL
+    }
 }
 
 enum class FuelTypeGroup(val prefFuelType: FuelType, val fuelTypes: List<FuelType>, @StringRes val stringRes: Int) {
     PETROL(FuelType.SUPER, listOf(FuelType.SUPER, FuelType.E10, FuelType.SUPER_PLUS, FuelType.E10_RON98, FuelType.RON98, FuelType.RON100), R.string.fuel_group_petrol),
     DIESEL(FuelType.DIESEL, listOf(FuelType.DIESEL, FuelType.DIESEL_B7, FuelType.DIESEL_PREMIUM, FuelType.DIESEL_GTL, FuelType.DIESEL_B0), R.string.fuel_group_diesel)
+}
+
+fun Int.toFuelTypeGroup(): FuelTypeGroup {
+    return FuelType.values().getOrNull(this)?.toFuelTypeGroup() ?: FuelTypeGroup.PETROL
 }
