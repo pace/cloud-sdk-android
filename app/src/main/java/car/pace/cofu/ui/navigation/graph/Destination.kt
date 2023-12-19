@@ -12,6 +12,7 @@ import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.PersonRemove
 import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.ui.graphics.vector.ImageVector
+import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
 import car.pace.cofu.ui.icon.DeveloperGuide
 import car.pace.cofu.ui.icon.Signature
@@ -51,7 +52,7 @@ enum class Route(
     ONBOARDING_TERMS(route = "onboarding_terms_route", graph = null),
     ONBOARDING_PRIVACY(route = "onboarding_privacy_route", graph = null),
     ANALYSIS(route = "analysis_route", graph = null),
-    HOME(route = "home_route", graph = Graph.HOME, showBottomBar = true),
+    HOME(route = "home_route", graph = Graph.HOME, drawBehindStatusBar = BuildConfig.HOME_SHOW_CUSTOM_HEADER, showBottomBar = true),
     DETAIL(route = "detail_route", graph = null),
     WALLET(route = "wallet_route", graph = Graph.WALLET, showBottomBar = true),
     PAYMENT_METHODS(route = "payment_methods_route", graph = Graph.WALLET, showBottomBar = true, icon = Icons.Outlined.AccountBalanceWallet, labelRes = R.string.wallet_payment_methods_title),

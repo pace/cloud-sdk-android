@@ -18,8 +18,6 @@ object Constants {
     const val ONBOARDING_DESCRIPTION_KEY = "OnboardingDescription"
     const val ONBOARDING_CONTENT_KEY = "OnboardingContent"
 
-    const val NEAREST_GAS_STATION_TITLE_KEY = "NearestGasStation"
-    const val OTHER_GAS_STATIONS_TITLE_KEY = "OtherGasStations"
     const val USER_HEADER_KEY = "UserHeader"
     const val SPACER_KEY = "Spacer"
 

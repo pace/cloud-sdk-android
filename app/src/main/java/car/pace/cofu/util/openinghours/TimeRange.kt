@@ -121,7 +121,7 @@ data class TimeRange(var from: Int, var to: Int) {
 
         const val DASH: String = "–"
 
-        private fun formatTime(is24HourFormat: Boolean, totalMinutes: Int): String {
+        fun formatTime(is24HourFormat: Boolean, totalMinutes: Int): String {
             // We cannot use the simple date format class because time zones will mess up.
 
             var hours = totalMinutes / 60

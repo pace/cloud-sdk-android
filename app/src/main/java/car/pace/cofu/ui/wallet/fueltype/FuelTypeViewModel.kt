@@ -29,9 +29,4 @@ class FuelTypeViewModel @Inject constructor(
     fun setFuelTypeGroup(fuelTypeGroup: FuelTypeGroup) {
         sharedPreferencesRepository.putValue(PREF_KEY_FUEL_TYPE, fuelTypeGroup.prefFuelType.ordinal)
     }
-
-    private fun Int.toFuelTypeGroup(): FuelTypeGroup {
-        val fuelType = FuelType.values().getOrNull(this)
-        return FuelTypeGroup.values().find { fuelType in it.fuelTypes } ?: FuelTypeGroup.PETROL
-    }
 }

@@ -47,6 +47,7 @@ android {
         buildConfigField("String", "PACE_REDIRECT_URL", "\"" + configJson.sdk.redirectUrl + "\"")
         buildConfigField("Boolean", "HIDE_PRICES", configJson.hidePrices.toString())
         buildConfigField("Boolean", "ONBOARDING_SHOW_CUSTOM_HEADER", configJson.onboardingShowCustomHeader.toString())
+        buildConfigField("Boolean", "HOME_SHOW_CUSTOM_HEADER", configJson.homeShowCustomHeader.toString())
 
         // appAuthRedirectScheme is needed for AppAuth in IDKit and pace_redirect_scheme is needed for deep linking in AppKit
         manifestPlaceholders["appAuthRedirectScheme"] = configJson.sdk.redirectScheme // e.g. reverse domain name notation: cloud.pace.app

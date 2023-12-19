@@ -90,8 +90,9 @@ import car.pace.cofu.util.extension.distanceText
 import car.pace.cofu.util.extension.formatPrice
 import car.pace.cofu.util.extension.lastUpdatedText
 import car.pace.cofu.util.extension.twoLineAddress
+import car.pace.cofu.util.openinghours.OpeningHoursStatus
 import car.pace.cofu.util.openinghours.format
-import car.pace.cofu.util.openinghours.isClosed
+import car.pace.cofu.util.openinghours.openingHoursStatus
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.poikit.poi.Address
 import cloud.pace.sdk.poikit.poi.Day
@@ -141,7 +142,7 @@ fun DetailScreenContent(
                 LoadingCard(
                     title = stringResource(id = R.string.gas_station_loading_title),
                     description = stringResource(id = R.string.gas_station_loading_description),
-                    modifier = Modifier.padding(top = 12.dp)
+                    modifier = Modifier.padding(vertical = 12.dp)
                 )
             }
 
@@ -167,11 +168,11 @@ fun DetailScreenContent(
                     ) {
                         ConstraintLayout {
                             val (map, address, closed) = createRefs()
-                            val isClosed = gasStation.isClosed()
+                            val openingHoursStatus = gasStation.openingHoursStatus()
 
                             MapRow(
                                 location = gasStation.center?.toLatLn(),
-                                isClosed = isClosed,
+                                isClosed = openingHoursStatus == OpeningHoursStatus.Closed,
                                 modifier = Modifier.constrainAs(map) {
                                     top.linkTo(parent.top)
                                     width = Dimension.matchParent
@@ -185,15 +186,16 @@ fun DetailScreenContent(
                                 gasStationLocation = gasStation.center?.toLatLn(),
                                 userLocation = userLocation,
                                 canStartFueling = canStartFueling,
-                                isClosed = isClosed,
+                                closedOrClosesSoon = openingHoursStatus != OpeningHoursStatus.Open,
                                 modifier = Modifier.constrainAs(address) {
                                     top.linkTo(anchor = map.bottom, margin = 28.dp)
                                     width = Dimension.matchParent
                                 }
                             )
 
-                            if (isClosed) {
+                            if (openingHoursStatus != OpeningHoursStatus.Open) {
                                 ClosedHint(
+                                    closesAt = (openingHoursStatus as? OpeningHoursStatus.ClosesSoon)?.closesAt,
                                     modifier = Modifier.constrainAs(closed) {
                                         top.linkTo(anchor = address.bottom, margin = 16.dp)
                                         width = Dimension.matchParent
@@ -252,7 +254,7 @@ fun DetailScreenContent(
                 ErrorCard(
                     title = stringResource(id = R.string.general_error_title),
                     description = stringResource(id = R.string.gas_station_error_description),
-                    modifier = Modifier.padding(top = 12.dp),
+                    modifier = Modifier.padding(vertical = 12.dp),
                     imageVector = Icons.Outlined.LocalGasStation,
                     buttonText = stringResource(id = R.string.common_use_retry),
                     onButtonClick = onRefresh
@@ -396,7 +398,7 @@ fun AddressRow(
     gasStationLocation: LatLng?,
     userLocation: LatLng?,
     canStartFueling: Boolean,
-    isClosed: Boolean,
+    closedOrClosesSoon: Boolean,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -414,31 +416,11 @@ fun AddressRow(
                 textAlign = TextAlign.Start
             )
             gasStationLocation?.distanceText(userLocation)?.let {
-                val color = when {
-                    isClosed -> Error
-                    canStartFueling -> Success
-                    else -> Warning
-                }
-
-                Row(
-                    modifier = Modifier
-                        .padding(top = 12.dp)
-                        .background(color = color, shape = RoundedCornerShape(12.dp))
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_distance_arrow),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.surface
-                    )
-                    Text(
-                        text = it,
-                        modifier = Modifier.padding(start = 4.dp),
-                        color = MaterialTheme.colorScheme.surface,
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
+                DistanceLabel(
+                    distanceText = it,
+                    canStartFueling = canStartFueling,
+                    isClosed = closedOrClosesSoon
+                )
             }
         }
         Image(
@@ -450,12 +432,50 @@ fun AddressRow(
 }
 
 @Composable
-fun ClosedHint(
-    modifier: Modifier = Modifier
+fun DistanceLabel(
+    distanceText: String,
+    canStartFueling: Boolean,
+    isClosed: Boolean
 ) {
+    val color = when {
+        isClosed -> Error
+        canStartFueling -> Success
+        else -> Warning
+    }
+
     Row(
-        modifier = modifier,
+        modifier = Modifier
+            .padding(top = 12.dp)
+            .background(color = color, shape = RoundedCornerShape(12.dp))
+            .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_distance_arrow),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.surface
+        )
+        Text(
+            text = distanceText,
+            modifier = Modifier.padding(start = 4.dp),
+            color = MaterialTheme.colorScheme.surface,
+            style = MaterialTheme.typography.labelSmall
+        )
+    }
+}
+
+@Composable
+fun ClosedHint(
+    modifier: Modifier = Modifier,
+    centerHorizontal: Boolean = false,
+    closesAt: String? = null
+) {
+    val text = if (closesAt != null) stringResource(id = R.string.gas_station_closes_soon_hint, closesAt) else stringResource(id = R.string.gas_station_closed_hint)
+    Row(
+        modifier = modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = if (centerHorizontal) Arrangement.Center else Arrangement.Start
     ) {
         Icon(
             imageVector = Icons.Outlined.ErrorOutline,
@@ -464,7 +484,7 @@ fun ClosedHint(
             tint = MaterialTheme.colorScheme.error
         )
         Text(
-            text = stringResource(id = R.string.gas_station_closed_hint),
+            text = text,
             modifier = Modifier.padding(start = 4.dp),
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.labelSmall
@@ -714,7 +734,7 @@ fun AddressRowPreview() {
             gasStationLocation = LatLng(49.012440, 8.426530),
             userLocation = LatLng(49.013513, 8.4018654),
             canStartFueling = true,
-            isClosed = false
+            closedOrClosesSoon = false
         )
     }
 }

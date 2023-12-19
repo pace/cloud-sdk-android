@@ -6,7 +6,8 @@ data class Config(
     val crashlyticsEnabled: Boolean,
     val hidePrices: Boolean,
     val googleMapsApiKey: String,
-    val onboardingShowCustomHeader: Boolean
+    val onboardingShowCustomHeader: Boolean,
+    val homeShowCustomHeader: Boolean
 )
 
 data class Signing(

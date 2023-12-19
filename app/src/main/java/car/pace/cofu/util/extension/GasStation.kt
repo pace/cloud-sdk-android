@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import car.pace.cofu.R
 import car.pace.cofu.ui.wallet.fueltype.FuelType
+import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 import car.pace.cofu.util.Constants.COFU_DISTANCE_METERS
 import car.pace.cofu.util.price.PriceFormatter
 import car.pace.cofu.util.price.toUnicodeString
@@ -33,6 +34,17 @@ fun Address.twoLineAddress() = remember {
         val firstLineAddress = firstLineAddress()
         val secondLineAddress = secondLineAddress()
         if (secondLineAddress.isNullOrEmpty()) firstLineAddress else "$firstLineAddress\n$secondLineAddress"
+    }
+}.orEmpty()
+
+@Composable
+fun Address.oneLineAddress() = remember {
+    if (street == null) {
+        ""
+    } else {
+        val firstLineAddress = firstLineAddress()
+        val secondLineAddress = secondLineAddress()
+        if (secondLineAddress.isNullOrEmpty()) firstLineAddress else "$firstLineAddress, $secondLineAddress"
     }
 }.orEmpty()
 
@@ -93,8 +105,14 @@ fun GasStation.canStartFueling(userLocation: LatLng?) = remember(userLocation) {
 }
 
 @Composable
-fun GasStation.formatPrice(fuelType: FuelType): String? {
-    val price = prices.find { it.type == fuelType.identifier }
+fun GasStation.formatPrice(fuelTypeGroup: FuelTypeGroup): String? {
+    val price = remember(fuelTypeGroup) {
+        val identifiers = fuelTypeGroup.fuelTypes.map(FuelType::identifier)
+        prices
+            .filter { it.price != null && it.type in identifiers }
+            .minByOrNull { it.price ?: 0.0 }
+    }
+
     return price?.formatPrice(priceFormat = priceFormat, currency = currency)
 }
 
