@@ -1,5 +1,6 @@
 package car.pace.cofu.util.openinghours
 
+import car.pace.cofu.util.openinghours.TimeRange.Companion.formatTime
 import cloud.pace.sdk.poikit.poi.Day
 import java.util.Calendar
 import java.util.Date
@@ -63,7 +64,7 @@ class TimeTable {
         }.size == 1
     }
 
-    fun closesSoon(now: Date): String? {
+    fun closesAt(now: Date, is24HourFormat: Boolean): String? {
         val cal = Calendar.getInstance(Locale.GERMANY).apply {
             time = now
         }
@@ -76,7 +77,7 @@ class TimeTable {
             cal.get(Calendar.DAY_OF_WEEK) - 2
         }
 
-        var closesAt: String? = null
+        var closesAt: Int? = null
         val minuteOfDay = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)
 
         if (dayOfWeek < this.days.size && this.days[dayOfWeek].openingTimes.size > 0) {
@@ -86,13 +87,13 @@ class TimeTable {
                 todaysHours.forEach {
                     val closesInMinutes = it.to - minuteOfDay
                     if (closesInMinutes in 60 downTo 1) {
-                        closesAt = it.to.toString()
+                        closesAt = it.to
                     }
                 }
             }
         }
 
-        return closesAt
+        return closesAt?.let { formatTime(is24HourFormat, it) }
     }
 
     override fun toString(): String {
@@ -100,7 +101,7 @@ class TimeTable {
     }
 
     private fun indexOfDay(day: Day): Int {
-        return Day.values().indexOf(day)
+        return Day.entries.indexOf(day)
     }
 
     companion object {

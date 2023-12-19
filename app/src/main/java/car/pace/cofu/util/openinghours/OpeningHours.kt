@@ -37,8 +37,8 @@ fun GasStation.openingHoursStatus(): OpeningHoursStatus {
     return if (isClosed()) {
         OpeningHoursStatus.Closed
     } else {
-        val closesSoon = closesSoon()
-        if (closesSoon != null) OpeningHoursStatus.ClosesSoon(closesSoon) else OpeningHoursStatus.Open
+        val closesAt = closesAt()
+        if (closesAt != null) OpeningHoursStatus.ClosesSoon(closesAt) else OpeningHoursStatus.Open
     }
 }
 
@@ -56,16 +56,18 @@ fun GasStation.isOpenOrUnknown(): Boolean {
 }
 
 @Composable
-fun GasStation.closesSoon(): String? {
+fun GasStation.closesAt(): String? {
+    val context = LocalContext.current
     val now = Date()
     return remember(now) {
+        val is24HourFormat = DateFormat.is24HourFormat(context)
         val timeTable = PoiTimeTableConverter().convertToTimetable(openingHours)
-        timeTable.closesSoon(now)
+        timeTable.closesAt(now, is24HourFormat)
     }
 }
 
 sealed class OpeningHoursStatus {
-    object Open : OpeningHoursStatus()
-    object Closed : OpeningHoursStatus()
+    data object Open : OpeningHoursStatus()
+    data object Closed : OpeningHoursStatus()
     data class ClosesSoon(val closesAt: String) : OpeningHoursStatus()
 }
