@@ -1,7 +1,13 @@
+import car.pace.cofu.config.CONFIG_FILE_NAME
+import car.pace.cofu.config.Config
+import car.pace.cofu.menu.MenuEntriesGenerator
+import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.google.gson.Gson
 
-val configFileReader = rootProject.file("config.json").reader()
-val configJson: Config = Gson().fromJson(configFileReader, Config::class.java)
+private val menuEntriesTask = "generateMenuEntries"
+private val menuEntriesDir = File(buildDir, "generated/menu_entries/src/main")
+private val configFileReader = rootProject.file(CONFIG_FILE_NAME).reader()
+private val configJson: Config = Gson().fromJson(configFileReader, Config::class.java)
 
 plugins {
     id("com.android.application")
@@ -12,6 +18,12 @@ plugins {
     id("io.sentry.android.gradle") version "3.14.0"
     id("com.mikepenz.aboutlibraries.plugin")
 }
+
+task(menuEntriesTask) {
+    MenuEntriesGenerator.generate(menuEntriesDir)
+}
+
+project.tasks.preBuild.dependsOn(menuEntriesTask)
 
 android {
     namespace = "car.pace.cofu"
@@ -108,6 +120,13 @@ android {
     kapt {
         // Allow references to generated code
         correctErrorTypes = true
+    }
+
+    sourceSets {
+        getByName("main") {
+            java.srcDir(File(menuEntriesDir, "java"))
+            res.srcDir(File(menuEntriesDir, "res"))
+        }
     }
 }
 
