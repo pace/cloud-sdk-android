@@ -14,9 +14,9 @@ import car.pace.cofu.util.IntentUtils
 import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.UiState.Loading.toUiState
+import car.pace.cofu.util.extension.toLatLng
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.poikit.poi.GasStation
-import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,11 +34,10 @@ class DetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     gasStationRepository: GasStationRepository,
     locationRepository: LocationRepository,
-    val analytics: Analytics
+    private val analytics: Analytics
 ) : ViewModel() {
 
     private val id: String = checkNotNull(savedStateHandle["id"])
-
     private val refresh = MutableSharedFlow<Unit>(replay = 1).apply {
         tryEmit(Unit)
     }
@@ -64,7 +63,9 @@ class DetailViewModel @Inject constructor(
         )
 
     val userLocation = locationRepository.location
-        .map { LatLng(it.latitude, it.longitude) }
+        .map { result ->
+            result.getOrNull()?.toLatLng()
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),

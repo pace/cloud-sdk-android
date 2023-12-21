@@ -13,14 +13,33 @@ import androidx.compose.material.icons.outlined.PersonRemove
 import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.VpnKey
 import androidx.compose.ui.graphics.vector.ImageVector
+import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
 import car.pace.cofu.ui.icon.BarChart4Bars
 import car.pace.cofu.ui.icon.DeveloperGuide
+import car.pace.cofu.ui.icon.Map
 import car.pace.cofu.ui.icon.Signature
 import car.pace.cofu.ui.icon.TwoPager
 
-val bottomBarGraphs = listOf(Graph.HOME, Graph.WALLET, Graph.MORE)
-val bottomBarRoutes = listOf(Route.HOME.route, Route.WALLET.route, Route.MORE.route)
+val bottomBarGraphs = buildList {
+    add(Graph.LIST)
+
+    if (BuildConfig.MAP_ENABLED) {
+        add(Graph.MAP)
+    }
+
+    addAll(listOf(Graph.WALLET, Graph.MORE))
+}
+
+val bottomBarRoutes = buildList {
+    add(Route.LIST.route)
+
+    if (BuildConfig.MAP_ENABLED) {
+        add(Route.MAP.route)
+    }
+
+    addAll(listOf(Route.WALLET.route, Route.MORE.route))
+}
 
 enum class Graph(
     val route: String,
@@ -32,10 +51,15 @@ enum class Graph(
         null,
         null
     ),
-    HOME(
-        "home_graph",
+    LIST(
+        "list_graph",
         Icons.Outlined.List,
         R.string.list_tab_label
+    ),
+    MAP(
+        "map_graph",
+        Icons.Outlined.Map,
+        R.string.map_tab_label
     ),
     WALLET(
         "wallet_graph",
@@ -60,8 +84,10 @@ enum class Route(
     ONBOARDING_TERMS(route = "onboarding_terms_route", graph = Graph.ONBOARDING),
     ONBOARDING_PRIVACY(route = "onboarding_privacy_route", graph = Graph.ONBOARDING),
     ONBOARDING_ANALYSIS(route = "onboarding_analysis_route", graph = Graph.ONBOARDING),
-    HOME(route = "home_route", graph = Graph.HOME, showBottomBar = true),
-    DETAIL(route = "detail_route", graph = Graph.HOME),
+    LIST(route = "list_route", graph = Graph.LIST, showBottomBar = true),
+    MAP(route = "map_route", graph = Graph.MAP, showBottomBar = true),
+    LIST_DETAIL(route = "list_detail_route", graph = Graph.LIST),
+    MAP_DETAIL(route = "map_detail_route", graph = Graph.MAP),
     WALLET(route = "wallet_route", graph = Graph.WALLET, showBottomBar = true),
     PAYMENT_METHODS(route = "payment_methods_route", graph = Graph.WALLET, showBottomBar = true, icon = Icons.Outlined.AccountBalanceWallet, labelRes = R.string.wallet_payment_methods_title),
     TRANSACTIONS(route = "transactions_route", graph = Graph.WALLET, icon = Icons.Outlined.ReceiptLong, labelRes = R.string.wallet_transactions_title),
@@ -77,6 +103,7 @@ enum class Route(
     AUTHORIZATION(route = "authorization_route", graph = Graph.WALLET, showBottomBar = true, icon = Icons.Outlined.Signature, labelRes = R.string.wallet_two_factor_authentication_title),
     DELETE_ACCOUNT("delete_account", Graph.WALLET, showBottomBar = true, icon = Icons.Outlined.PersonRemove, labelRes = R.string.wallet_account_deletion_title),
     PERMISSIONS(route = "permissions_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.menu_items_permissions, icon = Icons.Outlined.VpnKey);
+
     companion object {
 
         fun fromRoute(route: String?): Route? {

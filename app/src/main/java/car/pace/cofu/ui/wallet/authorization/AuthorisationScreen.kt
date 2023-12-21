@@ -1,8 +1,5 @@
 package car.pace.cofu.ui.wallet.authorization
 
-import android.content.Intent
-import android.os.Build
-import android.provider.Settings
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.clickable
@@ -35,6 +32,7 @@ import car.pace.cofu.ui.onboarding.twofactor.biometric.rememberBiometricManager
 import car.pace.cofu.ui.onboarding.twofactor.biometric.rememberBiometricPrompt
 import car.pace.cofu.ui.onboarding.twofactor.setup.TwoFactorSetup
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.util.IntentUtils
 import car.pace.cofu.util.LogAndBreadcrumb
 
 @Composable
@@ -89,21 +87,9 @@ fun AuthorisationScreen(
         BiometricSetupDialog(
             onConfirm = {
                 showBiometricSetupDialog = false
-
-                try {
-                    val intent = when {
-                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> Intent(Settings.ACTION_BIOMETRIC_ENROLL)
-                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.P -> Intent(Settings.ACTION_FINGERPRINT_ENROLL)
-                        else -> Intent(Settings.ACTION_SECURITY_SETTINGS)
-                    }
-                    context.startActivity(intent)
-                } catch (e: Exception) {
-                    try {
-                        context.startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS))
-                    } catch (e: Exception) {
-                        LogAndBreadcrumb.e(e, LogAndBreadcrumb.AUTHORISATION, "Could not launch biometry setup settings")
-                        viewModel.onFingerprintSettingsNotFound()
-                    }
+                IntentUtils.openBiometricSettings(context).onFailure {
+                    LogAndBreadcrumb.e(it, LogAndBreadcrumb.AUTHORISATION, "Could not launch biometry setup settings")
+                    viewModel.onFingerprintSettingsNotFound()
                 }
             },
             onDismiss = {

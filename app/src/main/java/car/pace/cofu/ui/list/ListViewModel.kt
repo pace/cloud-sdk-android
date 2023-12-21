@@ -1,4 +1,4 @@
-package car.pace.cofu.ui.home
+package car.pace.cofu.ui.list
 
 import android.content.Context
 import android.location.Location
@@ -32,46 +32,43 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class ListViewModel @Inject constructor(
     sharedPreferencesRepository: SharedPreferencesRepository,
     gasStationRepository: GasStationRepository,
-    locationRepository: LocationRepository,
-    val analytics: Analytics
+    private val locationRepository: LocationRepository,
+    private val analytics: Analytics
 ) : ViewModel() {
-    data class ListStation(val gasStation: GasStation, val canStartFueling: Boolean, val distance: Double?)
 
-    private val refresh = MutableStateFlow(false)
-    private var locationPermissionEnabled = MutableStateFlow<Boolean?>(null)
-    private var locationEnabled = MutableStateFlow<Boolean?>(null)
-    private var location = locationRepository.location.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = null
+    data class ListStation(
+        val gasStation: GasStation,
+        val canStartFueling: Boolean,
+        val distance: Double?
     )
 
-    val uiState = combineTransform(locationEnabled, locationPermissionEnabled, location, refresh) { locationEnabled, locationPermission, location, refresh ->
-        when {
-            locationPermission == false -> emit(UiState.Error(LocationPermissionDenied()))
-            locationEnabled == false -> emit(UiState.Error(LocationDisabled()))
-            location == null -> emit(UiState.Loading)
-            else -> {
-                if (refresh) {
-                    emit(UiState.Loading)
-                }
-                val gasStations = gasStationRepository.getGasStations(location).toGasStationUiState(location)
-                emit(gasStations)
-            }
+    private val refresh = MutableStateFlow(false)
+
+    val uiState = combineTransform(locationRepository.location, refresh) { locationResult, refresh ->
+        val location = locationResult.getOrElse {
+            emit(UiState.Error(it))
+            return@combineTransform
         }
+
+        if (refresh) {
+            emit(UiState.Loading)
+        }
+
+        val gasStations = gasStationRepository.getGasStations(location).toGasStationUiState(location)
+        emit(gasStations)
     }.onEach {
         refresh.value = false
 
         when {
-            it is UiState.Success && it.data.isEmpty() -> LogAndBreadcrumb.i(LogAndBreadcrumb.HOME, "No gas stations near user")
-            it is UiState.Error -> LogAndBreadcrumb.e(it.throwable, LogAndBreadcrumb.HOME, it.throwable.message ?: "Could not load gas station list")
+            it is UiState.Success && it.data.isEmpty() -> LogAndBreadcrumb.i(LogAndBreadcrumb.LIST, "No gas stations near user")
+            it is UiState.Error -> LogAndBreadcrumb.e(it.throwable, LogAndBreadcrumb.LIST, it.throwable.message ?: "Could not load gas station list")
         }
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
+        started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
         initialValue = UiState.Loading
     )
 
@@ -85,20 +82,12 @@ class HomeViewModel @Inject constructor(
             initialValue = initialValue.toFuelTypeGroup()
         )
 
-    val userLocation = locationRepository.location
-        .map { LatLng(it.latitude, it.longitude) }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-            initialValue = null
-        )
-
-    fun onLocationPermissionChanged(enabled: Boolean) {
-        locationPermissionEnabled.value = enabled
+    fun onLocationEnabledChanged(enabled: Boolean) {
+        locationRepository.onLocationEnabledChanged(enabled)
     }
 
-    fun onLocationEnabledChanged(enabled: Boolean) {
-        locationEnabled.value = enabled
+    fun onLocationPermissionChanged(granted: Boolean) {
+        locationRepository.onLocationPermissionChanged(granted)
     }
 
     fun refresh() {
@@ -106,13 +95,13 @@ class HomeViewModel @Inject constructor(
     }
 
     fun startFueling(context: Context, gasStation: GasStation) {
-        LogAndBreadcrumb.i(LogAndBreadcrumb.HOME, "Start fueling")
+        LogAndBreadcrumb.i(LogAndBreadcrumb.LIST, "Start fueling")
         analytics.logEvent(FuelingStarted)
         AppKit.openFuelingApp(context = context, id = gasStation.id, callback = analytics.TrackingAppCallback())
     }
 
     fun startNavigation(context: Context, gasStation: GasStation) {
-        LogAndBreadcrumb.i(LogAndBreadcrumb.HOME, "Start navigation to gas station")
+        LogAndBreadcrumb.i(LogAndBreadcrumb.LIST, "Start navigation to gas station")
         IntentUtils.startNavigation(context, gasStation).onSuccess {
             analytics.logEvent(StationNavigationUsed)
         }
@@ -142,7 +131,4 @@ class HomeViewModel @Inject constructor(
         val center = gasStation.center?.toLatLn() ?: return null
         return location.distanceTo(center)
     }
-
-    class LocationPermissionDenied : Throwable("Location permission denied")
-    class LocationDisabled : Throwable("Location disabled")
 }

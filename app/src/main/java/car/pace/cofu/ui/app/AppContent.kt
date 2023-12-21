@@ -71,7 +71,7 @@ fun AppContent(
                     .fillMaxSize(),
                 onOnboardingDone = {
                     viewModel.onOnboardingDone()
-                    appState.navigateAndClearBackStack(Graph.HOME)
+                    appState.navigateAndClearBackStack(Graph.LIST)
                 },
                 navigateToOnboarding = {
                     appState.navigateAndClearBackStack(Graph.ONBOARDING)

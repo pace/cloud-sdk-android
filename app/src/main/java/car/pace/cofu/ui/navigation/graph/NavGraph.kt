@@ -19,7 +19,8 @@ import car.pace.cofu.ui.animation.scaleOutOfContainer
 import car.pace.cofu.ui.animation.slideIn
 import car.pace.cofu.ui.animation.slideOut
 import car.pace.cofu.ui.detail.DetailScreen
-import car.pace.cofu.ui.home.HomeScreen
+import car.pace.cofu.ui.list.ListScreen
+import car.pace.cofu.ui.map.MapScreen
 import car.pace.cofu.ui.more.MoreScreen
 import car.pace.cofu.ui.more.licenses.LicensesScreen
 import car.pace.cofu.ui.more.permissions.PermissionsScreen
@@ -87,21 +88,49 @@ fun NavGraphBuilder.onboardingGraph(
     }
 }
 
-fun NavGraphBuilder.homeGraph(
+fun NavGraphBuilder.listGraph(
     onNavigate: (String) -> Unit,
     onNavigateUp: () -> Unit
 ) {
     navigation(
-        startDestination = Route.HOME.route,
-        route = Graph.HOME.route
+        startDestination = Route.LIST.route,
+        route = Graph.LIST.route
     ) {
-        parentComposable(Route.HOME.route) {
-            HomeScreen {
-                onNavigate("${Route.DETAIL.route}/$it")
+        parentComposable(Route.LIST.route) {
+            ListScreen {
+                onNavigate("${Route.LIST_DETAIL.route}/$it")
             }
         }
         childComposable(
-            route = "${Route.DETAIL.route}/{id}",
+            route = "${Route.LIST_DETAIL.route}/{id}",
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            DetailScreen(
+                onNavigateUp = onNavigateUp
+            )
+        }
+    }
+}
+
+fun NavGraphBuilder.mapGraph(
+    onNavigate: (String) -> Unit,
+    onNavigateUp: () -> Unit
+) {
+    navigation(
+        startDestination = Route.MAP.route,
+        route = Graph.MAP.route
+    ) {
+        parentComposable(Route.MAP.route) {
+            MapScreen {
+                onNavigate("${Route.MAP_DETAIL.route}/$it")
+            }
+        }
+        childComposable(
+            route = "${Route.MAP_DETAIL.route}/{id}",
             arguments = listOf(
                 navArgument("id") {
                     type = NavType.StringType

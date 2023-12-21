@@ -5,10 +5,18 @@ object Constants {
     const val TRANSITION_DURATION = 400
     const val FADE_DURATION = 300
 
-    const val STOP_TIMEOUT_MILLIS = 5000L
-    const val LOCATION_UPDATE_DISTANCE_METERS = 500f
-    const val GAS_STATION_SEARCH_RADIUS = 10000
+    const val STOP_TIMEOUT_MILLIS = 5_000L
+    const val LOCATION_UPDATE_INTERVAL_MILLIS = 5_000L
+    const val LOCATION_UPDATE_DISTANCE_METERS = 50f
+    const val GAS_STATION_SEARCH_RADIUS = 10_000
     const val COFU_DISTANCE_METERS = 500
+    const val STREET_ZOOM_LEVEL = 15f
+    const val COUNTRY_ZOOM_LEVEL = 6f
+    const val MIN_REDUCED_MARKER_DETAIL = 10.7f
+    const val VISIBLE_REGION_PADDING = 0.2
+    const val SEARCH_DEBOUNCE_MILLIS = 300L
+    const val MIN_SEARCH_QUERY_LENGTH = 3
+    const val MAX_SEARCH_RESULTS = 5
 
     const val TERMS_URI = "file:///android_res/raw/usage_terms.html"
     const val PRIVACY_URI = "file:///android_res/raw/privacy_statement.html"
@@ -46,6 +54,7 @@ object Constants {
     const val SPACER_CONTENT_TYPE = "Spacer"
     const val PAYMENT_METHOD_LIST_ITEM_CONTENT_TYPE = "PaymentMethod"
     const val CONTAINER_CONTENT_TYPE = "Container"
+    const val SEARCH_RESULT_CONTENT_TYPE = "SearchResult"
 
     const val DETAIL_TOP_CONTENT_CONTENT_TYPE = "DetailTopContent"
     const val DETAIL_OPENING_HOURS_CONTENT_TYPE = "DetailOpeningHours"

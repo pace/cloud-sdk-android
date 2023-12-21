@@ -69,6 +69,22 @@ android_test:
         - "/usr/local/share/android-sdk/platform-tools/adb wait-for-device"
         - ./gradlew connectedDebugAndroidTest
 
+pace_cloud_sdk_version_check:
+    extends: .docker_image
+    retry: 0
+    script:
+        - export PACE_CLOUD_SDK_VERSION=$(grep -m 1 "cloud.pace:sdk" app/build.gradle.kts | cut -d':' -f 3 | cut -d'"' -f 1)
+        - "echo PACE Cloud SDK version: $PACE_CLOUD_SDK_VERSION"
+        - >
+            if [[ "$PACE_CLOUD_SDK_VERSION" == *-SNAPSHOT* ]]; then
+              echo "Please use a stable PACE Cloud SDK version before merging. Snapshot versions are only allowed during development."
+              exit 1
+            else
+              echo "The PACE Cloud SDK version is already a stable version. No adjustments needed."
+              exit 0
+            fi
+    <<: *only_merge_requests
+
 trigger_github_mirroring:
     interruptible: true
     script:

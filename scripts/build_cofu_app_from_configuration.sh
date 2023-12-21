@@ -55,7 +55,7 @@ echo "All legal files exist in base language."
 
 shopt -s extglob
 onboarding_header=false
-home_header=false
+list_header=false
 detail_icon=false
 
 for f in ${ASSET_DIRECTORY}/@(*_header_image_android.*|detail_view_brand_icon_android.*)
@@ -68,8 +68,8 @@ do
             onboarding_header=true
             ;;
         *list_header_image_android*)
-            filename=ic_home_header
-            home_header=true
+            filename=ic_list_header
+            list_header=true
             ;;
         *fallback_header_image_android*) filename=ic_fallback_header;;
         *detail_view_brand_icon_android.*)
@@ -86,10 +86,10 @@ do
 done
 
 echo "Onboarding header exists: $onboarding_header"
-echo "Home header exists: $home_header"
+echo "List header exists: $list_header"
 echo "Detail icon exists: $detail_icon"
 apt-get update && apt-get install -y jq
-jq ". + { \"home_show_custom_header\": $home_header, \"onboarding_show_custom_header\": $onboarding_header, \"detail_screen_show_icon\": $detail_icon }" configuration.json > temp.json && mv temp.json configuration.json
+jq ". + { \"list_show_custom_header\": $list_header, \"onboarding_show_custom_header\": $onboarding_header, \"detail_screen_show_icon\": $detail_icon }" configuration.json > temp.json && mv temp.json configuration.json
 
 ./gradlew clean
 ./gradlew app:bundleRelease -PbuildNumber=$BUILD_NUMBER -PversionName=$VERSION_NAME

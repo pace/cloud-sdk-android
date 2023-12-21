@@ -56,14 +56,14 @@ android {
 
         resValue("string", "app_name", configuration.app_name)
         resValue("color", "notification_color", configuration.primary_branding_color)
-
+        resValue("string", "google_maps_api_key", configuration.google_maps_api_key)
 
         buildConfigField("String", "CLIENT_ID", "\"" + configuration.client_id + "\"")
         buildConfigField("String", "REDIRECT_URI", "\"${configuration.client_id}://callback\"")
         buildConfigField("@androidx.annotation.Nullable String", "DEFAULT_IDP", configuration.default_idp?.let { "\"" + it + "\"" }.toString())
         buildConfigField("Boolean", "HIDE_PRICES", configuration.hide_prices.toString())
         buildConfigField("Boolean", "ONBOARDING_SHOW_CUSTOM_HEADER", configuration.onboarding_show_custom_header.toString())
-        buildConfigField("Boolean", "HOME_SHOW_CUSTOM_HEADER", configuration.home_show_custom_header.toString())
+        buildConfigField("Boolean", "LIST_SHOW_CUSTOM_HEADER", configuration.list_show_custom_header.toString())
         buildConfigField("Boolean", "DETAIL_SCREEN_SHOW_ICON", configuration.detail_screen_show_icon.toString())
         buildConfigField("Boolean", "MAP_ENABLED", configuration.map_enabled.toString())
         buildConfigField("Boolean", "AUTOMATIC_PRODUCTION_UPDATES_ENABLED", configuration.automatic_production_updates_enabled.toString())
@@ -75,7 +75,6 @@ android {
         // appAuthRedirectScheme is needed for AppAuth in IDKit and pace_redirect_scheme is needed for deep linking in AppKit
         manifestPlaceholders["appAuthRedirectScheme"] = configuration.client_id
         manifestPlaceholders["pace_redirect_scheme"] = "${configuration.client_id}.${UUID.randomUUID()}"
-        manifestPlaceholders["google_maps_api_key"] = configuration.google_maps_api_key
 
         resourceConfigurations += arrayOf("en", "cs", "de", "es", "fr", "it", "nl", "pl", "pt", "ro", "ru")
 
@@ -147,21 +146,23 @@ android {
 
 dependencies {
     // PACE Cloud SDK
-    implementation("cloud.pace:sdk:21.0.1")
+    implementation("cloud.pace:sdk:21.1.0")
 
     // Jetpack Compose
-    val composeBom = platform("androidx.compose:compose-bom:2023.10.01")
+    val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
     implementation(composeBom)
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
-    implementation("androidx.navigation:navigation-compose:2.7.5")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0-rc01")
-    implementation("androidx.activity:activity-compose:1.8.1")
-    implementation("com.google.maps.android:maps-compose:4.3.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    implementation("androidx.activity:activity-compose:1.8.2")
+    implementation("com.google.maps.android:maps-compose:4.3.2")
+    implementation("com.google.maps.android:maps-compose-utils:4.3.2")
+    implementation("com.google.accompanist:accompanist-permissions:0.35.0-alpha")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.github.composeuisuite:ohteepee:1.0.3")
 
@@ -175,6 +176,9 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-inappmessaging-display")
+
+    // Places search
+    implementation("com.google.android.libraries.places:places:3.3.0")
 
     // AboutLibraries
     implementation("com.mikepenz:aboutlibraries-compose:10.10.0")

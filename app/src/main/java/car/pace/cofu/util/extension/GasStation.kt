@@ -14,7 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import car.pace.cofu.R
-import car.pace.cofu.ui.home.HomeViewModel
+import car.pace.cofu.ui.list.ListViewModel
 import car.pace.cofu.ui.wallet.fueltype.FuelType
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 import car.pace.cofu.util.Constants.COFU_DISTANCE_METERS
@@ -146,7 +146,7 @@ fun Date.lastUpdatedText(): String {
 }
 
 @Composable
-fun HomeViewModel.ListStation.distanceText(context: Context) = remember(distance) {
+fun ListViewModel.ListStation.distanceText(context: Context) = remember(distance) {
     when {
         distance == null -> null
         distance < COFU_DISTANCE_METERS -> context.getString(R.string.gas_station_location_here)

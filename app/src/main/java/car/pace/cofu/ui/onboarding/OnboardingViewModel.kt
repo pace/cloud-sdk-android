@@ -59,10 +59,12 @@ class OnboardingViewModel @Inject constructor(
                 }
                 currentPage + 1
             }
+
             args as? FuelTypeGroup != null -> {
                 finishOnboarding(args)
                 null
             }
+
             else -> currentPage + 1
         }
 

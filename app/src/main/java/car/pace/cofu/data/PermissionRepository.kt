@@ -4,6 +4,8 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import javax.inject.Inject
@@ -22,7 +24,12 @@ class PermissionRepository @Inject constructor(
     }
 
     companion object {
-        const val LOCATION_PERMISSION = Manifest.permission.ACCESS_FINE_LOCATION
+
+        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         const val NOTIFICATION_PERMISSION = Manifest.permission.POST_NOTIFICATIONS
+        const val FINE_LOCATION_PERMISSION = Manifest.permission.ACCESS_FINE_LOCATION
+        const val COARSE_LOCATION_PERMISSION = Manifest.permission.ACCESS_COARSE_LOCATION
+
+        val locationPermissions = listOf(FINE_LOCATION_PERMISSION, COARSE_LOCATION_PERMISSION)
     }
 }
