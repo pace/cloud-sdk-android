@@ -3,7 +3,7 @@ package car.pace.cofu.ui.more
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
-import car.pace.cofu.R
+import car.pace.cofu.MenuEntries
 import car.pace.cofu.ui.navigation.graph.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
@@ -17,7 +17,7 @@ class MoreViewModel @Inject constructor() : ViewModel() {
         val route: Route,
         val icon: ImageVector?,
         @StringRes val labelRes: Int?,
-        val url: String? = null
+        @StringRes val urlRes: Int? = null
     )
 
     val items = buildList {
@@ -30,19 +30,20 @@ class MoreViewModel @Inject constructor() : ViewModel() {
             )
         )
 
-        // TODO: Add dynamic WEBSITE routes from config. Because the menu label needs to be localized, specify a string resource. The menu item also needs an URL to open in the WebViewScreen e.g.:
-        add(
-            Route.WEBSITE.toMoreItem(R.string.MENU_ITEMS_CONTACT, "https://www.pace.car/de/drive/")
+        addAll(
+            MenuEntries.entries.map {
+                Route.WEBSITE.toMoreItem(it.key, it.value)
+            }
         )
     }
 
     private fun Route.toMoreItem(
         @StringRes labelRes: Int? = null,
-        url: String? = null
+        @StringRes urlRes: Int? = null
     ) = MoreItem(
         route = this,
         icon = this.icon,
         labelRes = labelRes ?: this.labelRes,
-        url = url
+        urlRes = urlRes
     )
 }

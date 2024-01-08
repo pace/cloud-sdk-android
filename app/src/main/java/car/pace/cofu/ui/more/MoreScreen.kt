@@ -44,7 +44,7 @@ fun MoreScreen(
                     role = Role.Button,
                     onClick = {
                         if (it.route == Route.WEBSITE) {
-                            IntentUtils.launchInCustomTabIfAvailable(context, it.url)
+                            IntentUtils.launchInCustomTabIfAvailable(context, it.urlRes?.let { url -> context.getString(url) })
                         } else {
                             onNavigate(it.route)
                         }
