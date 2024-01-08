@@ -70,5 +70,6 @@ class SharedPreferencesRepository @Inject constructor(
     companion object {
         const val PREF_KEY_ONBOARDING_DONE = "onboardingDone"
         const val PREF_KEY_FUEL_TYPE = "fuelType"
+        const val PREF_KEY_TRACKING_ENABLED = "trackingEnabled"
     }
 }

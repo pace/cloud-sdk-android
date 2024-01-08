@@ -65,7 +65,7 @@ fun RadioButton(
                 role = Role.RadioButton,
                 onClick = onClick
             )
-            .background(color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(8.dp))
+            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(8.dp))
             .padding(horizontal = 20.dp, vertical = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -79,7 +79,7 @@ fun RadioButton(
             modifier = Modifier
                 .size(30.dp)
                 .background(color = MaterialTheme.colorScheme.primaryContainer, shape = CircleShape)
-                .border(width = 1.dp, color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant, shape = CircleShape),
+                .border(width = 1.dp, color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface, shape = CircleShape),
             contentAlignment = Alignment.Center
         ) {
             if (selected) {

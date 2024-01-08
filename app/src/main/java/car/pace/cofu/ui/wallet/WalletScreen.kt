@@ -78,8 +78,7 @@ fun WalletScreen(
         onLogout = {
             coroutineScope.launch {
                 val activity = context.findActivity<AppCompatActivity>()
-                IDKit.endSession(activity)
-                viewModel.resetAppData()
+                viewModel.resetAppData(activity)
                 onNavigate(Route.ONBOARDING)
             }
         },
@@ -152,7 +151,7 @@ fun UserHeader(
         modifier = modifier
             .fillMaxWidth()
             .dropShadow()
-            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(12.dp))
+            .background(color = MaterialTheme.colorScheme.background, shape = RoundedCornerShape(12.dp))
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -160,7 +159,7 @@ fun UserHeader(
             imageVector = Icons.Outlined.AccountCircle,
             contentDescription = null,
             modifier = Modifier.size(48.dp),
-            tint = MaterialTheme.colorScheme.secondary
+            tint = MaterialTheme.colorScheme.surface
         )
 
         Column(
@@ -174,7 +173,7 @@ fun UserHeader(
             Text(
                 text = email,
                 modifier = Modifier.padding(top = 2.dp),
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(

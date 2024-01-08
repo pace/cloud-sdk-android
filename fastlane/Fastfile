@@ -1,0 +1,18 @@
+# Android
+default_platform :android
+
+platform :android do
+  lane :publish do |options|
+    supply(
+      track: options[:track],
+      aab: options[:aab_file],
+      json_key: options[:credentials_file],
+      package_name: options[:package_name],
+      mapping: options[:mapping_file],
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end

@@ -15,16 +15,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import car.pace.cofu.R
 import car.pace.cofu.ui.component.SecondaryButton
 import car.pace.cofu.ui.navigation.graph.Route
 import car.pace.cofu.ui.onboarding.PageScaffold
 import car.pace.cofu.ui.theme.AppTheme
-import com.google.firebase.Firebase
-import com.google.firebase.analytics.analytics
 
 @Composable
 fun TrackingPage(
+    viewModel: TrackingPageViewModel = hiltViewModel(),
     onNavigate: (Route) -> Unit,
     onNext: () -> Unit
 ) {
@@ -33,7 +33,7 @@ fun TrackingPage(
         titleRes = R.string.onboarding_tracking_title,
         nextButtonTextRes = R.string.common_use_accept,
         onNextButtonClick = {
-            Firebase.analytics.setAnalyticsCollectionEnabled(true)
+            viewModel.enableAnalytics()
             onNext()
         },
         descriptionContent = {
@@ -48,7 +48,7 @@ fun TrackingPage(
 
                 addStyle(
                     style = SpanStyle(
-                        color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.secondary,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal
                     ),
@@ -84,7 +84,7 @@ fun TrackingPage(
                 text = stringResource(id = R.string.common_use_decline),
                 modifier = Modifier.padding(start = 20.dp, top = 12.dp, end = 20.dp),
                 onClick = {
-                    Firebase.analytics.setAnalyticsCollectionEnabled(false)
+                    viewModel.disableAnalytics()
                     onNext()
                 }
             )

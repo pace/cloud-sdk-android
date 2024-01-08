@@ -64,8 +64,6 @@ import car.pace.cofu.ui.component.SecondaryButton
 import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.component.dropShadow
 import car.pace.cofu.ui.theme.AppTheme
-import car.pace.cofu.ui.theme.Error
-import car.pace.cofu.ui.theme.Shadow
 import car.pace.cofu.ui.theme.Success
 import car.pace.cofu.ui.theme.Warning
 import car.pace.cofu.util.Constants.DETAIL_EMPTY_PRICES_CONTENT_TYPE
@@ -355,11 +353,11 @@ fun DetailMap(
                         text = stringResource(id = R.string.closed_label),
                         modifier = Modifier
                             .padding(bottom = 4.dp)
-                            .dropShadow(color = Shadow)
-                            .border(width = 1.dp, color = MaterialTheme.colorScheme.onSurfaceVariant, shape = RoundedCornerShape(size = 8.dp))
+                            .dropShadow()
+                            .border(width = 1.dp, color = MaterialTheme.colorScheme.onSurface, shape = RoundedCornerShape(size = 8.dp))
                             .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(size = 8.dp))
                             .padding(4.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
                         lineHeight = 15.sp
@@ -368,7 +366,7 @@ fun DetailMap(
 
                 Box(
                     modifier = Modifier
-                        .dropShadow(color = Shadow)
+                        .dropShadow()
                         .size(15.dp)
                         .background(color = MaterialTheme.colorScheme.primaryContainer, shape = CircleShape),
                     contentAlignment = Alignment.Center
@@ -438,7 +436,7 @@ fun DistanceLabel(
     isClosed: Boolean
 ) {
     val color = when {
-        isClosed -> Error
+        isClosed -> MaterialTheme.colorScheme.error
         canStartFueling -> Success
         else -> Warning
     }
@@ -453,12 +451,12 @@ fun DistanceLabel(
         Icon(
             painter = painterResource(id = R.drawable.ic_distance_arrow),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.surface
+            tint = MaterialTheme.colorScheme.background
         )
         Text(
             text = distanceText,
             modifier = Modifier.padding(start = 4.dp),
-            color = MaterialTheme.colorScheme.surface,
+            color = MaterialTheme.colorScheme.background,
             style = MaterialTheme.typography.labelSmall
         )
     }
@@ -597,7 +595,7 @@ fun PriceListItem(
     Column(
         modifier = modifier
             .height(70.dp)
-            .background(color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(8.dp))
+            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(8.dp))
             .padding(2.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally

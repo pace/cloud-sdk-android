@@ -46,7 +46,7 @@ fun DefaultListItem(
                     modifier = Modifier
                         .padding(end = 12.dp)
                         .size(20.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
             Text(
@@ -54,7 +54,7 @@ fun DefaultListItem(
                 modifier = Modifier
                     .padding(vertical = 16.dp)
                     .weight(1f),
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onPrimary,
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
@@ -68,17 +68,17 @@ fun DefaultListItem(
                     modifier = Modifier
                         .padding(start = 12.dp)
                         .size(16.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             } else {
                 Switch(
                     checked = switchInfo.checked,
                     onCheckedChange = switchInfo.onCheckChanged,
                     colors = SwitchDefaults.colors(
-                        checkedThumbColor = MaterialTheme.colorScheme.surface,
-                        checkedTrackColor = MaterialTheme.colorScheme.primary,
-                        uncheckedThumbColor = MaterialTheme.colorScheme.secondary,
-                        uncheckedTrackColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        checkedThumbColor = MaterialTheme.colorScheme.background,
+                        uncheckedThumbColor = MaterialTheme.colorScheme.background,
+                        uncheckedTrackColor = MaterialTheme.colorScheme.onSurface,
+                        uncheckedBorderColor = MaterialTheme.colorScheme.onSurface
                     )
                 )
             }
@@ -102,12 +102,24 @@ fun DefaultListItemPreview() {
 
 @Preview
 @Composable
-fun DefaultSwitchListItemPreview() {
+fun DefaultCheckedSwitchListItemPreview() {
     AppTheme {
         DefaultListItem(
             icon = Icons.Outlined.ReceiptLong,
             text = "List item label",
             switchInfo = SwitchInfo(true) {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun DefaultUncheckedSwitchListItemPreview() {
+    AppTheme {
+        DefaultListItem(
+            icon = Icons.Outlined.ReceiptLong,
+            text = "List item label",
+            switchInfo = SwitchInfo(false) {}
         )
     }
 }

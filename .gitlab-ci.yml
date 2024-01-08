@@ -1,63 +1,169 @@
 image: softartdev/android-fastlane
 
 before_script:
+    - export GRADLE_USER_HOME=$(pwd)/.gradle
     - chmod +x ./gradlew
-    - echo $DEFAULT_CONFIG | tr ' ' '\r\n' > config.json
+    - echo $DEFAULT_CONFIGURATION | tr ' ' '\r\n' > configuration.json
     - echo "$FIREBASE_DEV_JSON" > app/google-services.json
-    - echo "$RELEASE_KEYSTORE" | base64 -d > keystore.jks
-
-after_script:
-    - rm config.json || true
+    - export TAG_COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
+    - echo "CI_COMMIT_SHA:" $CI_COMMIT_SHA
+    - echo "Commit time to be used as build number:" $TAG_COMMIT_TIME
+    - export BUILD_NUMBER=$(date -u -d @$TAG_COMMIT_TIME +"%Y%m%d%H")
+    - echo "Build number:" $BUILD_NUMBER
+    - export VERSION_NAME=$(date -u -d @$TAG_COMMIT_TIME +"%y.%V.%u")
+    - echo "Version name:" $VERSION_NAME
 
 stages:
-  - test
-  - build
-  - publish
+    - test
+    - release
+    - config
+    - build
+    - publish
 
 .only_merge_requests: &only_merge_requests
-  interruptible: true
-  only:
-    refs:
-      - merge_requests
+    only:
+        refs:
+            - merge_requests
 
 .docker_image:
-  tags:
-    - docker
-  retry: 2
+    tags:
+        - docker
+    interruptible: true
+    retry: 2
 
 .runner_tags:
-  tags:
-    - android-latest
-  retry: 2
+    tags:
+        - android-latest
+    interruptible: true
+    retry: 2
 
 .testing_with_emulator:
-  extends: .runner_tags
-  stage: test
-  retry: 2
-  <<: *only_merge_requests
+    extends: .runner_tags
+    stage: test
+    retry: 2
+    <<: *only_merge_requests
+
+.release_schedule_rule: &release_schedule_rule
+    rules:
+        -   if: $SCHEDULED_JOB == "connectedfueling-app-release"
+
+.tag_rule: &tag_rule
+    rules:
+        -   if: $CI_COMMIT_TAG =~ /^connectedfueling-app-/
 
 code_style:
-  extends: .docker_image
-  script:
-    - ./gradlew clean app:ktlintCheck
-  <<: *only_merge_requests
+    extends: .docker_image
+    script:
+        - ./gradlew clean app:ktlintCheck
+    <<: *only_merge_requests
 
 unit_test:
-  extends: .docker_image
-  script:
-    - ./gradlew testDebugUnitTest
-  <<: *only_merge_requests
+    extends: .docker_image
+    script:
+        - ./gradlew testDebugUnitTest
+    <<: *only_merge_requests
 
 android_test:
-  extends: .testing_with_emulator
-  script:
-    - "/usr/local/share/android-sdk/tools/emulator -avd api28 > /dev/null 2>&1 -skin 480x854 -no-audio -no-boot-anim -no-snapshot -memory 2048 &"
-    - "/usr/local/share/android-sdk/platform-tools/adb wait-for-device"
-    - ./gradlew connectedDebugAndroidTest
+    extends: .testing_with_emulator
+    script:
+        - "/usr/local/share/android-sdk/tools/emulator -avd api28 > /dev/null 2>&1 -skin 480x854 -no-audio -no-boot-anim -no-snapshot -memory 2048 &"
+        - "/usr/local/share/android-sdk/platform-tools/adb wait-for-device"
+        - ./gradlew connectedDebugAndroidTest
 
 trigger_github_mirroring:
-  interruptible: true
-  script:
-    - ./scripts/github_mirroring.sh
-  rules:
-    - if: $SCHEDULED_JOB == "connectedfueling-app-github-mirroring"
+    interruptible: true
+    script:
+        - ./scripts/github_mirroring.sh
+    rules:
+        -   if: $SCHEDULED_JOB == "connectedfueling-app-github-mirroring"
+
+create_release:
+    extends: .docker_image
+    image: node:latest
+    stage: release
+    <<: *release_schedule_rule
+    script:
+        - if $(eval $CONDITION); then echo "Releasing..."; else echo "Nothing to do"; exit 0; fi
+        - export CUSTOM_TAG_NAME="${TAG_PREFIX}v${VERSION_NAME}.${BUILD_NUMBER}"
+        - echo "Creating tag with tag name:" $CUSTOM_TAG_NAME
+        - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/pace/mobile/common.git tmp/common
+        - cd tmp/common/scripts/release
+        - yarn install
+        - node --unhandled-rejections=strict create.js
+    variables:
+        TAG_PREFIX: "connectedfueling-app-"
+
+fetch_config:
+    extends: .docker_image
+    image: python:3.7
+    stage: config
+    <<: *tag_rule
+    script:
+        - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/pace/mobile/common.git tmp/common
+        - pip3 install -r tmp/common/scripts/metadata/requirements.txt
+        - python3 tmp/common/scripts/whitelabel-app/fetch_configuration.py --whitelabel-app-id $WHITELABEL_APP_ID --platform android --configuration-base-url $DIRECTUS_BASE_URL --access-token $DIRECTUS_ACCESS_TOKEN
+    artifacts:
+        name: App configuration
+        expire_in: 14 days
+        paths:
+            - configuration
+
+build_app:
+    extends: .docker_image
+    stage: build
+    <<: *tag_rule
+    script:
+        # The extension for some files is a wildcard, as several file extensions are allowed
+        - mv configuration/configuration.json configuration.json
+        - mv ${ASSET_DIRECTORY}/firebase_config_android.json app/google-services.json
+        - mv ${ASSET_DIRECTORY}/android_keystore.jks keystore-release.jks
+        - |+
+            for f in ${ASSET_DIRECTORY}/android_launcher_icon_*
+            do
+              extension="${f##*.}"
+              density=${f##*android_launcher_icon_}
+              density=${density%%.*}
+              output=app/src/main/res/mipmap-${density}/ic_launcher.${extension}
+              mv "$f" "$output"
+              echo "Moved launcher icon $f to $output"
+            done
+        - |+
+            for f in ${ASSET_DIRECTORY}/*.htm*
+            do
+              filename=$(basename -- "$f")
+              filename=${filename%_*}
+              extension="${f##*.}"
+              language=${f##*_}
+              language=${language%-*}
+              if [ $language = "en" ]; then
+                output=app/src/main/res/raw/${filename}.${extension}
+              else
+                output=app/src/main/res/raw-${language}/${filename}.${extension}
+              fi
+              mv "$f" "$output"
+              echo "Moved legal document $f to $output"
+            done
+        - ./gradlew clean app:bundleRelease -PbuildNumber=$BUILD_NUMBER -PversionName=$VERSION_NAME
+    artifacts:
+        name: App build
+        expire_in: 30 days
+        paths:
+            - app/build/outputs
+    variables:
+        ASSET_DIRECTORY: configuration/assets
+
+publish_app:
+    extends: .docker_image
+    stage: publish
+    <<: *tag_rule
+    dependencies:
+        - fetch_config
+        - build_app
+    script:
+        - >-
+            fastlane publish
+            track:internal
+            aab_file:app/build/outputs/bundle/release/app-release.aab
+            credentials_file:configuration/assets/android_play_store_credentials.json
+            package_name:$(grep -oP '(?<="application_id": ")[^"]*' configuration/configuration.json)
+            mapping_file:app/build/outputs/mapping/release/mapping.txt

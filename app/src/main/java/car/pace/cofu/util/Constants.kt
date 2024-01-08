@@ -8,8 +8,8 @@ object Constants {
     const val COFU_DISTANCE_METERS = 500
     const val FADE_MAP_DURATION = 300
 
-    const val TERMS_URI = "file:///android_res/raw/terms.html"
-    const val PRIVACY_URI = "file:///android_res/raw/privacy.html"
+    const val TERMS_URI = "file:///android_res/raw/usage_terms.html"
+    const val PRIVACY_URI = "file:///android_res/raw/privacy_statement.html"
     const val ANALYSIS_URI = "file:///android_res/raw/analysis.html"
     const val IMPRINT_URI = "file:///android_res/raw/imprint.html"
 

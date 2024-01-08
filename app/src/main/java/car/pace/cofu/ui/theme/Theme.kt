@@ -12,17 +12,15 @@ import androidx.compose.ui.graphics.Color
 val LightColors = lightColorScheme(
     primary = Primary,
     onPrimary = OnPrimary,
-    primaryContainer = Surface,
+    primaryContainer = Background,
     secondary = Secondary,
     onSecondary = Primary,
-    background = Surface,
-    onBackground = OnSurface,
+    background = Background,
+    onBackground = OnPrimary,
     surface = Surface,
     onSurface = OnSurface,
-    surfaceVariant = Secondary,
-    onSurfaceVariant = OnSurfaceVariant,
     error = Error,
-    outlineVariant = Secondary
+    outlineVariant = Surface
 )
 
 @Composable

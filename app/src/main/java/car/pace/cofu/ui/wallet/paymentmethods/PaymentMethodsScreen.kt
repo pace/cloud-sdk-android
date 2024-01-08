@@ -155,7 +155,7 @@ fun PaymentMethodListItem(
             }
             val fallbackIconPainter = forwardingPainter(
                 painter = rememberVectorPainter(Icons.Outlined.CreditCard),
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant)
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
             )
 
             AsyncImage(
@@ -172,13 +172,13 @@ fun PaymentMethodListItem(
             ) {
                 Text(
                     text = name,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.bodySmall
                 )
                 Text(
                     text = alias ?: name,
                     modifier = Modifier.padding(top = 8.dp),
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.titleSmall
                 )
             }
@@ -188,7 +188,7 @@ fun PaymentMethodListItem(
                 modifier = Modifier
                     .padding(start = 12.dp)
                     .size(16.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                tint = MaterialTheme.colorScheme.onSurface
             )
         }
         Divider()
