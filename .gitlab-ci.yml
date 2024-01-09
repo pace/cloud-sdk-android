@@ -12,7 +12,6 @@ before_script:
     - echo "Build number:" $BUILD_NUMBER
     - export VERSION_NAME=$(date -u -d @$TAG_COMMIT_TIME +"%y.%V.%u")
     - echo "Version name:" $VERSION_NAME
-
 stages:
     - test
     - release
@@ -143,6 +142,36 @@ build_app:
               mv "$f" "$output"
               echo "Moved legal document $f to $output"
             done
+        - apt-get update && apt-get install -y jq
+        - |+
+            shopt -s extglob
+            for f in ${ASSET_DIRECTORY}/@(*_header_image_android.*|detail_view_brand_icon_android.*)
+            do
+              extension="${f##*.}"
+              case "$f" in
+                *onboarding_header_image_android*) filename=ic_onboarding_header;;
+                *list_header_image_android*) filename=ic_home_header;;
+                *fallback_header_image_android*) filename=ic_brand_logo;;
+                *detail_view_brand_icon_android.*) filename=ic_brand_horizontal;;
+              esac
+              output=${HEADER_DIRECTORY}/${filename}.${extension}
+              mv "$f" "$output"
+              echo "Moved image $f to $output"
+            done
+        - |+
+            if [ -e "${HEADER_DIRECTORY}/ic_home_header.png" ]; then
+                jq '. + { "home_show_custom_header": "true"}' configuration.json > temp.json && mv temp.json configuration.json
+                echo "Home header image exists and will be used."
+            else
+                echo "Home header image doesn't exist, fallback header will be used."
+            fi
+
+            if [ -e "${HEADER_DIRECTORY}/ic_onboarding_header.png" ]; then
+                jq '. + { "onboarding_show_custom_header": "true"}' configuration.json > temp.json && mv temp.json configuration.json
+                echo "Onboarding header image exists and will be used."
+            else
+                echo "Onboarding header image doesn't exist, fallback header will be used."
+            fi
         - ./gradlew clean app:bundleRelease -PbuildNumber=$BUILD_NUMBER -PversionName=$VERSION_NAME
     artifacts:
         name: App build
@@ -151,6 +180,7 @@ build_app:
             - app/build/outputs
     variables:
         ASSET_DIRECTORY: configuration/assets
+        HEADER_DIRECTORY: app/src/main/res/drawable
 
 publish_app:
     extends: .docker_image

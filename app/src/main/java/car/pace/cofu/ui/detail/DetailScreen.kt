@@ -422,7 +422,7 @@ fun AddressRow(
             }
         }
         Image(
-            painter = painterResource(id = R.drawable.ic_cofu_horizontal),
+            painter = painterResource(id = R.drawable.ic_brand_horizontal),
             contentDescription = null,
             modifier = Modifier.padding(start = 12.dp)
         )
