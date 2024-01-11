@@ -38,6 +38,7 @@ import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
 import car.pace.cofu.ui.component.DefaultDialog
 import car.pace.cofu.ui.component.DefaultListItem
+import car.pace.cofu.ui.component.TextTopBar
 import car.pace.cofu.ui.component.dropShadow
 import car.pace.cofu.ui.navigation.graph.Route
 import car.pace.cofu.ui.onboarding.twofactor.biometric.findActivity
@@ -55,7 +56,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun WalletScreen(
     viewModel: WalletViewModel = hiltViewModel(),
-    onNavigate: (Route) -> Unit
+    onNavigate: (Route) -> Unit,
+    onLogout: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -79,7 +81,7 @@ fun WalletScreen(
             coroutineScope.launch {
                 val activity = context.findActivity<AppCompatActivity>()
                 viewModel.resetAppData(activity)
-                onNavigate(Route.ONBOARDING)
+                onLogout()
             }
         },
         onNavigate = onNavigate
@@ -93,48 +95,55 @@ fun WalletScreenContent(
     onLogout: () -> Unit,
     onNavigate: (Route) -> Unit
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
-    ) {
-        item(
-            key = USER_HEADER_KEY,
-            contentType = USER_HEADER_CONTENT_TYPE
-        ) {
-            UserHeader(
-                email = email,
-                onLogout = onLogout
-            )
-        }
+    Column {
+        TextTopBar(
+            text = stringResource(id = R.string.wallet_tab_label),
+            backIcon = null
+        )
 
-        item(
-            key = SPACER_KEY,
-            contentType = SPACER_CONTENT_TYPE
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
         ) {
-            Spacer(modifier = Modifier.padding(top = 28.dp))
-        }
+            item(
+                key = USER_HEADER_KEY,
+                contentType = USER_HEADER_CONTENT_TYPE
+            ) {
+                UserHeader(
+                    email = email,
+                    onLogout = onLogout
+                )
+            }
 
-        items(
-            items = items,
-            key = Route::route,
-            contentType = { DEFAULT_LIST_ITEM_CONTENT_TYPE }
-        ) {
-            val context = LocalContext.current
+            item(
+                key = SPACER_KEY,
+                contentType = SPACER_CONTENT_TYPE
+            ) {
+                Spacer(modifier = Modifier.padding(top = 28.dp))
+            }
 
-            DefaultListItem(
-                modifier = Modifier.clickable(
-                    role = Role.Button,
-                    onClick = {
-                        when (it) {
-                            Route.TRANSACTIONS -> AppKit.openTransactions(context)
-                            Route.DELETE_ACCOUNT -> AppKit.openPaceID(context)
-                            else -> onNavigate(it)
+            items(
+                items = items,
+                key = Route::route,
+                contentType = { DEFAULT_LIST_ITEM_CONTENT_TYPE }
+            ) {
+                val context = LocalContext.current
+
+                DefaultListItem(
+                    modifier = Modifier.clickable(
+                        role = Role.Button,
+                        onClick = {
+                            when (it) {
+                                Route.TRANSACTIONS -> AppKit.openTransactions(context)
+                                Route.DELETE_ACCOUNT -> AppKit.openPaceID(context)
+                                else -> onNavigate(it)
+                            }
                         }
-                    }
-                ),
-                icon = it.icon,
-                text = it.labelRes?.let { res -> stringResource(id = res) }.orEmpty()
-            )
+                    ),
+                    icon = it.icon,
+                    text = it.labelRes?.let { res -> stringResource(id = res) }.orEmpty()
+                )
+            }
         }
     }
 }

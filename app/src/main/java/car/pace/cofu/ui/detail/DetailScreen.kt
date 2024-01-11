@@ -61,6 +61,7 @@ import car.pace.cofu.ui.component.ErrorCard
 import car.pace.cofu.ui.component.LoadingCard
 import car.pace.cofu.ui.component.PrimaryButton
 import car.pace.cofu.ui.component.SecondaryButton
+import car.pace.cofu.ui.component.TextTopBar
 import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.component.dropShadow
 import car.pace.cofu.ui.theme.AppTheme
@@ -114,6 +115,7 @@ import java.util.UUID
 
 @Composable
 fun DetailScreen(
+    onNavigateUp: () -> Unit,
     viewModel: DetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -122,6 +124,7 @@ fun DetailScreen(
     DetailScreenContent(
         uiState = uiState,
         userLocation = userLocation,
+        onNavigateUp = onNavigateUp,
         onRefresh = viewModel::refresh
     )
 }
@@ -130,133 +133,140 @@ fun DetailScreen(
 fun DetailScreenContent(
     uiState: UiState<GasStation>,
     userLocation: LatLng?,
+    onNavigateUp: () -> Unit,
     onRefresh: () -> Unit
 ) {
-    Column(
-        modifier = Modifier.padding(horizontal = 20.dp)
-    ) {
-        when (uiState) {
-            is UiState.Loading -> {
-                LoadingCard(
-                    title = stringResource(id = R.string.gas_station_loading_title),
-                    description = stringResource(id = R.string.gas_station_loading_description),
-                    modifier = Modifier.padding(vertical = 12.dp)
-                )
-            }
+    Column {
+        TextTopBar(
+            onNavigateUp = onNavigateUp
+        )
 
-            is UiState.Success -> {
-                val gasStation = uiState.data
-                val canStartFueling = gasStation.canStartFueling(userLocation)
-                val maxItemsInRow = 3
+        Column(
+            modifier = Modifier.padding(horizontal = 20.dp)
+        ) {
+            when (uiState) {
+                is UiState.Loading -> {
+                    LoadingCard(
+                        title = stringResource(id = R.string.gas_station_loading_title),
+                        description = stringResource(id = R.string.gas_station_loading_description),
+                        modifier = Modifier.padding(vertical = 12.dp)
+                    )
+                }
 
-                // To always show 3 prices in a row, we need to use a LazyVerticalGrid here.
-                // Unfortunately, a LazyVerticalGrid is not compatible with a scrollable column,
-                // so we also add the other content as items to the LazyVerticalGrid.
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(maxItemsInRow),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                    contentPadding = PaddingValues(vertical = 12.dp)
-                ) {
-                    item(
-                        key = DETAIL_TOP_CONTENT_KEY,
-                        span = { GridItemSpan(maxItemsInRow) },
-                        contentType = DETAIL_TOP_CONTENT_CONTENT_TYPE
+                is UiState.Success -> {
+                    val gasStation = uiState.data
+                    val canStartFueling = gasStation.canStartFueling(userLocation)
+                    val maxItemsInRow = 3
+
+                    // To always show 3 prices in a row, we need to use a LazyVerticalGrid here.
+                    // Unfortunately, a LazyVerticalGrid is not compatible with a scrollable column,
+                    // so we also add the other content as items to the LazyVerticalGrid.
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(maxItemsInRow),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        contentPadding = PaddingValues(vertical = 12.dp)
                     ) {
-                        ConstraintLayout {
-                            val (map, address, closed) = createRefs()
-                            val openingHoursStatus = gasStation.openingHoursStatus()
+                        item(
+                            key = DETAIL_TOP_CONTENT_KEY,
+                            span = { GridItemSpan(maxItemsInRow) },
+                            contentType = DETAIL_TOP_CONTENT_CONTENT_TYPE
+                        ) {
+                            ConstraintLayout {
+                                val (map, address, closed) = createRefs()
+                                val openingHoursStatus = gasStation.openingHoursStatus()
 
-                            MapRow(
-                                location = gasStation.center?.toLatLn(),
-                                isClosed = openingHoursStatus == OpeningHoursStatus.Closed,
-                                modifier = Modifier.constrainAs(map) {
-                                    top.linkTo(parent.top)
-                                    width = Dimension.matchParent
-                                    height = Dimension.percent(0.45f)
-                                }
-                            )
+                                MapRow(
+                                    location = gasStation.center?.toLatLn(),
+                                    isClosed = openingHoursStatus == OpeningHoursStatus.Closed,
+                                    modifier = Modifier.constrainAs(map) {
+                                        top.linkTo(parent.top)
+                                        width = Dimension.matchParent
+                                        height = Dimension.percent(0.45f)
+                                    }
+                                )
 
-                            AddressRow(
-                                name = gasStation.name,
-                                address = gasStation.address,
-                                gasStationLocation = gasStation.center?.toLatLn(),
-                                userLocation = userLocation,
-                                canStartFueling = canStartFueling,
-                                closedOrClosesSoon = openingHoursStatus != OpeningHoursStatus.Open,
-                                modifier = Modifier.constrainAs(address) {
-                                    top.linkTo(anchor = map.bottom, margin = 28.dp)
-                                    width = Dimension.matchParent
-                                }
-                            )
-
-                            if (openingHoursStatus != OpeningHoursStatus.Open) {
-                                ClosedHint(
-                                    closesAt = (openingHoursStatus as? OpeningHoursStatus.ClosesSoon)?.closesAt,
-                                    modifier = Modifier.constrainAs(closed) {
-                                        top.linkTo(anchor = address.bottom, margin = 16.dp)
+                                AddressRow(
+                                    name = gasStation.name,
+                                    address = gasStation.address,
+                                    gasStationLocation = gasStation.center?.toLatLn(),
+                                    userLocation = userLocation,
+                                    canStartFueling = canStartFueling,
+                                    closedOrClosesSoon = openingHoursStatus != OpeningHoursStatus.Open,
+                                    modifier = Modifier.constrainAs(address) {
+                                        top.linkTo(anchor = map.bottom, margin = 28.dp)
                                         width = Dimension.matchParent
                                     }
                                 )
+
+                                if (openingHoursStatus != OpeningHoursStatus.Open) {
+                                    ClosedHint(
+                                        closesAt = (openingHoursStatus as? OpeningHoursStatus.ClosesSoon)?.closesAt,
+                                        modifier = Modifier.constrainAs(closed) {
+                                            top.linkTo(anchor = address.bottom, margin = 16.dp)
+                                            width = Dimension.matchParent
+                                        }
+                                    )
+                                }
                             }
                         }
+
+                        val showPrices = !BuildConfig.HIDE_PRICES
+                        if (showPrices) {
+                            priceList(
+                                maxItemsInRow = maxItemsInRow,
+                                prices = gasStation.prices,
+                                priceFormat = gasStation.priceFormat,
+                                currency = gasStation.currency,
+                                updatedAt = gasStation.updatedAt
+                            )
+                        }
+
+                        item(
+                            key = DETAIL_OPENING_HOURS_KEY,
+                            span = { GridItemSpan(maxItemsInRow) },
+                            contentType = DETAIL_OPENING_HOURS_CONTENT_TYPE
+                        ) {
+                            OpeningHoursList(
+                                openingHours = gasStation.openingHours,
+                                modifier = Modifier.padding(top = 28.dp)
+                            )
+                        }
                     }
 
-                    val showPrices = !BuildConfig.HIDE_PRICES
-                    if (showPrices) {
-                        priceList(
-                            maxItemsInRow = maxItemsInRow,
-                            prices = gasStation.prices,
-                            priceFormat = gasStation.priceFormat,
-                            currency = gasStation.currency,
-                            updatedAt = gasStation.updatedAt
+                    val buttonModifier = Modifier.padding(top = 12.dp, bottom = 30.dp)
+                    val context = LocalContext.current
+
+                    if (canStartFueling) {
+                        PrimaryButton(
+                            text = stringResource(id = R.string.common_start_fueling),
+                            modifier = buttonModifier,
+                            onClick = {
+                                AppKit.openFuelingApp(context, gasStation.id)
+                            }
                         )
-                    }
-
-                    item(
-                        key = DETAIL_OPENING_HOURS_KEY,
-                        span = { GridItemSpan(maxItemsInRow) },
-                        contentType = DETAIL_OPENING_HOURS_CONTENT_TYPE
-                    ) {
-                        OpeningHoursList(
-                            openingHours = gasStation.openingHours,
-                            modifier = Modifier.padding(top = 28.dp)
+                    } else {
+                        SecondaryButton(
+                            text = stringResource(id = R.string.common_start_navigation),
+                            modifier = buttonModifier,
+                            onClick = {
+                                IntentUtils.startNavigation(context, gasStation)
+                            }
                         )
                     }
                 }
 
-                val buttonModifier = Modifier.padding(top = 12.dp, bottom = 30.dp)
-                val context = LocalContext.current
-
-                if (canStartFueling) {
-                    PrimaryButton(
-                        text = stringResource(id = R.string.common_start_fueling),
-                        modifier = buttonModifier,
-                        onClick = {
-                            AppKit.openFuelingApp(context, gasStation.id)
-                        }
-                    )
-                } else {
-                    SecondaryButton(
-                        text = stringResource(id = R.string.common_start_navigation),
-                        modifier = buttonModifier,
-                        onClick = {
-                            IntentUtils.startNavigation(context, gasStation)
-                        }
+                is UiState.Error -> {
+                    ErrorCard(
+                        title = stringResource(id = R.string.general_error_title),
+                        description = stringResource(id = R.string.gas_station_error_description),
+                        modifier = Modifier.padding(vertical = 12.dp),
+                        imageVector = Icons.Outlined.LocalGasStation,
+                        buttonText = stringResource(id = R.string.common_use_retry),
+                        onButtonClick = onRefresh
                     )
                 }
-            }
-
-            is UiState.Error -> {
-                ErrorCard(
-                    title = stringResource(id = R.string.general_error_title),
-                    description = stringResource(id = R.string.gas_station_error_description),
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    imageVector = Icons.Outlined.LocalGasStation,
-                    buttonText = stringResource(id = R.string.common_use_retry),
-                    onButtonClick = onRefresh
-                )
             }
         }
     }
@@ -705,6 +715,7 @@ fun DetailScreenContentPreview() {
                 }
             ),
             userLocation = LatLng(49.013513, 8.4018654),
+            onNavigateUp = {},
             onRefresh = {}
         )
     }

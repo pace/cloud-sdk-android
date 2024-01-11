@@ -22,7 +22,6 @@ fun rememberAppState(
 class AppState(
     val navController: NavHostController
 ) {
-    val bottomBarItems = Graph.values()
 
     val currentDestination: NavDestination?
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination
@@ -35,9 +34,6 @@ class AppState(
 
     val shouldShowBottomBar: Boolean
         @Composable get() = currentRoute?.showBottomBar == true
-
-    val shouldDrawBehindStatusBar: Boolean
-        @Composable get() = currentRoute?.drawBehindStatusBar == true
 
     fun navigateToGraph(graph: Graph) {
         navController.navigate(graph.route) {
@@ -53,9 +49,5 @@ class AppState(
             // Restore state when reselecting a previously selected item
             restoreState = true
         }
-    }
-
-    fun navigateUp() {
-        navController.navigateUp()
     }
 }

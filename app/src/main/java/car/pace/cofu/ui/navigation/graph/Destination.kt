@@ -12,17 +12,24 @@ import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.PersonRemove
 import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.ui.graphics.vector.ImageVector
-import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
 import car.pace.cofu.ui.icon.DeveloperGuide
 import car.pace.cofu.ui.icon.Signature
 import car.pace.cofu.ui.icon.TwoPager
 
+val bottomBarGraphs = listOf(Graph.HOME, Graph.WALLET, Graph.MORE)
+val bottomBarRoutes = listOf(Route.HOME.route, Route.WALLET.route, Route.MORE.route)
+
 enum class Graph(
     val route: String,
-    val icon: ImageVector,
-    @StringRes val labelRes: Int
+    val icon: ImageVector?,
+    @StringRes val labelRes: Int?
 ) {
+    ONBOARDING(
+        "onboarding_graph",
+        null,
+        null
+    ),
     HOME(
         "home_graph",
         Icons.Outlined.List,
@@ -42,18 +49,17 @@ enum class Graph(
 
 enum class Route(
     val route: String,
-    val graph: Graph?,
-    val drawBehindStatusBar: Boolean = false,
+    val graph: Graph,
     val showBottomBar: Boolean = false,
     val icon: ImageVector? = null,
     @StringRes val labelRes: Int? = null
 ) {
-    ONBOARDING(route = "onboarding_route", graph = null, drawBehindStatusBar = true),
-    ONBOARDING_TERMS(route = "onboarding_terms_route", graph = null),
-    ONBOARDING_PRIVACY(route = "onboarding_privacy_route", graph = null),
-    ANALYSIS(route = "analysis_route", graph = null),
-    HOME(route = "home_route", graph = Graph.HOME, drawBehindStatusBar = BuildConfig.HOME_SHOW_CUSTOM_HEADER, showBottomBar = true),
-    DETAIL(route = "detail_route", graph = null),
+    ONBOARDING(route = "onboarding_route", graph = Graph.ONBOARDING),
+    ONBOARDING_TERMS(route = "onboarding_terms_route", graph = Graph.ONBOARDING),
+    ONBOARDING_PRIVACY(route = "onboarding_privacy_route", graph = Graph.ONBOARDING),
+    ANALYSIS(route = "analysis_route", graph = Graph.ONBOARDING),
+    HOME(route = "home_route", graph = Graph.HOME, showBottomBar = true),
+    DETAIL(route = "detail_route", graph = Graph.HOME),
     WALLET(route = "wallet_route", graph = Graph.WALLET, showBottomBar = true),
     PAYMENT_METHODS(route = "payment_methods_route", graph = Graph.WALLET, showBottomBar = true, icon = Icons.Outlined.AccountBalanceWallet, labelRes = R.string.wallet_payment_methods_title),
     TRANSACTIONS(route = "transactions_route", graph = Graph.WALLET, icon = Icons.Outlined.ReceiptLong, labelRes = R.string.wallet_transactions_title),
@@ -71,7 +77,7 @@ enum class Route(
 
         fun fromRoute(route: String?): Route? {
             return route?.let { value ->
-                Route.values().find { value.contains(it.route) }
+                entries.find { value.contains(it.route) }
             }
         }
     }

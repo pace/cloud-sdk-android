@@ -97,7 +97,7 @@ fun RadioButton(
 @Composable
 fun RadioGroupPreview() {
     AppTheme {
-        val fuelTypeGroups = remember { FuelTypeGroup.values().associateWith { it.stringRes } }
+        val fuelTypeGroups = remember { FuelTypeGroup.entries.associateWith { it.stringRes } }
         var selectedFuelTypeGroup: FuelTypeGroup? by remember { mutableStateOf(null) }
 
         RadioGroup(

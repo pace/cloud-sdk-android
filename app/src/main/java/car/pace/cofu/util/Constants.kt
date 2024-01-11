@@ -2,6 +2,8 @@ package car.pace.cofu.util
 
 object Constants {
 
+    const val TRANSITION_DURATION = 400
+
     const val STOP_TIMEOUT_MILLIS = 5000L
     const val LOCATION_UPDATE_DISTANCE_METERS = 500f
     const val GAS_STATION_SEARCH_RADIUS = 10000

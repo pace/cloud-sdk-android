@@ -1,5 +1,8 @@
 package car.pace.cofu.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -7,16 +10,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import car.pace.cofu.ui.animation.ScaleTransitionDirection
-import car.pace.cofu.ui.animation.scaleIntoContainer
-import car.pace.cofu.ui.animation.scaleOutOfContainer
 import car.pace.cofu.ui.navigation.graph.Graph
-import car.pace.cofu.ui.navigation.graph.Route
 import car.pace.cofu.ui.navigation.graph.homeGraph
 import car.pace.cofu.ui.navigation.graph.moreGraph
 import car.pace.cofu.ui.navigation.graph.navigate
 import car.pace.cofu.ui.navigation.graph.onboardingGraph
 import car.pace.cofu.ui.navigation.graph.walletGraph
+import car.pace.cofu.util.Constants.TRANSITION_DURATION
 import car.pace.cofu.util.SnackbarData
 
 @Composable
@@ -30,38 +30,62 @@ fun AppNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = if (onboardingDone) Graph.HOME.route else Route.ONBOARDING.route,
+        startDestination = if (onboardingDone) Graph.HOME.route else Graph.ONBOARDING.route,
         modifier = modifier,
         enterTransition = {
-            scaleIntoContainer()
+            fadeIn(animationSpec = tween(TRANSITION_DURATION))
         },
         exitTransition = {
-            scaleOutOfContainer(direction = ScaleTransitionDirection.INWARDS)
-        },
-        popEnterTransition = {
-            scaleIntoContainer(direction = ScaleTransitionDirection.OUTWARDS)
-        },
-        popExitTransition = {
-            scaleOutOfContainer()
+            fadeOut(animationSpec = tween(TRANSITION_DURATION))
         }
     ) {
         onboardingGraph(
             onNavigate = {
                 navController.navigate(it)
             },
+            onNavigateUp = {
+                navController.navigateUp()
+            },
             onDone = {
                 viewModel.onboardingDone(it)
-                navController.navigate(Route.HOME)
+                navController.navigate(Graph.HOME) {
+                    popUpTo(navController.graph.id) {
+                        inclusive = true
+                    }
+                }
             }
         )
-        homeGraph {
-            navController.navigate(it)
-        }
-        walletGraph(showSnackbar = showSnackbar) {
-            navController.navigate(it)
-        }
-        moreGraph {
-            navController.navigate(it)
-        }
+        homeGraph(
+            onNavigate = {
+                navController.navigate(it)
+            },
+            onNavigateUp = {
+                navController.navigateUp()
+            }
+        )
+        walletGraph(
+            showSnackbar = showSnackbar,
+            onNavigate = {
+                navController.navigate(it)
+            },
+            onNavigateUp = {
+                navController.navigateUp()
+            },
+            onLogout = {
+                navController.navigate(Graph.ONBOARDING) {
+                    popUpTo(navController.graph.id) {
+                        inclusive = true
+                    }
+                }
+            }
+        )
+        moreGraph(
+            onNavigate = {
+                navController.navigate(it)
+            },
+            onNavigateUp = {
+                navController.navigateUp()
+            }
+        )
     }
 }

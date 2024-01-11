@@ -1,6 +1,5 @@
 package car.pace.cofu.ui.wallet.authorization
 
-import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -21,16 +20,18 @@ class AuthorisationViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    val isBiometricAuthenticationEnabled = mutableStateOf(userRepository.isBiometricAuthenticationEnabled())
+    var isBiometricAuthenticationEnabled by mutableStateOf(userRepository.isBiometricAuthenticationEnabled())
+        private set
     var twoFactorSetupType: TwoFactorSetupType? by mutableStateOf(null)
-    var errorText = MutableSharedFlow<Int?>()
+        private set
+    val errorText = MutableSharedFlow<Int?>()
 
-    fun enableBiometricAuthentication(context: Context) {
+    fun enableBiometricAuthentication() {
         viewModelScope.launch {
             userRepository.enableBiometricAuthentication()
                 .onSuccess {
                     if (it) {
-                        isBiometricAuthenticationEnabled.value = true
+                        isBiometricAuthenticationEnabled = true
                     } else {
                         twoFactorSetupType = TwoFactorSetupType.BIOMETRY
                     }
@@ -48,10 +49,10 @@ class AuthorisationViewModel @Inject constructor(
 
     fun disableBiometricAuthentication() {
         userRepository.disableBiometricAuthentication()
-        isBiometricAuthenticationEnabled.value = false
+        isBiometricAuthenticationEnabled = false
     }
 
-    fun onFingerprintSettingsNotFound(context: Context) {
+    fun onFingerprintSettingsNotFound() {
         viewModelScope.launch {
             errorText.emit(R.string.onboarding_fingerprint_setup_error)
         }
@@ -61,7 +62,7 @@ class AuthorisationViewModel @Inject constructor(
         twoFactorSetupType = null
 
         if (successful) {
-            isBiometricAuthenticationEnabled.value = userRepository.isBiometricAuthenticationEnabled()
+            isBiometricAuthenticationEnabled = userRepository.isBiometricAuthenticationEnabled()
         }
     }
 }

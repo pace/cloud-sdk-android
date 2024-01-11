@@ -3,6 +3,7 @@ package car.pace.cofu.ui.onboarding
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
 import car.pace.cofu.ui.component.Description
+import car.pace.cofu.ui.component.LogoTopBar
 import car.pace.cofu.ui.component.PrimaryButton
 import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.theme.AppTheme
@@ -68,11 +70,13 @@ fun PageScaffold(
                 key = ONBOARDING_IMAGE_KEY,
                 contentType = CONTAINER_CONTENT_TYPE
             ) {
-                Box(
-                    modifier = Modifier.fillParentMaxHeight(0.53f),
-                    contentAlignment = Alignment.BottomCenter
-                ) {
-                    if (showCustomHeader) {
+                val heightFraction = 0.53f
+
+                if (showCustomHeader) {
+                    Box(
+                        modifier = Modifier.fillParentMaxHeight(heightFraction),
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_onboarding_header),
                             contentDescription = null,
@@ -92,7 +96,15 @@ fun PageScaffold(
                                 .padding(13.dp),
                             tint = MaterialTheme.colorScheme.primary
                         )
-                    } else {
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier.fillParentMaxHeight(heightFraction),
+                        verticalArrangement = Arrangement.SpaceBetween,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        LogoTopBar()
+
                         Icon(
                             imageVector = imageVector,
                             contentDescription = null,

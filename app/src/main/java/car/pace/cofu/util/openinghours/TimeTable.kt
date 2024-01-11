@@ -11,7 +11,7 @@ import java.util.Locale
  */
 class TimeTable {
 
-    val days: List<DayTimes> = Day.values().map { DayTimes(it, arrayListOf()) }
+    val days: List<DayTimes> = Day.entries.map { DayTimes(it, arrayListOf()) }
 
     fun addTimeRange(day: Day, from: Int, to: Int) {
         days[indexOfDay(day)].add(from, to)
