@@ -74,7 +74,7 @@ fun LogoTopBar() {
     CenterAlignedTopAppBar(
         title = {
             Image(
-                painter = painterResource(id = R.drawable.ic_cofu_logo),
+                painter = painterResource(id = R.drawable.ic_brand_logo),
                 contentDescription = null
             )
         },
