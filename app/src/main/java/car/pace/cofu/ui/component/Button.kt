@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import car.pace.cofu.R
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.ui.theme.PrimaryButtonText
 
 @Composable
 fun PrimaryButton(
@@ -37,8 +38,9 @@ fun PrimaryButton(
         enabled = enabled,
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
+            contentColor = PrimaryButtonText,
             disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-            disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.2f)
+            disabledContentColor = PrimaryButtonText.copy(alpha = 0.2f)
         )
     ) {
         ButtonContent(

@@ -1,6 +1,7 @@
 package car.pace.cofu.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import car.pace.cofu.BuildConfig
 import timber.log.Timber
 
@@ -13,6 +14,12 @@ val Background = Color(0xFFFFFFFF)
 val Success = Color(0XFF76B532)
 val Warning = Color(0xFFFF9601)
 val Error = Color(0xFFE2001A)
+val PrimaryButtonText = Primary.contrastColor
+
+val Color.contrastColor: Color
+    get() {
+        return if (luminance() > 0.49) OnPrimary else Background
+    }
 
 fun String.toColor(): Color? {
     return try {
