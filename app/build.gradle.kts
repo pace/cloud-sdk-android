@@ -62,6 +62,7 @@ android {
         buildConfigField("Boolean", "HIDE_PRICES", configuration.hide_prices.toString())
         buildConfigField("Boolean", "ONBOARDING_SHOW_CUSTOM_HEADER", configuration.onboarding_show_custom_header.toString())
         buildConfigField("Boolean", "HOME_SHOW_CUSTOM_HEADER", configuration.home_show_custom_header.toString())
+        buildConfigField("Boolean", "DETAIL_SCREEN_SHOW_ICON", configuration.detail_screen_show_icon.toString())
         buildConfigField("Boolean", "ANALYTICS_ENABLED", configuration.analytics_enabled.toString())
         buildConfigField("String", "PRIMARY_COLOR", "\"" + configuration.primary_branding_color + "\"")
         buildConfigField("String", "SECONDARY_COLOR", "\"" + configuration.secondary_branding_color + "\"")
