@@ -24,7 +24,7 @@ import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 fun FuelTypePage(
     onNext: (FuelTypeGroup) -> Unit
 ) {
-    val fuelTypeGroups = remember { FuelTypeGroup.values().associateWith { it.stringRes } }
+    val fuelTypeGroups = remember { FuelTypeGroup.entries.associateWith { it.stringRes } }
     var selectedFuelType: FuelTypeGroup? by remember { mutableStateOf(null) }
     val nextButtonEnabled = selectedFuelType != null
 

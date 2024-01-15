@@ -27,11 +27,11 @@ fun OnboardingScreen(
     onDone: (FuelTypeGroup) -> Unit
 ) {
     val pages = remember {
-        val values = OnboardingPage.values()
+        val values = OnboardingPage.entries
         if (BuildConfig.HIDE_PRICES) {
             values.filterNot { it == OnboardingPage.FUEL_TYPE }
         } else {
-            values.toList()
+            values
         }
     }
     val pagerState = rememberPagerState { pages.size }

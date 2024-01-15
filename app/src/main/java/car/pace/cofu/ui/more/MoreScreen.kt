@@ -15,7 +15,9 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import car.pace.cofu.R
 import car.pace.cofu.ui.component.DefaultListItem
+import car.pace.cofu.ui.component.TextTopBar
 import car.pace.cofu.ui.navigation.graph.Route
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.util.Constants.DEFAULT_LIST_ITEM_CONTENT_TYPE
@@ -26,33 +28,40 @@ fun MoreScreen(
     viewModel: MoreViewModel = hiltViewModel(),
     onNavigate: (Route) -> Unit
 ) {
-    val items = remember { viewModel.items }
+    Column {
+        TextTopBar(
+            text = stringResource(id = R.string.more_tab_label),
+            backIcon = null
+        )
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
-    ) {
-        items(
-            items = items,
-            key = MoreViewModel.MoreItem::id,
-            contentType = { DEFAULT_LIST_ITEM_CONTENT_TYPE }
+        val items = remember { viewModel.items }
+
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
         ) {
-            val context = LocalContext.current
+            items(
+                items = items,
+                key = MoreViewModel.MoreItem::id,
+                contentType = { DEFAULT_LIST_ITEM_CONTENT_TYPE }
+            ) {
+                val context = LocalContext.current
 
-            DefaultListItem(
-                modifier = Modifier.clickable(
-                    role = Role.Button,
-                    onClick = {
-                        if (it.route == Route.WEBSITE) {
-                            IntentUtils.launchInCustomTabIfAvailable(context, it.urlRes?.let { url -> context.getString(url) })
-                        } else {
-                            onNavigate(it.route)
+                DefaultListItem(
+                    modifier = Modifier.clickable(
+                        role = Role.Button,
+                        onClick = {
+                            if (it.route == Route.WEBSITE) {
+                                IntentUtils.launchInCustomTabIfAvailable(context, it.urlRes?.let { url -> context.getString(url) })
+                            } else {
+                                onNavigate(it.route)
+                            }
                         }
-                    }
-                ),
-                icon = it.icon,
-                text = it.labelRes?.let { res -> stringResource(id = res) }.orEmpty()
-            )
+                    ),
+                    icon = it.icon,
+                    text = it.labelRes?.let { res -> stringResource(id = res) }.orEmpty()
+                )
+            }
         }
     }
 }
@@ -61,10 +70,6 @@ fun MoreScreen(
 @Composable
 fun MoreScreenPreview() {
     AppTheme {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            MoreScreen {}
-        }
+        MoreScreen {}
     }
 }

@@ -15,7 +15,6 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
-    id("com.google.android.gms.oss-licenses-plugin")
     id("io.sentry.android.gradle") version "3.14.0"
     id("com.mikepenz.aboutlibraries.plugin")
 }
@@ -154,9 +153,6 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.github.composeuisuite:ohteepee:1.0.3")
 
-    // Google
-    implementation("com.google.android.gms:play-services-oss-licenses:17.0.1")
-
     // Hilt
     implementation("com.google.dagger:hilt-android:2.48.1")
     kapt("com.google.dagger:hilt-android-compiler:2.48.1")
@@ -167,8 +163,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
 
     // AboutLibraries
-    implementation("com.mikepenz:aboutlibraries-core:10.9.2")
-    implementation("com.mikepenz:aboutlibraries-compose:10.9.2")
+    implementation("com.mikepenz:aboutlibraries-compose:10.10.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

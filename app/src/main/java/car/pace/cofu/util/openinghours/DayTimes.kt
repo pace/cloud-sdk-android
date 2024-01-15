@@ -12,7 +12,7 @@ import cloud.pace.sdk.poikit.poi.Day
 class DayTimes(val day: Day, val openingTimes: ArrayList<TimeRange>) {
 
     override fun toString(): String {
-        return "${Day.values().indexOf(day)}: (${openingTimes.joinToString(", ")})"
+        return "${Day.entries.indexOf(day)}: (${openingTimes.joinToString(", ")})"
     }
 
     fun toHumanReadableString(closed: String, alwaysOpened: String, is24HourFormat: Boolean): String {

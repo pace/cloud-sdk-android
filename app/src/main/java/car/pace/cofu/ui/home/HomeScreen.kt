@@ -45,6 +45,7 @@ import car.pace.cofu.R
 import car.pace.cofu.ui.component.Description
 import car.pace.cofu.ui.component.ErrorCard
 import car.pace.cofu.ui.component.LoadingCard
+import car.pace.cofu.ui.component.LogoTopBar
 import car.pace.cofu.ui.component.PrimaryButton
 import car.pace.cofu.ui.component.SecondaryButton
 import car.pace.cofu.ui.component.Title
@@ -116,6 +117,7 @@ fun HomeScreen(
 @Composable
 fun HomeScreenContent(
     uiState: UiState<List<GasStation>>,
+    showCustomHeader: Boolean = BuildConfig.HOME_SHOW_CUSTOM_HEADER,
     fuelTypeGroup: FuelTypeGroup,
     userLocation: LatLng?,
     refresh: () -> Unit,
@@ -124,7 +126,7 @@ fun HomeScreenContent(
     Column(
         modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
     ) {
-        if (BuildConfig.HOME_SHOW_CUSTOM_HEADER) {
+        if (showCustomHeader) {
             Image(
                 painter = painterResource(id = R.drawable.ic_home_header),
                 modifier = Modifier
@@ -134,6 +136,8 @@ fun HomeScreenContent(
                 alignment = Alignment.BottomCenter,
                 contentScale = ContentScale.Crop
             )
+        } else {
+            LogoTopBar()
         }
 
         when (uiState) {
@@ -391,7 +395,20 @@ private fun openLocationSettings(context: Context) {
 
 @Preview
 @Composable
-fun HomeScreenContentPreview() {
+fun HomeScreenCustomHeaderPreview() {
+    HomeScreenPreview(showCustomHeader = true)
+}
+
+@Preview
+@Composable
+fun HomeScreenDefaultPreview() {
+    HomeScreenPreview(showCustomHeader = false)
+}
+
+@Composable
+private fun HomeScreenPreview(
+    showCustomHeader: Boolean
+) {
     AppTheme {
         HomeScreenContent(
             uiState = UiState.Success(
@@ -416,6 +433,7 @@ fun HomeScreenContentPreview() {
                     }
                 )
             ),
+            showCustomHeader = showCustomHeader,
             fuelTypeGroup = FuelTypeGroup.DIESEL,
             userLocation = LatLng(49.013513, 8.4018654),
             refresh = {},

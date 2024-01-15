@@ -22,51 +22,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
 import car.pace.cofu.ui.navigation.graph.Graph
-import car.pace.cofu.ui.navigation.graph.Route
+import car.pace.cofu.ui.navigation.graph.bottomBarGraphs
 import car.pace.cofu.ui.theme.AppTheme
-
-@Composable
-fun TopBar(
-    currentRoute: Route?,
-    onNavigateUp: () -> Unit
-) {
-    when (currentRoute) {
-        Route.ONBOARDING -> {
-            if (!BuildConfig.ONBOARDING_SHOW_CUSTOM_HEADER) {
-                LogoTopBar()
-            }
-        }
-
-        Route.HOME -> {
-            if (!BuildConfig.HOME_SHOW_CUSTOM_HEADER) {
-                LogoTopBar()
-            }
-        }
-
-        Route.DETAIL, Route.TERMS, Route.PRIVACY, Route.IMPRINT, Route.ONBOARDING_TERMS, Route.ONBOARDING_PRIVACY, Route.ANALYSIS -> {
-            TextTopBar(onNavigateUp = onNavigateUp)
-        }
-
-        Route.WALLET, Route.MORE -> {
-            TextTopBar(
-                text = currentRoute.graph?.labelRes?.let { stringResource(id = it) },
-                backIcon = null
-            )
-        }
-
-        Route.PAYMENT_METHODS, Route.FUEL_TYPE, Route.LICENSES, Route.AUTHORIZATION -> {
-            TextTopBar(
-                text = currentRoute.labelRes?.let { stringResource(id = it) },
-                onNavigateUp = onNavigateUp
-            )
-        }
-
-        else -> {}
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,7 +79,7 @@ fun TextTopBar(
 
 @Composable
 fun BottomBar(
-    destinations: Array<Graph>,
+    destinations: List<Graph>,
     currentGraph: Graph?,
     onNavigateToGraph: (Graph) -> Unit
 ) {
@@ -135,13 +94,16 @@ fun BottomBar(
                     selected = it == currentGraph,
                     onClick = { onNavigateToGraph(it) },
                     icon = {
-                        Icon(
-                            imageVector = it.icon,
-                            contentDescription = stringResource(id = it.labelRes)
-                        )
+                        val icon = it.icon
+                        if (icon != null) {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = it.labelRes?.let { res -> stringResource(id = res) }
+                            )
+                        }
                     },
                     label = {
-                        Text(text = stringResource(id = it.labelRes))
+                        Text(text = it.labelRes?.let { res -> stringResource(id = res) }.orEmpty())
                     },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = MaterialTheme.colorScheme.primary,
@@ -177,7 +139,7 @@ fun TextTopBarPreview() {
 fun BottomBarPreview() {
     AppTheme {
         BottomBar(
-            destinations = Graph.values(),
+            destinations = bottomBarGraphs,
             currentGraph = Graph.WALLET,
             onNavigateToGraph = {}
         )

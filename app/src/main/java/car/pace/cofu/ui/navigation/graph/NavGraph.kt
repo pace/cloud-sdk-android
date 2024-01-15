@@ -1,19 +1,28 @@
 package car.pace.cofu.ui.navigation.graph
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.Modifier
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.runtime.Composable
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.NavType
-import androidx.navigation.Navigator
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import car.pace.cofu.ui.animation.ScaleTransitionDirection
+import car.pace.cofu.ui.animation.scaleIntoContainer
+import car.pace.cofu.ui.animation.scaleOutOfContainer
+import car.pace.cofu.ui.animation.slideIn
+import car.pace.cofu.ui.animation.slideOut
 import car.pace.cofu.ui.detail.DetailScreen
 import car.pace.cofu.ui.home.HomeScreen
 import car.pace.cofu.ui.more.MoreScreen
-import car.pace.cofu.ui.more.WebViewScreen
+import car.pace.cofu.ui.more.licenses.LicensesScreen
+import car.pace.cofu.ui.more.webview.WebViewScreen
 import car.pace.cofu.ui.onboarding.OnboardingScreen
 import car.pace.cofu.ui.wallet.WalletScreen
 import car.pace.cofu.ui.wallet.authorization.AuthorisationScreen
@@ -25,42 +34,73 @@ import car.pace.cofu.util.Constants.IMPRINT_URI
 import car.pace.cofu.util.Constants.PRIVACY_URI
 import car.pace.cofu.util.Constants.TERMS_URI
 import car.pace.cofu.util.SnackbarData
-import com.mikepenz.aboutlibraries.ui.compose.LibrariesContainer
 
 fun NavGraphBuilder.onboardingGraph(
     onNavigate: (Route) -> Unit,
+    onNavigateUp: () -> Unit,
     onDone: (FuelTypeGroup) -> Unit
 ) {
-    composable(Route.ONBOARDING.route) {
-        OnboardingScreen(
-            onNavigate = onNavigate,
-            onDone = onDone
-        )
-    }
-    composable(Route.ONBOARDING_TERMS.route) {
-        WebViewScreen(url = TERMS_URI)
-    }
-    composable(Route.ONBOARDING_PRIVACY.route) {
-        WebViewScreen(url = PRIVACY_URI)
-    }
-    composable(Route.ANALYSIS.route) {
-        WebViewScreen(url = ANALYSIS_URI)
+    navigation(
+        startDestination = Route.ONBOARDING.route,
+        route = Graph.ONBOARDING.route
+    ) {
+        composable(
+            route = Route.ONBOARDING.route,
+            exitTransition = { scaleOutOfContainer(direction = ScaleTransitionDirection.INWARDS) },
+            popEnterTransition = { scaleIntoContainer(direction = ScaleTransitionDirection.OUTWARDS) }
+        ) {
+            OnboardingScreen(
+                onNavigate = onNavigate,
+                onDone = onDone
+            )
+        }
+        composable(
+            route = Route.ONBOARDING_TERMS.route,
+            enterTransition = { scaleIntoContainer() },
+            popExitTransition = { scaleOutOfContainer() }
+        ) {
+            WebViewScreen(
+                url = TERMS_URI,
+                onNavigateUp = onNavigateUp
+            )
+        }
+        composable(
+            route = Route.ONBOARDING_PRIVACY.route,
+            enterTransition = { scaleIntoContainer() },
+            popExitTransition = { scaleOutOfContainer() }
+        ) {
+            WebViewScreen(
+                url = PRIVACY_URI,
+                onNavigateUp = onNavigateUp
+            )
+        }
+        composable(
+            route = Route.ANALYSIS.route,
+            enterTransition = { scaleIntoContainer() },
+            popExitTransition = { scaleOutOfContainer() }
+        ) {
+            WebViewScreen(
+                url = ANALYSIS_URI,
+                onNavigateUp = onNavigateUp
+            )
+        }
     }
 }
 
 fun NavGraphBuilder.homeGraph(
-    onNavigate: (String) -> Unit
+    onNavigate: (String) -> Unit,
+    onNavigateUp: () -> Unit
 ) {
     navigation(
         startDestination = Route.HOME.route,
         route = Graph.HOME.route
     ) {
-        composable(Route.HOME.route) {
+        parentComposable(Route.HOME.route) {
             HomeScreen {
                 onNavigate("${Route.DETAIL.route}/$it")
             }
         }
-        composable(
+        childComposable(
             route = "${Route.DETAIL.route}/{id}",
             arguments = listOf(
                 navArgument("id") {
@@ -68,65 +108,180 @@ fun NavGraphBuilder.homeGraph(
                 }
             )
         ) {
-            DetailScreen()
+            DetailScreen(
+                onNavigateUp = onNavigateUp
+            )
         }
     }
 }
 
 fun NavGraphBuilder.walletGraph(
     showSnackbar: (SnackbarData) -> Unit,
-    onNavigate: (Route) -> Unit
+    onNavigate: (Route) -> Unit,
+    onNavigateUp: () -> Unit,
+    onLogout: () -> Unit
 ) {
     navigation(
         startDestination = Route.WALLET.route,
         route = Graph.WALLET.route
     ) {
-        composable(Route.WALLET.route) {
-            WalletScreen(onNavigate = onNavigate)
+        parentComposable(Route.WALLET.route) {
+            WalletScreen(
+                onNavigate = onNavigate,
+                onLogout = onLogout
+            )
         }
-        composable(Route.PAYMENT_METHODS.route) {
-            PaymentMethodsScreen()
+        childComposable(Route.PAYMENT_METHODS.route) {
+            PaymentMethodsScreen(
+                onNavigateUp = onNavigateUp
+            )
         }
-        composable(Route.FUEL_TYPE.route) {
-            FuelTypeScreen()
+        childComposable(Route.FUEL_TYPE.route) {
+            FuelTypeScreen(
+                onNavigateUp = onNavigateUp
+            )
         }
-        composable(Route.AUTHORIZATION.route) {
-            AuthorisationScreen(showSnackbar = showSnackbar)
-        }
-    }
-}
-
-fun NavGraphBuilder.moreGraph(
-    onNavigate: (Route) -> Unit
-) {
-    navigation(
-        startDestination = Route.MORE.route,
-        route = Graph.MORE.route
-    ) {
-        composable(Route.MORE.route) {
-            MoreScreen(onNavigate = onNavigate)
-        }
-        composable(Route.TERMS.route) {
-            WebViewScreen(url = TERMS_URI)
-        }
-        composable(Route.PRIVACY.route) {
-            WebViewScreen(url = PRIVACY_URI)
-        }
-        composable(Route.IMPRINT.route) {
-            WebViewScreen(url = IMPRINT_URI)
-        }
-        composable(Route.LICENSES.route) {
-            LibrariesContainer(
-                modifier = Modifier.fillMaxSize()
+        childComposable(Route.AUTHORIZATION.route) {
+            AuthorisationScreen(
+                onNavigateUp = onNavigateUp,
+                showSnackbar = showSnackbar
             )
         }
     }
 }
 
+fun NavGraphBuilder.moreGraph(
+    onNavigate: (Route) -> Unit,
+    onNavigateUp: () -> Unit
+) {
+    navigation(
+        startDestination = Route.MORE.route,
+        route = Graph.MORE.route
+    ) {
+        parentComposable(Route.MORE.route) {
+            MoreScreen(
+                onNavigate = onNavigate
+            )
+        }
+        childComposable(Route.TERMS.route) {
+            WebViewScreen(
+                url = TERMS_URI,
+                onNavigateUp = onNavigateUp
+            )
+        }
+        childComposable(Route.PRIVACY.route) {
+            WebViewScreen(
+                url = PRIVACY_URI,
+                onNavigateUp = onNavigateUp
+            )
+        }
+        childComposable(Route.IMPRINT.route) {
+            WebViewScreen(
+                url = IMPRINT_URI,
+                onNavigateUp = onNavigateUp
+            )
+        }
+        childComposable(Route.LICENSES.route) {
+            LicensesScreen(
+                onNavigateUp = onNavigateUp
+            )
+        }
+    }
+}
+
+fun NavGraphBuilder.parentComposable(
+    route: String,
+    arguments: List<NamedNavArgument> = emptyList(),
+    deepLinks: List<NavDeepLink> = emptyList(),
+    content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
+) {
+    composable(
+        route = route,
+        arguments = arguments,
+        deepLinks = deepLinks,
+        exitTransition = {
+            if (targetState.destination.route !in bottomBarRoutes && initialState.destination.route.isSameGraph(targetState.destination.route)) {
+                slideOut()
+            } else {
+                null
+            }
+        },
+        popEnterTransition = {
+            if (initialState.destination.route !in bottomBarRoutes && initialState.destination.route.isSameGraph(targetState.destination.route)) {
+                slideIn(towards = AnimatedContentTransitionScope.SlideDirection.End)
+            } else {
+                null
+            }
+        },
+        content = content
+    )
+}
+
+fun NavGraphBuilder.childComposable(
+    route: String,
+    arguments: List<NamedNavArgument> = emptyList(),
+    deepLinks: List<NavDeepLink> = emptyList(),
+    content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
+) {
+    composable(
+        route = route,
+        arguments = arguments,
+        deepLinks = deepLinks,
+        enterTransition = {
+            if (initialState.destination.route.isSameGraph(targetState.destination.route)) {
+                slideIn()
+            } else {
+                null
+            }
+        },
+        exitTransition = {
+            if (initialState.destination.route.isSameGraph(targetState.destination.route)) {
+                slideOut()
+            } else {
+                null
+            }
+        },
+        popEnterTransition = {
+            if (initialState.destination.route.isSameGraph(targetState.destination.route)) {
+                slideIn(towards = AnimatedContentTransitionScope.SlideDirection.End)
+            } else {
+                null
+            }
+        },
+        popExitTransition = {
+            if (initialState.destination.route.isSameGraph(targetState.destination.route)) {
+                slideOut(towards = AnimatedContentTransitionScope.SlideDirection.End)
+            } else {
+                null
+            }
+        },
+        content = content
+    )
+}
+
+fun String?.isSameGraph(route: String?): Boolean {
+    val initialRoute = Route.fromRoute(this)
+    val targetRoute = Route.fromRoute(route)
+
+    return initialRoute?.graph == targetRoute?.graph
+}
+
 fun NavHostController.navigate(
     route: Route,
-    navOptions: NavOptions? = null,
-    navigatorExtras: Navigator.Extras? = null
+    builder: NavOptionsBuilder.() -> Unit = {}
 ) {
-    navigate(route.route, navOptions, navigatorExtras)
+    navigate(
+        route = route.route,
+        builder = builder
+    )
+}
+
+fun NavHostController.navigate(
+    graph: Graph,
+    builder: NavOptionsBuilder.() -> Unit = {}
+) {
+    navigate(
+        route = graph.route,
+        builder = builder
+    )
 }

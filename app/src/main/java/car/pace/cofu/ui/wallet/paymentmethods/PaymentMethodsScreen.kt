@@ -34,6 +34,7 @@ import car.pace.cofu.R
 import car.pace.cofu.ui.component.ErrorCard
 import car.pace.cofu.ui.component.LoadingCard
 import car.pace.cofu.ui.component.SecondaryButton
+import car.pace.cofu.ui.component.TextTopBar
 import car.pace.cofu.ui.component.forwardingPainter
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.util.Constants.PAYMENT_METHOD_LIST_ITEM_CONTENT_TYPE
@@ -46,6 +47,7 @@ import java.util.UUID
 
 @Composable
 fun PaymentMethodsScreen(
+    onNavigateUp: () -> Unit,
     viewModel: PaymentMethodsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -53,6 +55,7 @@ fun PaymentMethodsScreen(
 
     PaymentMethodsScreenContent(
         uiState = uiState,
+        onNavigateUp = onNavigateUp,
         onItemClick = {
             AppKit.openAppActivity(context, viewModel.paymentMethodUrl(it.id), true)
         },
@@ -66,68 +69,76 @@ fun PaymentMethodsScreen(
 @Composable
 fun PaymentMethodsScreenContent(
     uiState: UiState<List<PaymentMethodItem>>,
+    onNavigateUp: () -> Unit,
     onItemClick: (PaymentMethodItem) -> Unit,
     onAddClick: () -> Unit,
     onRefresh: () -> Unit
 ) {
-    Column(
-        modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
-    ) {
-        when (uiState) {
-            is UiState.Loading -> {
-                LoadingCard(
-                    title = stringResource(id = R.string.payment_methods_loading_title),
-                    description = stringResource(id = R.string.payment_methods_loading_description)
-                )
-            }
+    Column {
+        TextTopBar(
+            text = stringResource(id = R.string.wallet_payment_methods_title),
+            onNavigateUp = onNavigateUp
+        )
 
-            is UiState.Success -> {
-                val items = uiState.data
-                if (items.isEmpty()) {
-                    Column(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        ErrorCard(
-                            title = stringResource(id = R.string.payment_methods_empty_title),
-                            description = stringResource(id = R.string.payment_methods_empty_description),
-                            imageVector = Icons.Outlined.CreditCard
-                        )
-                    }
-                } else {
-                    LazyColumn(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        items(
-                            items = items,
-                            key = PaymentMethodItem::id,
-                            contentType = { PAYMENT_METHOD_LIST_ITEM_CONTENT_TYPE }
-                        ) {
-                            PaymentMethodListItem(
-                                modifier = Modifier.clickable(
-                                    role = Role.Button,
-                                    onClick = { onItemClick(it) }
-                                ),
-                                imageUrl = it.imageUrl,
-                                kind = it.kind,
-                                alias = it.alias
-                            )
-                        }
-                    }
+        Column(
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
+        ) {
+            when (uiState) {
+                is UiState.Loading -> {
+                    LoadingCard(
+                        title = stringResource(id = R.string.payment_methods_loading_title),
+                        description = stringResource(id = R.string.payment_methods_loading_description)
+                    )
                 }
 
-                SecondaryButton(
-                    text = stringResource(id = R.string.payment_methods_add_button),
-                    onClick = onAddClick
-                )
-            }
+                is UiState.Success -> {
+                    val items = uiState.data
+                    if (items.isEmpty()) {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            ErrorCard(
+                                title = stringResource(id = R.string.payment_methods_empty_title),
+                                description = stringResource(id = R.string.payment_methods_empty_description),
+                                imageVector = Icons.Outlined.CreditCard
+                            )
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            items(
+                                items = items,
+                                key = PaymentMethodItem::id,
+                                contentType = { PAYMENT_METHOD_LIST_ITEM_CONTENT_TYPE }
+                            ) {
+                                PaymentMethodListItem(
+                                    modifier = Modifier.clickable(
+                                        role = Role.Button,
+                                        onClick = { onItemClick(it) }
+                                    ),
+                                    imageUrl = it.imageUrl,
+                                    kind = it.kind,
+                                    alias = it.alias
+                                )
+                            }
+                        }
+                    }
 
-            is UiState.Error -> {
-                ErrorCard(
-                    title = stringResource(id = R.string.general_error_title),
-                    description = stringResource(id = R.string.payment_methods_error_description),
-                    buttonText = stringResource(id = R.string.common_use_retry),
-                    onButtonClick = onRefresh
-                )
+                    SecondaryButton(
+                        text = stringResource(id = R.string.payment_methods_add_button),
+                        onClick = onAddClick
+                    )
+                }
+
+                is UiState.Error -> {
+                    ErrorCard(
+                        title = stringResource(id = R.string.general_error_title),
+                        description = stringResource(id = R.string.payment_methods_error_description),
+                        buttonText = stringResource(id = R.string.common_use_retry),
+                        onButtonClick = onRefresh
+                    )
+                }
             }
         }
     }
@@ -225,6 +236,7 @@ fun PaymentMethodsScreenContentPreview() {
                     )
                 )
             ),
+            onNavigateUp = {},
             onItemClick = {},
             onAddClick = {},
             onRefresh = {}
