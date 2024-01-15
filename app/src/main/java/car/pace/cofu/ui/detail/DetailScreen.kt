@@ -407,6 +407,7 @@ fun AddressRow(
     userLocation: LatLng?,
     canStartFueling: Boolean,
     closedOrClosesSoon: Boolean,
+    showIcon: Boolean = BuildConfig.DETAIL_SCREEN_SHOW_ICON,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -431,11 +432,13 @@ fun AddressRow(
                 )
             }
         }
-        Image(
-            painter = painterResource(id = R.drawable.ic_brand_horizontal),
-            contentDescription = null,
-            modifier = Modifier.padding(start = 12.dp)
-        )
+        if (showIcon) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_brand_horizontal),
+                contentDescription = null,
+                modifier = Modifier.padding(start = 12.dp)
+            )
+        }
     }
 }
 
@@ -735,7 +738,18 @@ fun MapRowPreview() {
 
 @Preview
 @Composable
-fun AddressRowPreview() {
+fun AddressRowWithIconPreview() {
+    AddressRowPreview(showIcon = true)
+}
+
+@Preview
+@Composable
+fun AddressRowWithoutIconPreview() {
+    AddressRowPreview(showIcon = false)
+}
+
+@Composable
+private fun AddressRowPreview(showIcon: Boolean) {
     AppTheme {
         AddressRow(
             name = "Gas what",
@@ -743,7 +757,8 @@ fun AddressRowPreview() {
             gasStationLocation = LatLng(49.012440, 8.426530),
             userLocation = LatLng(49.013513, 8.4018654),
             canStartFueling = true,
-            closedOrClosesSoon = false
+            closedOrClosesSoon = false,
+            showIcon = showIcon
         )
     }
 }
