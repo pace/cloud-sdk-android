@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -434,9 +435,12 @@ fun AddressRow(
         }
         if (showIcon) {
             Image(
-                painter = painterResource(id = R.drawable.ic_brand_horizontal),
+                painter = painterResource(id = R.drawable.ic_brand_logo),
                 contentDescription = null,
-                modifier = Modifier.padding(start = 12.dp)
+                modifier = Modifier
+                    .padding(start = 12.dp)
+                    .width(120.dp),
+                contentScale = ContentScale.FillWidth
             )
         }
     }
