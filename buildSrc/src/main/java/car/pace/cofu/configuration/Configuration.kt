@@ -4,7 +4,7 @@ const val CONFIGURATION_FILE_NAME = "configuration.json"
 
 data class Configuration(
     val app_name: String,
-    val application_id: String,
+    val application_id_android: String,
     val android_keystore_password: String,
     val android_signing_key_alias: String,
     val android_signing_key_password: String,
@@ -15,7 +15,7 @@ data class Configuration(
     val google_maps_api_key: String,
     val map_enabled: Boolean,
     val sentry_dsn_android: String?,
-    val sentry_project_name: String?,
+    val sentry_project_name_android: String?,
     val sentry_enabled: Boolean,
     val analytics_enabled: Boolean,
     val crashlytics_enabled: Boolean,
