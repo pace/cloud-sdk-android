@@ -26,7 +26,7 @@ task(menuEntriesTask) {
 project.tasks.preBuild.dependsOn(menuEntriesTask)
 
 android {
-    namespace = configuration.application_id
+    namespace = configuration.application_id_android
     compileSdk = 34
 
     signingConfigs {
@@ -46,7 +46,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = configuration.application_id
+        applicationId = configuration.application_id_android
         minSdk = 26
         targetSdk = 34
         versionCode = properties.getOrDefault("buildNumber", 1)?.toString()?.toIntOrNull()
@@ -176,6 +176,6 @@ dependencies {
 sentry {
     // This is required for the Sentry Gradle plugin to upload Proguard mappings.
     // All other configurations required for the upload are stored as CI variables to not expose them here.
-    projectName.set(configuration.sentry_project_name)
+    projectName.set(configuration.sentry_project_name_android)
     includeProguardMapping.set(configuration.sentry_enabled)
 }
