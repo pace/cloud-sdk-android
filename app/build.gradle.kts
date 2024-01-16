@@ -64,6 +64,10 @@ android {
         buildConfigField("Boolean", "HOME_SHOW_CUSTOM_HEADER", configuration.home_show_custom_header.toString())
         buildConfigField("Boolean", "DETAIL_SCREEN_SHOW_ICON", configuration.detail_screen_show_icon.toString())
         buildConfigField("Boolean", "ANALYTICS_ENABLED", configuration.analytics_enabled.toString())
+        buildConfigField("Boolean", "MAP_ENABLED", configuration.map_enabled.toString())
+        buildConfigField("Boolean", "AUTOMATIC_PRODUCTION_UPDATES_ENABLED", configuration.automatic_production_updates_enabled.toString())
+        buildConfigField("Boolean", "NATIVE_FUELCARD_MANAGEMENT_ENABLED", configuration.native_fuelcard_management_enabled.toString())
+        buildConfigField("Boolean", "VEHICLE_INTEGRATION_ENABLED", configuration.vehicle_integration_enabled.toString())
         buildConfigField("String", "PRIMARY_COLOR", "\"" + configuration.primary_branding_color + "\"")
         buildConfigField("String", "SECONDARY_COLOR", "\"" + configuration.secondary_branding_color + "\"")
 

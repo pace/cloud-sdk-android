@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.PaymentMethodRepository
+import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.UiState.Loading.toUiState
 import cloud.pace.sdk.appkit.app.webview.AppWebViewClient
@@ -12,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.stateIn
 
@@ -26,6 +28,11 @@ class PaymentMethodsViewModel @Inject constructor(
         }
         .map {
             it.toUiState()
+        }
+        .onEach {
+            if (it is UiState.Error) {
+                LogAndBreadcrumb.e(it.throwable, LogAndBreadcrumb.PAYMENT_METHODS, "Couldn't load payment methods")
+            }
         }
         .stateIn(
             scope = viewModelScope,

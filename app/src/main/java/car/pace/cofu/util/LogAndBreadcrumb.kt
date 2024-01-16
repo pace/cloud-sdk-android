@@ -9,6 +9,14 @@ import io.sentry.SentryLevel
 import timber.log.Timber
 
 object LogAndBreadcrumb {
+    const val HOME = "Home"
+    const val DETAIL = "Gas station detail"
+    const val WALLET = "Wallet"
+    const val PAYMENT_METHODS = "Payment methods"
+    const val AUTHORISATION = "Authorisation"
+    const val CUSTOM_TAB = "Custom tab"
+    const val ONBOARDING = "Onboarding"
+
     fun i(category: String, message: String) {
         Timber.i(message)
         sendBreadcrumb(category, message, SentryLevel.INFO)

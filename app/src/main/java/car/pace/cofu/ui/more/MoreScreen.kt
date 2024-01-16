@@ -52,7 +52,8 @@ fun MoreScreen(
                         role = Role.Button,
                         onClick = {
                             if (it.route == Route.WEBSITE) {
-                                IntentUtils.launchInCustomTabIfAvailable(context, it.urlRes?.let { url -> context.getString(url) })
+                                val url = it.urlRes?.let { url -> context.getString(url) }
+                                IntentUtils.launchInCustomTabIfAvailable(context, url)
                             } else {
                                 onNavigate(it.route)
                             }

@@ -9,7 +9,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.browser.customtabs.CustomTabsIntent
 import car.pace.cofu.R
 import cloud.pace.sdk.poikit.poi.GasStation
-import timber.log.Timber
 
 object IntentUtils {
 
@@ -33,7 +32,7 @@ object IntentUtils {
                 context.startActivity(intent)
             }
         } catch (e: Exception) {
-            Timber.e(e, "Could not launch navigation app")
+            LogAndBreadcrumb.e(e, "Start Navigation", "Could not launch navigation app")
         }
     }
 
@@ -50,9 +49,10 @@ object IntentUtils {
         val externalUrl = url ?: return false
         return try {
             getCustomTabsIntent().launchUrl(context, Uri.parse(externalUrl))
+            LogAndBreadcrumb.i(LogAndBreadcrumb.CUSTOM_TAB, "Launch custom tab: $externalUrl")
             true
         } catch (e: ActivityNotFoundException) {
-            Timber.i(e, "No supported browser installed to launch the following URL in a custom tab: $externalUrl")
+            LogAndBreadcrumb.e(e, LogAndBreadcrumb.CUSTOM_TAB, "No supported browser installed to launch the following URL in a custom tab: $externalUrl")
             showNoSupportedBrowserDialog(context)
             false
         }

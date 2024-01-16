@@ -11,6 +11,7 @@ import car.pace.cofu.R
 import car.pace.cofu.ui.component.Description
 import car.pace.cofu.ui.onboarding.PageScaffold
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.extension.locationPermissions
 
 @Composable
@@ -18,6 +19,9 @@ fun LocationPermissionPage(
     onNext: () -> Unit
 ) {
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+        it.forEach { (permission, isGranted) ->
+            LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, "$permission ${if (isGranted) "is granted" else "is not granted"}")
+        }
         onNext()
     }
 

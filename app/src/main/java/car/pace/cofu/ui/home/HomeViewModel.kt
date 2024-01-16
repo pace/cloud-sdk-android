@@ -8,6 +8,7 @@ import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_FUEL_TYPE
 import car.pace.cofu.ui.wallet.fueltype.toFuelTypeGroup
 import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
+import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.UiState.Loading.toUiState
 import com.google.android.gms.maps.model.LatLng
@@ -51,6 +52,11 @@ class HomeViewModel @Inject constructor(
         }
     }.onEach {
         refresh.value = false
+
+        when {
+            it is UiState.Success && it.data.isEmpty() -> LogAndBreadcrumb.i(LogAndBreadcrumb.HOME, "No gas stations near user")
+            it is UiState.Error -> LogAndBreadcrumb.e(it.throwable, LogAndBreadcrumb.HOME, it.throwable.message ?: "Could not load gas station list")
+        }
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
@@ -87,6 +93,6 @@ class HomeViewModel @Inject constructor(
         refresh.value = true
     }
 
-    class LocationPermissionDenied : Throwable()
-    class LocationDisabled : Throwable()
+    class LocationPermissionDenied : Throwable("Location permission denied")
+    class LocationDisabled : Throwable("Location disabled")
 }

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.GasStationRepository
 import car.pace.cofu.data.LocationRepository
 import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
+import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.UiState.Loading.toUiState
 import com.google.android.gms.maps.model.LatLng
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -41,6 +43,11 @@ class DetailViewModel @Inject constructor(
             it.recoverCatching { throwable ->
                 gasStationRepository.getCachedGasStation(id) ?: throw throwable
             }.toUiState()
+        }
+        .onEach {
+            if (it is UiState.Error) {
+                LogAndBreadcrumb.e(it.throwable, LogAndBreadcrumb.DETAIL, "Loading of gas station failed")
+            }
         }
         .stateIn(
             scope = viewModelScope,

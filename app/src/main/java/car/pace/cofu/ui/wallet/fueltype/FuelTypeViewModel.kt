@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_FUEL_TYPE
 import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
+import car.pace.cofu.util.LogAndBreadcrumb
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,5 +29,6 @@ class FuelTypeViewModel @Inject constructor(
 
     fun setFuelTypeGroup(fuelTypeGroup: FuelTypeGroup) {
         sharedPreferencesRepository.putValue(PREF_KEY_FUEL_TYPE, fuelTypeGroup.prefFuelType.ordinal)
+        LogAndBreadcrumb.i("Fuel type", "Changed preferred fuel type: ${fuelTypeGroup.name}")
     }
 }

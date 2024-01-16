@@ -19,6 +19,7 @@ import car.pace.cofu.ui.component.RadioGroup
 import car.pace.cofu.ui.onboarding.PageScaffold
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
+import car.pace.cofu.util.LogAndBreadcrumb
 
 @Composable
 fun FuelTypePage(
@@ -32,7 +33,11 @@ fun FuelTypePage(
         imageVector = Icons.Outlined.LocalGasStation,
         titleRes = R.string.onboarding_fuel_type_title,
         nextButtonTextRes = R.string.common_use_next,
-        onNextButtonClick = { onNext(selectedFuelType ?: FuelTypeGroup.DIESEL) },
+        onNextButtonClick = {
+            val fuelType = selectedFuelType ?: FuelTypeGroup.DIESEL
+            LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, "Selected fuel type: $fuelType")
+            onNext(fuelType)
+        },
         nextButtonEnabled = nextButtonEnabled,
         descriptionContent = {
             Description(

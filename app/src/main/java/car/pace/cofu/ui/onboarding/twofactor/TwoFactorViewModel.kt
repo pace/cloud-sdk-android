@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import car.pace.cofu.R
 import car.pace.cofu.data.UserRepository
 import car.pace.cofu.ui.onboarding.twofactor.setup.TwoFactorSetupType
+import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.extension.errorTextRes
 import cloud.pace.sdk.idkit.model.InvalidSession
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @HiltViewModel
 class TwoFactorViewModel @Inject constructor(
@@ -41,14 +41,16 @@ class TwoFactorViewModel @Inject constructor(
                 .onSuccess {
                     biometryLoading = false
                     if (it) {
+                        LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, "Use biometry for authentication")
                         finish()
                     } else {
+                        LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, "Start biometry setup")
                         twoFactorSetupType = TwoFactorSetupType.BIOMETRY
                     }
                 }
                 .onFailure {
                     biometryLoading = false
-                    Timber.e(it, "Failed to enable biometric authentication")
+                    LogAndBreadcrumb.e(it, LogAndBreadcrumb.ONBOARDING, "Failed to enable biometric authentication")
                     handleError(context, it)
                 }
         }
@@ -69,25 +71,28 @@ class TwoFactorViewModel @Inject constructor(
                 .onSuccess {
                     pinLoading = false
                     if (it) {
+                        LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, "Use pin for authentication")
                         finish()
                     } else {
+                        LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, "Start pin setup")
                         twoFactorSetupType = TwoFactorSetupType.PIN
                     }
                 }
                 .onFailure {
                     pinLoading = false
-                    Timber.e(it, "Failed to check if PIN is set")
+                    LogAndBreadcrumb.e(it, LogAndBreadcrumb.ONBOARDING, "Failed to check if PIN is set")
                     handleError(context, it)
                 }
         }
     }
 
     fun onTwoFactorSetupFinished(successful: Boolean) {
-        twoFactorSetupType = null
-
         if (successful) {
+            LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, "Setup two factor authentication: ${twoFactorSetupType?.name}")
             finish()
         }
+
+        twoFactorSetupType = null
     }
 
     private fun handleError(context: Context, throwable: Throwable) {

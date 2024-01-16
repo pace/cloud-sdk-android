@@ -18,6 +18,7 @@ import car.pace.cofu.ui.onboarding.tracking.TrackingPage
 import car.pace.cofu.ui.onboarding.twofactor.TwoFactorPage
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
+import car.pace.cofu.util.LogAndBreadcrumb
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -41,7 +42,9 @@ fun OnboardingScreen(
         coroutineScope.launch {
             val newPage = pagerState.currentPage + 1
             if (newPage >= pages.size) {
-                onDone(FuelTypeGroup.PETROL) // Petrol is fallback, if fuel type selection was not displayed
+                val fuelType = FuelTypeGroup.PETROL
+                LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, "Selected fuel type: $fuelType (fallback)")
+                onDone(fuelType) // Petrol is fallback, if fuel type selection was not displayed
             } else {
                 pagerState.animateScrollToPage(newPage)
             }

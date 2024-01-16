@@ -3,7 +3,7 @@ package car.pace.cofu.ui.theme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import car.pace.cofu.BuildConfig
-import timber.log.Timber
+import car.pace.cofu.util.LogAndBreadcrumb
 
 val Primary = BuildConfig.PRIMARY_COLOR.toColor() ?: Color(0xFF00CCF0)
 val Secondary = BuildConfig.SECONDARY_COLOR.toColor() ?: Color(0xFF00CCF0)
@@ -25,7 +25,7 @@ fun String.toColor(): Color? {
     return try {
         Color(android.graphics.Color.parseColor(this))
     } catch (e: Exception) {
-        Timber.d("Could not parse color string $this to Color object")
+        LogAndBreadcrumb.d("Color config", "Could not parse color string $this to Color object")
         null
     }
 }
