@@ -44,7 +44,7 @@ class App : Application() {
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),
                 apiKey = "none",
                 authenticationMode = AuthenticationMode.NATIVE,
-                environment = Environment.DEVELOPMENT,
+                environment = Environment.PRODUCTION,
                 oidConfiguration = CustomOIDConfiguration(
                     redirectUri = BuildConfig.REDIRECT_URI,
                     additionalParameters = BuildConfig.DEFAULT_IDP?.let { mapOf("kc_idp_hint" to it) }
