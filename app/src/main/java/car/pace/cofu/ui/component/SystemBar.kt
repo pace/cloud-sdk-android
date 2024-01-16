@@ -2,6 +2,7 @@ package car.pace.cofu.ui.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -16,7 +17,9 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -33,8 +36,10 @@ fun LogoTopBar() {
     CenterAlignedTopAppBar(
         title = {
             Image(
-                painter = painterResource(id = R.drawable.ic_brand_logo),
-                contentDescription = null
+                painter = painterResource(id = R.drawable.ic_fallback_header),
+                contentDescription = null,
+                modifier = Modifier.height(28.dp),
+                contentScale = ContentScale.FillHeight
             )
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)

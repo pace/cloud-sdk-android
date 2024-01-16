@@ -161,13 +161,14 @@ build_app:
                     filename=ic_home_header
                     home_header=true
                     ;;
-                *fallback_header_image_android*) filename=ic_brand_logo;;
+                *fallback_header_image_android*) filename=ic_fallback_header;;
                 *detail_view_brand_icon_android.*)
-                    filename=ic_brand_horizontal
+                    filename=ic_brand_logo
                     detail_icon=true
                     ;;
               esac
               output=${DRAWABLE_DIRECTORY}/${filename}.${extension}
+              rm ${DRAWABLE_DIRECTORY}/${filename}.*
               mv "$f" "$output"
               echo "Moved image $f to $output"
             done
