@@ -176,7 +176,8 @@ build_app:
             echo "Home header exists: $home_header"
             echo "Detail icon exists: $detail_icon"
             jq ". + { \"home_show_custom_header\": $home_header, \"onboarding_show_custom_header\": $onboarding_header, \"detail_screen_show_icon\": $detail_icon }" configuration.json > temp.json && mv temp.json configuration.json
-        - ./gradlew clean app:bundleRelease -PbuildNumber=$BUILD_NUMBER -PversionName=$VERSION_NAME
+        - ./gradlew clean
+        - ./gradlew app:bundleRelease -PbuildNumber=$BUILD_NUMBER -PversionName=$VERSION_NAME
     artifacts:
         name: App build
         expire_in: 30 days

@@ -55,6 +55,8 @@ object MenuEntriesGenerator {
                 resourceDir.mkdirs()
                 val outputFile = File(resourceDir, "menu.xml")
                 outputFile.writeText(xml.toString(PrintOptions(singleLineTextElements = true)))
+
+                println("MenuEntriesGenerator: Successfully generated $language resource file to $outputFile")
             }
     }
 
@@ -79,7 +81,9 @@ object MenuEntriesGenerator {
             )
             .build()
 
-        file.writeTo(File(outputDir, "java"))
+        val outputFile = file.writeTo(File(outputDir, "java"))
+
+        println("MenuEntriesGenerator: Successfully generated source file to $outputFile")
     }
 
     private fun menuLabelName(index: Int) = "menu_label_$index"
