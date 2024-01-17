@@ -122,7 +122,9 @@ build_app:
               extension="${f##*.}"
               density=${f##*android_launcher_icon_}
               density=${density%%.*}
-              output=app/src/main/res/mipmap-${density}/ic_launcher.${extension}
+              path=app/src/main/res/mipmap-${density}
+              output=${path}/ic_launcher.${extension}
+              mkdir -p $path
               mv "$f" "$output"
               echo "Moved launcher icon $f to $output"
             done
@@ -134,11 +136,15 @@ build_app:
               extension="${f##*.}"
               language=${f##*_}
               language=${language%-*}
+
               if [ $language = "en" ]; then
-                output=app/src/main/res/raw/${filename}.${extension}
+                path=app/src/main/res/raw
               else
-                output=app/src/main/res/raw-${language}/${filename}.${extension}
+                path=app/src/main/res/raw-${language}
               fi
+
+              output=${path}/${filename}.${extension}
+              mkdir -p $path
               mv "$f" "$output"
               echo "Moved legal document $f to $output"
             done
