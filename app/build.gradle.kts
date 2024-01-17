@@ -26,7 +26,7 @@ task(menuEntriesTask) {
 project.tasks.preBuild.dependsOn(menuEntriesTask)
 
 android {
-    namespace = configuration.application_id_android
+    namespace = "car.pace.cofu"
     compileSdk = 34
 
     signingConfigs {

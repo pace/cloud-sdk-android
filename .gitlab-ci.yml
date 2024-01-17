@@ -136,6 +136,7 @@ build_app:
               extension="${f##*.}"
               language=${f##*_}
               language=${language%-*}
+              language=${language%.*}
 
               if [ $language = "en" ]; then
                 path=app/src/main/res/raw
