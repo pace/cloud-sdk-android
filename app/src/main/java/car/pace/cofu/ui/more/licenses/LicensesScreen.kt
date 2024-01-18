@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import car.pace.cofu.R
 import car.pace.cofu.ui.component.TextTopBar
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.ui.theme.PrimaryButtonText
 import com.mikepenz.aboutlibraries.ui.compose.LibrariesContainer
 import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
 
@@ -31,7 +32,7 @@ fun LicensesScreen(
                 backgroundColor = MaterialTheme.colorScheme.background,
                 contentColor = MaterialTheme.colorScheme.onBackground,
                 badgeBackgroundColor = MaterialTheme.colorScheme.primary,
-                badgeContentColor = MaterialTheme.colorScheme.onPrimary,
+                badgeContentColor = PrimaryButtonText,
                 dialogConfirmButtonColor = MaterialTheme.colorScheme.primary
             ),
             itemContentPadding = PaddingValues(horizontal = 20.dp, vertical = 14.dp)
