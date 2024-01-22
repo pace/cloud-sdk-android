@@ -1,14 +1,21 @@
 package car.pace.cofu.ui.detail
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.GasStationRepository
 import car.pace.cofu.data.LocationRepository
+import car.pace.cofu.features.analytics.Analytics
+import car.pace.cofu.features.analytics.FuelingStarted
+import car.pace.cofu.features.analytics.StationNavigationUsed
 import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
+import car.pace.cofu.util.IntentUtils
 import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.UiState.Loading.toUiState
+import cloud.pace.sdk.appkit.AppKit
+import cloud.pace.sdk.poikit.poi.GasStation
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -26,7 +33,8 @@ import kotlinx.coroutines.launch
 class DetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     gasStationRepository: GasStationRepository,
-    locationRepository: LocationRepository
+    locationRepository: LocationRepository,
+    val analytics: Analytics
 ) : ViewModel() {
 
     private val id: String = checkNotNull(savedStateHandle["id"])
@@ -66,6 +74,19 @@ class DetailViewModel @Inject constructor(
     fun refresh() {
         viewModelScope.launch {
             refresh.emit(Unit)
+        }
+    }
+
+    fun startFueling(context: Context, gasStation: GasStation) {
+        LogAndBreadcrumb.i(LogAndBreadcrumb.DETAIL, "Start fueling")
+        analytics.logEvent(FuelingStarted)
+        AppKit.openFuelingApp(context = context, id = gasStation.id, callback = analytics.TrackingAppCallback())
+    }
+
+    fun startNavigation(context: Context, gasStation: GasStation) {
+        LogAndBreadcrumb.i(LogAndBreadcrumb.DETAIL, "Start navigation to gas station")
+        IntentUtils.startNavigation(context, gasStation).onSuccess {
+            analytics.logEvent(StationNavigationUsed)
         }
     }
 }

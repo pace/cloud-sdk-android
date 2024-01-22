@@ -83,8 +83,6 @@ import car.pace.cofu.util.Constants.DETAIL_SPACER_TOP_KEY
 import car.pace.cofu.util.Constants.DETAIL_TOP_CONTENT_CONTENT_TYPE
 import car.pace.cofu.util.Constants.DETAIL_TOP_CONTENT_KEY
 import car.pace.cofu.util.Constants.FADE_DURATION
-import car.pace.cofu.util.IntentUtils
-import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.extension.canStartFueling
 import car.pace.cofu.util.extension.distanceText
@@ -94,7 +92,6 @@ import car.pace.cofu.util.extension.twoLineAddress
 import car.pace.cofu.util.openinghours.OpeningHoursStatus
 import car.pace.cofu.util.openinghours.format
 import car.pace.cofu.util.openinghours.openingHoursStatus
-import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.poikit.poi.Address
 import cloud.pace.sdk.poikit.poi.Day
 import cloud.pace.sdk.poikit.poi.GasStation
@@ -122,12 +119,19 @@ fun DetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val userLocation by viewModel.userLocation.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     DetailScreenContent(
         uiState = uiState,
         userLocation = userLocation,
         onNavigateUp = onNavigateUp,
-        onRefresh = viewModel::refresh
+        onRefresh = viewModel::refresh,
+        onStartFueling = {
+            viewModel.startFueling(context, it)
+        },
+        onNavigateToGasStation = {
+            viewModel.startNavigation(context, it)
+        }
     )
 }
 
@@ -136,7 +140,9 @@ fun DetailScreenContent(
     uiState: UiState<GasStation>,
     userLocation: LatLng?,
     onNavigateUp: () -> Unit,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    onStartFueling: (GasStation) -> Unit,
+    onNavigateToGasStation: (GasStation) -> Unit
 ) {
     Column {
         TextTopBar(
@@ -245,8 +251,7 @@ fun DetailScreenContent(
                             text = stringResource(id = R.string.common_start_fueling),
                             modifier = buttonModifier,
                             onClick = {
-                                LogAndBreadcrumb.i(LogAndBreadcrumb.DETAIL, "Start fueling")
-                                AppKit.openFuelingApp(context, gasStation.id)
+                                onStartFueling(gasStation)
                             }
                         )
                     } else {
@@ -254,8 +259,7 @@ fun DetailScreenContent(
                             text = stringResource(id = R.string.common_start_navigation),
                             modifier = buttonModifier,
                             onClick = {
-                                LogAndBreadcrumb.i(LogAndBreadcrumb.DETAIL, "Start navigation to gas station")
-                                IntentUtils.startNavigation(context, gasStation)
+                                onNavigateToGasStation(gasStation)
                             }
                         )
                     }
@@ -726,7 +730,9 @@ fun DetailScreenContentPreview() {
             ),
             userLocation = LatLng(49.013513, 8.4018654),
             onNavigateUp = {},
-            onRefresh = {}
+            onRefresh = {},
+            onStartFueling = {},
+            onNavigateToGasStation = {}
         )
     }
 }

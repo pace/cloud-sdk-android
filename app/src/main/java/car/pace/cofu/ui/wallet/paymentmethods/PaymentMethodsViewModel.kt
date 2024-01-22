@@ -1,12 +1,15 @@
 package car.pace.cofu.ui.wallet.paymentmethods
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.PaymentMethodRepository
+import car.pace.cofu.features.analytics.Analytics
 import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.UiState.Loading.toUiState
+import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.app.webview.AppWebViewClient
 import cloud.pace.sdk.utils.URL
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,8 +22,11 @@ import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel
 class PaymentMethodsViewModel @Inject constructor(
-    private val paymentMethodRepository: PaymentMethodRepository
+    private val paymentMethodRepository: PaymentMethodRepository,
+    analytics: Analytics
 ) : ViewModel() {
+
+    private val trackingAppCallback = analytics.TrackingAppCallback()
 
     val uiState = paymentMethodRepository.paymentMethods
         .onSubscription {
@@ -44,7 +50,17 @@ class PaymentMethodsViewModel @Inject constructor(
         paymentMethodRepository.refreshPaymentMethods()
     }
 
-    fun paymentMethodUrl(id: String?): String {
+    fun showPaymentMethod(context: Context, id: String) {
+        LogAndBreadcrumb.i(LogAndBreadcrumb.PAYMENT_METHODS, "Open Pay PWA to show selected payment method")
+        AppKit.openAppActivity(context, paymentMethodUrl(id), true, trackingAppCallback)
+    }
+
+    fun addPaymentMethod(context: Context) {
+        LogAndBreadcrumb.i(LogAndBreadcrumb.PAYMENT_METHODS, "Open Pay PWA to add a payment method")
+        AppKit.openAppActivity(context, paymentMethodCreateUrl(), true, trackingAppCallback)
+    }
+
+    private fun paymentMethodUrl(id: String?): String {
         id ?: return URL.payment
 
         return Uri.parse(URL.payment)
@@ -56,12 +72,17 @@ class PaymentMethodsViewModel @Inject constructor(
             .toString()
     }
 
-    fun paymentMethodCreateUrl(): String {
+    private fun paymentMethodCreateUrl(): String {
         return Uri.parse(URL.payment)
             .buildUpon()
             .appendPath("payment-create")
             .appendQueryParameter("redirect_uri", AppWebViewClient.CLOSE_URI)
             .build()
             .toString()
+    }
+
+    companion object {
+        const val PAYMENT_METHOD_CREATION_STARTED = "payment_method_creation_started"
+        const val PAYMENT_METHOD_ADDED = "payment_method_added"
     }
 }

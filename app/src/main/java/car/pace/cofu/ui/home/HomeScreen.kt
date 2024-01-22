@@ -56,10 +56,8 @@ import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.ui.theme.Success
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 import car.pace.cofu.util.Constants.GAS_STATION_CONTENT_TYPE
-import car.pace.cofu.util.IntentUtils
 import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
-import car.pace.cofu.util.extension.canStartFueling
 import car.pace.cofu.util.extension.distanceText
 import car.pace.cofu.util.extension.formatPrice
 import car.pace.cofu.util.extension.isLocationEnabled
@@ -69,11 +67,9 @@ import car.pace.cofu.util.extension.oneLineAddress
 import car.pace.cofu.util.extension.twoLineAddress
 import car.pace.cofu.util.openinghours.OpeningHoursStatus
 import car.pace.cofu.util.openinghours.openingHoursStatus
-import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.poikit.poi.Address
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.Price
-import com.google.android.gms.maps.model.LatLng
 import java.util.UUID
 
 @Composable
@@ -83,7 +79,6 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle(minActiveState = Lifecycle.State.RESUMED)
     val fuelTypeGroup by viewModel.fuelTypeGroup.collectAsStateWithLifecycle()
-    val userLocation by viewModel.userLocation.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -108,20 +103,26 @@ fun HomeScreen(
     HomeScreenContent(
         uiState = uiState,
         fuelTypeGroup = fuelTypeGroup,
-        userLocation = userLocation,
         refresh = viewModel::refresh,
-        navigateToDetail = navigateToDetail
+        navigateToDetail = navigateToDetail,
+        onStartFueling = {
+            viewModel.startFueling(context, it)
+        },
+        navigateToGasStation = {
+            viewModel.startNavigation(context, it)
+        }
     )
 }
 
 @Composable
 fun HomeScreenContent(
-    uiState: UiState<List<GasStation>>,
+    uiState: UiState<List<HomeViewModel.ListStation>>,
     showCustomHeader: Boolean = BuildConfig.HOME_SHOW_CUSTOM_HEADER,
     fuelTypeGroup: FuelTypeGroup,
-    userLocation: LatLng?,
     refresh: () -> Unit,
-    navigateToDetail: (String) -> Unit
+    navigateToDetail: (String) -> Unit,
+    onStartFueling: (GasStation) -> Unit,
+    navigateToGasStation: (GasStation) -> Unit
 ) {
     Column(
         modifier = Modifier.background(MaterialTheme.colorScheme.surface)
@@ -145,19 +146,12 @@ fun HomeScreenContent(
             is UiState.Success -> {
                 val gasStations = uiState.data
                 if (gasStations.isNotEmpty()) {
-                    val context = LocalContext.current
-
                     GasStationList(
                         gasStations = gasStations,
                         fuelTypeGroup = fuelTypeGroup,
-                        userLocation = userLocation,
-                        onStartFueling = {
-                            LogAndBreadcrumb.i(LogAndBreadcrumb.HOME, "Start fueling")
-                            AppKit.openFuelingApp(context, it.id)
-                        },
+                        onStartFueling = onStartFueling,
                         onStartNavigation = {
-                            LogAndBreadcrumb.i(LogAndBreadcrumb.HOME, "Start navigation to gas station")
-                            IntentUtils.startNavigation(context, it)
+                            navigateToGasStation(it)
                         },
                         onClick = {
                             navigateToDetail(it.id)
@@ -181,9 +175,8 @@ fun HomeScreenContent(
 
 @Composable
 fun GasStationList(
-    gasStations: List<GasStation>,
+    gasStations: List<HomeViewModel.ListStation>,
     fuelTypeGroup: FuelTypeGroup,
-    userLocation: LatLng?,
     onStartFueling: (GasStation) -> Unit,
     onStartNavigation: (GasStation) -> Unit,
     onClick: (GasStation) -> Unit
@@ -194,16 +187,15 @@ fun GasStationList(
     ) {
         items(
             items = gasStations,
-            key = GasStation::id,
+            key = { it.gasStation.id },
             contentType = { GAS_STATION_CONTENT_TYPE }
         ) {
             GasStationRow(
-                gasStation = it,
-                userLocation = userLocation,
+                listStation = it,
                 fuelTypeGroup = fuelTypeGroup,
-                onStartFueling = { onStartFueling(it) },
-                onStartNavigation = { onStartNavigation(it) },
-                onClick = { onClick(it) }
+                onStartFueling = { onStartFueling(it.gasStation) },
+                onStartNavigation = { onStartNavigation(it.gasStation) },
+                onClick = { onClick(it.gasStation) }
             )
         }
     }
@@ -212,8 +204,7 @@ fun GasStationList(
 @Composable
 fun GasStationRow(
     modifier: Modifier = Modifier,
-    gasStation: GasStation,
-    userLocation: LatLng?,
+    listStation: HomeViewModel.ListStation,
     fuelTypeGroup: FuelTypeGroup,
     onStartFueling: () -> Unit,
     onStartNavigation: () -> Unit,
@@ -226,10 +217,13 @@ fun GasStationRow(
             .background(color = MaterialTheme.colorScheme.background, shape = RoundedCornerShape(8.dp))
             .clickable { onClick() }
     ) {
-        val canStartFueling = gasStation.canStartFueling(userLocation)
+        val context = LocalContext.current
+        val gasStation = listStation.gasStation
+        val canStartFueling = listStation.canStartFueling
         val openingHoursStatus = gasStation.openingHoursStatus()
         val address = gasStation.address
         val showPrices = !BuildConfig.HIDE_PRICES
+        val distanceText = listStation.distanceText(context)
 
         if (canStartFueling) {
             Text(
@@ -265,7 +259,7 @@ fun GasStationRow(
                         textAlign = TextAlign.Start,
                         modifier = Modifier.padding(top = 12.dp)
                     )
-                    gasStation.center?.toLatLn()?.distanceText(userLocation)?.let {
+                    distanceText?.let {
                         DistanceLabel(
                             distanceText = it,
                             canStartFueling = canStartFueling,
@@ -415,31 +409,36 @@ private fun HomeScreenPreview(
         HomeScreenContent(
             uiState = UiState.Success(
                 listOf(
-                    GasStation(UUID.randomUUID().toString(), arrayListOf()).apply {
-                        name = "Gas what"
-                        address = Address("c=de;l=Karlsruhe;pc=76131;s=Haid-und-Neu-Straße;hn=18")
-                        latitude = 49.012440
-                        longitude = 8.4018654
-                        prices = mutableListOf(Price("diesel", "Diesel", 1.337))
-                        currency = "EUR"
-                        priceFormat = "d.dds"
-                    },
-                    GasStation(UUID.randomUUID().toString(), arrayListOf()).apply {
-                        name = "Tanke Emma"
-                        address = Address("c=de;l=Karlsruhe;pc=76131;s=Haid-und-Neu-Straße;hn=18")
-                        latitude = 49.013513
-                        longitude = 8.426530
-                        prices = mutableListOf(Price("ron95e5", "Petrol", 1.537))
-                        currency = "EUR"
-                        priceFormat = "d.dds"
-                    }
+                    HomeViewModel.ListStation(
+                        gasStation = GasStation(UUID.randomUUID().toString(), arrayListOf()).apply {
+                            name = "Gas what"
+                            address = Address("c=de;l=Karlsruhe;pc=76131;s=Haid-und-Neu-Straße;hn=18")
+                            prices = mutableListOf(Price("diesel", "Diesel", 1.337))
+                            currency = "EUR"
+                            priceFormat = "d.dds"
+                        },
+                        canStartFueling = true,
+                        distance = 10.0
+                    ),
+                    HomeViewModel.ListStation(
+                        gasStation = GasStation(UUID.randomUUID().toString(), arrayListOf()).apply {
+                            name = "Tanke Emma"
+                            address = Address("c=de;l=Karlsruhe;pc=76131;s=Haid-und-Neu-Straße;hn=18")
+                            prices = mutableListOf(Price("ron95e5", "Petrol", 1.537))
+                            currency = "EUR"
+                            priceFormat = "d.dds"
+                        },
+                        canStartFueling = false,
+                        distance = null
+                    )
                 )
             ),
             showCustomHeader = showCustomHeader,
             fuelTypeGroup = FuelTypeGroup.DIESEL,
-            userLocation = LatLng(49.013513, 8.4018654),
             refresh = {},
-            navigateToDetail = {}
+            navigateToDetail = {},
+            onStartFueling = {},
+            navigateToGasStation = {}
         )
     }
 }
@@ -462,8 +461,7 @@ fun GasStationRowPreview() {
 
         GasStationRow(
             modifier = Modifier.padding(20.dp),
-            gasStation = gasStation,
-            userLocation = LatLng(49.013513, 8.4018654),
+            listStation = HomeViewModel.ListStation(gasStation, true, 10.0),
             fuelTypeGroup = FuelTypeGroup.PETROL,
             onStartFueling = {},
             onStartNavigation = {},

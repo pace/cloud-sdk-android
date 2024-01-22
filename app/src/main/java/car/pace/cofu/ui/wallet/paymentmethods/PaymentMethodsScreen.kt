@@ -38,11 +38,9 @@ import car.pace.cofu.ui.component.TextTopBar
 import car.pace.cofu.ui.component.forwardingPainter
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.util.Constants.PAYMENT_METHOD_LIST_ITEM_CONTENT_TYPE
-import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.extension.PaymentMethodItem
 import car.pace.cofu.util.extension.name
-import cloud.pace.sdk.appkit.AppKit
 import coil.compose.AsyncImage
 import java.util.UUID
 
@@ -58,12 +56,10 @@ fun PaymentMethodsScreen(
         uiState = uiState,
         onNavigateUp = onNavigateUp,
         onItemClick = {
-            LogAndBreadcrumb.i(LogAndBreadcrumb.PAYMENT_METHODS, "Open Pay PWA to show selected payment method")
-            AppKit.openAppActivity(context, viewModel.paymentMethodUrl(it.id), true)
+            viewModel.showPaymentMethod(context, it.id)
         },
         onAddClick = {
-            LogAndBreadcrumb.i(LogAndBreadcrumb.PAYMENT_METHODS, "Open Pay PWA to add a payment method")
-            AppKit.openAppActivity(context, viewModel.paymentMethodCreateUrl(), true)
+            viewModel.addPaymentMethod(context)
         },
         onRefresh = viewModel::refresh
     )

@@ -1,7 +1,7 @@
 package car.pace.cofu.data
 
 import androidx.appcompat.app.AppCompatActivity
-import car.pace.cofu.util.AnalyticsUtils
+import car.pace.cofu.features.analytics.Analytics
 import car.pace.cofu.util.extension.MailNotSentException
 import car.pace.cofu.util.extension.resume
 import cloud.pace.sdk.idkit.IDKit
@@ -14,7 +14,8 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 
 @Singleton
 class UserRepository @Inject constructor(
-    private val sharedPreferencesRepository: SharedPreferencesRepository
+    private val sharedPreferencesRepository: SharedPreferencesRepository,
+    private val analytics: Analytics
 ) {
 
     fun isAuthorizationValid() = IDKit.isAuthorizationValid()
@@ -57,7 +58,7 @@ class UserRepository @Inject constructor(
 
     suspend fun resetAppData(activity: AppCompatActivity) {
         IDKit.endSession(activity)
-        AnalyticsUtils.setAnalyticsEnabled(false)
+        analytics.enableAnalyticsFeature(null, false)
         sharedPreferencesRepository.clear()
     }
 }

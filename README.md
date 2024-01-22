@@ -52,6 +52,12 @@ The project is localized for following languages:
 * Romanian
 * Russian
 
+## Analytics
+
+Analytic events are generated using [SNACK](https://git.pace.cloud/pace/mobile/common/#api-code-generation).
+The generated events are under [app/src/main/java/car/pace/cofu/features/analytics/AnalyticEvents.kt](app/src/main/java/car/pace/cofu/features/analytics/AnalyticEvents.kt).
+The definition files can be found in the [Common](https://git.pace.cloud/pace/mobile/common/-/blob/master/definition/cofu/events/v1/events.yaml) repo.
+
 ## License
 
 This project is licensed under the terms of the MIT license. See the [LICENSE](./LICENSE.md) file.
