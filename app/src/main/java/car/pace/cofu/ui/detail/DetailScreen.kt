@@ -84,6 +84,7 @@ import car.pace.cofu.util.Constants.DETAIL_TOP_CONTENT_CONTENT_TYPE
 import car.pace.cofu.util.Constants.DETAIL_TOP_CONTENT_KEY
 import car.pace.cofu.util.Constants.FADE_MAP_DURATION
 import car.pace.cofu.util.IntentUtils
+import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.extension.canStartFueling
 import car.pace.cofu.util.extension.distanceText
@@ -244,6 +245,7 @@ fun DetailScreenContent(
                             text = stringResource(id = R.string.common_start_fueling),
                             modifier = buttonModifier,
                             onClick = {
+                                LogAndBreadcrumb.i(LogAndBreadcrumb.DETAIL, "Start fueling")
                                 AppKit.openFuelingApp(context, gasStation.id)
                             }
                         )
@@ -252,6 +254,7 @@ fun DetailScreenContent(
                             text = stringResource(id = R.string.common_start_navigation),
                             modifier = buttonModifier,
                             onClick = {
+                                LogAndBreadcrumb.i(LogAndBreadcrumb.DETAIL, "Start navigation to gas station")
                                 IntentUtils.startNavigation(context, gasStation)
                             }
                         )

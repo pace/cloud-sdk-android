@@ -57,6 +57,7 @@ import car.pace.cofu.ui.theme.Success
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 import car.pace.cofu.util.Constants.GAS_STATION_CONTENT_TYPE
 import car.pace.cofu.util.IntentUtils
+import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.extension.canStartFueling
 import car.pace.cofu.util.extension.distanceText
@@ -74,7 +75,6 @@ import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.Price
 import com.google.android.gms.maps.model.LatLng
 import java.util.UUID
-import timber.log.Timber
 
 @Composable
 fun HomeScreen(
@@ -152,9 +152,11 @@ fun HomeScreenContent(
                         fuelTypeGroup = fuelTypeGroup,
                         userLocation = userLocation,
                         onStartFueling = {
+                            LogAndBreadcrumb.i(LogAndBreadcrumb.HOME, "Start fueling")
                             AppKit.openFuelingApp(context, it.id)
                         },
                         onStartNavigation = {
+                            LogAndBreadcrumb.i(LogAndBreadcrumb.HOME, "Start navigation to gas station")
                             IntentUtils.startNavigation(context, it)
                         },
                         onClick = {
@@ -381,7 +383,7 @@ private fun openLocationPermissionSettings(context: Context) {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri)
         context.startActivity(intent)
     } catch (e: Exception) {
-        Timber.e(e, "Could not launch permission settings")
+        LogAndBreadcrumb.e(e, LogAndBreadcrumb.HOME, "Could not launch permission settings")
     }
 }
 
@@ -389,7 +391,7 @@ private fun openLocationSettings(context: Context) {
     try {
         context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
     } catch (e: Exception) {
-        Timber.e(e, "Could not launch location settings")
+        LogAndBreadcrumb.e(e, LogAndBreadcrumb.HOME, "Could not launch location settings")
     }
 }
 

@@ -10,6 +10,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import car.pace.cofu.ui.navigation.graph.Graph
 import car.pace.cofu.ui.navigation.graph.Route
+import car.pace.cofu.util.LogAndBreadcrumb
 
 @Composable
 fun rememberAppState(
@@ -22,6 +23,13 @@ fun rememberAppState(
 class AppState(
     val navController: NavHostController
 ) {
+
+    init {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            val route = Route.fromRoute(destination.route)
+            LogAndBreadcrumb.d("Navigation", "${route?.name ?: destination.route} gets displayed")
+        }
+    }
 
     val currentDestination: NavDestination?
         @Composable get() = navController.currentBackStackEntryAsState().value?.destination

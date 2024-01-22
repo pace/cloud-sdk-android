@@ -34,8 +34,8 @@ import car.pace.cofu.ui.onboarding.twofactor.biometric.rememberBiometricManager
 import car.pace.cofu.ui.onboarding.twofactor.biometric.rememberBiometricPrompt
 import car.pace.cofu.ui.onboarding.twofactor.setup.TwoFactorSetup
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.SnackbarData
-import timber.log.Timber
 
 @Composable
 fun AuthorisationScreen(
@@ -55,6 +55,7 @@ fun AuthorisationScreen(
                 viewModel.enableBiometricAuthentication()
             },
             onError = { errorCode, errString ->
+                LogAndBreadcrumb.i(LogAndBreadcrumb.AUTHORISATION, "Biometric error: $errString")
                 if (errorCode == BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED) {
                     showBiometricSetupDialog = true
                 } else if (errorCode != BiometricPrompt.ERROR_USER_CANCELED && errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
@@ -101,7 +102,7 @@ fun AuthorisationScreen(
                     try {
                         context.startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS))
                     } catch (e: Exception) {
-                        Timber.e(e, "Could not launch biometry setup settings")
+                        LogAndBreadcrumb.e(e, LogAndBreadcrumb.AUTHORISATION, "Could not launch biometry setup settings")
                         viewModel.onFingerprintSettingsNotFound()
                     }
                 }
@@ -158,6 +159,7 @@ fun AuthorisationScreenContent(
                     text = stringResource(id = R.string.wallet_two_factor_authentication_biometry_title),
                     switchInfo = SwitchInfo(isBiometricAuthenticationEnabled) {
                         if (it) {
+                            LogAndBreadcrumb.i(LogAndBreadcrumb.AUTHORISATION, "User starts biometry setup")
                             val info = BiometricPrompt.PromptInfo.Builder()
                                 .setTitle(context.getString(R.string.onboarding_authorization_request_fingerprint))
                                 .setNegativeButtonText(context.getString(R.string.common_use_back))

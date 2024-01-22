@@ -8,12 +8,12 @@ import androidx.lifecycle.viewModelScope
 import car.pace.cofu.R
 import car.pace.cofu.data.UserRepository
 import car.pace.cofu.ui.onboarding.twofactor.setup.TwoFactorSetupType
+import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.extension.errorTextRes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @HiltViewModel
 class AuthorisationViewModel @Inject constructor(
@@ -33,23 +33,26 @@ class AuthorisationViewModel @Inject constructor(
                     if (it) {
                         isBiometricAuthenticationEnabled = true
                     } else {
+                        LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, "Start biometry setup")
                         twoFactorSetupType = TwoFactorSetupType.BIOMETRY
                     }
                 }
                 .onFailure {
-                    Timber.e(it, "Failed to enable biometric authentication")
+                    LogAndBreadcrumb.e(it, LogAndBreadcrumb.AUTHORISATION, "Failed to enable biometric authentication")
                     errorText.emit(it.errorTextRes())
                 }
         }
     }
 
     fun startPinSetUp() {
+        LogAndBreadcrumb.i(LogAndBreadcrumb.AUTHORISATION, "User starts pin setup")
         twoFactorSetupType = TwoFactorSetupType.PIN
     }
 
     fun disableBiometricAuthentication() {
         userRepository.disableBiometricAuthentication()
         isBiometricAuthenticationEnabled = false
+        LogAndBreadcrumb.i(LogAndBreadcrumb.AUTHORISATION, "Biometric authentication disabled")
     }
 
     fun onFingerprintSettingsNotFound() {
@@ -59,10 +62,11 @@ class AuthorisationViewModel @Inject constructor(
     }
 
     fun onTwoFactorSetupFinished(successful: Boolean) {
-        twoFactorSetupType = null
-
         if (successful) {
             isBiometricAuthenticationEnabled = userRepository.isBiometricAuthenticationEnabled()
+            LogAndBreadcrumb.i(LogAndBreadcrumb.AUTHORISATION, "Setup two factor authentication: ${twoFactorSetupType?.name}")
         }
+
+        twoFactorSetupType = null
     }
 }

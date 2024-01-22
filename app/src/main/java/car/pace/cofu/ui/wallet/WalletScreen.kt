@@ -49,6 +49,7 @@ import car.pace.cofu.util.Constants.SPACER_KEY
 import car.pace.cofu.util.Constants.USER_HEADER_CONTENT_TYPE
 import car.pace.cofu.util.Constants.USER_HEADER_KEY
 import car.pace.cofu.util.JWTUtils
+import car.pace.cofu.util.LogAndBreadcrumb
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.idkit.IDKit
 import kotlinx.coroutines.launch
@@ -78,6 +79,7 @@ fun WalletScreen(
         email = email,
         items = items,
         onLogout = {
+            LogAndBreadcrumb.i(LogAndBreadcrumb.WALLET, "User logged out")
             coroutineScope.launch {
                 val activity = context.findActivity<AppCompatActivity>()
                 viewModel.resetAppData(activity)
@@ -134,8 +136,14 @@ fun WalletScreenContent(
                         role = Role.Button,
                         onClick = {
                             when (it) {
-                                Route.TRANSACTIONS -> AppKit.openTransactions(context)
-                                Route.DELETE_ACCOUNT -> AppKit.openPaceID(context)
+                                Route.TRANSACTIONS -> {
+                                    LogAndBreadcrumb.d(LogAndBreadcrumb.WALLET, "Transactions gets displayed")
+                                    AppKit.openTransactions(context)
+                                }
+                                Route.DELETE_ACCOUNT -> {
+                                    LogAndBreadcrumb.d(LogAndBreadcrumb.WALLET, "PACE ID gets displayed")
+                                    AppKit.openPaceID(context)
+                                }
                                 else -> onNavigate(it)
                             }
                         }
