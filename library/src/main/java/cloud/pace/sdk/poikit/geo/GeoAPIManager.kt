@@ -14,6 +14,7 @@ import cloud.pace.sdk.utils.LocationProvider
 import cloud.pace.sdk.utils.Success
 import cloud.pace.sdk.utils.SystemManager
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.VisibleRegion
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -26,6 +27,7 @@ interface GeoAPIManager {
     suspend fun features(latitude: Double, longitude: Double): Result<List<GeoAPIFeature>>
     fun cofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit)
     fun cofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit)
+    fun cofuGasStations(visibleRegion: VisibleRegion, completion: (Result<List<GasStation>>) -> Unit)
     suspend fun isPoiInRange(poiId: String, location: Location? = null): Boolean
 }
 
@@ -125,26 +127,12 @@ class GeoAPIManagerImpl(
     override fun cofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit) {
         cofuGasStations { response ->
             response.onSuccess { cofuGasStations ->
-                val targetLocation = LatLng(location.latitude, location.longitude)
-                val cofuGasStationsInRange = cofuGasStations.filter { station -> station.coordinate.distanceTo(targetLocation) < radius }
-                val locations = cofuGasStationsInRange.associate { station -> station.id to station.coordinate.toLocationPoint() }
-
                 scope.launch {
-                    val result = POIKit
-                        .getGasStations(locations)
-                        .map { gasStations ->
-                            gasStations.mapNotNull { gasStation ->
-                                val cofuGasStation = cofuGasStationsInRange.firstOrNull { cofuGasStation -> cofuGasStation.id == gasStation.id }
-                                if (cofuGasStation != null) {
-                                    gasStation.also { it.additionalProperties = cofuGasStation.properties }
-                                } else {
-                                    null
-                                }
-                            }
-                        }
-
+                    val targetLocation = LatLng(location.latitude, location.longitude)
+                    val cofuGasStationsInRange = cofuGasStations.filter { station -> station.coordinate.distanceTo(targetLocation) < radius }
+                    val gasStations = getGasStations(cofuGasStationsInRange)
                     withContext(dispatchers.main()) {
-                        completion(result)
+                        completion(gasStations)
                     }
                 }
             }
@@ -153,6 +141,41 @@ class GeoAPIManagerImpl(
                 completion(Result.failure(it))
             }
         }
+    }
+
+    override fun cofuGasStations(visibleRegion: VisibleRegion, completion: (Result<List<GasStation>>) -> Unit) {
+        cofuGasStations { response ->
+            response.onSuccess { cofuGasStations ->
+                scope.launch {
+                    val cofuGasStationsInRange = cofuGasStations.filter { visibleRegion.latLngBounds.contains(it.coordinate) }
+                    val gasStations = getGasStations(cofuGasStationsInRange)
+                    withContext(dispatchers.main()) {
+                        completion(gasStations)
+                    }
+                }
+            }
+
+            response.onFailure {
+                completion(Result.failure(it))
+            }
+        }
+    }
+
+    private suspend fun getGasStations(cofuGasStations: List<CofuGasStation>): Result<List<GasStation>> {
+        val locations = cofuGasStations.associate { station -> station.id to station.coordinate.toLocationPoint() }
+
+        return POIKit
+            .getGasStations(locations)
+            .map { gasStations ->
+                gasStations.mapNotNull { gasStation ->
+                    val cofuGasStation = cofuGasStations.firstOrNull { cofuGasStation -> cofuGasStation.id == gasStation.id }
+                    if (cofuGasStation != null) {
+                        gasStation.also { it.additionalProperties = cofuGasStation.properties }
+                    } else {
+                        null
+                    }
+                }
+            }
     }
 
     override suspend fun isPoiInRange(poiId: String, location: Location?): Boolean {
