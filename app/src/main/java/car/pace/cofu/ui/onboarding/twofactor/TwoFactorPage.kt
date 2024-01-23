@@ -37,7 +37,7 @@ import car.pace.cofu.util.LogAndBreadcrumb
 fun TwoFactorPage(
     viewModel: TwoFactorViewModel = hiltViewModel(),
     onAuthorization: () -> Unit,
-    onNext: () -> Unit
+    onNext: (hasPaymentMethod: Boolean) -> Unit
 ) {
     data class TwoFactorButton(@StringRes val textRes: Int, val nextButtonLoading: Boolean, val onNextButtonClick: () -> Unit)
 
@@ -64,7 +64,7 @@ fun TwoFactorPage(
 
     LaunchedEffect(Unit) {
         viewModel.setupFinished.collect {
-            onNext()
+            onNext(it)
         }
     }
 
