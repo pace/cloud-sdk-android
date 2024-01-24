@@ -38,9 +38,8 @@ fun OnboardingScreen(
     val pagerState = rememberPagerState { pages.size }
     val coroutineScope = rememberCoroutineScope()
 
-    fun nextStep() {
+    fun nextStep(newPage: Int = pagerState.currentPage + 1) {
         coroutineScope.launch {
-            val newPage = pagerState.currentPage + 1
             if (newPage >= pages.size) {
                 val fuelType = FuelTypeGroup.PETROL
                 LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, "Selected fuel type: $fuelType (fallback)")
@@ -66,7 +65,16 @@ fun OnboardingScreen(
             OnboardingPage.TRACKING -> TrackingPage(onNavigate = onNavigate, onNext = ::nextStep)
             OnboardingPage.LOCATION_PERMISSION -> LocationPermissionPage(onNext = ::nextStep)
             OnboardingPage.AUTHENTICATION -> AuthenticationPage(onNext = ::nextStep)
-            OnboardingPage.TWO_FACTOR -> TwoFactorPage(onAuthorization = ::navigateToAuthorization, onNext = ::nextStep)
+            OnboardingPage.TWO_FACTOR -> TwoFactorPage(onAuthorization = ::navigateToAuthorization) { hasPaymentMethod ->
+                val nextPage = pagerState.currentPage + 1
+                if (hasPaymentMethod && pages[nextPage] == OnboardingPage.PAYMENT_METHOD) {
+                    // Skip payment method page
+                    nextStep(nextPage + 1)
+                } else {
+                    nextStep()
+                }
+            }
+
             OnboardingPage.PAYMENT_METHOD -> PaymentMethodPage(onNext = ::nextStep)
             OnboardingPage.FUEL_TYPE -> FuelTypePage(onNext = onDone)
             else -> {}

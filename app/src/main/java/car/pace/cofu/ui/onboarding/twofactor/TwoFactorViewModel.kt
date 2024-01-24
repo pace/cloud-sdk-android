@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.R
+import car.pace.cofu.data.PaymentMethodRepository
 import car.pace.cofu.data.UserRepository
 import car.pace.cofu.ui.onboarding.twofactor.setup.TwoFactorSetupType
 import car.pace.cofu.util.LogAndBreadcrumb
@@ -20,10 +21,11 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class TwoFactorViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val paymentMethodRepository: PaymentMethodRepository
 ) : ViewModel() {
 
-    private val _setupFinished = MutableSharedFlow<Unit>()
+    private val _setupFinished = MutableSharedFlow<Boolean>()
     val setupFinished = _setupFinished.asSharedFlow()
 
     private val _navigateToAuthorization = MutableSharedFlow<Unit>()
@@ -37,9 +39,9 @@ class TwoFactorViewModel @Inject constructor(
     fun enableBiometricAuthentication(context: Context) {
         viewModelScope.launch {
             biometryLoading = true
+
             userRepository.enableBiometricAuthentication()
                 .onSuccess {
-                    biometryLoading = false
                     if (it) {
                         LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, "Use biometry for authentication")
                         finish()
@@ -67,9 +69,9 @@ class TwoFactorViewModel @Inject constructor(
     fun isPinSet(context: Context) {
         viewModelScope.launch {
             pinLoading = true
+
             userRepository.isPINSet()
                 .onSuccess {
-                    pinLoading = false
                     if (it) {
                         LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, "Use pin for authentication")
                         finish()
@@ -88,26 +90,28 @@ class TwoFactorViewModel @Inject constructor(
 
     fun onTwoFactorSetupFinished(successful: Boolean) {
         if (successful) {
-            LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, "Setup two factor authentication: ${twoFactorSetupType?.name}")
-            finish()
+            viewModelScope.launch {
+                LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, "Setup two factor authentication: ${twoFactorSetupType?.name}")
+                finish()
+            }
+        } else {
+            biometryLoading = false
+            pinLoading = false
         }
 
         twoFactorSetupType = null
     }
 
-    private fun handleError(context: Context, throwable: Throwable) {
+    private suspend fun handleError(context: Context, throwable: Throwable) {
         if (throwable is InvalidSession) {
-            viewModelScope.launch {
-                _navigateToAuthorization.emit(Unit)
-            }
+            _navigateToAuthorization.emit(Unit)
         } else {
             errorText = context.getString(throwable.errorTextRes())
         }
     }
 
-    private fun finish() {
-        viewModelScope.launch {
-            _setupFinished.emit(Unit)
-        }
+    private suspend fun finish() {
+        val hasPaymentMethod = paymentMethodRepository.getPaymentMethods(true)?.getOrNull()?.isNotEmpty() == true
+        _setupFinished.emit(hasPaymentMethod)
     }
 }
