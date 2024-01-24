@@ -55,7 +55,7 @@ object LogAndBreadcrumb {
     }
 
     private fun sendBreadcrumb(category: String, message: String, level: SentryLevel, throwable: Throwable? = null) {
-        if (BuildConfig.FIREBASE_ENABLED) {
+        if (BuildConfig.CRASHLYTICS_ENABLED) {
             FirebaseCrashlytics.getInstance().log(message)
         }
 

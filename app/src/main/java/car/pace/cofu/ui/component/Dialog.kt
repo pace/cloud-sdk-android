@@ -41,8 +41,7 @@ fun DefaultDialog(
             Icon(
                 imageVector = imageVector,
                 contentDescription = null,
-                modifier = Modifier.size(40.dp),
-                tint = MaterialTheme.colorScheme.onSurface
+                modifier = Modifier.size(40.dp)
             )
         },
         title = {
@@ -51,6 +50,10 @@ fun DefaultDialog(
         text = {
             Description(text = text)
         },
+        containerColor = MaterialTheme.colorScheme.background,
+        iconContentColor = MaterialTheme.colorScheme.onSurface,
+        titleContentColor = MaterialTheme.colorScheme.onPrimary,
+        textContentColor = MaterialTheme.colorScheme.onPrimary,
         tonalElevation = 0.dp
     )
 }
@@ -65,7 +68,7 @@ fun DefaultDialogPreview() {
             confirmButtonText = "Confirm",
             dismissButtonText = "Cancel",
             imageVector = Icons.Outlined.Logout,
-            onConfirm = { },
+            onConfirm = {},
             onDismiss = {}
         )
     }

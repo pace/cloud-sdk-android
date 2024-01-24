@@ -3,9 +3,8 @@ package car.pace.cofu.ui.wallet
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import car.pace.cofu.data.SharedPreferencesRepository
+import car.pace.cofu.util.AnalyticsUtils
 import cloud.pace.sdk.idkit.IDKit
-import com.google.firebase.Firebase
-import com.google.firebase.analytics.analytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -16,7 +15,7 @@ class WalletViewModel @Inject constructor(
 
     suspend fun resetAppData(activity: AppCompatActivity) {
         IDKit.endSession(activity)
-        Firebase.analytics.setAnalyticsCollectionEnabled(false)
+        AnalyticsUtils.setAnalyticsEnabled(false)
         sharedPreferencesRepository.clear()
     }
 }

@@ -13,9 +13,7 @@ import androidx.core.location.LocationManagerCompat
 val locationPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
 
 val Context.isLocationPermissionGranted: Boolean
-    get() = locationPermissions.any {
-        ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
-    }
+    get() = locationPermissions.any(::isPermissionGranted)
 
 /**
  * Checks whether the location is enabled or not.
@@ -32,4 +30,8 @@ val Context.isLocationEnabled: Boolean
  */
 fun Context.listenForLocationEnabledChanges(receiver: BroadcastReceiver) {
     registerReceiver(receiver, IntentFilter("android.location.PROVIDERS_CHANGED"))
+}
+
+fun Context.isPermissionGranted(permission: String): Boolean {
+    return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 }

@@ -1,11 +1,14 @@
 package car.pace.cofu.ui.onboarding
 
+import android.Manifest
+import android.os.Build
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import car.pace.cofu.BuildConfig
 import car.pace.cofu.ui.navigation.graph.Route
@@ -13,12 +16,14 @@ import car.pace.cofu.ui.onboarding.authentication.AuthenticationPage
 import car.pace.cofu.ui.onboarding.fueltype.FuelTypePage
 import car.pace.cofu.ui.onboarding.legal.LegalPage
 import car.pace.cofu.ui.onboarding.paymentmethod.PaymentMethodPage
-import car.pace.cofu.ui.onboarding.permission.LocationPermissionPage
+import car.pace.cofu.ui.onboarding.permission.location.LocationPermissionPage
+import car.pace.cofu.ui.onboarding.permission.notification.NotificationPermissionPage
 import car.pace.cofu.ui.onboarding.tracking.TrackingPage
 import car.pace.cofu.ui.onboarding.twofactor.TwoFactorPage
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 import car.pace.cofu.util.LogAndBreadcrumb
+import car.pace.cofu.util.extension.isPermissionGranted
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -27,13 +32,27 @@ fun OnboardingScreen(
     onNavigate: (Route) -> Unit,
     onDone: (FuelTypeGroup) -> Unit
 ) {
+    val context = LocalContext.current
     val pages = remember {
-        val values = OnboardingPage.entries
-        if (BuildConfig.HIDE_PRICES) {
-            values.filterNot { it == OnboardingPage.FUEL_TYPE }
-        } else {
-            values
+        val newList = OnboardingPage.entries.toMutableList()
+
+        if (!BuildConfig.ANALYTICS_ENABLED) {
+            newList -= OnboardingPage.TRACKING
         }
+
+        if (context.isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            newList -= OnboardingPage.LOCATION_PERMISSION
+        }
+
+        if (!BuildConfig.ANALYTICS_ENABLED || Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || context.isPermissionGranted(Manifest.permission.POST_NOTIFICATIONS)) {
+            newList -= OnboardingPage.NOTIFICATION_PERMISSION
+        }
+
+        if (BuildConfig.HIDE_PRICES) {
+            newList -= OnboardingPage.FUEL_TYPE
+        }
+
+        newList
     }
     val pagerState = rememberPagerState { pages.size }
     val coroutineScope = rememberCoroutineScope()
@@ -63,6 +82,7 @@ fun OnboardingScreen(
         when (pages.getOrNull(index)) {
             OnboardingPage.LEGAL -> LegalPage(onNavigate = onNavigate, onNext = ::nextStep)
             OnboardingPage.TRACKING -> TrackingPage(onNavigate = onNavigate, onNext = ::nextStep)
+            OnboardingPage.NOTIFICATION_PERMISSION -> NotificationPermissionPage(onNext = ::nextStep)
             OnboardingPage.LOCATION_PERMISSION -> LocationPermissionPage(onNext = ::nextStep)
             OnboardingPage.AUTHENTICATION -> AuthenticationPage(onNext = ::nextStep)
             OnboardingPage.TWO_FACTOR -> TwoFactorPage(onAuthorization = ::navigateToAuthorization) { hasPaymentMethod ->

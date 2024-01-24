@@ -55,6 +55,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         resValue("string", "app_name", configuration.app_name)
+        resValue("color", "notification_color", configuration.primary_branding_color)
+
 
         buildConfigField("String", "CLIENT_ID", "\"" + configuration.client_id + "\"")
         buildConfigField("String", "REDIRECT_URI", "\"${configuration.client_id}://callback\"")
@@ -63,7 +65,6 @@ android {
         buildConfigField("Boolean", "ONBOARDING_SHOW_CUSTOM_HEADER", configuration.onboarding_show_custom_header.toString())
         buildConfigField("Boolean", "HOME_SHOW_CUSTOM_HEADER", configuration.home_show_custom_header.toString())
         buildConfigField("Boolean", "DETAIL_SCREEN_SHOW_ICON", configuration.detail_screen_show_icon.toString())
-        buildConfigField("Boolean", "ANALYTICS_ENABLED", configuration.analytics_enabled.toString())
         buildConfigField("Boolean", "MAP_ENABLED", configuration.map_enabled.toString())
         buildConfigField("Boolean", "AUTOMATIC_PRODUCTION_UPDATES_ENABLED", configuration.automatic_production_updates_enabled.toString())
         buildConfigField("Boolean", "NATIVE_FUELCARD_MANAGEMENT_ENABLED", configuration.native_fuelcard_management_enabled.toString())
@@ -78,15 +79,21 @@ android {
 
         resourceConfigurations += arrayOf("en", "cs", "de", "es", "fr", "it", "nl", "pl", "pt", "ro", "ru")
 
-        // Setup crash reporting
+        // Setup crash and analytics reporting
         buildConfigField("Boolean", "SENTRY_ENABLED", configuration.sentry_enabled.toString())
         buildConfigField("@androidx.annotation.Nullable String", "SENTRY_DSN", configuration.sentry_dsn_android?.let { "\"" + it + "\"" }.toString())
 
         val crashlyticsEnabled = configuration.crashlytics_enabled
-        buildConfigField("Boolean", "FIREBASE_ENABLED", crashlyticsEnabled.toString())
-        if (crashlyticsEnabled) {
+        val analyticsEnabled = configuration.analytics_enabled
+        buildConfigField("Boolean", "CRASHLYTICS_ENABLED", crashlyticsEnabled.toString())
+        buildConfigField("Boolean", "ANALYTICS_ENABLED", analyticsEnabled.toString())
+
+        if (crashlyticsEnabled || analyticsEnabled) {
             apply(plugin = "com.google.gms.google-services")
-            apply(plugin = "com.google.firebase.crashlytics")
+
+            if (crashlyticsEnabled) {
+                apply(plugin = "com.google.firebase.crashlytics")
+            }
         }
     }
 
@@ -163,9 +170,11 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.48.1")
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
+    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
     implementation("com.google.firebase:firebase-crashlytics")
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-inappmessaging-display")
 
     // AboutLibraries
     implementation("com.mikepenz:aboutlibraries-compose:10.10.0")

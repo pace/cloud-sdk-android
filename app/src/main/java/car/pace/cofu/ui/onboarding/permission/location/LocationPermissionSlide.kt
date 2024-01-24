@@ -1,4 +1,4 @@
-package car.pace.cofu.ui.onboarding.permission
+package car.pace.cofu.ui.onboarding.permission.location
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
