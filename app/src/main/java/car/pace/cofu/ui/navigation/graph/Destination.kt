@@ -13,6 +13,7 @@ import androidx.compose.material.icons.outlined.PersonRemove
 import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.ui.graphics.vector.ImageVector
 import car.pace.cofu.R
+import car.pace.cofu.ui.icon.BarChart4Bars
 import car.pace.cofu.ui.icon.DeveloperGuide
 import car.pace.cofu.ui.icon.Signature
 import car.pace.cofu.ui.icon.TwoPager
@@ -57,7 +58,7 @@ enum class Route(
     ONBOARDING(route = "onboarding_route", graph = Graph.ONBOARDING),
     ONBOARDING_TERMS(route = "onboarding_terms_route", graph = Graph.ONBOARDING),
     ONBOARDING_PRIVACY(route = "onboarding_privacy_route", graph = Graph.ONBOARDING),
-    ANALYSIS(route = "analysis_route", graph = Graph.ONBOARDING),
+    ONBOARDING_ANALYSIS(route = "onboarding_analysis_route", graph = Graph.ONBOARDING),
     HOME(route = "home_route", graph = Graph.HOME, showBottomBar = true),
     DETAIL(route = "detail_route", graph = Graph.HOME),
     WALLET(route = "wallet_route", graph = Graph.WALLET, showBottomBar = true),
@@ -67,6 +68,8 @@ enum class Route(
     MORE(route = "more_route", graph = Graph.MORE, showBottomBar = true),
     TERMS(route = "terms_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.MENU_ITEMS_TERMS, icon = Icons.Outlined.DeveloperGuide),
     PRIVACY(route = "privacy_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.MENU_ITEMS_PRIVACY, icon = Icons.Outlined.Lock),
+    TRACKING(route = "tracking_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.menu_items_analytics, icon = Icons.Outlined.BarChart4Bars),
+    ANALYSIS(route = "analysis_route", graph = Graph.MORE, showBottomBar = true),
     IMPRINT(route = "imprint_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.MENU_ITEMS_IMPRINT, icon = Icons.Outlined.Domain),
     LICENSES(route = "licenses_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.MENU_ITEMS_LICENCES, icon = Icons.Outlined.TwoPager),
     WEBSITE(route = "website_route", graph = Graph.MORE, icon = Icons.Outlined.Language),

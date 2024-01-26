@@ -27,14 +27,14 @@ fun LocationPermissionPage(
 
     PageScaffold(
         imageVector = Icons.Outlined.TravelExplore,
-        titleRes = R.string.onboarding_permission_title,
-        nextButtonTextRes = R.string.onboarding_permission_action,
+        titleRes = R.string.onboarding_location_permission_title,
+        nextButtonTextRes = R.string.onboarding_location_permission_action,
         onNextButtonClick = {
             launcher.launch(locationPermissions)
         },
         descriptionContent = {
             Description(
-                text = stringResource(id = R.string.onboarding_permission_description)
+                text = stringResource(id = R.string.onboarding_location_permission_description)
             )
         }
     )

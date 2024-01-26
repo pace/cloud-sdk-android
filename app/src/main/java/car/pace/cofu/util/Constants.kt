@@ -3,12 +3,12 @@ package car.pace.cofu.util
 object Constants {
 
     const val TRANSITION_DURATION = 400
+    const val FADE_DURATION = 300
 
     const val STOP_TIMEOUT_MILLIS = 5000L
     const val LOCATION_UPDATE_DISTANCE_METERS = 500f
     const val GAS_STATION_SEARCH_RADIUS = 10000
     const val COFU_DISTANCE_METERS = 500
-    const val FADE_MAP_DURATION = 300
 
     const val TERMS_URI = "file:///android_res/raw/usage_terms.html"
     const val PRIVACY_URI = "file:///android_res/raw/privacy_statement.html"
@@ -22,6 +22,14 @@ object Constants {
 
     const val USER_HEADER_KEY = "UserHeader"
     const val SPACER_KEY = "Spacer"
+
+    const val TRACKING_BADGE_KEY = "TrackingBadge"
+    const val TRACKING_BADGE_CONTENT_TYPE = "TrackingBadge"
+    const val TRACKING_ICON_KEY = "TrackingIcon"
+    const val TRACKING_ICON_CONTENT_TYPE = "TrackingIcon"
+    const val TRACKING_TITLE_KEY = "TrackingTitle"
+    const val TRACKING_DESCRIPTION_KEY = "TrackingDescription"
+    const val TRACKING_DESCRIPTION_CONTENT_TYPE = "TrackingDescription"
 
     const val DETAIL_TOP_CONTENT_KEY = "DetailTopContent"
     const val DETAIL_OPENING_HOURS_KEY = "DetailOpeningHours"
