@@ -3,6 +3,7 @@ package car.pace.cofu.ui.more
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
+import car.pace.cofu.BuildConfig
 import car.pace.cofu.MenuEntries
 import car.pace.cofu.ui.navigation.graph.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +25,16 @@ class MoreViewModel @Inject constructor() : ViewModel() {
         addAll(
             listOf(
                 Route.TERMS.toMoreItem(),
-                Route.PRIVACY.toMoreItem(),
+                Route.PRIVACY.toMoreItem()
+            )
+        )
+
+        if (BuildConfig.ANALYTICS_ENABLED) {
+            add(Route.TRACKING.toMoreItem())
+        }
+
+        addAll(
+            listOf(
                 Route.IMPRINT.toMoreItem(),
                 Route.LICENSES.toMoreItem()
             )

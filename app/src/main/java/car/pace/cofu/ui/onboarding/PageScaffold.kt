@@ -177,35 +177,29 @@ fun PageScaffold(
 @Preview
 @Composable
 fun PageScaffoldCustomHeaderPreview() {
-    AppTheme {
-        PageScaffold(
-            imageVector = Icons.Outlined.TravelExplore,
-            titleRes = R.string.onboarding_permission_title,
-            nextButtonTextRes = R.string.onboarding_permission_action,
-            onNextButtonClick = {},
-            showCustomHeader = true,
-            descriptionContent = {
-                Description(
-                    text = stringResource(id = R.string.onboarding_permission_description)
-                )
-            }
-        )
-    }
+    PageScaffoldPreview(showCustomHeader = true)
 }
 
 @Preview
 @Composable
 fun PageScaffoldDefaultPreview() {
+    PageScaffoldPreview(showCustomHeader = false)
+}
+
+@Composable
+private fun PageScaffoldPreview(
+    showCustomHeader: Boolean
+) {
     AppTheme {
         PageScaffold(
             imageVector = Icons.Outlined.TravelExplore,
-            titleRes = R.string.onboarding_permission_title,
-            nextButtonTextRes = R.string.onboarding_permission_action,
+            titleRes = R.string.onboarding_location_permission_title,
+            nextButtonTextRes = R.string.onboarding_location_permission_action,
             onNextButtonClick = {},
-            showCustomHeader = false,
+            showCustomHeader = showCustomHeader,
             descriptionContent = {
                 Description(
-                    text = stringResource(id = R.string.onboarding_permission_description)
+                    text = stringResource(id = R.string.onboarding_location_permission_description)
                 )
             }
         )

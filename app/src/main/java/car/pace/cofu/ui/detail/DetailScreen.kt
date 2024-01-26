@@ -82,7 +82,7 @@ import car.pace.cofu.util.Constants.DETAIL_SPACER_CONTENT_TYPE
 import car.pace.cofu.util.Constants.DETAIL_SPACER_TOP_KEY
 import car.pace.cofu.util.Constants.DETAIL_TOP_CONTENT_CONTENT_TYPE
 import car.pace.cofu.util.Constants.DETAIL_TOP_CONTENT_KEY
-import car.pace.cofu.util.Constants.FADE_MAP_DURATION
+import car.pace.cofu.util.Constants.FADE_DURATION
 import car.pace.cofu.util.IntentUtils
 import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
@@ -297,8 +297,8 @@ fun MapRow(
 
         AnimatedVisibility(
             visible = loading,
-            enter = fadeIn(animationSpec = tween(FADE_MAP_DURATION)),
-            exit = fadeOut(animationSpec = tween(FADE_MAP_DURATION))
+            enter = fadeIn(animationSpec = tween(FADE_DURATION)),
+            exit = fadeOut(animationSpec = tween(FADE_DURATION))
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_map_loading_detail),

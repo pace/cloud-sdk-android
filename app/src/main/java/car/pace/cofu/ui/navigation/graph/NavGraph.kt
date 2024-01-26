@@ -22,6 +22,7 @@ import car.pace.cofu.ui.detail.DetailScreen
 import car.pace.cofu.ui.home.HomeScreen
 import car.pace.cofu.ui.more.MoreScreen
 import car.pace.cofu.ui.more.licenses.LicensesScreen
+import car.pace.cofu.ui.more.tracking.TrackingScreen
 import car.pace.cofu.ui.more.webview.WebViewScreen
 import car.pace.cofu.ui.onboarding.OnboardingScreen
 import car.pace.cofu.ui.wallet.WalletScreen
@@ -75,7 +76,7 @@ fun NavGraphBuilder.onboardingGraph(
             )
         }
         composable(
-            route = Route.ANALYSIS.route,
+            route = Route.ONBOARDING_ANALYSIS.route,
             enterTransition = { scaleIntoContainer() },
             popExitTransition = { scaleOutOfContainer() }
         ) {
@@ -172,6 +173,18 @@ fun NavGraphBuilder.moreGraph(
         childComposable(Route.PRIVACY.route) {
             WebViewScreen(
                 url = PRIVACY_URI,
+                onNavigateUp = onNavigateUp
+            )
+        }
+        childComposable(Route.TRACKING.route) {
+            TrackingScreen(
+                onNavigate = onNavigate,
+                onNavigateUp = onNavigateUp
+            )
+        }
+        childComposable(Route.ANALYSIS.route) {
+            WebViewScreen(
+                url = ANALYSIS_URI,
                 onNavigateUp = onNavigateUp
             )
         }
