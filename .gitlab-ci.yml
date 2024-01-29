@@ -173,6 +173,7 @@ build_app:
                     filename=ic_brand_logo
                     detail_icon=true
                     ;;
+                *android_notification_icon*) filename=ic_notification;;
               esac
               output=${DRAWABLE_DIRECTORY}/${filename}.${extension}
               rm ${DRAWABLE_DIRECTORY}/${filename}.*

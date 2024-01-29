@@ -140,10 +140,12 @@ fun WalletScreenContent(
                                     LogAndBreadcrumb.d(LogAndBreadcrumb.WALLET, "Transactions gets displayed")
                                     AppKit.openTransactions(context)
                                 }
+
                                 Route.DELETE_ACCOUNT -> {
                                     LogAndBreadcrumb.d(LogAndBreadcrumb.WALLET, "PACE ID gets displayed")
                                     AppKit.openPaceID(context)
                                 }
+
                                 else -> onNavigate(it)
                             }
                         }
@@ -229,7 +231,7 @@ fun LogoutDialog(
     DefaultDialog(
         title = stringResource(id = R.string.DASHBOARD_LOGOUT_CONFIRM_TITLE),
         text = stringResource(id = R.string.DASHBOARD_LOGOUT_CONFIRM_DESCRIPTION),
-        confirmButtonText = stringResource(id = R.string.MENU_ITEMS_LOGOUT),
+        confirmButtonText = stringResource(id = R.string.DASHBOARD_LOGOUT_CONFIRM_ACTION_LOGOUT),
         dismissButtonText = stringResource(id = R.string.common_use_cancel),
         imageVector = Icons.Outlined.Logout,
         onConfirm = onLogout,

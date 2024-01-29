@@ -124,7 +124,7 @@ fun HomeScreenContent(
     navigateToDetail: (String) -> Unit
 ) {
     Column(
-        modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
+        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
     ) {
         if (showCustomHeader) {
             Image(

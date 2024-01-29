@@ -1,17 +1,18 @@
 package car.pace.cofu
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.os.Build
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_TRACKING_ENABLED
+import car.pace.cofu.util.AnalyticsUtils
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.idkit.model.CustomOIDConfiguration
 import cloud.pace.sdk.utils.AuthenticationMode
 import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.DeviceUtils
 import cloud.pace.sdk.utils.Environment
-import com.google.firebase.Firebase
-import com.google.firebase.analytics.analytics
 import dagger.hilt.android.HiltAndroidApp
 import io.sentry.android.core.SentryAndroid
 import java.util.Locale
@@ -37,7 +38,9 @@ class App : Application() {
         }
 
         val analyticsEnabled = BuildConfig.ANALYTICS_ENABLED && sharedPreferencesRepository.getBoolean(PREF_KEY_TRACKING_ENABLED, false)
-        Firebase.analytics.setAnalyticsCollectionEnabled(analyticsEnabled)
+        AnalyticsUtils.setAnalyticsEnabled(analyticsEnabled)
+
+        createNotificationChannel()
 
         PACECloudSDK.setup(
             this,
@@ -59,6 +62,12 @@ class App : Application() {
         logAppSessionStart(analyticsEnabled)
     }
 
+    private fun createNotificationChannel() {
+        val channel = NotificationChannel(getString(R.string.firebase_channel_id), getString(R.string.firebase_notification_channel_name), NotificationManager.IMPORTANCE_DEFAULT)
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+    }
+
     private fun logAppSessionStart(analyticsEnabled: Boolean) {
         // Log a visual separation for the beginning of a new app session
         val icons = "\uD83D\uDE80\uD83D\uDE80\uD83D\uDE80"
@@ -75,7 +84,7 @@ class App : Application() {
                 "Map enabled: ${BuildConfig.MAP_ENABLED}\n" +
                 "Hide prices: ${BuildConfig.HIDE_PRICES}\n" +
                 "Sentry enabled: ${BuildConfig.SENTRY_ENABLED}\n" +
-                "Firebase enabled: ${BuildConfig.FIREBASE_ENABLED}\n" +
+                "Crashlytics enabled: ${BuildConfig.CRASHLYTICS_ENABLED}\n" +
                 "Analytics enabled: $analyticsEnabled\n" +
                 "Automatic production updates enabled: ${BuildConfig.AUTOMATIC_PRODUCTION_UPDATES_ENABLED}\n" +
                 "Native fuelcard management enabled: ${BuildConfig.NATIVE_FUELCARD_MANAGEMENT_ENABLED}\n" +
