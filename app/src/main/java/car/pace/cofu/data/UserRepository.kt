@@ -1,5 +1,7 @@
 package car.pace.cofu.data
 
+import androidx.appcompat.app.AppCompatActivity
+import car.pace.cofu.util.AnalyticsUtils
 import car.pace.cofu.util.extension.MailNotSentException
 import car.pace.cofu.util.extension.resume
 import cloud.pace.sdk.idkit.IDKit
@@ -11,12 +13,19 @@ import javax.inject.Singleton
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 @Singleton
-class UserRepository @Inject constructor() {
+class UserRepository @Inject constructor(
+    private val sharedPreferencesRepository: SharedPreferencesRepository
+) {
 
     fun isAuthorizationValid() = IDKit.isAuthorizationValid()
 
     fun isBiometricAuthenticationEnabled() = IDKit.isBiometricAuthenticationEnabled()
+
     fun disableBiometricAuthentication() = IDKit.disableBiometricAuthentication()
+
+    suspend fun refreshToken(force: Boolean = false) = suspendCancellableCoroutine {
+        IDKit.refreshToken(force, it::resume)
+    }
 
     suspend fun enableBiometricAuthentication() = suspendCancellableCoroutine {
         IDKit.enableBiometricAuthentication(it::resume)
@@ -44,5 +53,11 @@ class UserRepository @Inject constructor() {
                 it.resumeIfActive(Result.failure(throwable))
             }
         }
+    }
+
+    suspend fun resetAppData(activity: AppCompatActivity) {
+        IDKit.endSession(activity)
+        AnalyticsUtils.setAnalyticsEnabled(false)
+        sharedPreferencesRepository.clear()
     }
 }

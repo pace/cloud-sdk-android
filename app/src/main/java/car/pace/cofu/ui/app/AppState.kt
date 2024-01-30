@@ -10,6 +10,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import car.pace.cofu.ui.navigation.graph.Graph
 import car.pace.cofu.ui.navigation.graph.Route
+import car.pace.cofu.ui.navigation.graph.navigate
 import car.pace.cofu.util.LogAndBreadcrumb
 
 @Composable
@@ -56,6 +57,14 @@ class AppState(
             launchSingleTop = true
             // Restore state when reselecting a previously selected item
             restoreState = true
+        }
+    }
+
+    fun navigateAndClearBackStack(graph: Graph) {
+        navController.navigate(graph) {
+            popUpTo(navController.graph.id) {
+                inclusive = true
+            }
         }
     }
 }
