@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -13,12 +14,14 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import car.pace.cofu.R
+import car.pace.cofu.ui.theme.AppRippleTheme
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.ui.theme.PrimaryButtonText
 
@@ -30,23 +33,25 @@ fun PrimaryButton(
     loading: Boolean = false,
     onClick: () -> Unit
 ) {
-    Button(
-        onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .heightIn(min = 50.dp),
-        enabled = enabled,
-        shape = RoundedCornerShape(8.dp),
-        colors = ButtonDefaults.buttonColors(
-            contentColor = PrimaryButtonText,
-            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-            disabledContentColor = PrimaryButtonText.copy(alpha = 0.2f)
-        )
-    ) {
-        ButtonContent(
-            text = text,
-            loading = loading
-        )
+    CompositionLocalProvider(LocalRippleTheme provides AppRippleTheme(PrimaryButtonText)) {
+        Button(
+            onClick = onClick,
+            modifier = modifier
+                .fillMaxWidth()
+                .heightIn(min = 50.dp),
+            enabled = enabled,
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(
+                contentColor = PrimaryButtonText,
+                disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                disabledContentColor = PrimaryButtonText.copy(alpha = 0.2f)
+            )
+        ) {
+            ButtonContent(
+                text = text,
+                loading = loading
+            )
+        }
     }
 }
 
