@@ -49,6 +49,10 @@ fun AppContent(
             }
         }
 
+        LifecycleEventEffect(event = Lifecycle.Event.ON_CREATE) {
+            viewModel.onAppStart()
+        }
+
         Scaffold(
             topBar = {
                 Box(modifier = Modifier)
@@ -74,7 +78,7 @@ fun AppContent(
                     .consumeWindowInsets(padding)
                     .fillMaxSize(),
                 onOnboardingDone = {
-                    viewModel.onOnboardingDone(it)
+                    viewModel.onOnboardingDone()
                     appState.navigateAndClearBackStack(Graph.HOME)
                 },
                 navigateToOnboarding = {

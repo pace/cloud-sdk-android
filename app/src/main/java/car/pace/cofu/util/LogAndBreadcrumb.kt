@@ -17,6 +17,7 @@ object LogAndBreadcrumb {
     const val CUSTOM_TAB = "Custom tab"
     const val ONBOARDING = "Onboarding"
     const val TRACKING = "Tracking setting"
+    const val TWO_FACTOR_CHECK = "Two factor check"
 
     fun i(category: String, message: String) {
         Timber.i(message)

@@ -34,7 +34,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
 import car.pace.cofu.ui.component.DefaultDialog
 import car.pace.cofu.ui.component.DefaultListItem
@@ -66,14 +65,7 @@ fun WalletScreen(
     val email = remember {
         JWTUtils.getUserEMailFromToken(IDKit.cachedToken()).orEmpty()
     }
-    val items = remember {
-        buildList {
-            addAll(listOf(Route.PAYMENT_METHODS, Route.TRANSACTIONS, Route.FUEL_TYPE, Route.AUTHORIZATION, Route.DELETE_ACCOUNT))
-            if (BuildConfig.HIDE_PRICES) {
-                remove(Route.FUEL_TYPE)
-            }
-        }
-    }
+    val items = remember { viewModel.items }
 
     WalletScreenContent(
         email = email,

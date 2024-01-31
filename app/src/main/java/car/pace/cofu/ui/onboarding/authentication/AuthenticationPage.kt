@@ -16,13 +16,13 @@ import car.pace.cofu.ui.theme.AppTheme
 @Composable
 fun AuthenticationPage(
     viewModel: AuthenticationViewModel = hiltViewModel(),
-    onNext: () -> Unit
+    onNext: (authenticationResult: AuthenticationViewModel.AuthenticationResult) -> Unit
 ) {
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.loginFinished.collect {
-            onNext()
+            onNext(it)
         }
     }
 
@@ -30,6 +30,7 @@ fun AuthenticationPage(
         imageVector = Icons.Outlined.Group,
         titleRes = R.string.onboarding_authentication_title,
         nextButtonTextRes = R.string.onboarding_authentication_action,
+        nextButtonLoading = viewModel.loading,
         onNextButtonClick = {
             viewModel.login(context)
         },

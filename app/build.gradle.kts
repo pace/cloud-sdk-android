@@ -179,11 +179,13 @@ dependencies {
     // AboutLibraries
     implementation("com.mikepenz:aboutlibraries-compose:10.10.0")
 
+    // Testing
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     testImplementation("com.google.dagger:hilt-android-testing:2.48.1")
     kaptTest("com.google.dagger:hilt-android-compiler:2.48.1")
+    testImplementation("io.mockk:mockk:1.13.9")
 }
 
 sentry {

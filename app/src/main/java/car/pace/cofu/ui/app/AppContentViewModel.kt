@@ -3,11 +3,10 @@ package car.pace.cofu.ui.app
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import car.pace.cofu.data.PaymentMethodKindsRepository
 import car.pace.cofu.data.SharedPreferencesRepository
-import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_FUEL_TYPE
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_ONBOARDING_DONE
 import car.pace.cofu.data.UserRepository
-import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
 import car.pace.cofu.util.LogAndBreadcrumb
 import cloud.pace.sdk.idkit.model.InvalidSession
@@ -15,11 +14,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AppContentViewModel @Inject constructor(
     private val sharedPreferencesRepository: SharedPreferencesRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val paymentMethodKindsRepository: PaymentMethodKindsRepository
 ) : ViewModel() {
 
     private val initialValue = isOnboardingDone()
@@ -44,8 +45,15 @@ class AppContentViewModel @Inject constructor(
         return false
     }
 
-    fun onOnboardingDone(fuelTypeGroup: FuelTypeGroup) {
-        sharedPreferencesRepository.putValue(PREF_KEY_FUEL_TYPE, fuelTypeGroup.prefFuelType.ordinal)
+    fun onAppStart() {
+        if (sharedPreferencesRepository.getBoolean(PREF_KEY_ONBOARDING_DONE, false)) {
+            viewModelScope.launch {
+                paymentMethodKindsRepository.check2FAState()
+            }
+        }
+    }
+
+    fun onOnboardingDone() {
         sharedPreferencesRepository.putValue(PREF_KEY_ONBOARDING_DONE, true)
     }
 
