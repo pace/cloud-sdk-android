@@ -65,11 +65,22 @@ class SharedPreferencesRepository @Inject constructor(
         }
     }
 
-    fun clear() = sharedPreferences.edit { clear() }
+    fun clear() {
+        val editor = sharedPreferences.edit()
+        val allKeys = sharedPreferences.all.keys.toList()
+        for (key in allKeys) {
+            if (key != PREF_KEY_FIRST_RUN) {
+                editor.remove(key)
+            }
+        }
+
+        editor.apply()
+    }
 
     companion object {
         const val PREF_KEY_ONBOARDING_DONE = "onboardingDone"
         const val PREF_KEY_FUEL_TYPE = "fuelType"
         const val PREF_KEY_TRACKING_ENABLED = "trackingEnabled"
+        const val PREF_KEY_FIRST_RUN = "firstRun"
     }
 }

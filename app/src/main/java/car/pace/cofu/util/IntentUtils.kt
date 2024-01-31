@@ -14,8 +14,8 @@ object IntentUtils {
 
     const val CHROME_PACKAGE = "com.android.chrome"
 
-    fun startNavigation(context: Context, gasStation: GasStation) {
-        try {
+    fun startNavigation(context: Context, gasStation: GasStation): Result<Unit> {
+        return try {
             // If Google Maps is installed, launch navigation directly
             val uri = Uri.parse("google.navigation:q=${gasStation.latitude},${gasStation.longitude}")
             val mapsIntent = Intent(Intent.ACTION_VIEW, uri).setPackage("com.google.android.apps.maps")
@@ -31,8 +31,10 @@ object IntentUtils {
                 intent.data = Uri.parse("geo:${gasStation.latitude},${gasStation.longitude}?q=$address")
                 context.startActivity(intent)
             }
+            Result.success(Unit)
         } catch (e: Exception) {
             LogAndBreadcrumb.e(e, "Start Navigation", "Could not launch navigation app")
+            Result.failure(e)
         }
     }
 

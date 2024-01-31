@@ -5,8 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import car.pace.cofu.data.SharedPreferencesRepository
-import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_TRACKING_ENABLED
-import car.pace.cofu.util.AnalyticsUtils
+import car.pace.cofu.features.analytics.Analytics
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.idkit.model.CustomOIDConfiguration
 import cloud.pace.sdk.utils.AuthenticationMode
@@ -25,6 +24,9 @@ class App : Application() {
     @Inject
     lateinit var sharedPreferencesRepository: SharedPreferencesRepository
 
+    @Inject
+    lateinit var analytics: Analytics
+
     override fun onCreate() {
         super.onCreate()
 
@@ -37,8 +39,7 @@ class App : Application() {
             }
         }
 
-        val analyticsEnabled = BuildConfig.ANALYTICS_ENABLED && sharedPreferencesRepository.getBoolean(PREF_KEY_TRACKING_ENABLED, false)
-        AnalyticsUtils.setAnalyticsEnabled(analyticsEnabled)
+        val analyticsEnabled = analytics.initAnalytics()
 
         createNotificationChannel()
 

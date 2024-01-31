@@ -1,5 +1,6 @@
 package car.pace.cofu.util.extension
 
+import android.content.Context
 import android.icu.number.NumberFormatter
 import android.icu.number.Precision
 import android.icu.text.DateFormat
@@ -13,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import car.pace.cofu.R
+import car.pace.cofu.ui.home.HomeViewModel
 import car.pace.cofu.ui.wallet.fueltype.FuelType
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 import car.pace.cofu.util.Constants.COFU_DISTANCE_METERS
@@ -101,7 +103,11 @@ fun LatLng.distanceText(destination: LatLng?): String? {
 @Composable
 fun GasStation.canStartFueling(userLocation: LatLng?) = remember(userLocation) {
     userLocation ?: return@remember false
-    center?.toLatLn()?.let { it.distanceTo(userLocation) < COFU_DISTANCE_METERS } ?: false
+    userIsNearStation(userLocation)
+}
+
+fun GasStation.userIsNearStation(userLocation: LatLng): Boolean {
+    return center?.toLatLn()?.let { it.distanceTo(userLocation) < COFU_DISTANCE_METERS } ?: false
 }
 
 @Composable
@@ -137,4 +143,36 @@ fun Date.lastUpdatedText(): String {
     }
 
     return stringResource(id = R.string.gas_station_last_updated, formattedDateTime)
+}
+
+@Composable
+fun HomeViewModel.ListStation.distanceText(context: Context) = remember(distance) {
+    when {
+        distance == null -> null
+        distance < COFU_DISTANCE_METERS -> context.getString(R.string.gas_station_location_here)
+        else -> {
+            val showInMeters = distance < 1000
+            val measureUnit = if (showInMeters) MeasureUnit.METER else MeasureUnit.KILOMETER
+            val digits = if (showInMeters) 0 else 1
+            val number = if (showInMeters) distance else distance / 1000
+            val measure = Measure(number, measureUnit)
+            val formattedDistance = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val formatter = NumberFormatter.withLocale(Locale.getDefault())
+                    .unitWidth(NumberFormatter.UnitWidth.SHORT)
+                    .precision(Precision.fixedFraction(digits))
+
+                formatter.format(measure).toString()
+            } else {
+                val numberFormat = NumberFormat.getInstance().apply {
+                    minimumFractionDigits = digits
+                    maximumFractionDigits = digits
+                }
+
+                val formatter = MeasureFormat.getInstance(Locale.getDefault(), MeasureFormat.FormatWidth.SHORT, numberFormat)
+                formatter.formatMeasures(measure)
+            }
+
+            context.getString(R.string.gas_station_location_away, formattedDistance)
+        }
+    }
 }

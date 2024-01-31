@@ -2,11 +2,8 @@ package car.pace.cofu.ui.onboarding.tracking
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import car.pace.cofu.BuildConfig
-import car.pace.cofu.data.SharedPreferencesRepository
-import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_TRACKING_ENABLED
-import car.pace.cofu.util.AnalyticsUtils
-import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
+import car.pace.cofu.features.analytics.Analytics
+import car.pace.cofu.util.Constants
 import car.pace.cofu.util.LogAndBreadcrumb
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -15,27 +12,23 @@ import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel
 class TrackingViewModel @Inject constructor(
-    private val sharedPreferencesRepository: SharedPreferencesRepository
+    private val analytics: Analytics
 ) : ViewModel() {
 
-    private val initialValue = sharedPreferencesRepository.getBoolean(PREF_KEY_TRACKING_ENABLED, false)
-    val trackingEnabled = sharedPreferencesRepository
-        .getValue(PREF_KEY_TRACKING_ENABLED, initialValue)
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-            initialValue = initialValue
-        )
+    val trackingEnabled = analytics.userEnabledTracking.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(Constants.STOP_TIMEOUT_MILLIS),
+        initialValue = analytics.userEnabledTracking()
+    )
 
     fun enableAnalytics(tag: String) {
-        AnalyticsUtils.setAnalyticsEnabled(BuildConfig.ANALYTICS_ENABLED)
-        sharedPreferencesRepository.putValue(PREF_KEY_TRACKING_ENABLED, true)
-        LogAndBreadcrumb.i(tag, "Analytics enabled")
+        analytics.enableAnalyticsFeature(tag, true)
+        if (tag == LogAndBreadcrumb.ONBOARDING) {
+            analytics.logAppInstall()
+        }
     }
 
     fun disableAnalytics(tag: String) {
-        AnalyticsUtils.setAnalyticsEnabled(false)
-        sharedPreferencesRepository.putValue(PREF_KEY_TRACKING_ENABLED, false)
-        LogAndBreadcrumb.i(tag, "Analytics disabled")
+        analytics.enableAnalyticsFeature(tag, false)
     }
 }
