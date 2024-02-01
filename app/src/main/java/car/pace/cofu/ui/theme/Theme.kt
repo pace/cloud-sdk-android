@@ -30,23 +30,23 @@ fun AppTheme(content: @Composable () -> Unit) {
         typography = Typography
     ) {
         CompositionLocalProvider(
-            LocalRippleTheme provides AppRippleTheme,
+            LocalRippleTheme provides AppRippleTheme(),
             content = content
         )
     }
 }
 
-private object AppRippleTheme : RippleTheme {
+class AppRippleTheme(val color: Color? = null) : RippleTheme {
 
     @Composable
     override fun defaultColor(): Color {
-        return MaterialTheme.colorScheme.onPrimary
+        return color ?: MaterialTheme.colorScheme.primary
     }
 
     @Composable
     override fun rippleAlpha(): RippleAlpha {
         return RippleAlpha(
-            pressedAlpha = 0.24f,
+            pressedAlpha = 0.25f,
             focusedAlpha = 0.24f,
             draggedAlpha = 0.16f,
             hoveredAlpha = 0.08f
