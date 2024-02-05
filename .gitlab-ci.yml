@@ -76,27 +76,27 @@ trigger_github_mirroring:
     rules:
         -   if: $SCHEDULED_JOB == "connectedfueling-app-github-mirroring"
 
-create_release:
-    extends: .docker_image
-    image: node:latest
-    stage: release
-    <<: *release_schedule_rule
-    script:
-        - if $(eval $CONDITION); then echo "Releasing..."; else echo "Nothing to do"; exit 0; fi
-        - export CUSTOM_TAG_NAME="${TAG_PREFIX}v${VERSION_NAME}.${BUILD_NUMBER}"
-        - echo "Creating tag with tag name:" $CUSTOM_TAG_NAME
-        - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/pace/mobile/common.git tmp/common
-        - cd tmp/common/scripts/release
-        - yarn install
-        - node --unhandled-rejections=strict create.js
-    variables:
-        TAG_PREFIX: "connectedfueling-app-"
+#create_release:
+#    extends: .docker_image
+#    image: node:latest
+#    stage: release
+#    <<: *release_schedule_rule
+#    script:
+#        - if $(eval $CONDITION); then echo "Releasing..."; else echo "Nothing to do"; exit 0; fi
+#        - export CUSTOM_TAG_NAME="${TAG_PREFIX}v${VERSION_NAME}.${BUILD_NUMBER}"
+#        - echo "Creating tag with tag name:" $CUSTOM_TAG_NAME
+#        - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/pace/mobile/common.git tmp/common
+#        - cd tmp/common/scripts/release
+#        - yarn install
+#        - node --unhandled-rejections=strict create.js
+#    variables:
+#        TAG_PREFIX: "connectedfueling-app-"
 
 fetch_config:
     extends: .docker_image
     image: python:3.7
     stage: config
-    <<: *tag_rule
+    <<: *release_schedule_rule
     script:
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/pace/mobile/common.git tmp/common
         - pip3 install -r tmp/common/scripts/metadata/requirements.txt
@@ -110,7 +110,7 @@ fetch_config:
 build_app:
     extends: .docker_image
     stage: build
-    <<: *tag_rule
+    <<: *release_schedule_rule
     script:
         # The extension for some files is a wildcard, as several file extensions are allowed
         - mv configuration/configuration.json configuration.json
@@ -195,18 +195,18 @@ build_app:
         ASSET_DIRECTORY: configuration/assets
         DRAWABLE_DIRECTORY: app/src/main/res/drawable
 
-publish_app:
-    extends: .docker_image
-    stage: publish
-    <<: *tag_rule
-    dependencies:
-        - fetch_config
-        - build_app
-    script:
-        - >-
-            fastlane publish
-            track:internal
-            aab_file:app/build/outputs/bundle/release/app-release.aab
-            credentials_file:configuration/assets/android_play_store_credentials.json
-            package_name:$(grep -oP '(?<="application_id_android": ")[^"]*' configuration/configuration.json)
-            mapping_file:app/build/outputs/mapping/release/mapping.txt
+#publish_app:
+#    extends: .docker_image
+#    stage: publish
+#    <<: *tag_rule
+#    dependencies:
+#        - fetch_config
+#        - build_app
+#    script:
+#        - >-
+#            fastlane publish
+#            track:internal
+#            aab_file:app/build/outputs/bundle/release/app-release.aab
+#            credentials_file:configuration/assets/android_play_store_credentials.json
+#            package_name:$(grep -oP '(?<="application_id_android": ")[^"]*' configuration/configuration.json)
+#            mapping_file:app/build/outputs/mapping/release/mapping.txt
