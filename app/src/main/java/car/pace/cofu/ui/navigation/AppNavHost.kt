@@ -13,7 +13,6 @@ import car.pace.cofu.ui.navigation.graph.moreGraph
 import car.pace.cofu.ui.navigation.graph.navigate
 import car.pace.cofu.ui.navigation.graph.onboardingGraph
 import car.pace.cofu.ui.navigation.graph.walletGraph
-import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 import car.pace.cofu.util.Constants.TRANSITION_DURATION
 import car.pace.cofu.util.SnackbarData
 
@@ -22,7 +21,7 @@ fun AppNavHost(
     navController: NavHostController,
     onboardingDone: Boolean,
     modifier: Modifier = Modifier,
-    onOnboardingDone: (FuelTypeGroup) -> Unit,
+    onOnboardingDone: () -> Unit,
     navigateToOnboarding: () -> Unit,
     showSnackbar: (SnackbarData) -> Unit
 ) {
@@ -45,7 +44,7 @@ fun AppNavHost(
                 navController.navigateUp()
             },
             onDone = {
-                onOnboardingDone(it)
+                onOnboardingDone()
             }
         )
         homeGraph(

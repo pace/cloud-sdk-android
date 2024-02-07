@@ -27,7 +27,6 @@ import car.pace.cofu.ui.more.webview.WebViewScreen
 import car.pace.cofu.ui.onboarding.OnboardingScreen
 import car.pace.cofu.ui.wallet.WalletScreen
 import car.pace.cofu.ui.wallet.authorization.AuthorisationScreen
-import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeScreen
 import car.pace.cofu.ui.wallet.paymentmethods.PaymentMethodsScreen
 import car.pace.cofu.util.Constants.ANALYSIS_URI
@@ -39,7 +38,7 @@ import car.pace.cofu.util.SnackbarData
 fun NavGraphBuilder.onboardingGraph(
     onNavigate: (Route) -> Unit,
     onNavigateUp: () -> Unit,
-    onDone: (FuelTypeGroup) -> Unit
+    onDone: () -> Unit
 ) {
     navigation(
         startDestination = Route.ONBOARDING.route,

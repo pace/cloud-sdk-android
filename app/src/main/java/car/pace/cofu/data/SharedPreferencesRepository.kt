@@ -82,5 +82,6 @@ class SharedPreferencesRepository @Inject constructor(
         const val PREF_KEY_FUEL_TYPE = "fuelType"
         const val PREF_KEY_TRACKING_ENABLED = "trackingEnabled"
         const val PREF_KEY_FIRST_RUN = "firstRun"
+        const val PREF_KEY_TWO_FACTOR_AVAILABLE = "twoFactorAvailable"
     }
 }
