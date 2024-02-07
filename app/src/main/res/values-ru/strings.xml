@@ -60,6 +60,7 @@
     <string name="common_use_monday">Понедельник</string>
     <string name="common_use_network_error">Не удалось подключиться к Интернету. Повторите попытку позже.</string>
     <string name="common_use_next">Следующий</string>
+    <string name="common_use_ok">OK</string>
     <string name="common_use_open_play_store">Откройте Play Store</string>
     <string name="common_use_pump">Бензоколонка</string>
     <string name="common_use_retry">Попробуйте еще раз</string>
@@ -181,9 +182,13 @@
     <string name="wallet_payment_methods_title">Способы оплаты и топливные карты</string>
     <string name="wallet_tab_label">Бумажник</string>
     <string name="wallet_transactions_title">Транзакции</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_text">Без биометрической аутентификации платежи могут быть авторизованы только с помощью PACE PIN-кода или пароля.</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_title">Действительно ли вы отключите биометрическую аутентификацию?</string>
+    <string name="wallet_two_factor_authentication_biometry_error">Ошибка при распознавании отпечатка пальца</string>
     <string name="wallet_two_factor_authentication_biometry_setup_successful">Биометрия успешно установлена</string>
     <string name="wallet_two_factor_authentication_biometry_title">Биометрия</string>
     <string name="wallet_two_factor_authentication_pin_setup_successful">PIN-код установлен успешно</string>
     <string name="wallet_two_factor_authentication_pin_title">Установите PIN-код</string>
     <string name="wallet_two_factor_authentication_title">Процедура авторизации</string>
+    <string name="zoom_in_note">Увеличьте масштаб, чтобы найти заправочные станции</string>
 </resources>

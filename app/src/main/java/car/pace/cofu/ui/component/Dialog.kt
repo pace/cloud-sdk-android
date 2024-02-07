@@ -18,10 +18,10 @@ fun DefaultDialog(
     title: String,
     text: String,
     confirmButtonText: String,
-    dismissButtonText: String,
-    imageVector: ImageVector,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    dismissButtonText: String? = null,
+    imageVector: ImageVector? = null,
+    onConfirm: () -> Unit = {},
+    onDismiss: () -> Unit = {}
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -31,18 +31,26 @@ fun DefaultDialog(
                 onClick = onConfirm
             )
         },
-        dismissButton = {
-            SecondaryButton(
-                text = dismissButtonText,
-                onClick = onDismiss
-            )
+        dismissButton = if (dismissButtonText != null) {
+            {
+                SecondaryButton(
+                    text = dismissButtonText,
+                    onClick = onDismiss
+                )
+            }
+        } else {
+            null
         },
-        icon = {
-            Icon(
-                imageVector = imageVector,
-                contentDescription = null,
-                modifier = Modifier.size(40.dp)
-            )
+        icon = if (imageVector != null) {
+            {
+                Icon(
+                    imageVector = imageVector,
+                    contentDescription = null,
+                    modifier = Modifier.size(40.dp)
+                )
+            }
+        } else {
+            null
         },
         title = {
             Title(text = title)
@@ -67,9 +75,19 @@ fun DefaultDialogPreview() {
             text = "Dialog text",
             confirmButtonText = "Confirm",
             dismissButtonText = "Cancel",
-            imageVector = Icons.Outlined.Logout,
-            onConfirm = {},
-            onDismiss = {}
+            imageVector = Icons.Outlined.Logout
+        )
+    }
+}
+
+@Preview
+@Composable
+fun DefaultInfoDialog() {
+    AppTheme {
+        DefaultDialog(
+            title = "Unexpected error",
+            text = "Something happened",
+            confirmButtonText = "Ok"
         )
     }
 }

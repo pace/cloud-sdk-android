@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import car.pace.cofu.R
+import car.pace.cofu.ui.component.DefaultDialog
 import car.pace.cofu.ui.component.DefaultListItem
 import car.pace.cofu.ui.component.SwitchInfo
 import car.pace.cofu.ui.component.TextTopBar
@@ -35,15 +36,15 @@ import car.pace.cofu.ui.onboarding.twofactor.biometric.rememberBiometricPrompt
 import car.pace.cofu.ui.onboarding.twofactor.setup.TwoFactorSetup
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.util.LogAndBreadcrumb
-import car.pace.cofu.util.SnackbarData
 
 @Composable
 fun AuthorisationScreen(
     viewModel: AuthorisationViewModel = hiltViewModel(),
-    onNavigateUp: () -> Unit,
-    showSnackbar: (SnackbarData) -> Unit
+    onNavigateUp: () -> Unit
 ) {
+    val context = LocalContext.current
     var showBiometricSetupDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
     val biometricManager = rememberBiometricManager()
     val canAuthenticate = remember {
         val allowedStates = arrayOf(BiometricManager.BIOMETRIC_SUCCESS, BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE, BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED)
@@ -59,7 +60,7 @@ fun AuthorisationScreen(
                 if (errorCode == BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED) {
                     showBiometricSetupDialog = true
                 } else if (errorCode != BiometricPrompt.ERROR_USER_CANCELED && errorCode != BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
-                    showSnackbar(SnackbarData(messageRes = R.string.onboarding_fingerprint_error, messageFormatArgs = arrayOf(errString)))
+                    errorMessage = errString.toString()
                 }
             }
         )
@@ -70,7 +71,7 @@ fun AuthorisationScreen(
     LaunchedEffect(Unit) {
         viewModel.errorText.collect {
             if (it != null) {
-                showSnackbar(SnackbarData(it))
+                errorMessage = context.getString(it)
             }
         }
     }
@@ -85,8 +86,6 @@ fun AuthorisationScreen(
     )
 
     if (showBiometricSetupDialog) {
-        val context = LocalContext.current
-
         BiometricSetupDialog(
             onConfirm = {
                 showBiometricSetupDialog = false
@@ -120,6 +119,18 @@ fun AuthorisationScreen(
             onResult = viewModel::onTwoFactorSetupFinished
         )
     }
+
+    val message = errorMessage
+    if (message != null) {
+        DefaultDialog(
+            title = context.getString(R.string.wallet_two_factor_authentication_biometry_error),
+            text = message,
+            confirmButtonText = context.getString(R.string.common_use_ok),
+            onConfirm = {
+                errorMessage = null
+            }
+        )
+    }
 }
 
 @Composable
@@ -131,6 +142,9 @@ fun AuthorisationScreenContent(
     onPinSetupClick: () -> Unit,
     onBiometricDisabled: () -> Unit
 ) {
+    var showDisableBiometricDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
     Column {
         TextTopBar(
             text = stringResource(id = R.string.wallet_two_factor_authentication_title),
@@ -152,8 +166,6 @@ fun AuthorisationScreenContent(
             )
 
             if (canAuthenticate) {
-                val context = LocalContext.current
-
                 DefaultListItem(
                     icon = Icons.Outlined.Fingerprint,
                     text = stringResource(id = R.string.wallet_two_factor_authentication_biometry_title),
@@ -167,12 +179,28 @@ fun AuthorisationScreenContent(
 
                             biometricPrompt?.authenticate(info)
                         } else {
-                            onBiometricDisabled()
+                            showDisableBiometricDialog = true
                         }
                     }
                 )
             }
         }
+    }
+
+    if (showDisableBiometricDialog) {
+        DefaultDialog(
+            title = context.getString(R.string.wallet_two_factor_authentication_biometry_disable_title),
+            text = context.getString(R.string.wallet_two_factor_authentication_biometry_disable_text),
+            confirmButtonText = context.getString(R.string.common_use_deactivate),
+            dismissButtonText = context.getString(R.string.common_use_cancel),
+            onConfirm = {
+                showDisableBiometricDialog = false
+                onBiometricDisabled()
+            },
+            onDismiss = {
+                showDisableBiometricDialog = false
+            }
+        )
     }
 }
 

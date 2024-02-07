@@ -60,6 +60,7 @@
     <string name="common_use_monday">Lunes</string>
     <string name="common_use_network_error">La conexión a Internet ha fallado. Vuelva a intentarlo más tarde.</string>
     <string name="common_use_next">Próximo</string>
+    <string name="common_use_ok">OK</string>
     <string name="common_use_open_play_store">Abrir Play Store</string>
     <string name="common_use_pump">Gasolinera</string>
     <string name="common_use_retry">Inténtalo de nuevo</string>
@@ -181,9 +182,13 @@
     <string name="wallet_payment_methods_title">Métodos de pago y tarjetas de combustible</string>
     <string name="wallet_tab_label">Cartera</string>
     <string name="wallet_transactions_title">Transacciones</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_text">Sin autenticación biométrica, los pagos sólo pueden autorizarse con su PIN PACE o su contraseña.</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_title">¿Realmente desactiva la autenticación biométrica?</string>
+    <string name="wallet_two_factor_authentication_biometry_error">Error al reconocer la huella dactilar</string>
     <string name="wallet_two_factor_authentication_biometry_setup_successful">Biometría instalada con éxito</string>
     <string name="wallet_two_factor_authentication_biometry_title">Biometría</string>
     <string name="wallet_two_factor_authentication_pin_setup_successful">PIN configurado correctamente</string>
     <string name="wallet_two_factor_authentication_pin_title">Establecer PIN</string>
     <string name="wallet_two_factor_authentication_title">Procedimiento de autorización</string>
+    <string name="zoom_in_note">Acercarse para encontrar gasolineras</string>
 </resources>

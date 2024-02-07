@@ -60,6 +60,7 @@
     <string name="common_use_monday">Lunedì</string>
     <string name="common_use_network_error">La connessione a Internet non è riuscita. Riprovare più tardi.</string>
     <string name="common_use_next">Avanti</string>
+    <string name="common_use_ok">OK</string>
     <string name="common_use_open_play_store">Aprire Play Store</string>
     <string name="common_use_pump">Pompa di benzina</string>
     <string name="common_use_retry">Prova di nuovo</string>
@@ -181,9 +182,13 @@
     <string name="wallet_payment_methods_title">Metodi di pagamento e carte carburante</string>
     <string name="wallet_tab_label">Portafoglio</string>
     <string name="wallet_transactions_title">Transazioni</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_text">Senza l\'autenticazione biometrica, i pagamenti possono essere autorizzati solo con il PIN PACE o la password.</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_title">È davvero possibile disattivare l\'autenticazione biometrica?</string>
+    <string name="wallet_two_factor_authentication_biometry_error">Errore nel riconoscimento dell\'impronta digitale</string>
     <string name="wallet_two_factor_authentication_biometry_setup_successful">La biometria è stata impostata con successo</string>
     <string name="wallet_two_factor_authentication_biometry_title">Biometria</string>
     <string name="wallet_two_factor_authentication_pin_setup_successful">PIN impostato con successo</string>
     <string name="wallet_two_factor_authentication_pin_title">Impostare il PIN</string>
     <string name="wallet_two_factor_authentication_title">Procedura di autorizzazione</string>
+    <string name="zoom_in_note">Zoom per trovare le stazioni di servizio</string>
 </resources>

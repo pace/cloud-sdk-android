@@ -60,6 +60,7 @@
     <string name="common_use_monday">Poniedziałek</string>
     <string name="common_use_network_error">Połączenie z Internetem nie powiodło się. Spróbuj ponownie później.</string>
     <string name="common_use_next">Następny</string>
+    <string name="common_use_ok">OK</string>
     <string name="common_use_open_play_store">Otwórz Sklep Play</string>
     <string name="common_use_pump">Pompa benzynowa</string>
     <string name="common_use_retry">Spróbuj ponownie</string>
@@ -181,9 +182,13 @@
     <string name="wallet_payment_methods_title">Metody płatności i karty paliwowe</string>
     <string name="wallet_tab_label">Portfel</string>
     <string name="wallet_transactions_title">Transakcje</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_text">Bez uwierzytelniania biometrycznego płatności można autoryzować wyłącznie za pomocą kodu PIN PACE lub hasła.</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_title">Czy naprawdę dezaktywujesz uwierzytelnianie biometryczne?</string>
+    <string name="wallet_two_factor_authentication_biometry_error">Błąd podczas rozpoznawania odcisku palca</string>
     <string name="wallet_two_factor_authentication_biometry_setup_successful">Pomyślna konfiguracja danych biometrycznych</string>
     <string name="wallet_two_factor_authentication_biometry_title">Biometria</string>
     <string name="wallet_two_factor_authentication_pin_setup_successful">Pomyślne ustawienie kodu PIN</string>
     <string name="wallet_two_factor_authentication_pin_title">Ustaw PIN</string>
     <string name="wallet_two_factor_authentication_title">Procedura autoryzacji</string>
+    <string name="zoom_in_note">Powiększ, aby znaleźć stacje benzynowe</string>
 </resources>

@@ -60,6 +60,7 @@
     <string name="common_use_monday">Lundi</string>
     <string name="common_use_network_error">Échec de la connexion à Internet. Réessaie plus tard.</string>
     <string name="common_use_next">Suivant</string>
+    <string name="common_use_ok">OK</string>
     <string name="common_use_open_play_store">Ouvrir le Play Store</string>
     <string name="common_use_pump">Pompe à essence</string>
     <string name="common_use_retry">Essayer à nouveau</string>
@@ -181,9 +182,13 @@
     <string name="wallet_payment_methods_title">Méthodes de paiement &amp; cartes de carburant</string>
     <string name="wallet_tab_label">Portefeuille</string>
     <string name="wallet_transactions_title">Transactions</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_text">Sans authentification biométrique, les paiements ne peuvent être autorisés qu\'avec ton code PIN PACE ou ton mot de passe.</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_title">Désactiver vraiment l\'authentification biométrique ?</string>
+    <string name="wallet_two_factor_authentication_biometry_error">Erreur de reconnaissance de l\'empreinte digitale</string>
     <string name="wallet_two_factor_authentication_biometry_setup_successful">Biométrie mise en place avec succès</string>
     <string name="wallet_two_factor_authentication_biometry_title">Biométrie</string>
     <string name="wallet_two_factor_authentication_pin_setup_successful">PIN défini avec succès</string>
     <string name="wallet_two_factor_authentication_pin_title">Définir le PIN</string>
     <string name="wallet_two_factor_authentication_title">Procédure d\'autorisation</string>
+    <string name="zoom_in_note">Agrandir pour trouver des stations-service</string>
 </resources>

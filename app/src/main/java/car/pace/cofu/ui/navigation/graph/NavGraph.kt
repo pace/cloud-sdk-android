@@ -33,7 +33,6 @@ import car.pace.cofu.util.Constants.ANALYSIS_URI
 import car.pace.cofu.util.Constants.IMPRINT_URI
 import car.pace.cofu.util.Constants.PRIVACY_URI
 import car.pace.cofu.util.Constants.TERMS_URI
-import car.pace.cofu.util.SnackbarData
 
 fun NavGraphBuilder.onboardingGraph(
     onNavigate: (Route) -> Unit,
@@ -116,7 +115,6 @@ fun NavGraphBuilder.homeGraph(
 }
 
 fun NavGraphBuilder.walletGraph(
-    showSnackbar: (SnackbarData) -> Unit,
     onNavigate: (Route) -> Unit,
     onNavigateUp: () -> Unit,
     onLogout: () -> Unit
@@ -143,8 +141,7 @@ fun NavGraphBuilder.walletGraph(
         }
         childComposable(Route.AUTHORIZATION.route) {
             AuthorisationScreen(
-                onNavigateUp = onNavigateUp,
-                showSnackbar = showSnackbar
+                onNavigateUp = onNavigateUp
             )
         }
     }

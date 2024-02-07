@@ -7,11 +7,8 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,7 +22,6 @@ import car.pace.cofu.ui.navigation.graph.Graph
 import car.pace.cofu.ui.navigation.graph.bottomBarGraphs
 import car.pace.cofu.ui.onboarding.twofactor.biometric.findActivity
 import car.pace.cofu.ui.theme.AppTheme
-import car.pace.cofu.util.showSnackbar
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -38,7 +34,6 @@ fun AppContent(
         val context = LocalContext.current
         val appState = rememberAppState()
         val coroutineScope = rememberCoroutineScope()
-        val snackbarHostState = remember { SnackbarHostState() }
 
         LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
             coroutineScope.launch {
@@ -65,9 +60,6 @@ fun AppContent(
                         onNavigateToGraph = appState::navigateToGraph
                     )
                 }
-            },
-            snackbarHost = {
-                SnackbarHost(snackbarHostState)
             }
         ) { padding ->
             AppNavHost(
@@ -84,11 +76,7 @@ fun AppContent(
                 navigateToOnboarding = {
                     appState.navigateAndClearBackStack(Graph.ONBOARDING)
                 }
-            ) {
-                coroutineScope.launch {
-                    it.showSnackbar(context, snackbarHostState)
-                }
-            }
+            )
         }
     }
 }

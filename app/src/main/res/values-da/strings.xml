@@ -60,6 +60,7 @@
     <string name="common_use_monday">Mandag</string>
     <string name="common_use_network_error">Forbindelsen til internettet mislykkedes. Prøv igen senere.</string>
     <string name="common_use_next">Næste</string>
+    <string name="common_use_ok">OK</string>
     <string name="common_use_open_play_store">Åbn Play Butik</string>
     <string name="common_use_pump">Benzinpumpe</string>
     <string name="common_use_retry">Prøv igen</string>
@@ -181,9 +182,13 @@
     <string name="wallet_payment_methods_title">Betalingsmetoder og brændstofkort</string>
     <string name="wallet_tab_label">Pung</string>
     <string name="wallet_transactions_title">Transaktioner</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_text">Uden biometrisk autentificering kan betalinger kun godkendes med din PACE PIN-kode eller din adgangskode.</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_title">Deaktiverer du virkelig biometrisk autentificering?</string>
+    <string name="wallet_two_factor_authentication_biometry_error">Fejl ved genkendelse af fingeraftryk</string>
     <string name="wallet_two_factor_authentication_biometry_setup_successful">Biometri er sat op med succes</string>
     <string name="wallet_two_factor_authentication_biometry_title">Biometri</string>
     <string name="wallet_two_factor_authentication_pin_setup_successful">PIN-kode indstillet korrekt</string>
     <string name="wallet_two_factor_authentication_pin_title">Indstil PIN-kode</string>
     <string name="wallet_two_factor_authentication_title">Godkendelsesprocedure</string>
+    <string name="zoom_in_note">Zoom ind for at finde benzinstationer</string>
 </resources>

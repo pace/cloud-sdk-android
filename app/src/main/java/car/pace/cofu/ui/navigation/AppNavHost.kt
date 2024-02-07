@@ -14,7 +14,6 @@ import car.pace.cofu.ui.navigation.graph.navigate
 import car.pace.cofu.ui.navigation.graph.onboardingGraph
 import car.pace.cofu.ui.navigation.graph.walletGraph
 import car.pace.cofu.util.Constants.TRANSITION_DURATION
-import car.pace.cofu.util.SnackbarData
 
 @Composable
 fun AppNavHost(
@@ -22,8 +21,7 @@ fun AppNavHost(
     onboardingDone: Boolean,
     modifier: Modifier = Modifier,
     onOnboardingDone: () -> Unit,
-    navigateToOnboarding: () -> Unit,
-    showSnackbar: (SnackbarData) -> Unit
+    navigateToOnboarding: () -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -56,7 +54,6 @@ fun AppNavHost(
             }
         )
         walletGraph(
-            showSnackbar = showSnackbar,
             onNavigate = {
                 navController.navigate(it)
             },
