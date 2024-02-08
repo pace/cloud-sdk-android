@@ -60,6 +60,7 @@
     <string name="common_use_monday">Montag</string>
     <string name="common_use_network_error">Verbindung zum Internet fehlgeschlagen. Versuche es später erneut.</string>
     <string name="common_use_next">Weiter</string>
+    <string name="common_use_ok">OK</string>
     <string name="common_use_open_play_store">Play Store öffnen</string>
     <string name="common_use_pump">Zapfsäule</string>
     <string name="common_use_retry">Erneut versuchen</string>
@@ -181,9 +182,13 @@
     <string name="wallet_payment_methods_title">Bezahlmethoden &amp; Tankkarten</string>
     <string name="wallet_tab_label">Wallet</string>
     <string name="wallet_transactions_title">Transaktionen</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_text">Ohne biometrische Authentifizierung können Bezahlungen ausschließlich mit deiner PACE-PIN oder deinem Passwort autorisiert werden.</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_title">Biometrische Authentifizierung wirklich deaktivieren?</string>
+    <string name="wallet_two_factor_authentication_biometry_error">Fehler beim Erkennen des Fingerabdrucks</string>
     <string name="wallet_two_factor_authentication_biometry_setup_successful">Biometrie erfolgreich eingerichtet</string>
     <string name="wallet_two_factor_authentication_biometry_title">Biometrie</string>
     <string name="wallet_two_factor_authentication_pin_setup_successful">PIN erfolgreich gesetzt</string>
     <string name="wallet_two_factor_authentication_pin_title">PIN setzen</string>
     <string name="wallet_two_factor_authentication_title">Autorisierungsverfahren</string>
+    <string name="zoom_in_note">Vergrößern, um Tankstellen zu finden</string>
 </resources>

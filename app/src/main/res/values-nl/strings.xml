@@ -60,6 +60,7 @@
     <string name="common_use_monday">Maandag</string>
     <string name="common_use_network_error">Verbinding met internet mislukt. Probeer het later opnieuw.</string>
     <string name="common_use_next">Volgende</string>
+    <string name="common_use_ok">OK</string>
     <string name="common_use_open_play_store">Open Play Store</string>
     <string name="common_use_pump">Benzinepomp</string>
     <string name="common_use_retry">Probeer het nog eens.</string>
@@ -181,9 +182,13 @@
     <string name="wallet_payment_methods_title">Betaalmethoden &amp; tankkaarten</string>
     <string name="wallet_tab_label">Portemonnee</string>
     <string name="wallet_transactions_title">Transacties</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_text">Zonder biometrische verificatie kunnen betalingen alleen worden geautoriseerd met uw PACE PIN of uw wachtwoord.</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_title">Deactiveer je echt biometrische verificatie?</string>
+    <string name="wallet_two_factor_authentication_biometry_error">Fout bij het herkennen van de vingerafdruk</string>
     <string name="wallet_two_factor_authentication_biometry_setup_successful">Biometrie succesvol opgezet</string>
     <string name="wallet_two_factor_authentication_biometry_title">Biometrie</string>
     <string name="wallet_two_factor_authentication_pin_setup_successful">PIN succesvol ingesteld</string>
     <string name="wallet_two_factor_authentication_pin_title">PIN instellen</string>
     <string name="wallet_two_factor_authentication_title">Autorisatieprocedure</string>
+    <string name="zoom_in_note">Inzoomen om tankstations te vinden</string>
 </resources>

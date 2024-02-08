@@ -60,6 +60,7 @@
     <string name="common_use_monday">Segunda-feira</string>
     <string name="common_use_network_error">A ligação à Internet falhou. Tente novamente mais tarde.</string>
     <string name="common_use_next">Próximo</string>
+    <string name="common_use_ok">OK</string>
     <string name="common_use_open_play_store">Abrir a Play Store</string>
     <string name="common_use_pump">Bomba de gasolina</string>
     <string name="common_use_retry">Tente novamente</string>
@@ -181,9 +182,13 @@
     <string name="wallet_payment_methods_title">Métodos de pagamento e cartões de combustível</string>
     <string name="wallet_tab_label">Carteira</string>
     <string name="wallet_transactions_title">Transacções</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_text">Sem a autenticação biométrica, os pagamentos só podem ser autorizados com o seu PIN PACE ou a sua palavra-passe.</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_title">Desactiva-se realmente a autenticação biométrica?</string>
+    <string name="wallet_two_factor_authentication_biometry_error">Erro no reconhecimento da impressão digital</string>
     <string name="wallet_two_factor_authentication_biometry_setup_successful">Biometria instalada com sucesso</string>
     <string name="wallet_two_factor_authentication_biometry_title">Biometria</string>
     <string name="wallet_two_factor_authentication_pin_setup_successful">PIN definido com êxito</string>
     <string name="wallet_two_factor_authentication_pin_title">Definir PIN</string>
     <string name="wallet_two_factor_authentication_title">Procedimento de autorização</string>
+    <string name="zoom_in_note">Ampliar para encontrar estações de serviço</string>
 </resources>

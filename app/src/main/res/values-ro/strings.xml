@@ -60,6 +60,7 @@
     <string name="common_use_monday">Luni</string>
     <string name="common_use_network_error">Conexiunea la Internet a eșuat. Încercați din nou mai târziu.</string>
     <string name="common_use_next">Următorul</string>
+    <string name="common_use_ok">OK</string>
     <string name="common_use_open_play_store">Deschideți Magazinul Play</string>
     <string name="common_use_pump">Pompă de benzină</string>
     <string name="common_use_retry">Încearcă din nou</string>
@@ -181,9 +182,13 @@
     <string name="wallet_payment_methods_title">Metode de plată și carduri de combustibil</string>
     <string name="wallet_tab_label">Portofel</string>
     <string name="wallet_transactions_title">Tranzacții</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_text">Fără autentificarea biometrică, plățile pot fi autorizate doar cu PIN-ul sau parola dumneavoastră PACE.</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_title">Chiar dezactivați autentificarea biometrică?</string>
+    <string name="wallet_two_factor_authentication_biometry_error">Eroare la recunoașterea amprentei digitale</string>
     <string name="wallet_two_factor_authentication_biometry_setup_successful">Biometrie instalată cu succes</string>
     <string name="wallet_two_factor_authentication_biometry_title">Biometrie</string>
     <string name="wallet_two_factor_authentication_pin_setup_successful">PIN setat cu succes</string>
     <string name="wallet_two_factor_authentication_pin_title">Setați PIN-ul</string>
     <string name="wallet_two_factor_authentication_title">Procedura de autorizare</string>
+    <string name="zoom_in_note">Mărește imaginea pentru a găsi benzinării</string>
 </resources>

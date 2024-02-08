@@ -60,6 +60,7 @@
     <string name="common_use_monday">Monday</string>
     <string name="common_use_network_error">Connection to the Internet failed. Try again later.</string>
     <string name="common_use_next">Next</string>
+    <string name="common_use_ok">OK</string>
     <string name="common_use_open_play_store">Open Play Store</string>
     <string name="common_use_pump">Fuel pump</string>
     <string name="common_use_retry">Try again</string>
@@ -181,9 +182,13 @@
     <string name="wallet_payment_methods_title">Payment methods &amp; fuel cards</string>
     <string name="wallet_tab_label">Wallet</string>
     <string name="wallet_transactions_title">Transactions</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_text">Without biometric authentication, every payment can only be authorized with your PACE PIN or your password.</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_title">Really deactivate biometric authentication?</string>
+    <string name="wallet_two_factor_authentication_biometry_error">Error recognizing fingerprint</string>
     <string name="wallet_two_factor_authentication_biometry_setup_successful">Biometrics successfully set up</string>
     <string name="wallet_two_factor_authentication_biometry_title">Biometrics</string>
     <string name="wallet_two_factor_authentication_pin_setup_successful">PIN set successfully</string>
     <string name="wallet_two_factor_authentication_pin_title">Set PIN</string>
     <string name="wallet_two_factor_authentication_title">Authorisation</string>
+    <string name="zoom_in_note">Zoom in to find gas stations</string>
 </resources>

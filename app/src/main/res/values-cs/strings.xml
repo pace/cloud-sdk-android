@@ -60,6 +60,7 @@
     <string name="common_use_monday">Pondělí</string>
     <string name="common_use_network_error">Připojení k internetu se nezdařilo. Zkuste to později.</string>
     <string name="common_use_next">Další</string>
+    <string name="common_use_ok">OK</string>
     <string name="common_use_open_play_store">Otevřít Obchod Play</string>
     <string name="common_use_pump">Benzínové čerpadlo</string>
     <string name="common_use_retry">Zkuste to znovu</string>
@@ -181,9 +182,13 @@
     <string name="wallet_payment_methods_title">Platební metody a palivové karty</string>
     <string name="wallet_tab_label">Peněženka</string>
     <string name="wallet_transactions_title">Transakce</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_text">Bez biometrického ověření lze platby autorizovat pouze pomocí kódu PIN PACE nebo hesla.</string>
+    <string name="wallet_two_factor_authentication_biometry_disable_title">Opravdu deaktivujete biometrické ověřování?</string>
+    <string name="wallet_two_factor_authentication_biometry_error">Chyba při rozpoznávání otisku prstu</string>
     <string name="wallet_two_factor_authentication_biometry_setup_successful">Úspěšné nastavení biometrických údajů</string>
     <string name="wallet_two_factor_authentication_biometry_title">Biometrické údaje</string>
     <string name="wallet_two_factor_authentication_pin_setup_successful">Úspěšné nastavení kódu PIN</string>
     <string name="wallet_two_factor_authentication_pin_title">Nastavení kódu PIN</string>
     <string name="wallet_two_factor_authentication_title">Autorizační postup</string>
+    <string name="zoom_in_note">Přiblížení čerpacích stanic</string>
 </resources>
