@@ -149,6 +149,16 @@ build_app:
               mv "$f" "$output"
               echo "Moved legal document $f to $output"
             done
+        - |+
+            needed_files=("usage_terms" "privacy_statement" "usage_analysis" "imprint")
+            for item in "${needed_files[@]}"; do
+            legal_file=app/src/main/res/raw/${item}.html
+                if [ ! -e "$legal_file" ]; then
+                    echo "Error: File '$legal_file' does not exist in base language."
+                    exit 1
+                fi
+            done
+            echo "All legal files exist in base language."
         - apt-get update && apt-get install -y jq
         - shopt -s extglob
         - |+
