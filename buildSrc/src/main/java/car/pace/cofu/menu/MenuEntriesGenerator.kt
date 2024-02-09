@@ -10,6 +10,7 @@ import com.squareup.kotlinpoet.MAP
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
+import org.gradle.api.GradleException
 import org.redundent.kotlin.xml.PrintOptions
 import org.redundent.kotlin.xml.xml
 import java.io.File
@@ -31,6 +32,7 @@ object MenuEntriesGenerator {
     }
 
     private fun generateStringResources(outputDir: File) {
+        var menuEntriesInBaseLanguage = 0
         configuration.menu_entries
             .map { it.menu_entries_id.menu_entry }
             .flatten()
@@ -50,7 +52,12 @@ object MenuEntriesGenerator {
                 }
 
                 val language = languageCode.substringBefore("-")
-                val resourceFolder = if (language == "en") "values" else "values-$language"
+                val resourceFolder = if (language == "en") {
+                    menuEntriesInBaseLanguage = menuEntries.size
+                    "values"
+                } else {
+                    "values-$language"
+                }
                 val resourceDir = File(outputDir, "res/$resourceFolder")
                 resourceDir.mkdirs()
                 val outputFile = File(resourceDir, "menu.xml")
@@ -58,6 +65,13 @@ object MenuEntriesGenerator {
 
                 println("MenuEntriesGenerator: Successfully generated $language resource file to $outputFile")
             }
+
+        // Check if base language exists
+        when {
+            configuration.menu_entries.isEmpty() -> println("No custom menu entries available.")
+            File(File(outputDir, "res/values"),"menu.xml").exists() && menuEntriesInBaseLanguage == configuration.menu_entries.size -> println("Menu string resources exist in base language.")
+            else -> throw GradleException("Menu string resources doesn't exist in base language.")
+        }
     }
 
     private fun generateMenuEntries(outputDir: File) {
