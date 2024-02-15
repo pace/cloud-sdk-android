@@ -2,7 +2,6 @@ package car.pace.cofu.features.analytics
 
 import car.pace.cofu.BuildConfig
 import car.pace.cofu.data.SharedPreferencesRepository
-import car.pace.cofu.ui.wallet.paymentmethods.PaymentMethodsViewModel
 import car.pace.cofu.util.LogAndBreadcrumb
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import com.google.firebase.Firebase
@@ -26,8 +25,10 @@ class Analytics @Inject constructor(
             super.logEvent(key, parameters)
 
             when (key) {
-                PaymentMethodsViewModel.PAYMENT_METHOD_CREATION_STARTED -> logEvent(CardBoardingStarted)
-                PaymentMethodsViewModel.PAYMENT_METHOD_ADDED -> logEvent(CardBoardingDone(parameters["kind"] as? String?))
+                PAYMENT_METHOD_CREATION_STARTED -> logEvent(CardBoardingStarted)
+                PAYMENT_METHOD_ADDED -> logEvent(CardBoardingDone(parameters["kind"] as? String?))
+                FuelingEnded.key -> logEvent(FuelingEnded(parameters["success"] as? Boolean))
+                FuelingCanceled.key -> logEvent(FuelingCanceled)
                 else -> {}
             }
         }
@@ -81,5 +82,10 @@ class Analytics @Inject constructor(
             logEvent(AppInstalled)
             sharedPreferencesRepository.putValue(SharedPreferencesRepository.PREF_KEY_FIRST_RUN, false)
         }
+    }
+
+    companion object {
+        const val PAYMENT_METHOD_CREATION_STARTED = "payment_method_creation_started"
+        const val PAYMENT_METHOD_ADDED = "payment_method_added"
     }
 }

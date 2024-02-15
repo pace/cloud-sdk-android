@@ -80,9 +80,4 @@ class PaymentMethodsViewModel @Inject constructor(
             .build()
             .toString()
     }
-
-    companion object {
-        const val PAYMENT_METHOD_CREATION_STARTED = "payment_method_creation_started"
-        const val PAYMENT_METHOD_ADDED = "payment_method_added"
-    }
 }
