@@ -1,0 +1,78 @@
+spec:
+    inputs:
+        app-name:
+            type: string
+            default: "connectedfueling-app"
+        app-id:
+            type: string
+---
+
+image: softartdev/android-fastlane
+
+stages:
+    - build
+    - publish
+
+before_script:
+    - bundle install || true
+    - git fetch --prune --prune-tags
+    - echo "Latest tag to be used as build and version number"
+    - export LATEST_TAG=$(git describe --tags --abbrev=0 --match "connectedfueling-app-*")
+    - export TAG_NUMBER=${LATEST_TAG##connectedfueling-app-v} # Get content after connectedfueling-app-v
+    - export VERSION_NAME=${TAG_NUMBER%.*} # Get content before last .
+    - export BUILD_NUMBER=${TAG_NUMBER##*.} # Get content after last .
+
+.tag_rule: &tag_rule
+    rules:
+        -   if: $CI_COMMIT_TAG =~ /^connectedfueling-app-/
+
+.docker_image:
+    tags:
+        - docker
+    interruptible: true
+    retry: 2
+
+"$[[ inputs.app-name ]]-fetch_config":
+    extends: .docker_image
+    image: python:3.7
+    stage: build
+    <<: *tag_rule
+    script:
+        - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/pace/mobile/common.git tmp/common
+        - python3 tmp/common/scripts/whitelabel-app/fetch_configuration.py --whitelabel-app-id $[[ inputs.app-id ]] --platform android --configuration-base-url $DIRECTUS_BASE_URL --access-token $DIRECTUS_ACCESS_TOKEN
+    artifacts:
+        name: App configuration
+        expire_in: 14 days
+        paths:
+            - configuration
+
+"$[[ inputs.app-name ]]-build_app":
+    extends: .docker_image
+    stage: build
+    <<: *tag_rule
+    script:
+        - bash scripts/build_cofu_app_from_configuration.sh
+    artifacts:
+        name: $(git show -s --format=%ct $CI_COMMIT_SHA)-beta
+        paths:
+            - app/build/outputs
+        expire_in: 14 days
+    needs: ["$[[ inputs.app-name ]]-fetch_config"]
+
+
+"$[[ inputs.app-name ]]-publish_app":
+    extends: .docker_image
+    stage: publish
+    <<: *tag_rule
+    dependencies:
+        - "$[[ inputs.app-name ]]-fetch_config"
+        - "$[[ inputs.app-name ]]-build_app"
+    script:
+        - >-
+            fastlane publish
+            track:internal
+            aab_file:app/build/outputs/bundle/release/app-release.aab
+            credentials_file:configuration/assets/android_play_store_credentials.json
+            package_name:$(grep -oP '(?<="application_id_android": ")[^"]*' configuration/configuration.json)
+            mapping_file:app/build/outputs/mapping/release/mapping.txt
+
