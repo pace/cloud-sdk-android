@@ -40,8 +40,11 @@
     <string name="PRICE.NOT_AVAILABLE">n. a.</string>
     <string name="SHARE_TITLE">Share</string>
     <string name="actions_and_coupons_section_title">Promotions &amp; Coupons</string>
-    <string name="alert_location_permission_description">To show you the nearest gas station, we need access to your current location.</string>
-    <string name="alert_location_permission_title">Location permission not granted</string>
+    <string name="alert_location_permission_denied_description">To show you the nearest gas station, we need access to your current location.</string>
+    <string name="alert_location_permission_denied_title">Please grant location access in the settings.</string>
+    <string name="alert_location_permission_disabled_title">You cannot use mobile payment without location access.</string>
+    <string name="alert_notification_permission_denied_title">Please grant notification permission in the settings.</string>
+    <string name="alert_notification_permission_disabled_title">Without notification permission, we cannot inform you about the latest features and deals.</string>
     <string name="analytics_accepted_text">Usage analysis activated</string>
     <string name="analytics_declined_text">Usage analysis deactivated</string>
     <string name="closed_label">CLOSED</string>
@@ -103,6 +106,11 @@
     <string name="list_tab_label">List</string>
     <string name="map_tab_label">Map</string>
     <string name="menu_items_analytics">Usage analysis</string>
+    <string name="menu_items_permissions">Permissions</string>
+    <string name="menu_permissions_location_description">To see the nearest gas station, we need access to your precise location.</string>
+    <string name="menu_permissions_location_title">Location</string>
+    <string name="menu_permissions_notifications_description">We inform you via push notification about gas stations in your area and general news.</string>
+    <string name="menu_permissions_notifications_title">Notifications</string>
     <string name="more_tab_label">More</string>
     <string name="no_supported_browser_dialog_title">No supported browser</string>
     <string name="no_supported_browser_toast">Enable Google Chrome and restart the app to continue.</string>

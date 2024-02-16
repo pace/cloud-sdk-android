@@ -40,8 +40,11 @@
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Compartir</string>
     <string name="actions_and_coupons_section_title">Promociones y cupones</string>
-    <string name="alert_location_permission_description">Para mostrarte la gasolinera más cercana, necesitamos acceder a tu ubicación actual.</string>
-    <string name="alert_location_permission_title">Ubicación no divulgada</string>
+    <string name="alert_location_permission_denied_description">Para mostrarte la gasolinera más cercana, necesitamos acceder a tu ubicación actual.</string>
+    <string name="alert_location_permission_denied_title">Por favor, autorice la ubicación en los ajustes.</string>
+    <string name="alert_location_permission_disabled_title">No puede utilizar el pago por móvil sin la aprobación de la ubicación.</string>
+    <string name="alert_notification_permission_denied_title">Por favor, autorice la liberación de notificaciones en los ajustes.</string>
+    <string name="alert_notification_permission_disabled_title">Sin la aprobación de la notificación, no podemos informarle sobre las últimas funciones y ofertas.</string>
     <string name="analytics_accepted_text">Análisis de la utilización activado</string>
     <string name="analytics_declined_text">Análisis de la utilización desactivado</string>
     <string name="closed_label">CERRADO</string>
@@ -103,6 +106,11 @@
     <string name="list_tab_label">Lista</string>
     <string name="map_tab_label">Mapa</string>
     <string name="menu_items_analytics">Análisis de la utilización</string>
+    <string name="menu_items_permissions">Permisos</string>
+    <string name="menu_permissions_location_description">Para ver la gasolinera más cercana, necesitamos acceder a su ubicación exacta.</string>
+    <string name="menu_permissions_location_title">Ubicación</string>
+    <string name="menu_permissions_notifications_description">Le informamos mediante notificaciones push sobre las gasolineras de su zona y noticias generales.</string>
+    <string name="menu_permissions_notifications_title">Notificaciones</string>
     <string name="more_tab_label">Más</string>
     <string name="no_supported_browser_dialog_title">Ningún navegador compatible</string>
     <string name="no_supported_browser_toast">Activa Google Chrome y reinicia la aplicación para continuar.</string>

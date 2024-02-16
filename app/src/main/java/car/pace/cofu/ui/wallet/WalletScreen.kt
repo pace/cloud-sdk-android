@@ -65,11 +65,10 @@ fun WalletScreen(
     val email = remember {
         JWTUtils.getUserEMailFromToken(IDKit.cachedToken()).orEmpty()
     }
-    val items = remember { viewModel.items }
 
     WalletScreenContent(
         email = email,
-        items = items,
+        items = viewModel.items,
         onLogout = {
             LogAndBreadcrumb.i(LogAndBreadcrumb.WALLET, "User logged out")
             coroutineScope.launch {
@@ -143,7 +142,7 @@ fun WalletScreenContent(
                         }
                     ),
                     icon = it.icon,
-                    text = it.labelRes?.let { res -> stringResource(id = res) }.orEmpty()
+                    title = it.labelRes?.let { res -> stringResource(id = res) }.orEmpty()
                 )
             }
         }

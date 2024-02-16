@@ -22,6 +22,7 @@ import car.pace.cofu.ui.detail.DetailScreen
 import car.pace.cofu.ui.home.HomeScreen
 import car.pace.cofu.ui.more.MoreScreen
 import car.pace.cofu.ui.more.licenses.LicensesScreen
+import car.pace.cofu.ui.more.permissions.PermissionsScreen
 import car.pace.cofu.ui.more.tracking.TrackingScreen
 import car.pace.cofu.ui.more.webview.WebViewScreen
 import car.pace.cofu.ui.onboarding.OnboardingScreen
@@ -192,6 +193,11 @@ fun NavGraphBuilder.moreGraph(
         }
         childComposable(Route.LICENSES.route) {
             LicensesScreen(
+                onNavigateUp = onNavigateUp
+            )
+        }
+        childComposable(Route.PERMISSIONS.route) {
+            PermissionsScreen(
                 onNavigateUp = onNavigateUp
             )
         }

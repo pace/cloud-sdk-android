@@ -162,13 +162,13 @@ fun AuthorisationScreenContent(
                     onClick = onPinSetupClick
                 ),
                 icon = Icons.Outlined.Pin,
-                text = stringResource(id = R.string.wallet_two_factor_authentication_pin_title)
+                title = stringResource(id = R.string.wallet_two_factor_authentication_pin_title)
             )
 
             if (canAuthenticate) {
                 DefaultListItem(
                     icon = Icons.Outlined.Fingerprint,
-                    text = stringResource(id = R.string.wallet_two_factor_authentication_biometry_title),
+                    title = stringResource(id = R.string.wallet_two_factor_authentication_biometry_title),
                     switchInfo = SwitchInfo(isBiometricAuthenticationEnabled) {
                         if (it) {
                             LogAndBreadcrumb.i(LogAndBreadcrumb.AUTHORISATION, "User starts biometry setup")

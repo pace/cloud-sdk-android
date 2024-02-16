@@ -40,8 +40,11 @@
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Condividere</string>
     <string name="actions_and_coupons_section_title">Promozioni e coupon</string>
-    <string name="alert_location_permission_description">Per mostrarvi la stazione di servizio più vicina, abbiamo bisogno di accedere alla vostra posizione attuale.</string>
-    <string name="alert_location_permission_title">Posizione non resa nota</string>
+    <string name="alert_location_permission_denied_description">Per mostrarvi la stazione di servizio più vicina, abbiamo bisogno di accedere alla vostra posizione attuale.</string>
+    <string name="alert_location_permission_denied_title">Autorizzare la posizione nelle impostazioni.</string>
+    <string name="alert_location_permission_disabled_title">Non è possibile utilizzare il pagamento mobile senza l\'approvazione della sede.</string>
+    <string name="alert_notification_permission_denied_title">Autorizzare il rilascio della notifica nelle impostazioni.</string>
+    <string name="alert_notification_permission_disabled_title">Senza l\'approvazione della notifica, non possiamo informarvi sulle ultime funzionalità e offerte.</string>
     <string name="analytics_accepted_text">Analisi dell\'utilizzo attivato</string>
     <string name="analytics_declined_text">Analisi dell\'utilizzo disattivato</string>
     <string name="closed_label">CHIUSO</string>
@@ -103,6 +106,11 @@
     <string name="list_tab_label">Elenco</string>
     <string name="map_tab_label">Mappa</string>
     <string name="menu_items_analytics">Analisi dell\'utilizzo</string>
+    <string name="menu_items_permissions">Permessi</string>
+    <string name="menu_permissions_location_description">Per vedere la stazione di servizio più vicina, abbiamo bisogno di accedere alla vostra posizione esatta.</string>
+    <string name="menu_permissions_location_title">Posizione</string>
+    <string name="menu_permissions_notifications_description">Vi informiamo tramite notifica push sulle stazioni di servizio nella vostra zona e sulle notizie generali.</string>
+    <string name="menu_permissions_notifications_title">Notifiche</string>
     <string name="more_tab_label">Più</string>
     <string name="no_supported_browser_dialog_title">Nessun browser supportato</string>
     <string name="no_supported_browser_toast">Attivare Google Chrome e riavviare l\'applicazione per continuare.</string>

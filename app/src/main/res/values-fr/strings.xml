@@ -40,8 +40,11 @@
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Partager</string>
     <string name="actions_and_coupons_section_title">Actions &amp; coupons</string>
-    <string name="alert_location_permission_description">Pour pouvoir t\'indiquer la station-service la plus proche, nous devons avoir accès à ta position actuelle.</string>
-    <string name="alert_location_permission_title">Site non validé</string>
+    <string name="alert_location_permission_denied_description">Pour pouvoir t\'indiquer la station-service la plus proche, nous devons avoir accès à ta position actuelle.</string>
+    <string name="alert_location_permission_denied_title">Veuillez autoriser l\'accès au site dans les paramètres.</string>
+    <string name="alert_location_permission_disabled_title">Tu ne peux pas utiliser le paiement mobile sans autorisation de localisation.</string>
+    <string name="alert_notification_permission_denied_title">Veuillez donner l\'autorisation de notification dans les paramètres.</string>
+    <string name="alert_notification_permission_disabled_title">Sans l\'autorisation de recevoir des notifications, nous ne pouvons pas t\'informer des dernières fonctionnalités et offres.</string>
     <string name="analytics_accepted_text">Analyse de l\'utilisation activé</string>
     <string name="analytics_declined_text">Analyse de l\'utilisation désactivé</string>
     <string name="closed_label">FERMÉ</string>
@@ -103,6 +106,11 @@
     <string name="list_tab_label">Liste</string>
     <string name="map_tab_label">Carte</string>
     <string name="menu_items_analytics">Analyse de l\'utilisation</string>
+    <string name="menu_items_permissions">Permissions</string>
+    <string name="menu_permissions_location_description">Pour voir la station-service la plus proche, nous devons avoir accès à ta localisation exacte.</string>
+    <string name="menu_permissions_location_title">Localisation</string>
+    <string name="menu_permissions_notifications_description">Nous t\'informons par notification push des stations-service proches de chez toi et des nouveautés générales.</string>
+    <string name="menu_permissions_notifications_title">Notifications</string>
     <string name="more_tab_label">Plus</string>
     <string name="no_supported_browser_dialog_title">Pas de navigateur supporté</string>
     <string name="no_supported_browser_toast">Active Google Chrome et redémarre l\'application pour continuer.</string>

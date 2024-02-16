@@ -40,8 +40,11 @@
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Deel</string>
     <string name="actions_and_coupons_section_title">Promoties en kortingsbonnen</string>
-    <string name="alert_location_permission_description">Om u het dichtstbijzijnde tankstation te tonen, hebben we toegang nodig tot uw huidige locatie.</string>
-    <string name="alert_location_permission_title">Locatie niet vrijgegeven</string>
+    <string name="alert_location_permission_denied_description">Om u het dichtstbijzijnde tankstation te tonen, hebben we toegang nodig tot uw huidige locatie.</string>
+    <string name="alert_location_permission_denied_title">Geef de locatie toestemming in de instellingen.</string>
+    <string name="alert_location_permission_disabled_title">Je kunt mobiele betaling niet gebruiken zonder goedkeuring van de locatie.</string>
+    <string name="alert_notification_permission_denied_title">Autoriseer de vrijgave van meldingen in de instellingen.</string>
+    <string name="alert_notification_permission_disabled_title">Zonder goedkeuring van de melding kunnen we je niet informeren over de nieuwste functies en aanbiedingen.</string>
     <string name="analytics_accepted_text">Gebruiksanalyse geactiveerd</string>
     <string name="analytics_declined_text">Gebruiksanalyse gedeactiveerd</string>
     <string name="closed_label">GESLOTEN</string>
@@ -103,6 +106,11 @@
     <string name="list_tab_label">Lijst</string>
     <string name="map_tab_label">Kaart</string>
     <string name="menu_items_analytics">Gebruiksanalyse</string>
+    <string name="menu_items_permissions">Toestemmingen</string>
+    <string name="menu_permissions_location_description">Om het dichtstbijzijnde tankstation te zien, hebben we toegang tot je exacte locatie nodig.</string>
+    <string name="menu_permissions_location_title">Locatie</string>
+    <string name="menu_permissions_notifications_description">We informeren je via pushmeldingen over tankstations bij jou in de buurt en algemeen nieuws.</string>
+    <string name="menu_permissions_notifications_title">Meldingen</string>
     <string name="more_tab_label">Meer</string>
     <string name="no_supported_browser_dialog_title">Geen ondersteunde browser</string>
     <string name="no_supported_browser_toast">Activeer Google Chrome en start de app opnieuw op om verder te gaan.</string>

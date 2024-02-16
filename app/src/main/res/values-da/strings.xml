@@ -40,8 +40,11 @@
     <string name="PRICE.NOT_AVAILABLE">n. a.</string>
     <string name="SHARE_TITLE">Del</string>
     <string name="actions_and_coupons_section_title">Kampagner og kuponer</string>
-    <string name="alert_location_permission_description">For at vise dig den nærmeste tankstation skal vi have adgang til din aktuelle position.</string>
-    <string name="alert_location_permission_title">Tilladelse til placering ikke givet</string>
+    <string name="alert_location_permission_denied_description">For at vise dig den nærmeste tankstation skal vi have adgang til din aktuelle position.</string>
+    <string name="alert_location_permission_denied_title">Godkend placeringen i indstillingerne.</string>
+    <string name="alert_location_permission_disabled_title">Du kan ikke bruge mobilbetaling uden lokationsgodkendelse.</string>
+    <string name="alert_notification_permission_denied_title">Godkend venligst udgivelsen af notifikationer i indstillingerne.</string>
+    <string name="alert_notification_permission_disabled_title">Uden godkendelse af notifikationen kan vi ikke informere dig om de nyeste funktioner og tilbud.</string>
     <string name="analytics_accepted_text">Analyse af udnyttelse aktiveret</string>
     <string name="analytics_declined_text">Analyse af udnyttelse deaktiveret</string>
     <string name="closed_label">LUKKET</string>
@@ -103,6 +106,11 @@
     <string name="list_tab_label">Liste</string>
     <string name="map_tab_label">Kort</string>
     <string name="menu_items_analytics">Analyse af udnyttelse</string>
+    <string name="menu_items_permissions">Tilladelser</string>
+    <string name="menu_permissions_location_description">For at se den nærmeste tankstation skal vi have adgang til din nøjagtige placering.</string>
+    <string name="menu_permissions_location_title">Placering</string>
+    <string name="menu_permissions_notifications_description">Vi informerer dig via push-notifikationer om tankstationer i dit område og generelle nyheder.</string>
+    <string name="menu_permissions_notifications_title">Meddelelser</string>
     <string name="more_tab_label">Mere</string>
     <string name="no_supported_browser_dialog_title">Ingen understøttet browser</string>
     <string name="no_supported_browser_toast">Aktivér Google Chrome, og genstart appen for at fortsætte.</string>

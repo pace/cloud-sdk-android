@@ -40,8 +40,11 @@
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Teilen</string>
     <string name="actions_and_coupons_section_title">Aktionen &amp; Coupons</string>
-    <string name="alert_location_permission_description">Um dir die nächstgelegene Tankstelle anzuzeigen, brauchen wir Zugriff auf deinen aktuellen Standort.</string>
-    <string name="alert_location_permission_title">Standort nicht freigegeben</string>
+    <string name="alert_location_permission_denied_description">Um dir die nächstgelegene Tankstelle anzuzeigen, brauchen wir Zugriff auf deinen aktuellen Standort.</string>
+    <string name="alert_location_permission_denied_title">Bitte erteile die Standort-Freigabe in den Einstellungen.</string>
+    <string name="alert_location_permission_disabled_title">Ohne Standort-Freigabe kannst du das mobile Bezahlen nicht nutzen.</string>
+    <string name="alert_notification_permission_denied_title">Bitte erteile die Benachrichtungs-Freigabe in den Einstellungen.</string>
+    <string name="alert_notification_permission_disabled_title">Ohne Benachrichtigungs-Freigabe können wir dich nicht über neueste Funktionen und Angebote informieren.</string>
     <string name="analytics_accepted_text">Nutzungsanalyse aktiviert</string>
     <string name="analytics_declined_text">Nutzungsanalyse deaktiviert</string>
     <string name="closed_label">GESCHLOSSEN</string>
@@ -103,6 +106,11 @@
     <string name="list_tab_label">Liste</string>
     <string name="map_tab_label">Karte</string>
     <string name="menu_items_analytics">Nutzungsanalyse</string>
+    <string name="menu_items_permissions">Berechtigungen</string>
+    <string name="menu_permissions_location_description">Um die nächstgelegene Tankstelle zu sehen, benötigen wir Zugriff auf deinen genauen Standort.</string>
+    <string name="menu_permissions_location_title">Standortfreigabe</string>
+    <string name="menu_permissions_notifications_description">Wir informieren dich per Push-Benachrichtigung über Tankstellen in deiner Nähe und allgemeine Neuigkeiten.</string>
+    <string name="menu_permissions_notifications_title">Benachrichtigungen</string>
     <string name="more_tab_label">Mehr</string>
     <string name="no_supported_browser_dialog_title">Kein unterstützter Browser</string>
     <string name="no_supported_browser_toast">Aktiviere Google Chrome und starte die App neu, um fortzufahren.</string>

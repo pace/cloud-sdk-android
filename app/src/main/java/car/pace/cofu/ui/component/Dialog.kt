@@ -16,7 +16,7 @@ import car.pace.cofu.ui.theme.AppTheme
 @Composable
 fun DefaultDialog(
     title: String,
-    text: String,
+    text: String? = null,
     confirmButtonText: String,
     dismissButtonText: String? = null,
     imageVector: ImageVector? = null,
@@ -55,8 +55,12 @@ fun DefaultDialog(
         title = {
             Title(text = title)
         },
-        text = {
-            Description(text = text)
+        text = if (text != null) {
+            {
+                Description(text = text)
+            }
+        } else {
+            null
         },
         containerColor = MaterialTheme.colorScheme.background,
         iconContentColor = MaterialTheme.colorScheme.onSurface,
