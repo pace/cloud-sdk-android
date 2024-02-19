@@ -11,6 +11,7 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.PersonRemove
 import androidx.compose.material.icons.outlined.ReceiptLong
+import androidx.compose.material.icons.outlined.VpnKey
 import androidx.compose.ui.graphics.vector.ImageVector
 import car.pace.cofu.R
 import car.pace.cofu.ui.icon.BarChart4Bars
@@ -74,8 +75,8 @@ enum class Route(
     LICENSES(route = "licenses_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.MENU_ITEMS_LICENCES, icon = Icons.Outlined.TwoPager),
     WEBSITE(route = "website_route", graph = Graph.MORE, icon = Icons.Outlined.Language),
     AUTHORIZATION(route = "authorization_route", graph = Graph.WALLET, showBottomBar = true, icon = Icons.Outlined.Signature, labelRes = R.string.wallet_two_factor_authentication_title),
-    DELETE_ACCOUNT("delete_account", Graph.WALLET, showBottomBar = true, icon = Icons.Outlined.PersonRemove, labelRes = R.string.wallet_account_deletion_title);
-
+    DELETE_ACCOUNT("delete_account", Graph.WALLET, showBottomBar = true, icon = Icons.Outlined.PersonRemove, labelRes = R.string.wallet_account_deletion_title),
+    PERMISSIONS(route = "permissions_route", graph = Graph.MORE, showBottomBar = true, labelRes = R.string.menu_items_permissions, icon = Icons.Outlined.VpnKey);
     companion object {
 
         fun fromRoute(route: String?): Route? {

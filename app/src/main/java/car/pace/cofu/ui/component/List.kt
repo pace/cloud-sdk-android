@@ -28,7 +28,8 @@ import car.pace.cofu.ui.theme.AppTheme
 fun DefaultListItem(
     modifier: Modifier = Modifier,
     icon: ImageVector?,
-    text: String,
+    title: String,
+    description: String? = null,
     switchInfo: SwitchInfo? = null
 ) {
     Column(
@@ -49,17 +50,32 @@ fun DefaultListItem(
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
-            Text(
-                text = text,
+
+            Column(
                 modifier = Modifier
                     .padding(vertical = 16.dp)
-                    .weight(1f),
-                color = MaterialTheme.colorScheme.onPrimary,
-                textAlign = TextAlign.Start,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-                style = MaterialTheme.typography.titleSmall
-            )
+                    .weight(1f)
+            ) {
+                Text(
+                    text = title,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    textAlign = TextAlign.Start,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    style = MaterialTheme.typography.titleSmall
+                )
+
+                if (description != null) {
+                    Text(
+                        text = description,
+                        modifier = Modifier.padding(top = 2.dp),
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Start,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
 
             if (switchInfo == null) {
                 Icon(
@@ -95,7 +111,19 @@ fun DefaultListItemPreview() {
     AppTheme {
         DefaultListItem(
             icon = Icons.Outlined.ReceiptLong,
-            text = "List item label"
+            title = "List item label"
+        )
+    }
+}
+
+@Preview
+@Composable
+fun DefaultListItemWithDescriptionPreview() {
+    AppTheme {
+        DefaultListItem(
+            icon = Icons.Outlined.ReceiptLong,
+            title = "List item label",
+            description = "Explains what the item does"
         )
     }
 }
@@ -106,7 +134,7 @@ fun DefaultCheckedSwitchListItemPreview() {
     AppTheme {
         DefaultListItem(
             icon = Icons.Outlined.ReceiptLong,
-            text = "List item label",
+            title = "List item label",
             switchInfo = SwitchInfo(true) {}
         )
     }
@@ -118,7 +146,7 @@ fun DefaultUncheckedSwitchListItemPreview() {
     AppTheme {
         DefaultListItem(
             icon = Icons.Outlined.ReceiptLong,
-            text = "List item label",
+            title = "List item label",
             switchInfo = SwitchInfo(false) {}
         )
     }

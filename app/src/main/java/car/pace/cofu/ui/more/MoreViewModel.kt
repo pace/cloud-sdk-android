@@ -33,6 +33,8 @@ class MoreViewModel @Inject constructor() : ViewModel() {
             add(Route.TRACKING.toMoreItem())
         }
 
+        add(Route.PERMISSIONS.toMoreItem())
+
         addAll(
             listOf(
                 Route.IMPRINT.toMoreItem(),

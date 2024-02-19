@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -34,14 +33,12 @@ fun MoreScreen(
             backIcon = null
         )
 
-        val items = remember { viewModel.items }
-
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp)
         ) {
             items(
-                items = items,
+                items = viewModel.items,
                 key = MoreViewModel.MoreItem::id,
                 contentType = { DEFAULT_LIST_ITEM_CONTENT_TYPE }
             ) {
@@ -60,7 +57,7 @@ fun MoreScreen(
                         }
                     ),
                     icon = it.icon,
-                    text = it.labelRes?.let { res -> stringResource(id = res) }.orEmpty()
+                    title = it.labelRes?.let { res -> stringResource(id = res) }.orEmpty()
                 )
             }
         }

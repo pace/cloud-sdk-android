@@ -40,8 +40,11 @@
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Udział</string>
     <string name="actions_and_coupons_section_title">Promocje i kupony</string>
-    <string name="alert_location_permission_description">Aby pokazać Ci najbliższą stację benzynową, potrzebujemy dostępu do Twojej aktualnej lokalizacji.</string>
-    <string name="alert_location_permission_title">Lokalizacja nie została ujawniona</string>
+    <string name="alert_location_permission_denied_description">Aby pokazać Ci najbliższą stację benzynową, potrzebujemy dostępu do Twojej aktualnej lokalizacji.</string>
+    <string name="alert_location_permission_denied_title">Należy zatwierdzić lokalizację w ustawieniach.</string>
+    <string name="alert_location_permission_disabled_title">Nie można korzystać z płatności mobilnych bez zatwierdzenia lokalizacji.</string>
+    <string name="alert_notification_permission_denied_title">Zezwól na odblokowanie powiadomień w ustawieniach.</string>
+    <string name="alert_notification_permission_disabled_title">Bez zgody na powiadomienie nie możemy informować o najnowszych funkcjach i ofertach.</string>
     <string name="analytics_accepted_text">Analiza wykorzystania aktywowany</string>
     <string name="analytics_declined_text">Analiza wykorzystania dezaktywowany</string>
     <string name="closed_label">ZAMKNIĘTE</string>
@@ -103,6 +106,11 @@
     <string name="list_tab_label">Lista</string>
     <string name="map_tab_label">Mapa</string>
     <string name="menu_items_analytics">Analiza wykorzystania</string>
+    <string name="menu_items_permissions">Uprawnienia</string>
+    <string name="menu_permissions_location_description">Aby zobaczyć najbliższą stację benzynową, potrzebujemy dostępu do dokładnej lokalizacji użytkownika.</string>
+    <string name="menu_permissions_location_title">Lokalizacja</string>
+    <string name="menu_permissions_notifications_description">Informujemy Cię za pomocą powiadomień push o stacjach benzynowych w Twojej okolicy i ogólnych wiadomościach.</string>
+    <string name="menu_permissions_notifications_title">Powiadomienia</string>
     <string name="more_tab_label">Więcej</string>
     <string name="no_supported_browser_dialog_title">Brak obsługiwanej przeglądarki</string>
     <string name="no_supported_browser_toast">Aktywuj Google Chrome i uruchom ponownie aplikację, aby kontynuować.</string>

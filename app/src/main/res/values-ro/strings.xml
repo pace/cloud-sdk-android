@@ -40,8 +40,11 @@
     <string name="PRICE.NOT_AVAILABLE">n. v.</string>
     <string name="SHARE_TITLE">Acțiune</string>
     <string name="actions_and_coupons_section_title">Promoții și cupoane</string>
-    <string name="alert_location_permission_description">Pentru a vă arăta cea mai apropiată benzinărie, avem nevoie de acces la locația dvs. actuală.</string>
-    <string name="alert_location_permission_title">Locația nu a fost publicată</string>
+    <string name="alert_location_permission_denied_description">Pentru a vă arăta cea mai apropiată benzinărie, avem nevoie de acces la locația dvs. actuală.</string>
+    <string name="alert_location_permission_denied_title">Vă rugăm să autorizați locația în setări.</string>
+    <string name="alert_location_permission_disabled_title">Nu puteți utiliza plata cu telefonul mobil fără aprobarea locației.</string>
+    <string name="alert_notification_permission_denied_title">Vă rugăm să autorizați eliberarea notificării în setări.</string>
+    <string name="alert_notification_permission_disabled_title">Fără aprobarea notificării, nu vă putem informa cu privire la cele mai recente caracteristici și oferte.</string>
     <string name="analytics_accepted_text">Analiza utilizării activat</string>
     <string name="analytics_declined_text">Analiza utilizării dezactivat</string>
     <string name="closed_label">ÎNCHIS</string>
@@ -103,6 +106,11 @@
     <string name="list_tab_label">Lista</string>
     <string name="map_tab_label">Hartă</string>
     <string name="menu_items_analytics">Analiza utilizării</string>
+    <string name="menu_items_permissions">Permisiuni</string>
+    <string name="menu_permissions_location_description">Pentru a vedea cea mai apropiată stație de benzină, avem nevoie de acces la locația dvs. exactă.</string>
+    <string name="menu_permissions_location_title">Locație</string>
+    <string name="menu_permissions_notifications_description">Vă informăm prin notificare push despre benzinăriile din zona dumneavoastră și despre știrile generale.</string>
+    <string name="menu_permissions_notifications_title">Notificări</string>
     <string name="more_tab_label">Mai mult</string>
     <string name="no_supported_browser_dialog_title">Nici un browser acceptat</string>
     <string name="no_supported_browser_toast">Activați Google Chrome și reporniți aplicația pentru a continua.</string>

@@ -40,8 +40,11 @@
     <string name="PRICE.NOT_AVAILABLE">н. в.</string>
     <string name="SHARE_TITLE">Делиться</string>
     <string name="actions_and_coupons_section_title">Акции и купоны</string>
-    <string name="alert_location_permission_description">Чтобы показать вам ближайшую заправочную станцию, нам необходим доступ к вашему текущему местоположению.</string>
-    <string name="alert_location_permission_title">Местонахождение не разглашается</string>
+    <string name="alert_location_permission_denied_description">Чтобы показать вам ближайшую заправочную станцию, нам необходим доступ к вашему текущему местоположению.</string>
+    <string name="alert_location_permission_denied_title">Пожалуйста, авторизуйте местоположение в настройках.</string>
+    <string name="alert_location_permission_disabled_title">Вы не можете использовать мобильный платеж без одобрения местоположения.</string>
+    <string name="alert_notification_permission_denied_title">Разрешите выпуск уведомлений в настройках.</string>
+    <string name="alert_notification_permission_disabled_title">Без подтверждения уведомления мы не сможем информировать вас о новейших функциях и предложениях.</string>
     <string name="analytics_accepted_text">Анализ использования активирован</string>
     <string name="analytics_declined_text">Анализ использования деактивирован</string>
     <string name="closed_label">ЗАКРЫТО</string>
@@ -103,6 +106,11 @@
     <string name="list_tab_label">Список</string>
     <string name="map_tab_label">Карта</string>
     <string name="menu_items_analytics">Анализ использования</string>
+    <string name="menu_items_permissions">Разрешения</string>
+    <string name="menu_permissions_location_description">Чтобы увидеть ближайшую заправочную станцию, нам нужен доступ к вашему точному местоположению.</string>
+    <string name="menu_permissions_location_title">Местонахождение</string>
+    <string name="menu_permissions_notifications_description">Мы информируем вас с помощью push-уведомлений о заправочных станциях в вашем районе и общих новостях.</string>
+    <string name="menu_permissions_notifications_title">Уведомления</string>
     <string name="more_tab_label">Подробнее</string>
     <string name="no_supported_browser_dialog_title">Нет поддерживаемого браузера</string>
     <string name="no_supported_browser_toast">Активируйте Google Chrome и перезапустите приложение, чтобы продолжить работу.</string>
