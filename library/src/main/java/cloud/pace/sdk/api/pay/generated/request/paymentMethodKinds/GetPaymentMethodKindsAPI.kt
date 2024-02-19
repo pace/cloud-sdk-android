@@ -24,7 +24,9 @@ object GetPaymentMethodKindsAPI {
             /* Language preference of localized response properties. The full standard of RFC 7231 (https://tools.ietf.org/html/rfc7231#section-5.3.5) is supported. */
             @Header("Accept-Language") acceptLanguage: String? = null,
             /* Flag to allow more data to the payment method kinds. */
-            @Query("additionalData") additionalData: Boolean? = null
+            @Query("additionalData") additionalData: Boolean? = null,
+            /* Filter allowed payment methods kinds by poi. */
+            @Query("poiID") poiID: String? = null
         ): Call<PaymentMethodKinds>
     }
 
@@ -33,6 +35,7 @@ object GetPaymentMethodKindsAPI {
         fun getPaymentMethodKinds(
             acceptLanguage: String? = null,
             additionalData: Boolean? = null,
+            poiID: String? = null,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
@@ -44,7 +47,8 @@ object GetPaymentMethodKindsAPI {
                 .getPaymentMethodKinds(
                     headers,
                     acceptLanguage,
-                    additionalData
+                    additionalData,
+                    poiID
                 )
         }
     }
@@ -52,12 +56,14 @@ object GetPaymentMethodKindsAPI {
     fun PayAPI.PaymentMethodKindsAPI.getPaymentMethodKinds(
         acceptLanguage: String? = null,
         additionalData: Boolean? = null,
+        poiID: String? = null,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
     ) = Request().getPaymentMethodKinds(
         acceptLanguage,
         additionalData,
+        poiID,
         readTimeout,
         additionalHeaders,
         additionalParameters

@@ -13,31 +13,31 @@ import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
 import retrofit2.http.*
 
-object CreatePaymentMethodRMCAPI {
+object CreatePaymentMethodTFCSandboxAPI {
 
-    interface CreatePaymentMethodRMCService {
-        /* Register a RMC Card as a payment method */
-        /* By registering you allow the user to use a RMC Card as a payment method.
+    interface CreatePaymentMethodTFCSandboxService {
+        /* Register a TFC Sandbox Card as a payment method */
+        /* By registering you allow the user to use a TFCSandbox Card as a payment method.
 The payment method ID is optional when posting data.
  */
-        @POST("payment-methods/rmc")
-        fun createPaymentMethodRMC(
+        @POST("payment-methods/tfcsandbox")
+        fun createPaymentMethodTFCSandbox(
             @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: Body
         ): Call<PaymentMethod>
     }
 
-    /* By registering you allow the user to use a RMC Card as a payment method.
+    /* By registering you allow the user to use a TFCSandbox Card as a payment method.
     The payment method ID is optional when posting data.
      */
     class Body {
 
-        var data: PaymentMethodRMCCreateBody? = null
+        var data: PaymentMethodTFCSandboxCreateBody? = null
     }
 
     open class Request : BaseRequest() {
 
-        fun createPaymentMethodRMC(
+        fun createPaymentMethodTFCSandbox(
             body: Body,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
@@ -47,20 +47,20 @@ The payment method ID is optional when posting data.
             val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout, resources)
-                .create(CreatePaymentMethodRMCService::class.java)
-                .createPaymentMethodRMC(
+                .create(CreatePaymentMethodTFCSandboxService::class.java)
+                .createPaymentMethodTFCSandbox(
                     headers,
                     body
                 )
         }
     }
 
-    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodRMC(
+    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodTFCSandbox(
         body: Body,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ) = Request().createPaymentMethodRMC(
+    ) = Request().createPaymentMethodTFCSandbox(
         body,
         readTimeout,
         additionalHeaders,

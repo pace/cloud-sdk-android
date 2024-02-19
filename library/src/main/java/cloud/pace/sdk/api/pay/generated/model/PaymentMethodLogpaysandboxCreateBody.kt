@@ -9,8 +9,9 @@ package cloud.pace.sdk.api.pay.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
+import java.util.Date
 
-class PaymentMethodRadiusCreateBody {
+class PaymentMethodLogpaysandboxCreateBody {
 
     lateinit var type: Type
     var attributes: Attributes? = null
@@ -28,16 +29,20 @@ class PaymentMethodRadiusCreateBody {
 
         lateinit var kind: Kind
 
-        /* AuthCode used to retrieve the payment card details from Radius. */
-        lateinit var authCode: String
+        /* Identifier or PAN (Primary Account Number) representing the Logpay Card. The identifier is payment provider specific and provided by the payment provider.
+     */
+        var pan: String? = null
 
-        /* ObfuscatedPan */
-        lateinit var obfuscatedPan: String
+        /* The date the card is expiring */
+        var expiry: Date? = null
+
+        /* Indicates whether this payment method should be managed by the creating client, i.e., no other client can modify or delete this method. */
+        var managed: Boolean? = null
 
         enum class Kind(val value: String) {
-            @SerializedName("radius")
-            @Json(name = "radius")
-            RADIUS("radius")
+            @SerializedName("logpaysandbox")
+            @Json(name = "logpaysandbox")
+            LOGPAYSANDBOX("logpaysandbox")
         }
     }
 }
