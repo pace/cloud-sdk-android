@@ -31,6 +31,7 @@ import cloud.pace.sdk.utils.Success
 import cloud.pace.sdk.utils.SystemManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.maps.model.VisibleRegion
 import io.mockk.mockk
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -226,5 +227,6 @@ open class TestGeoAPIManager(private val isPoiInRange: Boolean = false) : GeoAPI
     override suspend fun features(latitude: Double, longitude: Double): Result<List<GeoAPIFeature>> = mockk()
     override fun cofuGasStations(completion: (Result<List<CofuGasStation>>) -> Unit) {}
     override fun cofuGasStations(location: Location, radius: Int, completion: (Result<List<GasStation>>) -> Unit) {}
+    override fun cofuGasStations(visibleRegion: VisibleRegion, completion: (Result<List<GasStation>>) -> Unit) {}
     override suspend fun isPoiInRange(poiId: String, location: Location?) = isPoiInRange
 }

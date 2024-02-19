@@ -252,6 +252,19 @@ object POIKit : CloudSDKKoinComponent {
     }
 
     /**
+     * Returns a list of Connected Fueling gas stations within the [visibleRegion].
+     *
+     * @param visibleRegion The [VisibleRegion] to be searched in.
+     * @param completion Returns a list of [GasStation]s where Connected Fueling is available on success or a [Throwable] on failure.
+     */
+    fun requestCofuGasStations(visibleRegion: VisibleRegion, completion: (Completion<List<GasStation>>) -> Unit) {
+        geoApiManager.cofuGasStations(visibleRegion) { result ->
+            result.onSuccess { completion(Success(it)) }
+            result.onFailure { completion(Failure(it)) }
+        }
+    }
+
+    /**
      * Checks if there is at least one app for the given [poiId] at the current location.
      *
      * @param location Can be specified optionally if the current location should not be determined.
