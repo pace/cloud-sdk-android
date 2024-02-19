@@ -52,7 +52,6 @@ class WebViewActivity : AppCompatActivity() {
             }
 
             CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
-            WebView.setWebContentsDebuggingEnabled(true)
 
             setContentView(webView)
         } else {
@@ -79,14 +78,17 @@ class WebViewActivity : AppCompatActivity() {
                 startActivity(newIntent)
                 true
             }
+
             MAILTO_SCHEME, SMS_SCHEME -> {
                 startActivityIfAvailable(Intent(Intent.ACTION_SENDTO, newUri))
                 true
             }
+
             TEL_SCHEME -> {
                 startActivityIfAvailable(Intent(Intent.ACTION_DIAL, newUri))
                 true
             }
+
             else -> {
                 if (newUri?.scheme != HTTPS_SCHEME && newUri?.scheme != HTTP_SCHEME) {
                     ErrorListener.reportError(IllegalArgumentException("The scheme ${newUri?.scheme} is not a valid scheme."))

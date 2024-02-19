@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.webkit.CookieManager
 import android.webkit.JavascriptInterface
-import android.webkit.WebView.setWebContentsDebuggingEnabled
 import android.widget.RelativeLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.findViewTreeLifecycleOwner
@@ -103,7 +102,6 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
      * Initializes [AppWebView] with [AppWebViewClient] and loads the [url] in the WebView.
      */
     fun init(url: String, isDarkMode: Boolean?) {
-        setWebContentsDebuggingEnabled(true)
         webViewModel.init(url)
 
         val backgroundColor = if (isDarkMode == true) Color.BLACK else Color.WHITE
