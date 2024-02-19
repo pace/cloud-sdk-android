@@ -13,31 +13,25 @@ import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
 import retrofit2.http.*
 
-object CreatePaymentMethodRadiusAPI {
+object CreatePaymentMethodOMVAPI {
 
-    interface CreatePaymentMethodRadiusService {
-        /* Register a Radius Card as a payment method */
-        /* By registering you allow the user to use a Radius Card as a payment method.
-The payment method ID is optional when posting data.
- */
-        @POST("payment-methods/radius")
-        fun createPaymentMethodRadius(
+    interface CreatePaymentMethodOMVService {
+        /* Register a OMV card as a payment method */
+        @POST("payment-methods/omv")
+        fun createPaymentMethodOMV(
             @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: Body
         ): Call<PaymentMethod>
     }
 
-    /* By registering you allow the user to use a Radius Card as a payment method.
-    The payment method ID is optional when posting data.
-     */
     class Body {
 
-        var data: PaymentMethodRadiusCreateBody? = null
+        var data: PaymentMethodOMVCreateBody? = null
     }
 
     open class Request : BaseRequest() {
 
-        fun createPaymentMethodRadius(
+        fun createPaymentMethodOMV(
             body: Body,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
@@ -47,20 +41,20 @@ The payment method ID is optional when posting data.
             val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout, resources)
-                .create(CreatePaymentMethodRadiusService::class.java)
-                .createPaymentMethodRadius(
+                .create(CreatePaymentMethodOMVService::class.java)
+                .createPaymentMethodOMV(
                     headers,
                     body
                 )
         }
     }
 
-    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodRadius(
+    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodOMV(
         body: Body,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ) = Request().createPaymentMethodRadius(
+    ) = Request().createPaymentMethodOMV(
         body,
         readTimeout,
         additionalHeaders,

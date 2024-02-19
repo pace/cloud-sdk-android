@@ -9,8 +9,9 @@ package cloud.pace.sdk.api.pay.generated.model
 
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
+import java.util.Date
 
-class PaymentMethodRMCCreateBody {
+class PaymentMethodTFCSandboxCreateBody {
 
     lateinit var type: Type
     var attributes: Attributes? = null
@@ -28,20 +29,20 @@ class PaymentMethodRMCCreateBody {
 
         lateinit var kind: Kind
 
-        /* Identifier representing the RMC Card number. The identifier is payment provider specific and provided by the payment provider.
+        /* Identifier or PAN (Primary Account Number) representing the TFC Card. The identifier is payment provider specific and provided by the payment provider.
      */
-        var cardNumber: String? = null
+        var pan: String? = null
+
+        /* The date the card is expiring */
+        var expiry: Date? = null
 
         /* Indicates whether this payment method should be managed by the creating client, i.e., no other client can modify or delete this method. */
         var managed: Boolean? = null
 
-        /* Personal identification number is a security code for verifying the user's identity. */
-        var pin: String? = null
-
         enum class Kind(val value: String) {
-            @SerializedName("rmc")
-            @Json(name = "rmc")
-            RMC("rmc")
+            @SerializedName("tfcsandbox")
+            @Json(name = "tfcsandbox")
+            TFCSANDBOX("tfcsandbox")
         }
     }
 }
