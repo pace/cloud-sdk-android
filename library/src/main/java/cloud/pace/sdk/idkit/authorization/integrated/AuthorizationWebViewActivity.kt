@@ -6,13 +6,24 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.webkit.*
+import android.webkit.ConsoleMessage
+import android.webkit.CookieManager
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.DeviceUtils
-import net.openid.appauth.*
+import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationException.AuthorizationRequestErrors
+import net.openid.appauth.AuthorizationManagementRequest
+import net.openid.appauth.AuthorizationManagementResponse
+import net.openid.appauth.AuthorizationRequest
+import net.openid.appauth.AuthorizationResponse
+import net.openid.appauth.EndSessionRequest
+import net.openid.appauth.EndSessionResponse
 import org.json.JSONException
 import org.json.JSONObject
 import timber.log.Timber
@@ -101,7 +112,6 @@ class AuthorizationWebViewActivity : AppCompatActivity(), CloudSDKKoinComponent 
         }
 
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
-        WebView.setWebContentsDebuggingEnabled(true)
 
         setContentView(webView)
     }
@@ -154,9 +164,11 @@ class AuthorizationWebViewActivity : AppCompatActivity(), CloudSDKKoinComponent 
             is AuthorizationRequest -> AuthorizationResponse.Builder(request)
                 .fromUri(uri)
                 .build()
+
             is EndSessionRequest -> EndSessionResponse.Builder(request)
                 .setState(uri.getQueryParameter(KEY_STATE))
                 .build()
+
             else -> null
         }
     }
