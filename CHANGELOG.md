@@ -1,3 +1,18 @@
+21.1.0 Release notes (2024-02-20)
+=============================================================
+
+### Enhancements
+
+* Add function to request CoFu gas stations within visible region
+
+### Fixes
+
+* Only enable web contents debugging in debug builds
+
+### Internal
+
+* Re-generate pay API 2022-1
+
 21.0.1 Release notes (2023-12-06)
 =============================================================
 
