@@ -44,8 +44,8 @@ class OnboardingViewModel @Inject constructor(
     fun getCountOfPages() = pages.size
 
     fun <T> nextStep(currentPage: Int, args: T?): Int? {
-        val nextPage = when {
-            args as? AuthenticationViewModel.AuthenticationResult != null -> {
+        val nextPage = when (args) {
+            is AuthenticationViewModel.AuthenticationResult -> {
                 if (!args.twoFactorEnabled) {
                     // Skip TwoFactorPage
                     LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, "Skip TwoFactorPage in Onboarding")
@@ -60,7 +60,7 @@ class OnboardingViewModel @Inject constructor(
                 currentPage + 1
             }
 
-            args as? FuelTypeGroup != null -> {
+            is FuelTypeGroup -> {
                 finishOnboarding(args)
                 null
             }

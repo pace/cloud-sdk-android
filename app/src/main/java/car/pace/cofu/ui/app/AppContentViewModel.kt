@@ -3,16 +3,19 @@ package car.pace.cofu.ui.app
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import car.pace.cofu.data.LegalRepository
 import car.pace.cofu.data.PaymentMethodKindsRepository
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_ONBOARDING_DONE
 import car.pace.cofu.data.UserRepository
+import car.pace.cofu.ui.navigation.graph.Graph
 import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
 import car.pace.cofu.util.LogAndBreadcrumb
 import cloud.pace.sdk.idkit.model.InvalidSession
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -20,16 +23,17 @@ import kotlinx.coroutines.launch
 class AppContentViewModel @Inject constructor(
     private val sharedPreferencesRepository: SharedPreferencesRepository,
     private val userRepository: UserRepository,
-    private val paymentMethodKindsRepository: PaymentMethodKindsRepository
+    private val paymentMethodKindsRepository: PaymentMethodKindsRepository,
+    private val legalRepository: LegalRepository
 ) : ViewModel() {
 
-    private val initialValue = isOnboardingDone()
-    val onboardingDone = sharedPreferencesRepository
-        .getValue(PREF_KEY_ONBOARDING_DONE, initialValue)
+    private val isOnboardingDone = isOnboardingDone()
+    val startDestination = sharedPreferencesRepository.getValue(PREF_KEY_ONBOARDING_DONE, isOnboardingDone)
+        .map(::getStartDestination)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-            initialValue = initialValue
+            initialValue = getStartDestination(isOnboardingDone)
         )
 
     suspend fun isReLoginNeeded(activity: AppCompatActivity): Boolean {
@@ -58,4 +62,12 @@ class AppContentViewModel @Inject constructor(
     }
 
     private fun isOnboardingDone() = sharedPreferencesRepository.getBoolean(PREF_KEY_ONBOARDING_DONE, false)
+
+    private fun getStartDestination(onboardingDone: Boolean): Graph {
+        return when {
+            !onboardingDone -> Graph.ONBOARDING
+            legalRepository.isUpdateAvailable() -> Graph.LEGAL_UPDATE
+            else -> Graph.LIST
+        }
+    }
 }

@@ -29,13 +29,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import car.pace.cofu.R
+import car.pace.cofu.ui.component.ClickableText
 import car.pace.cofu.ui.component.PrimaryButton
 import car.pace.cofu.ui.component.SecondaryButton
 import car.pace.cofu.ui.component.TextTopBar
 import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.icon.BarChart4Bars
 import car.pace.cofu.ui.navigation.graph.Route
-import car.pace.cofu.ui.onboarding.tracking.TrackingDescription
 import car.pace.cofu.ui.onboarding.tracking.TrackingViewModel
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.ui.theme.Success
@@ -165,8 +165,10 @@ fun TrackingScreenContent(
                 key = TRACKING_DESCRIPTION_KEY,
                 contentType = TRACKING_DESCRIPTION_CONTENT_TYPE
             ) {
-                TrackingDescription(
-                    clickableTextRoute = Route.ANALYSIS,
+                ClickableText(
+                    linkText = stringResource(id = R.string.onboarding_tracking_app_tracking),
+                    fullText = stringResource(id = R.string.onboarding_tracking_description),
+                    linkTextRoute = Route.ANALYSIS,
                     modifier = Modifier.padding(top = 20.dp, bottom = 12.dp),
                     onNavigate = onNavigate
                 )

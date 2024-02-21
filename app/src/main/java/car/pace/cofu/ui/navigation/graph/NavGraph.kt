@@ -22,19 +22,17 @@ import car.pace.cofu.ui.detail.DetailScreen
 import car.pace.cofu.ui.list.ListScreen
 import car.pace.cofu.ui.map.MapScreen
 import car.pace.cofu.ui.more.MoreScreen
+import car.pace.cofu.ui.more.legal.LegalDocumentScreen
+import car.pace.cofu.ui.more.legal.update.LegalDocument
+import car.pace.cofu.ui.more.legal.update.LegalUpdateScreen
 import car.pace.cofu.ui.more.licenses.LicensesScreen
 import car.pace.cofu.ui.more.permissions.PermissionsScreen
 import car.pace.cofu.ui.more.tracking.TrackingScreen
-import car.pace.cofu.ui.more.webview.WebViewScreen
 import car.pace.cofu.ui.onboarding.OnboardingScreen
 import car.pace.cofu.ui.wallet.WalletScreen
 import car.pace.cofu.ui.wallet.authorization.AuthorisationScreen
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeScreen
 import car.pace.cofu.ui.wallet.paymentmethods.PaymentMethodsScreen
-import car.pace.cofu.util.Constants.ANALYSIS_URI
-import car.pace.cofu.util.Constants.IMPRINT_URI
-import car.pace.cofu.util.Constants.PRIVACY_URI
-import car.pace.cofu.util.Constants.TERMS_URI
 
 fun NavGraphBuilder.onboardingGraph(
     onNavigate: (Route) -> Unit,
@@ -60,8 +58,8 @@ fun NavGraphBuilder.onboardingGraph(
             enterTransition = { scaleIntoContainer() },
             popExitTransition = { scaleOutOfContainer() }
         ) {
-            WebViewScreen(
-                url = TERMS_URI,
+            LegalDocumentScreen(
+                legalDocument = LegalDocument.TERMS,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -70,8 +68,8 @@ fun NavGraphBuilder.onboardingGraph(
             enterTransition = { scaleIntoContainer() },
             popExitTransition = { scaleOutOfContainer() }
         ) {
-            WebViewScreen(
-                url = PRIVACY_URI,
+            LegalDocumentScreen(
+                legalDocument = LegalDocument.PRIVACY,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -80,8 +78,60 @@ fun NavGraphBuilder.onboardingGraph(
             enterTransition = { scaleIntoContainer() },
             popExitTransition = { scaleOutOfContainer() }
         ) {
-            WebViewScreen(
-                url = ANALYSIS_URI,
+            LegalDocumentScreen(
+                legalDocument = LegalDocument.TRACKING,
+                onNavigateUp = onNavigateUp
+            )
+        }
+    }
+}
+
+fun NavGraphBuilder.legalUpdateGraph(
+    onNavigate: (Route) -> Unit,
+    onNavigateUp: () -> Unit,
+    onDone: () -> Unit
+) {
+    navigation(
+        startDestination = Route.LEGAL_UPDATE.route,
+        route = Graph.LEGAL_UPDATE.route
+    ) {
+        composable(
+            route = Route.LEGAL_UPDATE.route,
+            exitTransition = { scaleOutOfContainer(direction = ScaleTransitionDirection.INWARDS) },
+            popEnterTransition = { scaleIntoContainer(direction = ScaleTransitionDirection.OUTWARDS) }
+        ) {
+            LegalUpdateScreen(
+                onNavigate = onNavigate,
+                onDone = onDone
+            )
+        }
+        composable(
+            route = Route.ONBOARDING_TERMS.route,
+            enterTransition = { scaleIntoContainer() },
+            popExitTransition = { scaleOutOfContainer() }
+        ) {
+            LegalDocumentScreen(
+                legalDocument = LegalDocument.TERMS,
+                onNavigateUp = onNavigateUp
+            )
+        }
+        composable(
+            route = Route.ONBOARDING_PRIVACY.route,
+            enterTransition = { scaleIntoContainer() },
+            popExitTransition = { scaleOutOfContainer() }
+        ) {
+            LegalDocumentScreen(
+                legalDocument = LegalDocument.PRIVACY,
+                onNavigateUp = onNavigateUp
+            )
+        }
+        composable(
+            route = Route.ONBOARDING_ANALYSIS.route,
+            enterTransition = { scaleIntoContainer() },
+            popExitTransition = { scaleOutOfContainer() }
+        ) {
+            LegalDocumentScreen(
+                legalDocument = LegalDocument.TRACKING,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -191,14 +241,14 @@ fun NavGraphBuilder.moreGraph(
             )
         }
         childComposable(Route.TERMS.route) {
-            WebViewScreen(
-                url = TERMS_URI,
+            LegalDocumentScreen(
+                legalDocument = LegalDocument.TERMS,
                 onNavigateUp = onNavigateUp
             )
         }
         childComposable(Route.PRIVACY.route) {
-            WebViewScreen(
-                url = PRIVACY_URI,
+            LegalDocumentScreen(
+                legalDocument = LegalDocument.PRIVACY,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -209,14 +259,14 @@ fun NavGraphBuilder.moreGraph(
             )
         }
         childComposable(Route.ANALYSIS.route) {
-            WebViewScreen(
-                url = ANALYSIS_URI,
+            LegalDocumentScreen(
+                legalDocument = LegalDocument.TRACKING,
                 onNavigateUp = onNavigateUp
             )
         }
         childComposable(Route.IMPRINT.route) {
-            WebViewScreen(
-                url = IMPRINT_URI,
+            LegalDocumentScreen(
+                legalDocument = LegalDocument.IMPRINT,
                 onNavigateUp = onNavigateUp
             )
         }

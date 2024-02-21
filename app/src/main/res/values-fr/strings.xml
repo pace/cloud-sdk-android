@@ -102,6 +102,12 @@
     <string name="good_day_message">Bonjour !</string>
     <string name="good_evening_message">Bonsoir !</string>
     <string name="good_morning_message">Bonjour !</string>
+    <string name="legal_update_privacy_description">Pour pouvoir continuer, tu dois accepter la mise à jour de politique de confidentialité.</string>
+    <string name="legal_update_privacy_title">La politique de confidentialité a changé</string>
+    <string name="legal_update_terms_description">Pour pouvoir continuer, tu dois accepter la mise à jour de conditions d\'utilisation.</string>
+    <string name="legal_update_terms_title">Les conditions d\'utilisation ont changé</string>
+    <string name="legal_update_tracking_description">Acceptez la mise à jour de l\'analyse de l\'utilisation afin que nous puissions continuer à optimiser cette application pour vous.</string>
+    <string name="legal_update_tracking_title">L\'analyse de l\'utilisation a changé</string>
     <string name="list_price_not_available">Prix non disponible</string>
     <string name="list_tab_label">Liste</string>
     <string name="map_tab_label">Carte</string>

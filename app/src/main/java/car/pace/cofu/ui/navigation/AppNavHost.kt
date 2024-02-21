@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import car.pace.cofu.BuildConfig
 import car.pace.cofu.ui.navigation.graph.Graph
+import car.pace.cofu.ui.navigation.graph.legalUpdateGraph
 import car.pace.cofu.ui.navigation.graph.listGraph
 import car.pace.cofu.ui.navigation.graph.mapGraph
 import car.pace.cofu.ui.navigation.graph.moreGraph
@@ -20,14 +21,15 @@ import car.pace.cofu.util.Constants.TRANSITION_DURATION
 @Composable
 fun AppNavHost(
     navController: NavHostController,
-    onboardingDone: Boolean,
+    startDestination: Graph,
     modifier: Modifier = Modifier,
     onOnboardingDone: () -> Unit,
+    onLegalUpdateDone: () -> Unit,
     navigateToOnboarding: () -> Unit
 ) {
     NavHost(
         navController = navController,
-        startDestination = if (onboardingDone) Graph.LIST.route else Graph.ONBOARDING.route,
+        startDestination = startDestination.route,
         modifier = modifier,
         enterTransition = {
             fadeIn(animationSpec = tween(TRANSITION_DURATION))
@@ -45,6 +47,18 @@ fun AppNavHost(
             },
             onDone = {
                 onOnboardingDone()
+            }
+        )
+
+        legalUpdateGraph(
+            onNavigate = {
+                navController.navigate(it)
+            },
+            onNavigateUp = {
+                navController.navigateUp()
+            },
+            onDone = {
+                onLegalUpdateDone()
             }
         )
 

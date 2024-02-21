@@ -102,6 +102,12 @@
     <string name="good_day_message">Cześć!</string>
     <string name="good_evening_message">Dobry wieczór!</string>
     <string name="good_morning_message">Dzień dobry!</string>
+    <string name="legal_update_privacy_description">Aby kontynuować, należy wyrazić zgodę na aktualizację strony politykę prywatności.</string>
+    <string name="legal_update_privacy_title">Przepisy dotyczące ochrony danych uległy zmianie</string>
+    <string name="legal_update_terms_description">Aby kontynuować, należy wyrazić zgodę na aktualizację strony warunkami użytkowania.</string>
+    <string name="legal_update_terms_title">Warunki użytkowania uległy zmianie</string>
+    <string name="legal_update_tracking_description">Wyraź zgodę na aktualizację analizę użytkowania, abyśmy mogli nadal optymalizować tę aplikację dla Ciebie.</string>
+    <string name="legal_update_tracking_title">Analiza użytkowania uległa zmianie</string>
     <string name="list_price_not_available">Cena niedostępna</string>
     <string name="list_tab_label">Lista</string>
     <string name="map_tab_label">Mapa</string>

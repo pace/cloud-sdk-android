@@ -102,6 +102,12 @@
     <string name="good_day_message">Dobrý den!</string>
     <string name="good_evening_message">Dobrý večer!</string>
     <string name="good_morning_message">Dobré ráno!</string>
+    <string name="legal_update_privacy_description">Chcete-li pokračovat, musíte souhlasit s aktualizovanými stránkami zásady ochrany osobních údajů.</string>
+    <string name="legal_update_privacy_title">Změnily se předpisy o ochraně údajů</string>
+    <string name="legal_update_terms_description">Chcete-li pokračovat, musíte souhlasit s aktualizovanými stránkami podmínkami používání.</string>
+    <string name="legal_update_terms_title">Podmínky používání se změnily</string>
+    <string name="legal_update_tracking_description">Souhlasíte s aktualizovanou stránkou analýzu používání, abychom pro vás mohli tuto aplikaci nadále optimalizovat.</string>
+    <string name="legal_update_tracking_title">Analýza použití se změnila</string>
     <string name="list_price_not_available">Cena není k dispozici</string>
     <string name="list_tab_label">Seznam</string>
     <string name="map_tab_label">Mapa</string>

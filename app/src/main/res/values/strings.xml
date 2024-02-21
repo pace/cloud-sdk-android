@@ -102,6 +102,12 @@
     <string name="good_day_message">Good afternoon!</string>
     <string name="good_evening_message">Good evening!</string>
     <string name="good_morning_message">Good morning!</string>
+    <string name="legal_update_privacy_description">To continue, you must agree to the updated privacy policy.</string>
+    <string name="legal_update_privacy_title">The privacy policy has changed</string>
+    <string name="legal_update_terms_description">To continue, you must agree to the updated terms of use.</string>
+    <string name="legal_update_terms_title">The terms of use have changed</string>
+    <string name="legal_update_tracking_description">Agree to the updated usage analysis so that we can further optimize this app for you.</string>
+    <string name="legal_update_tracking_title">The usage analysis has changed</string>
     <string name="list_price_not_available">Price not available</string>
     <string name="list_tab_label">List</string>
     <string name="map_tab_label">Map</string>

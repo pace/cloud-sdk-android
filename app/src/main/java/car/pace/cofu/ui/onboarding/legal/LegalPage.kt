@@ -1,6 +1,5 @@
 package car.pace.cofu.ui.onboarding.legal
 
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Balance
 import androidx.compose.material3.MaterialTheme
@@ -9,16 +8,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import car.pace.cofu.R
+import car.pace.cofu.ui.component.ClickableText
 import car.pace.cofu.ui.navigation.graph.Route
 import car.pace.cofu.ui.onboarding.PageScaffold
 import car.pace.cofu.ui.theme.AppTheme
 
 @Composable
 fun LegalPage(
+    viewModel: LegalViewModel = hiltViewModel(),
     onNavigate: (Route) -> Unit,
     onNext: () -> Unit
 ) {
@@ -26,7 +27,10 @@ fun LegalPage(
         imageVector = Icons.Outlined.Balance,
         titleRes = R.string.onboarding_legal_title,
         nextButtonTextRes = R.string.common_use_accept,
-        onNextButtonClick = onNext,
+        onNextButtonClick = {
+            viewModel.acceptTermsAndPrivacy()
+            onNext()
+        },
         descriptionContent = {
             val annotatedText = buildAnnotatedString {
                 val termsText = stringResource(id = R.string.onboarding_legal_terms_of_use)
@@ -76,19 +80,9 @@ fun LegalPage(
             }
 
             ClickableText(
-                text = annotatedText,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    textAlign = TextAlign.Center
-                )
-            ) {
-                annotatedText
-                    .getStringAnnotations(start = it, end = it)
-                    .firstOrNull()?.let { annotation ->
-                        val route = Route.valueOf(annotation.item)
-                        onNavigate(route)
-                    }
-            }
+                annotatedText = annotatedText,
+                onNavigate = onNavigate
+            )
         }
     )
 }

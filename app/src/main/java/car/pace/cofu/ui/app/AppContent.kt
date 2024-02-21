@@ -30,7 +30,7 @@ fun AppContent(
     viewModel: AppContentViewModel = hiltViewModel()
 ) {
     AppTheme {
-        val onboardingDone by viewModel.onboardingDone.collectAsStateWithLifecycle()
+        val startDestination by viewModel.startDestination.collectAsStateWithLifecycle()
         val context = LocalContext.current
         val appState = rememberAppState()
         val coroutineScope = rememberCoroutineScope()
@@ -64,13 +64,16 @@ fun AppContent(
         ) { padding ->
             AppNavHost(
                 navController = appState.navController,
-                onboardingDone = onboardingDone,
+                startDestination = startDestination,
                 modifier = Modifier
                     .padding(padding)
                     .consumeWindowInsets(padding)
                     .fillMaxSize(),
                 onOnboardingDone = {
                     viewModel.onOnboardingDone()
+                    appState.navigateAndClearBackStack(Graph.LIST)
+                },
+                onLegalUpdateDone = {
                     appState.navigateAndClearBackStack(Graph.LIST)
                 },
                 navigateToOnboarding = {
