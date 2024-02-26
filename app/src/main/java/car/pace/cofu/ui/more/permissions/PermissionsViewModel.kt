@@ -13,8 +13,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
 import car.pace.cofu.R
 import car.pace.cofu.data.PermissionRepository
+import car.pace.cofu.data.PermissionRepository.Companion.locationPermissions
 import car.pace.cofu.util.BuildProvider
-import car.pace.cofu.util.extension.locationPermissions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import javax.inject.Inject
@@ -24,14 +24,14 @@ class PermissionsViewModel @Inject constructor(
     private val permissionRepository: PermissionRepository
 ) : ViewModel() {
 
-    var isLocationPermissionGiven by mutableStateOf(permissionRepository.isPermissionGranted(PermissionRepository.LOCATION_PERMISSION))
+    var isLocationPermissionGiven by mutableStateOf(permissionRepository.isPermissionGranted(PermissionRepository.FINE_LOCATION_PERMISSION))
     var isNotificationPermissionGiven by mutableStateOf(permissionRepository.isPermissionGranted(PermissionRepository.NOTIFICATION_PERMISSION))
     var permissionsDialog by mutableStateOf<PermissionDialog?>(null)
 
     sealed class PermissionDialog {
         data class SettingsDialog(@StringRes val text: Int) : PermissionDialog()
 
-        data class SystemDialog(val permissions: Array<String>) : PermissionDialog()
+        data class SystemDialog(val permissions: List<String>) : PermissionDialog()
     }
 
     enum class PermissionsItem(
@@ -64,8 +64,9 @@ class PermissionsViewModel @Inject constructor(
         permissionsDialog = when {
             !enable -> PermissionDialog.SettingsDialog(R.string.alert_notification_permission_disabled_title)
             enable && permissionRepository.shouldShowRequestPermissionRationale(activity, PermissionRepository.NOTIFICATION_PERMISSION) -> {
-                PermissionDialog.SystemDialog(arrayOf(PermissionRepository.NOTIFICATION_PERMISSION))
+                PermissionDialog.SystemDialog(listOf(PermissionRepository.NOTIFICATION_PERMISSION))
             }
+
             else -> PermissionDialog.SettingsDialog(R.string.alert_notification_permission_denied_title)
         }
     }
@@ -73,9 +74,10 @@ class PermissionsViewModel @Inject constructor(
     fun enableLocation(activity: AppCompatActivity, enable: Boolean) {
         permissionsDialog = when {
             !enable -> PermissionDialog.SettingsDialog(R.string.alert_location_permission_disabled_title)
-            enable && permissionRepository.shouldShowRequestPermissionRationale(activity, PermissionRepository.LOCATION_PERMISSION) -> {
+            enable && permissionRepository.shouldShowRequestPermissionRationale(activity, PermissionRepository.FINE_LOCATION_PERMISSION) -> {
                 PermissionDialog.SystemDialog(locationPermissions)
             }
+
             else -> PermissionDialog.SettingsDialog(R.string.alert_location_permission_denied_title)
         }
     }
@@ -88,7 +90,7 @@ class PermissionsViewModel @Inject constructor(
     }
 
     fun checkPermissions() {
-        isLocationPermissionGiven = permissionRepository.isPermissionGranted(PermissionRepository.LOCATION_PERMISSION)
+        isLocationPermissionGiven = permissionRepository.isPermissionGranted(PermissionRepository.FINE_LOCATION_PERMISSION)
         isNotificationPermissionGiven = permissionRepository.isPermissionGranted(PermissionRepository.NOTIFICATION_PERMISSION)
     }
 }

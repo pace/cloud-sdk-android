@@ -97,6 +97,7 @@ fun PermissionScreenContent(
                                 onEnableLocation(it)
                             }
                         }
+
                         PermissionsViewModel.PermissionsItem.NOTIFICATIONS -> {
                             SwitchInfo(isNotificationPermissionGiven) {
                                 onEnableNotifications(it)
@@ -123,9 +124,11 @@ fun PermissionScreenContent(
                 }
             )
         }
+
         is PermissionsViewModel.PermissionDialog.SystemDialog -> {
-            launcher.launch(permissionDialog.permissions)
+            launcher.launch(permissionDialog.permissions.toTypedArray())
         }
+
         else -> {}
     }
 }

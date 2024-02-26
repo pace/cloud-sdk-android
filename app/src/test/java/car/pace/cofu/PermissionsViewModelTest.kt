@@ -4,9 +4,9 @@ import android.Manifest
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import car.pace.cofu.data.PermissionRepository
+import car.pace.cofu.data.PermissionRepository.Companion.locationPermissions
 import car.pace.cofu.ui.more.permissions.PermissionsViewModel
 import car.pace.cofu.util.BuildProvider
-import car.pace.cofu.util.extension.locationPermissions
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
@@ -68,8 +68,8 @@ class PermissionsViewModelTest {
         setup()
         every { permissionRepository.shouldShowRequestPermissionRationale(activity, Manifest.permission.POST_NOTIFICATIONS) } returns true
         viewModel.enableNotifications(activity, true)
-        val expectedDialog = PermissionsViewModel.PermissionDialog.SystemDialog(arrayOf(PermissionRepository.NOTIFICATION_PERMISSION))
-        assertSystemDialogEquals(expectedDialog, viewModel.permissionsDialog as PermissionsViewModel.PermissionDialog.SystemDialog)
+        val expectedDialog = PermissionsViewModel.PermissionDialog.SystemDialog(listOf(PermissionRepository.NOTIFICATION_PERMISSION))
+        assertEquals(expectedDialog, viewModel.permissionsDialog as PermissionsViewModel.PermissionDialog.SystemDialog)
     }
 
     @Test
@@ -95,10 +95,6 @@ class PermissionsViewModelTest {
         every { permissionRepository.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION) } returns true
         viewModel.enableLocation(activity, true)
         val expectedDialog = PermissionsViewModel.PermissionDialog.SystemDialog(locationPermissions)
-        assertSystemDialogEquals(expectedDialog, viewModel.permissionsDialog as PermissionsViewModel.PermissionDialog.SystemDialog)
-    }
-
-    private fun assertSystemDialogEquals(expected: PermissionsViewModel.PermissionDialog.SystemDialog, actual: PermissionsViewModel.PermissionDialog.SystemDialog) {
-        assert(expected.permissions.contentEquals(actual.permissions))
+        assertEquals(expectedDialog, viewModel.permissionsDialog as PermissionsViewModel.PermissionDialog.SystemDialog)
     }
 }

@@ -5,15 +5,14 @@ import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
-import android.content.pm.PackageManager
+import android.location.Location
 import android.location.LocationManager
-import androidx.core.content.ContextCompat
+import androidx.core.app.ActivityCompat
 import androidx.core.location.LocationManagerCompat
-
-val locationPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-
-val Context.isLocationPermissionGranted: Boolean
-    get() = locationPermissions.any(::isPermissionGranted)
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.places.api.model.RectangularBounds
+import com.google.maps.android.ktx.utils.withSphericalOffset
+import kotlin.math.sqrt
 
 /**
  * Checks whether the location is enabled or not.
@@ -32,6 +31,18 @@ fun Context.listenForLocationEnabledChanges(receiver: BroadcastReceiver) {
     registerReceiver(receiver, IntentFilter("android.location.PROVIDERS_CHANGED"))
 }
 
-fun Context.isPermissionGranted(permission: String): Boolean {
-    return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+fun Activity.canShowLocationPermissionDialog(): Boolean {
+    return ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
+}
+
+fun Location.toLatLng(): LatLng {
+    return LatLng(latitude, longitude)
+}
+
+fun LatLng.toRectangularBounds(radiusInMeters: Double): RectangularBounds {
+    val distanceFromCenterToCorner = radiusInMeters * sqrt(2.0)
+    val southwestCorner = withSphericalOffset(distanceFromCenterToCorner, 225.0)
+    val northeastCorner = withSphericalOffset(distanceFromCenterToCorner, 45.0)
+
+    return RectangularBounds.newInstance(southwestCorner, northeastCorner)
 }

@@ -1,13 +1,13 @@
 package car.pace.cofu.di
 
 import android.content.Context
-import car.pace.cofu.util.Constants
+import car.pace.cofu.util.Constants.LOCATION_UPDATE_DISTANCE_METERS
+import car.pace.cofu.util.Constants.LOCATION_UPDATE_INTERVAL_MILLIS
 import cloud.pace.sdk.utils.LocationProvider
 import cloud.pace.sdk.utils.LocationProviderImpl
 import cloud.pace.sdk.utils.SystemManager
 import cloud.pace.sdk.utils.SystemManagerImpl
 import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.Priority
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,9 +28,8 @@ object LocationProviderModule {
     @Singleton
     @Provides
     fun provideLocationRequest(): LocationRequest {
-        return LocationRequest.Builder(LocationProviderImpl.DEFAULT_LOCATION_REQUEST)
-            .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-            .setMinUpdateDistanceMeters(Constants.LOCATION_UPDATE_DISTANCE_METERS)
+        return LocationRequest.Builder(LOCATION_UPDATE_INTERVAL_MILLIS)
+            .setMinUpdateDistanceMeters(LOCATION_UPDATE_DISTANCE_METERS)
             .build()
     }
 

@@ -1,19 +1,12 @@
 package car.pace.cofu.ui.detail
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,7 +17,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ErrorOutline
@@ -60,11 +52,12 @@ import car.pace.cofu.R
 import car.pace.cofu.ui.component.Description
 import car.pace.cofu.ui.component.ErrorCard
 import car.pace.cofu.ui.component.LoadingCard
+import car.pace.cofu.ui.component.LoadingMap
+import car.pace.cofu.ui.component.MarkerAnchor
 import car.pace.cofu.ui.component.PrimaryButton
 import car.pace.cofu.ui.component.SecondaryButton
 import car.pace.cofu.ui.component.TextTopBar
 import car.pace.cofu.ui.component.Title
-import car.pace.cofu.ui.component.dropShadow
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.ui.theme.Success
 import car.pace.cofu.ui.theme.Warning
@@ -82,7 +75,6 @@ import car.pace.cofu.util.Constants.DETAIL_SPACER_CONTENT_TYPE
 import car.pace.cofu.util.Constants.DETAIL_SPACER_TOP_KEY
 import car.pace.cofu.util.Constants.DETAIL_TOP_CONTENT_CONTENT_TYPE
 import car.pace.cofu.util.Constants.DETAIL_TOP_CONTENT_KEY
-import car.pace.cofu.util.Constants.FADE_DURATION
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.extension.canStartFueling
 import car.pace.cofu.util.extension.distanceText
@@ -99,19 +91,16 @@ import cloud.pace.sdk.poikit.poi.OpeningHour
 import cloud.pace.sdk.poikit.poi.OpeningHours
 import cloud.pace.sdk.poikit.poi.OpeningRule
 import cloud.pace.sdk.poikit.poi.Price
-import com.google.android.gms.maps.GoogleMapOptions
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.MarkerComposable
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import java.util.Date
 import java.util.UUID
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun DetailScreen(
     onNavigateUp: () -> Unit,
@@ -129,7 +118,7 @@ fun DetailScreen(
         onStartFueling = {
             viewModel.startFueling(context, it)
         },
-        onNavigateToGasStation = {
+        onStartNavigation = {
             viewModel.startNavigation(context, it)
         }
     )
@@ -142,7 +131,7 @@ fun DetailScreenContent(
     onNavigateUp: () -> Unit,
     onRefresh: () -> Unit,
     onStartFueling: (GasStation) -> Unit,
-    onNavigateToGasStation: (GasStation) -> Unit
+    onStartNavigation: (GasStation) -> Unit
 ) {
     Column {
         TextTopBar(
@@ -259,7 +248,7 @@ fun DetailScreenContent(
                             text = stringResource(id = R.string.common_start_navigation),
                             modifier = buttonModifier,
                             onClick = {
-                                onNavigateToGasStation(gasStation)
+                                onStartNavigation(gasStation)
                             }
                         )
                     }
@@ -286,123 +275,34 @@ fun MapRow(
     isClosed: Boolean,
     modifier: Modifier = Modifier
 ) {
-    var loading by remember { mutableStateOf(true) }
-
-    Box(
-        modifier = modifier.clip(shape = RoundedCornerShape(12.dp))
-    ) {
-        DetailMap(
-            location = location,
-            isClosed = isClosed,
-            onMapLoaded = {
-                loading = false
-            }
-        )
-
-        AnimatedVisibility(
-            visible = loading,
-            enter = fadeIn(animationSpec = tween(FADE_DURATION)),
-            exit = fadeOut(animationSpec = tween(FADE_DURATION))
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_map_loading_detail),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-        }
-    }
-}
-
-@Composable
-fun DetailMap(
-    location: LatLng?,
-    isClosed: Boolean,
-    onMapLoaded: () -> Unit = {}
-) {
-    val context = LocalContext.current
+    var mapLoading by remember { mutableStateOf(true) }
     val cameraPositionState = rememberCameraPositionState {
         if (location != null) {
             position = CameraPosition.fromLatLngZoom(location, 13f)
         }
     }
-    val googleMapOptionsFactory = remember {
-        GoogleMapOptions().liteMode(true)
-    }
-    val properties = remember {
-        MapProperties(mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style))
-    }
-    val mapUiSettings = remember {
-        MapUiSettings(
-            compassEnabled = false,
-            indoorLevelPickerEnabled = false,
-            mapToolbarEnabled = false,
-            myLocationButtonEnabled = false,
-            rotationGesturesEnabled = false,
-            scrollGesturesEnabled = false,
-            scrollGesturesEnabledDuringRotateOrZoom = false,
-            tiltGesturesEnabled = false,
-            zoomControlsEnabled = false,
-            zoomGesturesEnabled = false
-        )
-    }
 
-    GoogleMap(
+    LoadingMap(
+        loadingImage = R.drawable.ic_map_loading_small,
+        mapLoading = mapLoading,
+        modifier = modifier.clip(shape = RoundedCornerShape(12.dp)),
         cameraPositionState = cameraPositionState,
-        googleMapOptionsFactory = { googleMapOptionsFactory },
-        properties = properties,
-        uiSettings = mapUiSettings,
-        onMapClick = {},
-        onMapLoaded = onMapLoaded
+        gesturesEnabled = false,
+        liteModeEnabled = true,
+        isMyLocationEnabled = false,
+        onMapLoaded = { mapLoading = false }
     ) {
-        location ?: return@GoogleMap
+        location ?: return@LoadingMap
 
         MarkerComposable(
             keys = arrayOf(location, isClosed),
             state = MarkerState(position = location),
             anchor = Offset(0.5f, 0.5f)
         ) {
-            Column(
+            MarkerAnchor(
                 modifier = Modifier.padding(10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                if (isClosed) {
-                    Text(
-                        text = stringResource(id = R.string.closed_label),
-                        modifier = Modifier
-                            .padding(bottom = 4.dp)
-                            .dropShadow()
-                            .border(width = 1.dp, color = MaterialTheme.colorScheme.onSurface, shape = RoundedCornerShape(size = 8.dp))
-                            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(size = 8.dp))
-                            .padding(4.dp),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = 15.sp
-                    )
-                }
-
-                Box(
-                    modifier = Modifier
-                        .dropShadow()
-                        .size(15.dp)
-                        .background(color = MaterialTheme.colorScheme.primaryContainer, shape = CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(11.dp)
-                            .background(color = MaterialTheme.colorScheme.primary, shape = CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(3.dp)
-                                .background(color = MaterialTheme.colorScheme.primaryContainer, shape = CircleShape)
-                        )
-                    }
-                }
-            }
+                isClosed = isClosed
+            )
         }
     }
 }
@@ -415,8 +315,8 @@ fun AddressRow(
     userLocation: LatLng?,
     canStartFueling: Boolean,
     closedOrClosesSoon: Boolean,
-    showIcon: Boolean = BuildConfig.DETAIL_SCREEN_SHOW_ICON,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showIcon: Boolean = BuildConfig.DETAIL_SCREEN_SHOW_ICON
 ) {
     Row(
         modifier = modifier,
@@ -732,7 +632,7 @@ fun DetailScreenContentPreview() {
             onNavigateUp = {},
             onRefresh = {},
             onStartFueling = {},
-            onNavigateToGasStation = {}
+            onStartNavigation = {}
         )
     }
 }

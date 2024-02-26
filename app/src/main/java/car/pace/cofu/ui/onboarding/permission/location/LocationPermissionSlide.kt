@@ -8,11 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import car.pace.cofu.R
+import car.pace.cofu.data.PermissionRepository.Companion.locationPermissions
 import car.pace.cofu.ui.component.Description
 import car.pace.cofu.ui.onboarding.PageScaffold
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.util.LogAndBreadcrumb
-import car.pace.cofu.util.extension.locationPermissions
 
 @Composable
 fun LocationPermissionPage(
@@ -30,7 +30,7 @@ fun LocationPermissionPage(
         titleRes = R.string.onboarding_location_permission_title,
         nextButtonTextRes = R.string.onboarding_location_permission_action,
         onNextButtonClick = {
-            launcher.launch(locationPermissions)
+            launcher.launch(locationPermissions.toTypedArray())
         },
         descriptionContent = {
             Description(

@@ -30,9 +30,13 @@ class TwoFactorViewModel @Inject constructor(
     val navigateToAuthorization = _navigateToAuthorization.asSharedFlow()
 
     var errorText: String? by mutableStateOf(null)
+        private set
     var biometryLoading by mutableStateOf(false)
+        private set
     var pinLoading by mutableStateOf(false)
+        private set
     var twoFactorSetupType: TwoFactorSetupType? by mutableStateOf(null)
+        private set
 
     fun enableBiometricAuthentication(context: Context) {
         viewModelScope.launch {

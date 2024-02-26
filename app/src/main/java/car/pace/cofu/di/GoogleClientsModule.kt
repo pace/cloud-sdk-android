@@ -7,6 +7,8 @@ import cloud.pace.sdk.utils.environment
 import com.google.android.gms.wallet.PaymentsClient
 import com.google.android.gms.wallet.Wallet
 import com.google.android.gms.wallet.WalletConstants
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.net.PlacesClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +18,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object PaymentsClientModule {
+object GoogleClientsModule {
 
     @Singleton
     @Provides
@@ -27,5 +29,11 @@ object PaymentsClientModule {
             .build()
 
         return Wallet.getPaymentsClient(context, walletOptions)
+    }
+
+    @Singleton
+    @Provides
+    fun providePlacesClient(@ApplicationContext context: Context): PlacesClient {
+        return Places.createClient(context)
     }
 }

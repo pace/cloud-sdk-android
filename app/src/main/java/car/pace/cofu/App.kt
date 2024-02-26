@@ -12,6 +12,7 @@ import cloud.pace.sdk.utils.AuthenticationMode
 import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.DeviceUtils
 import cloud.pace.sdk.utils.Environment
+import com.google.android.libraries.places.api.Places
 import dagger.hilt.android.HiltAndroidApp
 import io.sentry.android.core.SentryAndroid
 import java.util.Locale
@@ -40,6 +41,10 @@ class App : Application() {
         }
 
         val analyticsEnabled = analytics.initAnalytics()
+
+        if (BuildConfig.MAP_ENABLED) {
+            Places.initializeWithNewPlacesApiEnabled(this, getString(R.string.google_maps_api_key))
+        }
 
         createNotificationChannel()
 
@@ -80,7 +85,7 @@ class App : Application() {
                 "App Language: ${Locale.getDefault().displayLanguage}\n" +
                 "System Region: ${Locale.getDefault().country}\n" +
                 "Show onboarding header: ${BuildConfig.ONBOARDING_SHOW_CUSTOM_HEADER}\n" +
-                "Show home header: ${BuildConfig.HOME_SHOW_CUSTOM_HEADER}\n" +
+                "Show list header: ${BuildConfig.LIST_SHOW_CUSTOM_HEADER}\n" +
                 "Show detail icon: ${BuildConfig.DETAIL_SCREEN_SHOW_ICON}\n" +
                 "Map enabled: ${BuildConfig.MAP_ENABLED}\n" +
                 "Hide prices: ${BuildConfig.HIDE_PRICES}\n" +

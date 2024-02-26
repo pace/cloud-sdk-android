@@ -29,3 +29,6 @@ sealed class UiState<out R> {
 
 val <T> UiState<T>.data: T?
     get() = (this as? UiState.Success)?.data
+
+val <T> UiState<T>.throwable: Throwable?
+    get() = (this as? UiState.Error)?.throwable

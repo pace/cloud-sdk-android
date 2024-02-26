@@ -2,6 +2,7 @@ package car.pace.cofu.ui.wallet.paymentmethods
 
 import android.net.Uri
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowForwardIos
 import androidx.compose.material.icons.outlined.CreditCard
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -93,7 +94,7 @@ fun PaymentMethodsScreenContent(
                 is UiState.Success -> {
                     val items = uiState.data
                     if (items.isEmpty()) {
-                        Column(
+                        Box(
                             modifier = Modifier.weight(1f)
                         ) {
                             ErrorCard(
@@ -201,7 +202,7 @@ fun PaymentMethodListItem(
                 tint = MaterialTheme.colorScheme.onSurface
             )
         }
-        Divider()
+        HorizontalDivider()
     }
 }
 

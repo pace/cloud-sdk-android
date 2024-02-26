@@ -24,7 +24,7 @@ data class Configuration(
     val native_fuelcard_management_enabled: Boolean,
     val vehicle_integration_enabled: Boolean,
     val onboarding_show_custom_header: Boolean,
-    val home_show_custom_header: Boolean,
+    val list_show_custom_header: Boolean,
     val detail_screen_show_icon: Boolean,
     val menu_entries: List<MenuEntry>
 )

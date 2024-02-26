@@ -9,7 +9,10 @@ import io.sentry.SentryLevel
 import timber.log.Timber
 
 object LogAndBreadcrumb {
-    const val HOME = "Home"
+
+    const val LIST = "List"
+    const val MAP = "Map"
+    const val SEARCH = "Search"
     const val DETAIL = "Gas station detail"
     const val WALLET = "Wallet"
     const val PAYMENT_METHODS = "Payment methods"

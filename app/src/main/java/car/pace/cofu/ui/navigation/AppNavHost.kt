@@ -7,8 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import car.pace.cofu.BuildConfig
 import car.pace.cofu.ui.navigation.graph.Graph
-import car.pace.cofu.ui.navigation.graph.homeGraph
+import car.pace.cofu.ui.navigation.graph.listGraph
+import car.pace.cofu.ui.navigation.graph.mapGraph
 import car.pace.cofu.ui.navigation.graph.moreGraph
 import car.pace.cofu.ui.navigation.graph.navigate
 import car.pace.cofu.ui.navigation.graph.onboardingGraph
@@ -25,7 +27,7 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = if (onboardingDone) Graph.HOME.route else Graph.ONBOARDING.route,
+        startDestination = if (onboardingDone) Graph.LIST.route else Graph.ONBOARDING.route,
         modifier = modifier,
         enterTransition = {
             fadeIn(animationSpec = tween(TRANSITION_DURATION))
@@ -45,7 +47,8 @@ fun AppNavHost(
                 onOnboardingDone()
             }
         )
-        homeGraph(
+
+        listGraph(
             onNavigate = {
                 navController.navigate(it)
             },
@@ -53,6 +56,18 @@ fun AppNavHost(
                 navController.navigateUp()
             }
         )
+
+        if (BuildConfig.MAP_ENABLED) {
+            mapGraph(
+                onNavigate = {
+                    navController.navigate(it)
+                },
+                onNavigateUp = {
+                    navController.navigateUp()
+                }
+            )
+        }
+
         walletGraph(
             onNavigate = {
                 navController.navigate(it)
@@ -64,6 +79,7 @@ fun AppNavHost(
                 navigateToOnboarding()
             }
         )
+
         moreGraph(
             onNavigate = {
                 navController.navigate(it)

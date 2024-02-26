@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import androidx.appcompat.app.AlertDialog
 import androidx.browser.customtabs.CustomTabsIntent
@@ -35,6 +36,34 @@ object IntentUtils {
             Result.success(Unit)
         } catch (e: Exception) {
             LogAndBreadcrumb.e(e, "Start Navigation", "Could not launch navigation app")
+            Result.failure(e)
+        }
+    }
+
+    fun openBiometricSettings(context: Context): Result<Unit> {
+        return try {
+            val intent = when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> Intent(Settings.ACTION_BIOMETRIC_ENROLL)
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.P -> Intent(Settings.ACTION_FINGERPRINT_ENROLL)
+                else -> Intent(Settings.ACTION_SECURITY_SETTINGS)
+            }
+            context.startActivity(intent)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            try {
+                context.startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS))
+                Result.success(Unit)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
+
+    fun openLocationSettings(context: Context): Result<Unit> {
+        return try {
+            context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+            Result.success(Unit)
+        } catch (e: Exception) {
             Result.failure(e)
         }
     }
@@ -81,7 +110,6 @@ object IntentUtils {
      * Opens the specified app listing page in the Play Store.
      *
      * @param context The context to start the Play Store activity.
-     * @param packageName The package name of the app to open in the Play Store. Defaults to `car.pace.drive`.
      */
     private fun openAppListing(context: Context) {
         try {
@@ -96,13 +124,18 @@ object IntentUtils {
      *
      * @param context The context to start the settings activity.
      */
-    fun openAppSettings(context: Context) {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-        val uri = Uri.fromParts("package", context.packageName, null)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-        intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
-        intent.data = uri
-        context.startActivity(intent)
+    fun openAppSettings(context: Context): Result<Unit> {
+        return try {
+            val uri = Uri.fromParts("package", context.packageName, null)
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                .addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+
+            context.startActivity(intent)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

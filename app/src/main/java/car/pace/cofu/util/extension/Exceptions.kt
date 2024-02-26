@@ -9,6 +9,8 @@ import java.net.HttpURLConnection
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
+class LocationDisabledException : Throwable("Location services disabled")
+class LocationPermissionDeniedException : Throwable("Location permission denied")
 class MailNotSentException : Exception("Mail could not be sent")
 class InvalidLengthException : Exception("PIN has not the correct length of 4 digits")
 class TooFewDigitsException : Exception("PIN does not contain at least 3 different digits")
@@ -18,6 +20,8 @@ class PinMismatchException : Exception("PIN input mismatches")
 @StringRes
 fun Throwable.errorTextRes(): Int {
     return when (this) {
+        is LocationDisabledException -> R.string.LOCATION_DIALOG_DISABLED_TITLE
+        is LocationPermissionDeniedException -> R.string.LOCATION_DIALOG_PERMISSION_DENIED_TITLE
         is InternalError -> R.string.onboarding_error_authorization
         is UnknownHostException, is SocketTimeoutException -> R.string.common_use_network_error
         is ApiException -> if (errorCode == HttpURLConnection.HTTP_FORBIDDEN) R.string.onboarding_error_authorization else R.string.common_use_network_error

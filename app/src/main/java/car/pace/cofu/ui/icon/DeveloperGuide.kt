@@ -19,8 +19,7 @@ val Icons.Outlined.DeveloperGuide: ImageVector
         _developerGuide = Builder(
             name = "Outlined.DeveloperGuide",
             defaultWidth = 24.0.dp,
-            defaultHeight =
-            24.0.dp,
+            defaultHeight = 24.0.dp,
             viewportWidth = 960.0f,
             viewportHeight = 960.0f
         ).apply {
