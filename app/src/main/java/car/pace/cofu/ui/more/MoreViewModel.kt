@@ -3,9 +3,9 @@ package car.pace.cofu.ui.more
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
-import car.pace.cofu.BuildConfig
 import car.pace.cofu.MenuEntries
 import car.pace.cofu.ui.navigation.graph.Route
+import car.pace.cofu.util.BuildProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import javax.inject.Inject
@@ -29,7 +29,7 @@ class MoreViewModel @Inject constructor() : ViewModel() {
             )
         )
 
-        if (BuildConfig.ANALYTICS_ENABLED) {
+        if (BuildProvider.isAnalyticsEnabled()) {
             add(Route.TRACKING.toMoreItem())
         }
 
