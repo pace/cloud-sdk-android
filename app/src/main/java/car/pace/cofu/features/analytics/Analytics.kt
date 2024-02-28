@@ -1,11 +1,11 @@
 package car.pace.cofu.features.analytics
 
-import car.pace.cofu.BuildConfig
 import car.pace.cofu.data.SharedPreferencesRepository
+import car.pace.cofu.util.BuildProvider
 import car.pace.cofu.util.LogAndBreadcrumb
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import com.google.firebase.Firebase
-import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
 import com.google.firebase.inappmessaging.inAppMessaging
 import com.google.firebase.messaging.messaging
 import javax.inject.Inject
@@ -14,7 +14,6 @@ import timber.log.Timber
 
 @Singleton
 class Analytics @Inject constructor(
-    val firebaseAnalytics: FirebaseAnalytics,
     val sharedPreferencesRepository: SharedPreferencesRepository
 ) {
     val userEnabledTracking = sharedPreferencesRepository
@@ -59,11 +58,15 @@ class Analytics @Inject constructor(
     }
 
     private fun setAnalyticsEnabled(tag: String?, userEnabled: Boolean): Boolean {
-        val isEnabled = BuildConfig.ANALYTICS_ENABLED && userEnabled
+        // We are only allowed to access the Firebase instance if the google-services.json is present.
+        // This is only the case if analytics is enabled, otherwise the app crashes.
+        if (BuildProvider.isAnalyticsEnabled()) {
+            Firebase.analytics.setAnalyticsCollectionEnabled(userEnabled)
+            Firebase.messaging.isAutoInitEnabled = userEnabled
+            Firebase.inAppMessaging.isAutomaticDataCollectionEnabled = userEnabled
+        }
 
-        firebaseAnalytics.setAnalyticsCollectionEnabled(isEnabled)
-        Firebase.messaging.isAutoInitEnabled = isEnabled
-        Firebase.inAppMessaging.isAutomaticDataCollectionEnabled = isEnabled
+        val isEnabled = BuildProvider.isAnalyticsEnabled() && userEnabled
 
         tag?.let {
             LogAndBreadcrumb.i(it, if (isEnabled) "Analytics enabled" else "Analytics disabled")
@@ -73,8 +76,10 @@ class Analytics @Inject constructor(
     }
 
     fun logEvent(analyticEvent: AnalyticEvent) {
-        firebaseAnalytics.logEvent(analyticEvent.key, analyticEvent.parameters)
-        Timber.d("Log event ${analyticEvent.key} (params: ${analyticEvent.parameters})")
+        if (BuildProvider.isAnalyticsEnabled()) {
+            Firebase.analytics.logEvent(analyticEvent.key, analyticEvent.parameters)
+            Timber.d("Log event ${analyticEvent.key} (params: ${analyticEvent.parameters})")
+        }
     }
 
     fun logAppInstall() {
