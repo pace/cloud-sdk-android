@@ -58,7 +58,7 @@ onboarding_header=false
 list_header=false
 detail_icon=false
 
-for f in ${ASSET_DIRECTORY}/@(*_header_image_android.*|detail_view_brand_icon_android.*)
+for f in ${ASSET_DIRECTORY}/@(*_header_image_android.*|detail_view_brand_icon_android.*|android_notification_icon.*)
 do
     extension="${f##*.}"
 
