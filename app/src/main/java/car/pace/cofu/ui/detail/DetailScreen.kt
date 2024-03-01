@@ -232,8 +232,7 @@ fun DetailScreenContent(
                         }
                     }
 
-                    val buttonModifier = Modifier.padding(top = 12.dp, bottom = 30.dp)
-                    val context = LocalContext.current
+                    val buttonModifier = Modifier.padding(top = 12.dp, bottom = 12.dp)
 
                     if (canStartFueling) {
                         PrimaryButton(
