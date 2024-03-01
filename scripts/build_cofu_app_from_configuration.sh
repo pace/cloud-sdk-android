@@ -1,15 +1,17 @@
 #!/bin/bash
 
-ASSET_DIRECTORY=configuration/assets
+CONFIGURATION_ASSET_DIRECTORY=configuration/assets
 DRAWABLE_DIRECTORY=app/src/main/res/drawable
 RES_DIRECTORY=app/src/main/res
+ASSET_DIRECTORY=app/src/main/assets
+LEGAL_DOCUMENTS=("usage_terms" "privacy_statement" "usage_analysis" "imprint")
 
 # The extension for some files is a wildcard, as several file extensions are allowed
 mv configuration/configuration.json configuration.json
-mv ${ASSET_DIRECTORY}/firebase_config_android.json app/google-services.json
-mv ${ASSET_DIRECTORY}/android_keystore.jks keystore-release.jks
+mv ${CONFIGURATION_ASSET_DIRECTORY}/firebase_config_android.json app/google-services.json
+mv ${CONFIGURATION_ASSET_DIRECTORY}/android_keystore.jks keystore-release.jks
 
-for f in ${ASSET_DIRECTORY}/android_launcher_icon_*
+for f in ${CONFIGURATION_ASSET_DIRECTORY}/android_launcher_icon_*
 do
     extension="${f##*.}"
     density=${f##*android_launcher_icon_}
@@ -21,7 +23,13 @@ do
     echo "Moved launcher icon $f to $output"
 done
 
-for f in ${ASSET_DIRECTORY}/*.htm*
+for item in "${LEGAL_DOCUMENTS[@]}";
+do
+    rm ${ASSET_DIRECTORY}/${item}*
+done
+echo "Removed all fallback legal documents."
+
+for f in ${CONFIGURATION_ASSET_DIRECTORY}/*.htm*
 do
     filename=$(basename -- "$f")
     filename=${filename%_*}
@@ -29,23 +37,14 @@ do
     language=${f##*_}
     language=${language%-*}
     language=${language%.*}
-
-    if [ $language = "en" ]; then
-        path=${RES_DIRECTORY}/raw
-    else
-        path=${RES_DIRECTORY}/raw-${language}
-    fi
-
-    output=${path}/${filename}.${extension}
-    mkdir -p $path
+    output=${ASSET_DIRECTORY}/${filename}_${language}.${extension}
     mv "$f" "$output"
     echo "Moved legal document $f to $output"
 done
 
-needed_files=("usage_terms" "privacy_statement" "usage_analysis" "imprint")
-for item in "${needed_files[@]}";
+for item in "${LEGAL_DOCUMENTS[@]}";
 do
-    legal_file=app/src/main/res/raw/${item}.html
+    legal_file=${ASSET_DIRECTORY}/${item}_en.html
     if [ ! -e "$legal_file" ]; then
         echo "Error: File '$legal_file' does not exist in base language."
         exit 1
@@ -58,7 +57,7 @@ onboarding_header=false
 list_header=false
 detail_icon=false
 
-for f in ${ASSET_DIRECTORY}/@(*_header_image_android.*|detail_view_brand_icon_android.*|android_notification_icon.*)
+for f in ${CONFIGURATION_ASSET_DIRECTORY}/@(*_header_image_android.*|detail_view_brand_icon_android.*|android_notification_icon.*)
 do
     extension="${f##*.}"
 

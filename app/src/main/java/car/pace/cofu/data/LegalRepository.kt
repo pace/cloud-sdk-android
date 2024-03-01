@@ -16,8 +16,6 @@ class LegalRepository @Inject constructor(
 ) {
 
     private val documents = listOf(LegalDocument.TERMS, LegalDocument.PRIVACY, LegalDocument.TRACKING)
-    private val newHashes = documents.associateWith(::getNewHash)
-    private val assets = context.assets.list("")
 
     fun isUpdateAvailable(): Boolean {
         return getAcceptedHashes().any {
@@ -43,6 +41,7 @@ class LegalRepository @Inject constructor(
     fun getLanguage(legalDocument: LegalDocument): String {
         val language = legalDocument.languagePrefKey?.let { sharedPreferencesRepository.getString(it, null) } ?: Locale.getDefault().language
         val fullFileName = legalDocument.getFullFileName(language)
+        val assets = context.assets.list("")
         return if (assets?.contains(fullFileName) == true) language else "en"
     }
 
@@ -65,7 +64,7 @@ class LegalRepository @Inject constructor(
         // True means that we save the new hash but do not show the update screen.
         // This should be done for existing users for the updated terms or privacy policy.
         val autoAccept = legalDocument != LegalDocument.TRACKING
-        val newHash = newHashes[legalDocument]
+        val newHash = getNewHash(legalDocument)
 
         return if (acceptedHash != null || !autoAccept) {
             // Ask to accept changed document or existing user sees tracking consent the first time

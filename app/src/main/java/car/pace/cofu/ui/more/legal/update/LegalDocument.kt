@@ -37,8 +37,8 @@ enum class LegalDocument(
     }
 
     companion object {
-        const val FILE_SCHEME = "file"
-        const val ASSET_DIR = "android_asset"
-        const val EXTENSION = "html"
+        private const val FILE_SCHEME = "file"
+        private const val ASSET_DIR = "android_asset"
+        private const val EXTENSION = "html"
     }
 }
