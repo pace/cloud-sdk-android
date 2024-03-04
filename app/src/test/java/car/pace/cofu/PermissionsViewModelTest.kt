@@ -29,25 +29,25 @@ class PermissionsViewModelTest {
     }
 
     @Test
-    fun showNotificationSettingIfAnalyticsEnabled() {
+    fun `show notification setting if analytics enabled`() {
         setup()
         assertEquals(listOf(PermissionsViewModel.PermissionsItem.NOTIFICATIONS, PermissionsViewModel.PermissionsItem.LOCATION), viewModel.items)
     }
 
     @Test
-    fun hideNotificationSettingIfAnalyticsDisabled() {
+    fun `hide notification setting if analytics disabled`() {
         setup(analyticsEnabled = false)
         assertEquals(listOf(PermissionsViewModel.PermissionsItem.LOCATION), viewModel.items)
     }
 
     @Test
-    fun hideNotificationSettingIfBuildVersionTooLow() {
+    fun `hide notification setting if build version too low`() {
         setup(analyticsEnabled = true, buildVersion = 30)
         assertEquals(listOf(PermissionsViewModel.PermissionsItem.LOCATION), viewModel.items)
     }
 
     @Test
-    fun triggerNotificationDisableDialog() {
+    fun `trigger notification disable dialog`() {
         setup()
         viewModel.enableNotifications(activity, false)
         val expectedDialog = PermissionsViewModel.PermissionDialog.SettingsDialog(R.string.alert_notification_permission_disabled_title)
@@ -55,7 +55,7 @@ class PermissionsViewModelTest {
     }
 
     @Test
-    fun triggerNotificationEnableDialog() {
+    fun `trigger notification enable dialog`() {
         setup()
         every { permissionRepository.shouldShowRequestPermissionRationale(activity, Manifest.permission.POST_NOTIFICATIONS) } returns false
         viewModel.enableNotifications(activity, true)
@@ -64,7 +64,7 @@ class PermissionsViewModelTest {
     }
 
     @Test
-    fun triggerNotificationSystemDialog() {
+    fun `trigger notification system dialog`() {
         setup()
         every { permissionRepository.shouldShowRequestPermissionRationale(activity, Manifest.permission.POST_NOTIFICATIONS) } returns true
         viewModel.enableNotifications(activity, true)
@@ -73,7 +73,7 @@ class PermissionsViewModelTest {
     }
 
     @Test
-    fun triggerLocationDisableDialog() {
+    fun `trigger location disable dialog`() {
         setup()
         viewModel.enableLocation(activity, false)
         val expectedDialog = PermissionsViewModel.PermissionDialog.SettingsDialog(R.string.alert_location_permission_disabled_title)
@@ -81,7 +81,7 @@ class PermissionsViewModelTest {
     }
 
     @Test
-    fun triggerLocationEnableDialog() {
+    fun `trigger location enable dialog`() {
         setup()
         every { permissionRepository.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION) } returns false
         viewModel.enableLocation(activity, true)
@@ -90,7 +90,7 @@ class PermissionsViewModelTest {
     }
 
     @Test
-    fun triggerLocationSystemDialog() {
+    fun `trigger location system dialog`() {
         setup()
         every { permissionRepository.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION) } returns true
         viewModel.enableLocation(activity, true)

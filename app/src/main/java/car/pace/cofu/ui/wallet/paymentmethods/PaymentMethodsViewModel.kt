@@ -2,9 +2,13 @@ package car.pace.cofu.ui.wallet.paymentmethods
 
 import android.content.Context
 import android.net.Uri
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.PaymentMethodRepository
+import car.pace.cofu.data.SharedPreferencesRepository
+import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_PAYMENT_METHOD_MANAGEMENT_AVAILABLE
 import car.pace.cofu.features.analytics.Analytics
 import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
@@ -23,6 +27,7 @@ import kotlinx.coroutines.flow.stateIn
 @HiltViewModel
 class PaymentMethodsViewModel @Inject constructor(
     private val paymentMethodRepository: PaymentMethodRepository,
+    sharedPreferencesRepository: SharedPreferencesRepository,
     analytics: Analytics
 ) : ViewModel() {
 
@@ -45,6 +50,8 @@ class PaymentMethodsViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(),
             initialValue = UiState.Loading
         )
+
+    val canAddPaymentMethods by mutableStateOf(sharedPreferencesRepository.getBoolean(PREF_KEY_PAYMENT_METHOD_MANAGEMENT_AVAILABLE, true))
 
     fun refresh() {
         paymentMethodRepository.refreshPaymentMethods()

@@ -20,7 +20,7 @@ object LogAndBreadcrumb {
     const val CUSTOM_TAB = "Custom tab"
     const val ONBOARDING = "Onboarding"
     const val TRACKING = "Tracking setting"
-    const val TWO_FACTOR_CHECK = "Two factor check"
+    const val PAYMENT_METHOD_KINDS_CHECK = "Payment method kinds check"
     const val FILE = "File"
     const val LEGAL_UPDATE = "Legal update"
 
