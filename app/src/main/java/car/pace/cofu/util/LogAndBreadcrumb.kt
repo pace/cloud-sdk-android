@@ -21,6 +21,8 @@ object LogAndBreadcrumb {
     const val ONBOARDING = "Onboarding"
     const val TRACKING = "Tracking setting"
     const val TWO_FACTOR_CHECK = "Two factor check"
+    const val FILE = "File"
+    const val LEGAL_UPDATE = "Legal update"
 
     fun i(category: String, message: String) {
         Timber.i(message)

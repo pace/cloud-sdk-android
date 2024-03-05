@@ -102,6 +102,12 @@
     <string name="good_day_message">Guten Tag!</string>
     <string name="good_evening_message">Guten Abend!</string>
     <string name="good_morning_message">Guten Morgen!</string>
+    <string name="legal_update_privacy_description">Um fortfahren zu können, musst du den aktualisierten Datenschutzbestimmungen zustimmen.</string>
+    <string name="legal_update_privacy_title">Die Datenschutzbestimmungen haben sich geändert</string>
+    <string name="legal_update_terms_description">Um fortfahren zu können, musst du den aktualisierten Nutzungsbedingungen zustimmen.</string>
+    <string name="legal_update_terms_title">Die Nutzungsbedingungen haben sich geändert</string>
+    <string name="legal_update_tracking_description">Stimme der aktualisierten Nutzungsanalyse zu, damit wir diese App weiter für dich optimieren können.</string>
+    <string name="legal_update_tracking_title">Die Nutzungsanalyse hat sich geändert</string>
     <string name="list_price_not_available">Preis nicht verfügbar</string>
     <string name="list_tab_label">Liste</string>
     <string name="map_tab_label">Karte</string>

@@ -51,6 +51,11 @@ enum class Graph(
         null,
         null
     ),
+    LEGAL_UPDATE(
+        "legal_update_graph",
+        null,
+        null
+    ),
     LIST(
         "list_graph",
         Icons.Outlined.List,
@@ -84,6 +89,7 @@ enum class Route(
     ONBOARDING_TERMS(route = "onboarding_terms_route", graph = Graph.ONBOARDING, showBottomBar = false),
     ONBOARDING_PRIVACY(route = "onboarding_privacy_route", graph = Graph.ONBOARDING, showBottomBar = false),
     ONBOARDING_ANALYSIS(route = "onboarding_analysis_route", graph = Graph.ONBOARDING, showBottomBar = false),
+    LEGAL_UPDATE(route = "legal_update", graph = Graph.LEGAL_UPDATE, showBottomBar = false),
     LIST(route = "list_route", graph = Graph.LIST),
     MAP(route = "map_route", graph = Graph.MAP),
     LIST_DETAIL(route = "list_detail_route", graph = Graph.LIST),
@@ -101,7 +107,7 @@ enum class Route(
     LICENSES(route = "licenses_route", graph = Graph.MORE, labelRes = R.string.MENU_ITEMS_LICENCES, icon = Icons.Outlined.TwoPager),
     WEBSITE(route = "website_route", graph = Graph.MORE, icon = Icons.Outlined.Language, showBottomBar = false),
     AUTHORIZATION(route = "authorization_route", graph = Graph.WALLET, icon = Icons.Outlined.Signature, labelRes = R.string.wallet_two_factor_authentication_title),
-    DELETE_ACCOUNT("delete_account", Graph.WALLET, icon = Icons.Outlined.PersonRemove, labelRes = R.string.wallet_account_deletion_title),
+    DELETE_ACCOUNT("delete_account", Graph.WALLET, icon = Icons.Outlined.PersonRemove, labelRes = R.string.wallet_account_deletion_title, showBottomBar = false),
     PERMISSIONS(route = "permissions_route", graph = Graph.MORE, labelRes = R.string.menu_items_permissions, icon = Icons.Outlined.VpnKey);
 
     companion object {

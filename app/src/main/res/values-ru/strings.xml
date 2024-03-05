@@ -102,6 +102,12 @@
     <string name="good_day_message">Здравствуйте!</string>
     <string name="good_evening_message">Добрый вечер!</string>
     <string name="good_morning_message">Доброе утро!</string>
+    <string name="legal_update_privacy_description">Чтобы продолжить, вы должны согласиться с обновленным политику конфиденциальности.</string>
+    <string name="legal_update_privacy_title">Изменились правила защиты данных</string>
+    <string name="legal_update_terms_description">Чтобы продолжить, вы должны согласиться с обновленным условиями использования.</string>
+    <string name="legal_update_terms_title">Условия использования изменились</string>
+    <string name="legal_update_tracking_description">Согласитесь с обновленным анализ использования, чтобы мы могли продолжать оптимизировать это приложение для вас.</string>
+    <string name="legal_update_tracking_title">Анализ использования изменился</string>
     <string name="list_price_not_available">Цена недоступна</string>
     <string name="list_tab_label">Список</string>
     <string name="map_tab_label">Карта</string>

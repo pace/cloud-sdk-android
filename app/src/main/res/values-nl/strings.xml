@@ -102,6 +102,12 @@
     <string name="good_day_message">Hallo!</string>
     <string name="good_evening_message">Goedenavond!</string>
     <string name="good_morning_message">Goedemorgen!</string>
+    <string name="legal_update_privacy_description">Om verder te gaan, moet je akkoord gaan met de bijgewerkte privacybeleid.</string>
+    <string name="legal_update_privacy_title">De regels voor gegevensbescherming zijn veranderd</string>
+    <string name="legal_update_terms_description">Om verder te gaan, moet je akkoord gaan met de bijgewerkte gebruiksvoorwaarden.</string>
+    <string name="legal_update_terms_title">De gebruiksvoorwaarden zijn gewijzigd</string>
+    <string name="legal_update_tracking_description">Ga akkoord met de bijgewerkte gebruiksanalyse zodat we deze app voor jou kunnen blijven optimaliseren.</string>
+    <string name="legal_update_tracking_title">De gebruiksanalyse is veranderd</string>
     <string name="list_price_not_available">Prijs niet beschikbaar</string>
     <string name="list_tab_label">Lijst</string>
     <string name="map_tab_label">Kaart</string>

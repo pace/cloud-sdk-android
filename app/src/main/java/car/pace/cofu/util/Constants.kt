@@ -18,11 +18,6 @@ object Constants {
     const val MIN_SEARCH_QUERY_LENGTH = 3
     const val MAX_SEARCH_RESULTS = 5
 
-    const val TERMS_URI = "file:///android_res/raw/usage_terms.html"
-    const val PRIVACY_URI = "file:///android_res/raw/privacy_statement.html"
-    const val ANALYSIS_URI = "file:///android_res/raw/usage_analysis.html"
-    const val IMPRINT_URI = "file:///android_res/raw/imprint.html"
-
     const val ONBOARDING_IMAGE_KEY = "OnboardingImage"
     const val ONBOARDING_TITLE_KEY = "OnboardingTitle"
     const val ONBOARDING_DESCRIPTION_KEY = "OnboardingDescription"

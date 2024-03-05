@@ -102,6 +102,12 @@
     <string name="good_day_message">Bună!</string>
     <string name="good_evening_message">Bună seara!</string>
     <string name="good_morning_message">Bună dimineața!</string>
+    <string name="legal_update_privacy_description">Pentru a continua, trebuie să fiți de acord cu actualizarea politica de confidențialitate.</string>
+    <string name="legal_update_privacy_title">S-au schimbat reglementările privind protecția datelor</string>
+    <string name="legal_update_terms_description">Pentru a continua, trebuie să fiți de acord cu actualizarea termenii de utilizare.</string>
+    <string name="legal_update_terms_title">Condițiile de utilizare s-au schimbat</string>
+    <string name="legal_update_tracking_description">Sunteți de acord cu actualizarea analiza de utilizare, astfel încât să putem continua să optimizăm această aplicație pentru dumneavoastră.</string>
+    <string name="legal_update_tracking_title">Analiza utilizării s-a schimbat</string>
     <string name="list_price_not_available">Prețul nu este disponibil</string>
     <string name="list_tab_label">Lista</string>
     <string name="map_tab_label">Hartă</string>

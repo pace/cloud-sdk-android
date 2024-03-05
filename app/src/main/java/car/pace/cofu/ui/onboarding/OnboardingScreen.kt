@@ -5,7 +5,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import car.pace.cofu.ui.navigation.graph.Route
 import car.pace.cofu.ui.onboarding.authentication.AuthenticationPage
@@ -16,7 +15,6 @@ import car.pace.cofu.ui.onboarding.permission.location.LocationPermissionPage
 import car.pace.cofu.ui.onboarding.permission.notification.NotificationPermissionPage
 import car.pace.cofu.ui.onboarding.tracking.TrackingPage
 import car.pace.cofu.ui.onboarding.twofactor.TwoFactorPage
-import car.pace.cofu.ui.theme.AppTheme
 import kotlin.math.absoluteValue
 import kotlinx.coroutines.launch
 
@@ -30,8 +28,9 @@ fun OnboardingScreen(
     val pagerState = rememberPagerState { viewModel.getCountOfPages() }
     val coroutineScope = rememberCoroutineScope()
 
-    fun nextStep(nextPage: Int? = viewModel.nextStep(pagerState.currentPage, null)) {
+    fun nextStep(args: Any? = null) {
         coroutineScope.launch {
+            val nextPage = viewModel.nextStep(pagerState.currentPage, args)
             if (nextPage == null) {
                 onDone()
             } else {
@@ -60,28 +59,11 @@ fun OnboardingScreen(
             OnboardingPage.TRACKING -> TrackingPage(onNavigate = onNavigate, onNext = ::nextStep)
             OnboardingPage.NOTIFICATION_PERMISSION -> NotificationPermissionPage(onNext = ::nextStep)
             OnboardingPage.LOCATION_PERMISSION -> LocationPermissionPage(onNext = ::nextStep)
-            OnboardingPage.AUTHENTICATION -> AuthenticationPage { authenticationResult ->
-                val nextPage = viewModel.nextStep(pagerState.currentPage, authenticationResult)
-                nextStep(nextPage)
-            }
+            OnboardingPage.AUTHENTICATION -> AuthenticationPage(onNext = ::nextStep)
             OnboardingPage.TWO_FACTOR -> TwoFactorPage(onAuthorization = ::navigateToAuthorization, onNext = ::nextStep)
             OnboardingPage.PAYMENT_METHOD -> PaymentMethodPage(onNext = ::nextStep)
-            OnboardingPage.FUEL_TYPE -> FuelTypePage { fuelTypeGroup ->
-                val nextPage = viewModel.nextStep(pagerState.currentPage, fuelTypeGroup)
-                nextStep(nextPage)
-            }
+            OnboardingPage.FUEL_TYPE -> FuelTypePage(onNext = ::nextStep)
             else -> {}
         }
-    }
-}
-
-@Preview
-@Composable
-fun OnboardingScreenPreview() {
-    AppTheme {
-        OnboardingScreen(
-            onNavigate = {},
-            onDone = {}
-        )
     }
 }

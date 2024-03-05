@@ -102,6 +102,12 @@
     <string name="good_day_message">Hej med jer!</string>
     <string name="good_evening_message">Godaften!</string>
     <string name="good_morning_message">Godmorgen!</string>
+    <string name="legal_update_privacy_description">For at fortsætte skal du acceptere den opdaterede privatlivspolitikken.</string>
+    <string name="legal_update_privacy_title">Databeskyttelsesreglerne har ændret sig</string>
+    <string name="legal_update_terms_description">For at fortsætte skal du acceptere den opdaterede brugsbetingelserne.</string>
+    <string name="legal_update_terms_title">Betingelserne for brug er ændret</string>
+    <string name="legal_update_tracking_description">Accepter den opdaterede brugsanalysen, så vi kan fortsætte med at optimere denne app til dig.</string>
+    <string name="legal_update_tracking_title">Brugsanalysen har ændret sig</string>
     <string name="list_price_not_available">Pris ikke tilgængelig</string>
     <string name="list_tab_label">Liste</string>
     <string name="map_tab_label">Kort</string>

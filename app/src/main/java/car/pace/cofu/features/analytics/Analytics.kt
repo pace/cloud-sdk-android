@@ -50,7 +50,13 @@ class Analytics @Inject constructor(
         return setAnalyticsEnabled(null, userEnabledTracking())
     }
 
-    fun userEnabledTracking() = sharedPreferencesRepository.getBoolean(SharedPreferencesRepository.PREF_KEY_TRACKING_ENABLED, false)
+    fun isTrackingEnabled(userEnabled: Boolean = userEnabledTracking()): Boolean {
+        return BuildProvider.isAnalyticsEnabled() && userEnabled
+    }
+
+    fun userEnabledTracking(): Boolean {
+        return sharedPreferencesRepository.getBoolean(SharedPreferencesRepository.PREF_KEY_TRACKING_ENABLED, false)
+    }
 
     fun enableAnalyticsFeature(tag: String?, userEnabled: Boolean) {
         sharedPreferencesRepository.putValue(SharedPreferencesRepository.PREF_KEY_TRACKING_ENABLED, userEnabled)
@@ -66,7 +72,7 @@ class Analytics @Inject constructor(
             Firebase.inAppMessaging.isAutomaticDataCollectionEnabled = userEnabled
         }
 
-        val isEnabled = BuildProvider.isAnalyticsEnabled() && userEnabled
+        val isEnabled = isTrackingEnabled(userEnabled)
 
         tag?.let {
             LogAndBreadcrumb.i(it, if (isEnabled) "Analytics enabled" else "Analytics disabled")
