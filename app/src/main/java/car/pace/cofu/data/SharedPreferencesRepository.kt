@@ -83,6 +83,7 @@ class SharedPreferencesRepository @Inject constructor(
         const val PREF_KEY_TRACKING_ENABLED = "trackingEnabled"
         const val PREF_KEY_FIRST_RUN = "firstRun"
         const val PREF_KEY_TWO_FACTOR_AVAILABLE = "twoFactorAvailable"
+        const val PREF_KEY_PAYMENT_METHOD_MANAGEMENT_AVAILABLE = "paymentMethodManagementAvailable"
         const val PREF_KEY_TERMS_HASH = "termsHash"
         const val PREF_KEY_PRIVACY_HASH = "privacyHash"
         const val PREF_KEY_TRACKING_HASH = "trackingHash"

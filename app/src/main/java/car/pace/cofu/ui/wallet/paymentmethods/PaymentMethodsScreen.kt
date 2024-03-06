@@ -55,6 +55,7 @@ fun PaymentMethodsScreen(
 
     PaymentMethodsScreenContent(
         uiState = uiState,
+        canAddPaymentMethods = viewModel.canAddPaymentMethods,
         onNavigateUp = onNavigateUp,
         onItemClick = {
             viewModel.showPaymentMethod(context, it.id)
@@ -69,6 +70,7 @@ fun PaymentMethodsScreen(
 @Composable
 fun PaymentMethodsScreenContent(
     uiState: UiState<List<PaymentMethodItem>>,
+    canAddPaymentMethods: Boolean,
     onNavigateUp: () -> Unit,
     onItemClick: (PaymentMethodItem) -> Unit,
     onAddClick: () -> Unit,
@@ -125,10 +127,12 @@ fun PaymentMethodsScreenContent(
                         }
                     }
 
-                    SecondaryButton(
-                        text = stringResource(id = R.string.payment_methods_add_button),
-                        onClick = onAddClick
-                    )
+                    if (canAddPaymentMethods) {
+                        SecondaryButton(
+                            text = stringResource(id = R.string.payment_methods_add_button),
+                            onClick = onAddClick
+                        )
+                    }
                 }
 
                 is UiState.Error -> {
@@ -236,6 +240,7 @@ fun PaymentMethodsScreenContentPreview() {
                     )
                 )
             ),
+            canAddPaymentMethods = true,
             onNavigateUp = {},
             onItemClick = {},
             onAddClick = {},

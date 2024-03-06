@@ -52,7 +52,7 @@ class OnboardingViewModel @Inject constructor(
                     pages.remove(OnboardingPage.TWO_FACTOR)
                 }
 
-                if (args.userHasPaymentMethods) {
+                if (!args.paymentMethodManagementEnabled || args.userHasPaymentMethods) {
                     // Skip PaymentMethodPage
                     LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, "Skip PaymentMethodPage in Onboarding")
                     pages.remove(OnboardingPage.PAYMENT_METHOD)

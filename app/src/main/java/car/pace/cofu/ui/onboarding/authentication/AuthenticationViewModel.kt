@@ -30,8 +30,14 @@ class AuthenticationViewModel @Inject constructor(
     private val paymentMethodRepository: PaymentMethodRepository
 ) : ViewModel() {
 
-    data class AuthenticationResult(val twoFactorEnabled: Boolean, val userHasPaymentMethods: Boolean)
+    data class AuthenticationResult(
+        val twoFactorEnabled: Boolean,
+        val paymentMethodManagementEnabled: Boolean,
+        val userHasPaymentMethods: Boolean
+    )
+
     var loading by mutableStateOf(false)
+
     private val _loginFinished = MutableSharedFlow<AuthenticationResult>()
     val loginFinished = _loginFinished.asSharedFlow()
 
@@ -47,6 +53,7 @@ class AuthenticationViewModel @Inject constructor(
                     analytics.logEvent(UserSignedIn)
                     finish()
                 }
+
                 is Failure -> {
                     loading = false
                     errorText = context.getString(R.string.onboarding_login_unsuccessful)
@@ -56,12 +63,22 @@ class AuthenticationViewModel @Inject constructor(
     }
 
     private suspend fun finish() {
-        val twoFactorEnabled = paymentMethodKindsRepository.check2FAState()
-        LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, if (twoFactorEnabled) "Two factor is enabled" else "Two factor is not enabled")
+        val paymentMethodKindsResult = paymentMethodKindsRepository.checkPaymentMethodKinds()
+        LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, if (paymentMethodKindsResult.twoFactorNeeded) "Two factor is enabled" else "Two factor is not enabled")
+        LogAndBreadcrumb.i(
+            LogAndBreadcrumb.ONBOARDING,
+            if (paymentMethodKindsResult.paymentMethodManagementEnabled) "Payment method management is available" else "Payment method management is not available"
+        )
 
         val hasPaymentMethod = paymentMethodRepository.getPaymentMethods(true)?.getOrNull()?.isNotEmpty() == true
         LogAndBreadcrumb.i(LogAndBreadcrumb.ONBOARDING, if (hasPaymentMethod) "User has payment methods" else "User has no payment methods")
 
-        _loginFinished.emit(AuthenticationResult(twoFactorEnabled, hasPaymentMethod))
+        _loginFinished.emit(
+            AuthenticationResult(
+                twoFactorEnabled = paymentMethodKindsResult.twoFactorNeeded,
+                paymentMethodManagementEnabled = paymentMethodKindsResult.paymentMethodManagementEnabled,
+                userHasPaymentMethods = hasPaymentMethod
+            )
+        )
     }
 }

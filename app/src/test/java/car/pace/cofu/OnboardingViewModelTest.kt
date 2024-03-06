@@ -23,7 +23,7 @@ class OnboardingViewModelTest {
     private lateinit var viewModel: OnboardingViewModel
 
     @Test
-    fun showAllOnboardingPages() {
+    fun `show all onboarding pages`() {
         testOnboarding(expectedOnboardingPages = OnboardingPage.entries)
     }
 
@@ -38,7 +38,7 @@ class OnboardingViewModelTest {
     }
 
     @Test
-    fun skipLocationPage() {
+    fun `skip LocationPage`() {
         val expectedOnboardingPages = buildList {
             addAll(OnboardingPage.entries)
             remove(OnboardingPage.LOCATION_PERMISSION)
@@ -47,7 +47,7 @@ class OnboardingViewModelTest {
     }
 
     @Test
-    fun skipNotificationPage() {
+    fun `skip NotificationPage`() {
         val expectedOnboardingPages = buildList {
             addAll(OnboardingPage.entries)
             remove(OnboardingPage.NOTIFICATION_PERMISSION)
@@ -61,7 +61,7 @@ class OnboardingViewModelTest {
     }
 
     @Test
-    fun skipFuelTypePage() {
+    fun `skip FuelTypePage`() {
         val expectedOnboardingPages = buildList {
             addAll(OnboardingPage.entries)
             remove(OnboardingPage.FUEL_TYPE)
@@ -70,7 +70,7 @@ class OnboardingViewModelTest {
     }
 
     @Test
-    fun skipTwoFactorPage() {
+    fun `skip TwoFactorPage`() {
         val expectedOnboardingPages = buildList {
             addAll(OnboardingPage.entries)
             remove(OnboardingPage.TWO_FACTOR)
@@ -79,12 +79,21 @@ class OnboardingViewModelTest {
     }
 
     @Test
-    fun skipPaymentMethodPage() {
+    fun `skip PaymentMethodPage if payment method is already onboarded`() {
         val expectedOnboardingPages = buildList {
             addAll(OnboardingPage.entries)
             remove(OnboardingPage.PAYMENT_METHOD)
         }
         testOnboarding(userHasPaymentMethods = true, expectedOnboardingPages = expectedOnboardingPages)
+    }
+
+    @Test
+    fun `skip PaymentMethodPage if payment method management is not available`() {
+        val expectedOnboardingPages = buildList {
+            addAll(OnboardingPage.entries)
+            remove(OnboardingPage.PAYMENT_METHOD)
+        }
+        testOnboarding(paymentMethodManagementEnabled = false, expectedOnboardingPages = expectedOnboardingPages)
     }
 
     @Suppress("IMPLICIT_CAST_TO_ANY")
@@ -95,6 +104,7 @@ class OnboardingViewModelTest {
         notificationPermissionGiven: Boolean = false,
         hidePrices: Boolean = false,
         isTwoFactorEnabled: Boolean = true,
+        paymentMethodManagementEnabled: Boolean = true,
         userHasPaymentMethods: Boolean = false,
         expectedOnboardingPages: List<OnboardingPage>
     ) {
@@ -123,7 +133,12 @@ class OnboardingViewModelTest {
             seenOnboardingPages.add(currentPage)
 
             val args = when (currentPage) {
-                OnboardingPage.AUTHENTICATION -> AuthenticationViewModel.AuthenticationResult(isTwoFactorEnabled, userHasPaymentMethods)
+                OnboardingPage.AUTHENTICATION -> AuthenticationViewModel.AuthenticationResult(
+                    twoFactorEnabled = isTwoFactorEnabled,
+                    paymentMethodManagementEnabled = paymentMethodManagementEnabled,
+                    userHasPaymentMethods = userHasPaymentMethods
+                )
+
                 OnboardingPage.FUEL_TYPE -> FuelTypeGroup.DIESEL
                 else -> null
             }

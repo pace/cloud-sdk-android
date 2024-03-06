@@ -52,7 +52,7 @@ class AppContentViewModel @Inject constructor(
     fun onAppStart() {
         if (sharedPreferencesRepository.getBoolean(PREF_KEY_ONBOARDING_DONE, false)) {
             viewModelScope.launch {
-                paymentMethodKindsRepository.check2FAState()
+                paymentMethodKindsRepository.checkPaymentMethodKinds()
             }
         }
     }
