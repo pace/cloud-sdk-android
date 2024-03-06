@@ -1,4 +1,4 @@
-package car.pace.cofu
+package car.pace.cofu.data
 
 import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.extension.toRectangularBounds

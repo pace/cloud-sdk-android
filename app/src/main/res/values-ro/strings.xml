@@ -120,6 +120,7 @@
     <string name="more_tab_label">Mai mult</string>
     <string name="no_supported_browser_dialog_title">Nici un browser acceptat</string>
     <string name="no_supported_browser_toast">Activați Google Chrome și reporniți aplicația pentru a continua.</string>
+    <string name="notification_permission_request_title">Doriți să permiteți notificări?</string>
     <string name="onboarding_authentication_action">Autentificați-vă sau înregistrați-vă</string>
     <string name="onboarding_authentication_description">Pentru a efectua o plată simplă cu ajutorul aplicației, trebuie să vă înregistrați sau să vă conectați cu ID-ul PACE existent.</string>
     <string name="onboarding_authentication_title">Profilul magazinului</string>

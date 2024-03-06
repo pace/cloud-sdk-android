@@ -120,6 +120,7 @@
     <string name="more_tab_label">Více</string>
     <string name="no_supported_browser_dialog_title">Žádný podporovaný prohlížeč</string>
     <string name="no_supported_browser_toast">Aktivujte Google Chrome a restartujte aplikaci, abyste mohli pokračovat.</string>
+    <string name="notification_permission_request_title">Chcete povolit oznámení?</string>
     <string name="onboarding_authentication_action">Přihlaste se nebo se zaregistrujte</string>
     <string name="onboarding_authentication_description">Chcete-li provést jednoduchou platbu pomocí aplikace, musíte se zaregistrovat nebo přihlásit pomocí svého stávajícího PACE ID.</string>
     <string name="onboarding_authentication_title">Profil obchodu</string>

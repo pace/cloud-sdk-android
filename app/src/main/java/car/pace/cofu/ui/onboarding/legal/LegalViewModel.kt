@@ -2,7 +2,7 @@ package car.pace.cofu.ui.onboarding.legal
 
 import androidx.lifecycle.ViewModel
 import car.pace.cofu.data.LegalRepository
-import car.pace.cofu.ui.more.legal.update.LegalDocument
+import car.pace.cofu.ui.consent.Consent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -12,7 +12,7 @@ class LegalViewModel @Inject constructor(
 ) : ViewModel() {
 
     fun acceptTermsAndPrivacy() {
-        legalRepository.saveHash(LegalDocument.TERMS)
-        legalRepository.saveHash(LegalDocument.PRIVACY)
+        legalRepository.saveHash(Consent.Legal.Terms)
+        legalRepository.saveHash(Consent.Legal.Privacy)
     }
 }

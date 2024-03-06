@@ -18,13 +18,13 @@ import car.pace.cofu.ui.animation.scaleIntoContainer
 import car.pace.cofu.ui.animation.scaleOutOfContainer
 import car.pace.cofu.ui.animation.slideIn
 import car.pace.cofu.ui.animation.slideOut
+import car.pace.cofu.ui.consent.Consent
+import car.pace.cofu.ui.consent.ConsentScreen
 import car.pace.cofu.ui.detail.DetailScreen
 import car.pace.cofu.ui.list.ListScreen
 import car.pace.cofu.ui.map.MapScreen
 import car.pace.cofu.ui.more.MoreScreen
 import car.pace.cofu.ui.more.legal.LegalDocumentScreen
-import car.pace.cofu.ui.more.legal.update.LegalDocument
-import car.pace.cofu.ui.more.legal.update.LegalUpdateScreen
 import car.pace.cofu.ui.more.licenses.LicensesScreen
 import car.pace.cofu.ui.more.permissions.PermissionsScreen
 import car.pace.cofu.ui.more.tracking.TrackingScreen
@@ -59,7 +59,7 @@ fun NavGraphBuilder.onboardingGraph(
             popExitTransition = { scaleOutOfContainer() }
         ) {
             LegalDocumentScreen(
-                legalDocument = LegalDocument.TERMS,
+                legalConsent = Consent.Legal.Terms,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -69,7 +69,7 @@ fun NavGraphBuilder.onboardingGraph(
             popExitTransition = { scaleOutOfContainer() }
         ) {
             LegalDocumentScreen(
-                legalDocument = LegalDocument.PRIVACY,
+                legalConsent = Consent.Legal.Privacy,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -79,28 +79,28 @@ fun NavGraphBuilder.onboardingGraph(
             popExitTransition = { scaleOutOfContainer() }
         ) {
             LegalDocumentScreen(
-                legalDocument = LegalDocument.TRACKING,
+                legalConsent = Consent.Legal.Tracking,
                 onNavigateUp = onNavigateUp
             )
         }
     }
 }
 
-fun NavGraphBuilder.legalUpdateGraph(
+fun NavGraphBuilder.consentGraph(
     onNavigate: (Route) -> Unit,
     onNavigateUp: () -> Unit,
     onDone: () -> Unit
 ) {
     navigation(
-        startDestination = Route.LEGAL_UPDATE.route,
-        route = Graph.LEGAL_UPDATE.route
+        startDestination = Route.CONSENT.route,
+        route = Graph.CONSENT.route
     ) {
         composable(
-            route = Route.LEGAL_UPDATE.route,
+            route = Route.CONSENT.route,
             exitTransition = { scaleOutOfContainer(direction = ScaleTransitionDirection.INWARDS) },
             popEnterTransition = { scaleIntoContainer(direction = ScaleTransitionDirection.OUTWARDS) }
         ) {
-            LegalUpdateScreen(
+            ConsentScreen(
                 onNavigate = onNavigate,
                 onDone = onDone
             )
@@ -111,7 +111,7 @@ fun NavGraphBuilder.legalUpdateGraph(
             popExitTransition = { scaleOutOfContainer() }
         ) {
             LegalDocumentScreen(
-                legalDocument = LegalDocument.TERMS,
+                legalConsent = Consent.Legal.Terms,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -121,7 +121,7 @@ fun NavGraphBuilder.legalUpdateGraph(
             popExitTransition = { scaleOutOfContainer() }
         ) {
             LegalDocumentScreen(
-                legalDocument = LegalDocument.PRIVACY,
+                legalConsent = Consent.Legal.Privacy,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -131,7 +131,7 @@ fun NavGraphBuilder.legalUpdateGraph(
             popExitTransition = { scaleOutOfContainer() }
         ) {
             LegalDocumentScreen(
-                legalDocument = LegalDocument.TRACKING,
+                legalConsent = Consent.Legal.Tracking,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -242,13 +242,13 @@ fun NavGraphBuilder.moreGraph(
         }
         childComposable(Route.TERMS.route) {
             LegalDocumentScreen(
-                legalDocument = LegalDocument.TERMS,
+                legalConsent = Consent.Legal.Terms,
                 onNavigateUp = onNavigateUp
             )
         }
         childComposable(Route.PRIVACY.route) {
             LegalDocumentScreen(
-                legalDocument = LegalDocument.PRIVACY,
+                legalConsent = Consent.Legal.Privacy,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -260,13 +260,13 @@ fun NavGraphBuilder.moreGraph(
         }
         childComposable(Route.ANALYSIS.route) {
             LegalDocumentScreen(
-                legalDocument = LegalDocument.TRACKING,
+                legalConsent = Consent.Legal.Tracking,
                 onNavigateUp = onNavigateUp
             )
         }
         childComposable(Route.IMPRINT.route) {
             LegalDocumentScreen(
-                legalDocument = LegalDocument.IMPRINT,
+                legalConsent = Consent.Legal.Imprint,
                 onNavigateUp = onNavigateUp
             )
         }

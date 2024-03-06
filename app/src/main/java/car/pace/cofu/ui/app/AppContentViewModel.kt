@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.LegalRepository
 import car.pace.cofu.data.PaymentMethodKindsRepository
+import car.pace.cofu.data.PermissionRepository
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_ONBOARDING_DONE
 import car.pace.cofu.data.UserRepository
@@ -24,7 +25,8 @@ class AppContentViewModel @Inject constructor(
     private val sharedPreferencesRepository: SharedPreferencesRepository,
     private val userRepository: UserRepository,
     private val paymentMethodKindsRepository: PaymentMethodKindsRepository,
-    private val legalRepository: LegalRepository
+    private val legalRepository: LegalRepository,
+    private val permissionRepository: PermissionRepository
 ) : ViewModel() {
 
     private val isOnboardingDone = isOnboardingDone()
@@ -66,7 +68,7 @@ class AppContentViewModel @Inject constructor(
     private fun getStartDestination(onboardingDone: Boolean): Graph {
         return when {
             !onboardingDone -> Graph.ONBOARDING
-            legalRepository.isUpdateAvailable() -> Graph.LEGAL_UPDATE
+            legalRepository.isUpdateAvailable() || permissionRepository.canRequestNotificationPermission() -> Graph.CONSENT
             else -> Graph.LIST
         }
     }

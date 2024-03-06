@@ -15,6 +15,8 @@ class SharedPreferencesRepository @Inject constructor(
     val sharedPreferences: SharedPreferences
 ) {
 
+    private val excludedKeys = listOf(PREF_KEY_FIRST_RUN, PREF_KEY_NOTIFICATION_PERMISSION_REQUESTED)
+
     inline fun <reified T> getValue(key: String, defaultValue: T) = callbackFlow {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, preferenceKey ->
             if (key == preferenceKey) {
@@ -69,7 +71,7 @@ class SharedPreferencesRepository @Inject constructor(
         val editor = sharedPreferences.edit()
         val allKeys = sharedPreferences.all.keys.toList()
         for (key in allKeys) {
-            if (key != PREF_KEY_FIRST_RUN) {
+            if (key !in excludedKeys) {
                 editor.remove(key)
             }
         }
@@ -90,5 +92,6 @@ class SharedPreferencesRepository @Inject constructor(
         const val PREF_KEY_TERMS_LANGUAGE = "termsLanguage"
         const val PREF_KEY_PRIVACY_LANGUAGE = "privacyLanguage"
         const val PREF_KEY_TRACKING_LANGUAGE = "trackingLanguage"
+        const val PREF_KEY_NOTIFICATION_PERMISSION_REQUESTED = "notificationPermissionRequested"
     }
 }

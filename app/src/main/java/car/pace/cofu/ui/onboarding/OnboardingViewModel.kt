@@ -4,6 +4,7 @@ import android.Manifest
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import car.pace.cofu.data.PermissionRepository
+import car.pace.cofu.data.PermissionRepository.Companion.FINE_LOCATION_PERMISSION
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.ui.onboarding.authentication.AuthenticationViewModel
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
@@ -25,7 +26,7 @@ class OnboardingViewModel @Inject constructor(
             remove(OnboardingPage.TRACKING)
         }
 
-        if (permissionRepository.isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (permissionRepository.isPermissionGranted(FINE_LOCATION_PERMISSION)) {
             remove(OnboardingPage.LOCATION_PERMISSION)
         }
 

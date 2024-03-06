@@ -9,7 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import car.pace.cofu.BuildConfig
 import car.pace.cofu.ui.navigation.graph.Graph
-import car.pace.cofu.ui.navigation.graph.legalUpdateGraph
+import car.pace.cofu.ui.navigation.graph.consentGraph
 import car.pace.cofu.ui.navigation.graph.listGraph
 import car.pace.cofu.ui.navigation.graph.mapGraph
 import car.pace.cofu.ui.navigation.graph.moreGraph
@@ -24,7 +24,7 @@ fun AppNavHost(
     startDestination: Graph,
     modifier: Modifier = Modifier,
     onOnboardingDone: () -> Unit,
-    onLegalUpdateDone: () -> Unit,
+    onConsentDone: () -> Unit,
     navigateToOnboarding: () -> Unit
 ) {
     NavHost(
@@ -50,7 +50,7 @@ fun AppNavHost(
             }
         )
 
-        legalUpdateGraph(
+        consentGraph(
             onNavigate = {
                 navController.navigate(it)
             },
@@ -58,7 +58,7 @@ fun AppNavHost(
                 navController.navigateUp()
             },
             onDone = {
-                onLegalUpdateDone()
+                onConsentDone()
             }
         )
 

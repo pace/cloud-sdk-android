@@ -120,6 +120,7 @@
     <string name="more_tab_label">Подробнее</string>
     <string name="no_supported_browser_dialog_title">Нет поддерживаемого браузера</string>
     <string name="no_supported_browser_toast">Активируйте Google Chrome и перезапустите приложение, чтобы продолжить работу.</string>
+    <string name="notification_permission_request_title">Хотите ли вы разрешить уведомления?</string>
     <string name="onboarding_authentication_action">Войдите или зарегистрируйтесь</string>
     <string name="onboarding_authentication_description">Чтобы совершить простой платеж с помощью приложения, вам нужно зарегистрироваться или войти в систему с помощью существующего идентификатора PACE.</string>
     <string name="onboarding_authentication_title">Профиль магазина</string>

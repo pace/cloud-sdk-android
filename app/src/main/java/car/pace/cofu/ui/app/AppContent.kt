@@ -73,7 +73,7 @@ fun AppContent(
                     viewModel.onOnboardingDone()
                     appState.navigateAndClearBackStack(Graph.LIST)
                 },
-                onLegalUpdateDone = {
+                onConsentDone = {
                     appState.navigateAndClearBackStack(Graph.LIST)
                 },
                 navigateToOnboarding = {

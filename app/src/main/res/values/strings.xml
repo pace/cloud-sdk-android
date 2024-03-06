@@ -120,6 +120,7 @@
     <string name="more_tab_label">More</string>
     <string name="no_supported_browser_dialog_title">No supported browser</string>
     <string name="no_supported_browser_toast">Enable Google Chrome and restart the app to continue.</string>
+    <string name="notification_permission_request_title">Do you want to allow notifications?</string>
     <string name="onboarding_authentication_action">Log in or register</string>
     <string name="onboarding_authentication_description">For easy payment with the app you have to register or login with your existing PACE-ID.</string>
     <string name="onboarding_authentication_title">Add profile</string>

@@ -51,8 +51,8 @@ enum class Graph(
         null,
         null
     ),
-    LEGAL_UPDATE(
-        "legal_update_graph",
+    CONSENT(
+        "consent_graph",
         null,
         null
     ),
@@ -89,7 +89,7 @@ enum class Route(
     ONBOARDING_TERMS(route = "onboarding_terms_route", graph = Graph.ONBOARDING, showBottomBar = false),
     ONBOARDING_PRIVACY(route = "onboarding_privacy_route", graph = Graph.ONBOARDING, showBottomBar = false),
     ONBOARDING_ANALYSIS(route = "onboarding_analysis_route", graph = Graph.ONBOARDING, showBottomBar = false),
-    LEGAL_UPDATE(route = "legal_update", graph = Graph.LEGAL_UPDATE, showBottomBar = false),
+    CONSENT(route = "consent", graph = Graph.CONSENT, showBottomBar = false),
     LIST(route = "list_route", graph = Graph.LIST),
     MAP(route = "map_route", graph = Graph.MAP),
     LIST_DETAIL(route = "list_detail_route", graph = Graph.LIST),

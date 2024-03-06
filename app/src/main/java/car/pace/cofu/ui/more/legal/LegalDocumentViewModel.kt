@@ -7,7 +7,7 @@ import android.webkit.WebView
 import androidx.lifecycle.ViewModel
 import car.pace.cofu.data.LegalRepository
 import car.pace.cofu.ui.component.AccompanistWebViewClient
-import car.pace.cofu.ui.more.legal.update.LegalDocument
+import car.pace.cofu.ui.consent.Consent
 import cloud.pace.sdk.appkit.app.webview.DefaultWebChromeClient.Companion.MAILTO_SCHEME
 import cloud.pace.sdk.appkit.app.webview.DefaultWebChromeClient.Companion.SMS_SCHEME
 import cloud.pace.sdk.appkit.app.webview.DefaultWebChromeClient.Companion.TEL_SCHEME
@@ -19,9 +19,9 @@ class LegalDocumentViewModel @Inject constructor(
     private val legalRepository: LegalRepository
 ) : ViewModel() {
 
-    fun getUrl(legalDocument: LegalDocument): String {
-        val language = legalRepository.getLanguage(legalDocument)
-        return legalDocument.getUrl(language)
+    fun getUrl(legalConsent: Consent.Legal): String {
+        val language = legalRepository.getLanguage(legalConsent)
+        return legalConsent.getUrl(language)
     }
 
     fun createClient(context: Context) = object : AccompanistWebViewClient() {

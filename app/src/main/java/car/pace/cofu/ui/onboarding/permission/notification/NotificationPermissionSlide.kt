@@ -1,6 +1,5 @@
 package car.pace.cofu.ui.onboarding.permission.notification
 
-import android.Manifest
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -8,7 +7,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import car.pace.cofu.R
+import car.pace.cofu.data.PermissionRepository.Companion.NOTIFICATION_PERMISSION
 import car.pace.cofu.ui.component.Description
 import car.pace.cofu.ui.icon.StreamApps
 import car.pace.cofu.ui.onboarding.PageScaffold
@@ -17,6 +18,7 @@ import car.pace.cofu.util.LogAndBreadcrumb
 
 @Composable
 fun NotificationPermissionPage(
+    viewModel: NotificationPermissionViewModel = hiltViewModel(),
     onNext: () -> Unit
 ) {
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -30,7 +32,8 @@ fun NotificationPermissionPage(
         nextButtonTextRes = R.string.common_use_next,
         onNextButtonClick = {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                viewModel.notificationPermissionRequested()
+                launcher.launch(NOTIFICATION_PERMISSION)
             }
         },
         descriptionContent = {

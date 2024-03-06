@@ -120,6 +120,7 @@
     <string name="more_tab_label">Więcej</string>
     <string name="no_supported_browser_dialog_title">Brak obsługiwanej przeglądarki</string>
     <string name="no_supported_browser_toast">Aktywuj Google Chrome i uruchom ponownie aplikację, aby kontynuować.</string>
+    <string name="notification_permission_request_title">Czy chcesz zezwolić na powiadomienia?</string>
     <string name="onboarding_authentication_action">Zaloguj się lub zarejestruj</string>
     <string name="onboarding_authentication_description">Aby dokonać prostej płatności za pomocą aplikacji, należy się zarejestrować lub zalogować przy użyciu istniejącego identyfikatora PACE ID.</string>
     <string name="onboarding_authentication_title">Profil sklepu</string>

@@ -1,7 +1,8 @@
 package car.pace.cofu
 
-import android.Manifest
 import car.pace.cofu.data.PermissionRepository
+import car.pace.cofu.data.PermissionRepository.Companion.FINE_LOCATION_PERMISSION
+import car.pace.cofu.data.PermissionRepository.Companion.NOTIFICATION_PERMISSION
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.ui.onboarding.OnboardingPage
 import car.pace.cofu.ui.onboarding.OnboardingViewModel
@@ -28,7 +29,7 @@ class OnboardingViewModelTest {
     }
 
     @Test
-    fun skipTrackingAndNotificationPages() {
+    fun `skip tracking and notification pages`() {
         val expectedOnboardingPages = buildList {
             addAll(OnboardingPage.entries)
             remove(OnboardingPage.TRACKING)
@@ -110,8 +111,8 @@ class OnboardingViewModelTest {
     ) {
         mockkObject(LogAndBreadcrumb)
         every { LogAndBreadcrumb.i(any(), any()) } returns Unit
-        every { permissionRepository.isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION) } returns locationPermissionGiven
-        every { permissionRepository.isPermissionGranted(Manifest.permission.POST_NOTIFICATIONS) } returns notificationPermissionGiven
+        every { permissionRepository.isPermissionGranted(FINE_LOCATION_PERMISSION) } returns locationPermissionGiven
+        every { permissionRepository.isPermissionGranted(NOTIFICATION_PERMISSION) } returns notificationPermissionGiven
         mockkObject(BuildProvider)
         every { BuildProvider.isAnalyticsEnabled() } returns isAnalyticsEnabled
         every { BuildProvider.hidePrices() } returns hidePrices
