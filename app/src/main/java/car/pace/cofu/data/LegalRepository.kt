@@ -2,7 +2,7 @@ package car.pace.cofu.data
 
 import android.content.Context
 import car.pace.cofu.features.analytics.Analytics
-import car.pace.cofu.ui.more.legal.update.LegalDocument
+import car.pace.cofu.ui.consent.Consent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Locale
 import javax.inject.Inject
@@ -15,7 +15,7 @@ class LegalRepository @Inject constructor(
     private val analytics: Analytics
 ) {
 
-    private val documents = listOf(LegalDocument.TERMS, LegalDocument.PRIVACY, LegalDocument.TRACKING)
+    private val legalConsents = listOf(Consent.Legal.Terms, Consent.Legal.Privacy, Consent.Legal.Tracking)
 
     fun isUpdateAvailable(): Boolean {
         return getAcceptedHashes().any {
@@ -23,7 +23,7 @@ class LegalRepository @Inject constructor(
         }
     }
 
-    fun getChangedDocuments(): List<LegalDocument> {
+    fun getChangedDocuments(): List<Consent> {
         return getAcceptedHashes().mapNotNull {
             it.key.takeIf { _ ->
                 hasDocumentChanged(it.key, it.value)
@@ -31,47 +31,47 @@ class LegalRepository @Inject constructor(
         }
     }
 
-    fun saveHash(legalDocument: LegalDocument) {
-        val language = getLanguage(legalDocument)
-        val hash = legalDocument.getFileHash(context, language)
-        legalDocument.hashPrefKey?.let { sharedPreferencesRepository.putValue(it, hash) }
-        legalDocument.languagePrefKey?.let { sharedPreferencesRepository.putValue(it, language) }
+    fun saveHash(legalConsent: Consent.Legal) {
+        val language = getLanguage(legalConsent)
+        val hash = legalConsent.getFileHash(context, language)
+        legalConsent.hashPrefKey?.let { sharedPreferencesRepository.putValue(it, hash) }
+        legalConsent.languagePrefKey?.let { sharedPreferencesRepository.putValue(it, language) }
     }
 
-    fun getLanguage(legalDocument: LegalDocument): String {
-        val language = legalDocument.languagePrefKey?.let { sharedPreferencesRepository.getString(it, null) } ?: Locale.getDefault().language
-        val fullFileName = legalDocument.getFullFileName(language)
+    fun getLanguage(legalConsent: Consent.Legal): String {
+        val language = legalConsent.languagePrefKey?.let { sharedPreferencesRepository.getString(it, null) } ?: Locale.getDefault().language
+        val fullFileName = legalConsent.getFullFileName(language)
         val assets = context.assets.list("")
         return if (assets?.contains(fullFileName) == true) language else "en"
     }
 
-    private fun getAcceptedHashes(): Map<LegalDocument, String?> {
-        return documents.associateWith(::getAcceptedHash)
+    private fun getAcceptedHashes(): Map<Consent.Legal, String?> {
+        return legalConsents.associateWith(::getAcceptedHash)
     }
 
-    private fun getAcceptedHash(legalDocument: LegalDocument): String? {
-        return legalDocument.hashPrefKey?.let { sharedPreferencesRepository.getString(it, null) }
+    private fun getAcceptedHash(legalConsent: Consent.Legal): String? {
+        return legalConsent.hashPrefKey?.let { sharedPreferencesRepository.getString(it, null) }
     }
 
-    private fun getNewHash(legalDocument: LegalDocument): String? {
-        val language = getLanguage(legalDocument)
-        return legalDocument.getFileHash(context, language)
+    private fun getNewHash(legalConsent: Consent.Legal): String? {
+        val language = getLanguage(legalConsent)
+        return legalConsent.getFileHash(context, language)
     }
 
-    private fun hasDocumentChanged(legalDocument: LegalDocument, acceptedHash: String?): Boolean {
-        if (legalDocument == LegalDocument.TRACKING && !analytics.isTrackingEnabled()) return false
+    private fun hasDocumentChanged(legalConsent: Consent.Legal, acceptedHash: String?): Boolean {
+        if (legalConsent == Consent.Legal.Tracking && !analytics.isTrackingEnabled()) return false
 
         // True means that we save the new hash but do not show the update screen.
         // This should be done for existing users for the updated terms or privacy policy.
-        val autoAccept = legalDocument != LegalDocument.TRACKING
-        val newHash = getNewHash(legalDocument)
+        val autoAccept = legalConsent != Consent.Legal.Tracking
+        val newHash = getNewHash(legalConsent)
 
         return if (acceptedHash != null || !autoAccept) {
             // Ask to accept changed document or existing user sees tracking consent the first time
             newHash != null && acceptedHash != newHash
         } else {
             // Existing users only: Auto accept terms and privacy changes once
-            saveHash(legalDocument)
+            saveHash(legalConsent)
             false
         }
     }

@@ -3,9 +3,9 @@ package car.pace.cofu.ui.map
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import car.pace.cofu.SearchRepository
 import car.pace.cofu.data.GasStationRepository
 import car.pace.cofu.data.LocationRepository
+import car.pace.cofu.data.SearchRepository
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.ui.wallet.fueltype.toFuelTypeGroup
 import car.pace.cofu.util.Constants.MAX_SEARCH_RESULTS

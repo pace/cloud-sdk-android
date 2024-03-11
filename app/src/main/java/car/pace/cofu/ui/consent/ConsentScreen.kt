@@ -1,5 +1,9 @@
-package car.pace.cofu.ui.more.legal.update
+package car.pace.cofu.ui.consent
 
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,28 +22,36 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import car.pace.cofu.R
+import car.pace.cofu.data.PermissionRepository.Companion.NOTIFICATION_PERMISSION
 import car.pace.cofu.ui.component.ClickableText
+import car.pace.cofu.ui.component.Description
 import car.pace.cofu.ui.component.PrimaryButton
 import car.pace.cofu.ui.component.SecondaryButton
 import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.navigation.graph.Route
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.util.LogAndBreadcrumb
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun LegalUpdateScreen(
-    viewModel: LegalUpdateViewModel = hiltViewModel(),
+fun ConsentScreen(
+    viewModel: ConsentViewModel = hiltViewModel(),
     onNavigate: (Route) -> Unit,
     onDone: () -> Unit
 ) {
-    val pagerState = rememberPagerState { viewModel.getCountOfPages() }
     val pageIndex = viewModel.pageIndex
+    val pagerState = rememberPagerState { viewModel.getCountOfPages() }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+        LogAndBreadcrumb.i(LogAndBreadcrumb.CONSENT, "Manifest.permission.POST_NOTIFICATIONS ${if (it) "is granted" else "is not granted"}")
+        viewModel.nextPage()
+    }
 
     LaunchedEffect(pageIndex) {
         if (pageIndex >= viewModel.getCountOfPages()) {
@@ -54,20 +66,27 @@ fun LegalUpdateScreen(
         userScrollEnabled = false
     ) {
         when (viewModel.getPage(it)) {
-            LegalDocument.TERMS -> TermsUpdatePage(onNavigate = onNavigate, onAccept = viewModel::acceptTerms)
-            LegalDocument.PRIVACY -> PrivacyUpdatePage(onNavigate = onNavigate, onAccept = viewModel::acceptPrivacy)
-            LegalDocument.TRACKING -> TrackingUpdatePage(onNavigate = onNavigate, onDecline = viewModel::declineTracking, onAccept = viewModel::acceptTracking)
+            Consent.Legal.Terms -> TermsConsentPage(onNavigate = onNavigate, onAccept = viewModel::acceptTerms)
+            Consent.Legal.Privacy -> PrivacyConsentPage(onNavigate = onNavigate, onAccept = viewModel::acceptPrivacy)
+            Consent.Legal.Tracking -> TrackingConsentPage(onNavigate = onNavigate, onDecline = viewModel::declineTracking, onAccept = viewModel::acceptTracking)
+            Consent.Notification -> NotificationConsentPage {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    viewModel.notificationPermissionRequested()
+                    launcher.launch(NOTIFICATION_PERMISSION)
+                }
+            }
+
             else -> {}
         }
     }
 }
 
 @Composable
-fun TermsUpdatePage(
+fun TermsConsentPage(
     onNavigate: (Route) -> Unit,
     onAccept: () -> Unit
 ) {
-    LegalUpdateScreenContent(
+    LegalConsentScaffold(
         title = stringResource(id = R.string.legal_update_terms_title),
         linkText = stringResource(id = R.string.onboarding_legal_terms_of_use),
         fullText = stringResource(id = R.string.legal_update_terms_description),
@@ -78,11 +97,11 @@ fun TermsUpdatePage(
 }
 
 @Composable
-fun PrivacyUpdatePage(
+fun PrivacyConsentPage(
     onNavigate: (Route) -> Unit,
     onAccept: () -> Unit
 ) {
-    LegalUpdateScreenContent(
+    LegalConsentScaffold(
         title = stringResource(id = R.string.legal_update_privacy_title),
         linkText = stringResource(id = R.string.onboarding_legal_data_privacy),
         fullText = stringResource(id = R.string.legal_update_privacy_description),
@@ -93,12 +112,12 @@ fun PrivacyUpdatePage(
 }
 
 @Composable
-fun TrackingUpdatePage(
+fun TrackingConsentPage(
     onNavigate: (Route) -> Unit,
     onDecline: () -> Unit,
     onAccept: () -> Unit
 ) {
-    LegalUpdateScreenContent(
+    LegalConsentScaffold(
         title = stringResource(id = R.string.legal_update_tracking_title),
         linkText = stringResource(id = R.string.onboarding_tracking_app_tracking),
         fullText = stringResource(id = R.string.legal_update_tracking_description),
@@ -111,13 +130,54 @@ fun TrackingUpdatePage(
 }
 
 @Composable
-fun LegalUpdateScreenContent(
+fun LegalConsentScaffold(
     title: String,
     linkText: String,
     fullText: String,
     linkTextRoute: Route,
     canBeDeclined: Boolean = false,
     onNavigate: (Route) -> Unit,
+    onDecline: () -> Unit = {},
+    onAccept: () -> Unit
+) {
+    ConsentScaffold(
+        title = title,
+        description = {
+            ClickableText(
+                linkText = linkText,
+                fullText = fullText,
+                linkTextRoute = linkTextRoute,
+                onNavigate = onNavigate
+            )
+        },
+        canBeDeclined = canBeDeclined,
+        onDecline = onDecline,
+        onAccept = onAccept
+    )
+}
+
+@Composable
+fun NotificationConsentPage(
+    onNext: () -> Unit
+) {
+    ConsentScaffold(
+        title = stringResource(id = R.string.notification_permission_request_title),
+        description = {
+            Description(text = stringResource(id = R.string.onboarding_notification_permission_description))
+        },
+        acceptText = R.string.common_use_next,
+        onAccept = onNext
+    )
+}
+
+@Composable
+fun ConsentScaffold(
+    title: String,
+    icon: ImageVector = Icons.Outlined.Info,
+    description: @Composable () -> Unit,
+    canBeDeclined: Boolean = false,
+    @StringRes acceptText: Int = R.string.common_use_accept,
+    @StringRes declineText: Int = R.string.common_use_decline,
     onDecline: () -> Unit = {},
     onAccept: () -> Unit
 ) {
@@ -139,7 +199,7 @@ fun LegalUpdateScreenContent(
             )
 
             Icon(
-                imageVector = Icons.Outlined.Info,
+                imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier.size(42.dp),
                 tint = MaterialTheme.colorScheme.onSurface
@@ -150,25 +210,23 @@ fun LegalUpdateScreenContent(
                 modifier = Modifier.padding(top = 20.dp)
             )
 
-            ClickableText(
-                linkText = linkText,
-                fullText = fullText,
-                linkTextRoute = linkTextRoute,
-                modifier = Modifier.padding(top = 20.dp, bottom = 12.dp),
-                onNavigate = onNavigate
-            )
+            Spacer(modifier = Modifier.height(20.dp))
+
+            description()
+
+            Spacer(modifier = Modifier.height(12.dp))
         }
 
         if (canBeDeclined) {
             SecondaryButton(
-                text = stringResource(id = R.string.common_use_decline),
+                text = stringResource(id = declineText),
                 modifier = Modifier.padding(top = 12.dp),
                 onClick = onDecline
             )
         }
 
         PrimaryButton(
-            text = stringResource(id = R.string.common_use_accept),
+            text = stringResource(id = acceptText),
             modifier = Modifier.padding(top = 12.dp, bottom = 28.dp),
             onClick = onAccept
         )
@@ -177,9 +235,9 @@ fun LegalUpdateScreenContent(
 
 @Preview
 @Composable
-fun TermsUpdatePagePreview() {
+fun TermsConsentPagePreview() {
     AppTheme {
-        TermsUpdatePage(
+        TermsConsentPage(
             onNavigate = {},
             onAccept = {}
         )
@@ -188,9 +246,9 @@ fun TermsUpdatePagePreview() {
 
 @Preview
 @Composable
-fun PrivacyUpdatePagePreview() {
+fun PrivacyConsentPagePreview() {
     AppTheme {
-        PrivacyUpdatePage(
+        PrivacyConsentPage(
             onNavigate = {},
             onAccept = {}
         )
@@ -199,12 +257,20 @@ fun PrivacyUpdatePagePreview() {
 
 @Preview
 @Composable
-fun TrackingUpdatePagePreview() {
+fun TrackingConsentPagePreview() {
     AppTheme {
-        TrackingUpdatePage(
+        TrackingConsentPage(
             onNavigate = {},
             onDecline = {},
             onAccept = {}
         )
+    }
+}
+
+@Preview
+@Composable
+fun NotificationConsentPagePreview() {
+    AppTheme {
+        NotificationConsentPage {}
     }
 }

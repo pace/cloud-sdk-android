@@ -120,6 +120,7 @@
     <string name="more_tab_label">Mere</string>
     <string name="no_supported_browser_dialog_title">Ingen understøttet browser</string>
     <string name="no_supported_browser_toast">Aktivér Google Chrome, og genstart appen for at fortsætte.</string>
+    <string name="notification_permission_request_title">Vil du tillade notifikationer?</string>
     <string name="onboarding_authentication_action">Log ind eller registrer dig</string>
     <string name="onboarding_authentication_description">For at foretage en simpel betaling med appen skal du registrere dig eller logge ind med dit eksisterende PACE-ID.</string>
     <string name="onboarding_authentication_title">Butiksprofil</string>

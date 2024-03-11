@@ -22,7 +22,7 @@ object LogAndBreadcrumb {
     const val TRACKING = "Tracking setting"
     const val PAYMENT_METHOD_KINDS_CHECK = "Payment method kinds check"
     const val FILE = "File"
-    const val LEGAL_UPDATE = "Legal update"
+    const val CONSENT = "Consent"
 
     fun i(category: String, message: String) {
         Timber.i(message)

@@ -11,19 +11,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import car.pace.cofu.ui.component.TextTopBar
 import car.pace.cofu.ui.component.WebView
 import car.pace.cofu.ui.component.rememberWebViewState
-import car.pace.cofu.ui.more.legal.update.LegalDocument
+import car.pace.cofu.ui.consent.Consent
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun LegalDocumentScreen(
     viewModel: LegalDocumentViewModel = hiltViewModel(),
-    legalDocument: LegalDocument,
+    legalConsent: Consent.Legal,
     onNavigateUp: () -> Unit
 ) {
     Column {
         val context = LocalContext.current
         val url = remember {
-            viewModel.getUrl(legalDocument)
+            viewModel.getUrl(legalConsent)
         }
         val client = remember {
             viewModel.createClient(context)

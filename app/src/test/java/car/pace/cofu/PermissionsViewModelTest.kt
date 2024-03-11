@@ -1,9 +1,10 @@
 package car.pace.cofu
 
-import android.Manifest
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import car.pace.cofu.data.PermissionRepository
+import car.pace.cofu.data.PermissionRepository.Companion.FINE_LOCATION_PERMISSION
+import car.pace.cofu.data.PermissionRepository.Companion.NOTIFICATION_PERMISSION
 import car.pace.cofu.data.PermissionRepository.Companion.locationPermissions
 import car.pace.cofu.ui.more.permissions.PermissionsViewModel
 import car.pace.cofu.util.BuildProvider
@@ -57,7 +58,7 @@ class PermissionsViewModelTest {
     @Test
     fun `trigger notification enable dialog`() {
         setup()
-        every { permissionRepository.shouldShowRequestPermissionRationale(activity, Manifest.permission.POST_NOTIFICATIONS) } returns false
+        every { permissionRepository.shouldShowRequestPermissionRationale(activity, NOTIFICATION_PERMISSION) } returns false
         viewModel.enableNotifications(activity, true)
         val expectedDialog = PermissionsViewModel.PermissionDialog.SettingsDialog(R.string.alert_notification_permission_denied_title)
         assertEquals(expectedDialog, viewModel.permissionsDialog)
@@ -66,9 +67,9 @@ class PermissionsViewModelTest {
     @Test
     fun `trigger notification system dialog`() {
         setup()
-        every { permissionRepository.shouldShowRequestPermissionRationale(activity, Manifest.permission.POST_NOTIFICATIONS) } returns true
+        every { permissionRepository.shouldShowRequestPermissionRationale(activity, NOTIFICATION_PERMISSION) } returns true
         viewModel.enableNotifications(activity, true)
-        val expectedDialog = PermissionsViewModel.PermissionDialog.SystemDialog(listOf(PermissionRepository.NOTIFICATION_PERMISSION))
+        val expectedDialog = PermissionsViewModel.PermissionDialog.SystemDialog(listOf(NOTIFICATION_PERMISSION))
         assertEquals(expectedDialog, viewModel.permissionsDialog as PermissionsViewModel.PermissionDialog.SystemDialog)
     }
 
@@ -83,7 +84,7 @@ class PermissionsViewModelTest {
     @Test
     fun `trigger location enable dialog`() {
         setup()
-        every { permissionRepository.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION) } returns false
+        every { permissionRepository.shouldShowRequestPermissionRationale(activity, FINE_LOCATION_PERMISSION) } returns false
         viewModel.enableLocation(activity, true)
         val expectedDialog = PermissionsViewModel.PermissionDialog.SettingsDialog(R.string.alert_location_permission_denied_title)
         assertEquals(expectedDialog, viewModel.permissionsDialog)
@@ -92,7 +93,7 @@ class PermissionsViewModelTest {
     @Test
     fun `trigger location system dialog`() {
         setup()
-        every { permissionRepository.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION) } returns true
+        every { permissionRepository.shouldShowRequestPermissionRationale(activity, FINE_LOCATION_PERMISSION) } returns true
         viewModel.enableLocation(activity, true)
         val expectedDialog = PermissionsViewModel.PermissionDialog.SystemDialog(locationPermissions)
         assertEquals(expectedDialog, viewModel.permissionsDialog as PermissionsViewModel.PermissionDialog.SystemDialog)

@@ -120,6 +120,7 @@
     <string name="more_tab_label">Meer</string>
     <string name="no_supported_browser_dialog_title">Geen ondersteunde browser</string>
     <string name="no_supported_browser_toast">Activeer Google Chrome en start de app opnieuw op om verder te gaan.</string>
+    <string name="notification_permission_request_title">Wil je meldingen toestaan?</string>
     <string name="onboarding_authentication_action">Inloggen of registreren</string>
     <string name="onboarding_authentication_description">Om een eenvoudige betaling met de app te doen, moet je je registreren of inloggen met je bestaande PACE ID.</string>
     <string name="onboarding_authentication_title">Winkelprofiel</string>

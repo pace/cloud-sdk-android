@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.LegalRepository
 import car.pace.cofu.features.analytics.Analytics
-import car.pace.cofu.ui.more.legal.update.LegalDocument
+import car.pace.cofu.ui.consent.Consent
 import car.pace.cofu.util.Constants
 import car.pace.cofu.util.LogAndBreadcrumb
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +31,7 @@ class TrackingViewModel @Inject constructor(
             analytics.logAppInstall()
         }
 
-        legalRepository.saveHash(LegalDocument.TRACKING)
+        legalRepository.saveHash(Consent.Legal.Tracking)
     }
 
     fun disableAnalytics(tag: String) {

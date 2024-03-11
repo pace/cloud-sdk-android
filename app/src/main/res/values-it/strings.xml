@@ -120,6 +120,7 @@
     <string name="more_tab_label">Più</string>
     <string name="no_supported_browser_dialog_title">Nessun browser supportato</string>
     <string name="no_supported_browser_toast">Attivare Google Chrome e riavviare l\'applicazione per continuare.</string>
+    <string name="notification_permission_request_title">Si desidera consentire le notifiche?</string>
     <string name="onboarding_authentication_action">Accedi o registrati</string>
     <string name="onboarding_authentication_description">Per effettuare un semplice pagamento con l\'app, è necessario registrarsi o accedere con il proprio ID PACE.</string>
     <string name="onboarding_authentication_title">Profilo del negozio</string>

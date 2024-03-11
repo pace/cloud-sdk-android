@@ -1,6 +1,5 @@
 package car.pace.cofu.util.extension
 
-import android.Manifest
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -9,6 +8,7 @@ import android.location.Location
 import android.location.LocationManager
 import androidx.core.app.ActivityCompat
 import androidx.core.location.LocationManagerCompat
+import car.pace.cofu.data.PermissionRepository.Companion.FINE_LOCATION_PERMISSION
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.RectangularBounds
 import com.google.maps.android.ktx.utils.withSphericalOffset
@@ -32,7 +32,7 @@ fun Context.listenForLocationEnabledChanges(receiver: BroadcastReceiver) {
 }
 
 fun Activity.canShowLocationPermissionDialog(): Boolean {
-    return ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
+    return ActivityCompat.shouldShowRequestPermissionRationale(this, FINE_LOCATION_PERMISSION)
 }
 
 fun Location.toLatLng(): LatLng {
