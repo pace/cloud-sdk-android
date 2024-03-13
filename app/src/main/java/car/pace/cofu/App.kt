@@ -5,7 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import car.pace.cofu.data.SharedPreferencesRepository
-import car.pace.cofu.features.analytics.Analytics
+import car.pace.cofu.data.analytics.Analytics
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.idkit.model.CustomOIDConfiguration
 import cloud.pace.sdk.utils.AuthenticationMode

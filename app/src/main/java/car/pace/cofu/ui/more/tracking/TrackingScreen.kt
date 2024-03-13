@@ -29,13 +29,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import car.pace.cofu.R
+import car.pace.cofu.ui.Route
 import car.pace.cofu.ui.component.ClickableText
 import car.pace.cofu.ui.component.PrimaryButton
 import car.pace.cofu.ui.component.SecondaryButton
 import car.pace.cofu.ui.component.TextTopBar
 import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.icon.BarChart4Bars
-import car.pace.cofu.ui.navigation.graph.Route
 import car.pace.cofu.ui.onboarding.tracking.TrackingViewModel
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.ui.theme.Success

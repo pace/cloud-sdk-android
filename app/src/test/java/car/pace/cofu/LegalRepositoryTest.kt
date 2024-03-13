@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.res.AssetManager
 import car.pace.cofu.data.LegalRepository
 import car.pace.cofu.data.SharedPreferencesRepository
-import car.pace.cofu.features.analytics.Analytics
+import car.pace.cofu.data.analytics.Analytics
 import car.pace.cofu.ui.consent.Consent
 import car.pace.cofu.util.extension.hash
 import car.pace.cofu.util.extension.openAsset

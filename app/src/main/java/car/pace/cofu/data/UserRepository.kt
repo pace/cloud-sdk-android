@@ -1,7 +1,7 @@
 package car.pace.cofu.data
 
 import androidx.appcompat.app.AppCompatActivity
-import car.pace.cofu.features.analytics.Analytics
+import car.pace.cofu.data.analytics.Analytics
 import car.pace.cofu.util.extension.MailNotSentException
 import car.pace.cofu.util.extension.resume
 import cloud.pace.sdk.idkit.IDKit

@@ -30,12 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import car.pace.cofu.R
 import car.pace.cofu.data.PermissionRepository.Companion.NOTIFICATION_PERMISSION
+import car.pace.cofu.ui.Route
 import car.pace.cofu.ui.component.ClickableText
 import car.pace.cofu.ui.component.Description
 import car.pace.cofu.ui.component.PrimaryButton
 import car.pace.cofu.ui.component.SecondaryButton
 import car.pace.cofu.ui.component.Title
-import car.pace.cofu.ui.navigation.graph.Route
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.util.LogAndBreadcrumb
 

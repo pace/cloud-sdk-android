@@ -1,4 +1,4 @@
-package car.pace.cofu.ui.location
+package car.pace.cofu.data.location
 
 import android.content.BroadcastReceiver
 import android.content.Context

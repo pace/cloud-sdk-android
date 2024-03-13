@@ -1,4 +1,4 @@
-package car.pace.cofu.ui.navigation.graph
+package car.pace.cofu.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons

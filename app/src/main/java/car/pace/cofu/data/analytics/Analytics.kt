@@ -1,4 +1,4 @@
-package car.pace.cofu.features.analytics
+package car.pace.cofu.data.analytics
 
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.util.BuildProvider

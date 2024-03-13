@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
-import car.pace.cofu.features.analytics.Analytics
-import car.pace.cofu.features.analytics.AppOpened
+import car.pace.cofu.data.analytics.Analytics
+import car.pace.cofu.data.analytics.AppOpened
 import car.pace.cofu.ui.app.AppContent
 import cloud.pace.sdk.idkit.IDKit
 import dagger.hilt.android.AndroidEntryPoint

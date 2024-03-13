@@ -1,4 +1,4 @@
-package car.pace.cofu.ui.navigation
+package car.pace.cofu.ui
 
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -8,14 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import car.pace.cofu.BuildConfig
-import car.pace.cofu.ui.navigation.graph.Graph
-import car.pace.cofu.ui.navigation.graph.consentGraph
-import car.pace.cofu.ui.navigation.graph.listGraph
-import car.pace.cofu.ui.navigation.graph.mapGraph
-import car.pace.cofu.ui.navigation.graph.moreGraph
-import car.pace.cofu.ui.navigation.graph.navigate
-import car.pace.cofu.ui.navigation.graph.onboardingGraph
-import car.pace.cofu.ui.navigation.graph.walletGraph
 import car.pace.cofu.util.Constants.TRANSITION_DURATION
 
 @Composable

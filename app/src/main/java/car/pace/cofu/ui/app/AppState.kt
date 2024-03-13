@@ -8,9 +8,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import car.pace.cofu.ui.navigation.graph.Graph
-import car.pace.cofu.ui.navigation.graph.Route
-import car.pace.cofu.ui.navigation.graph.navigate
+import car.pace.cofu.ui.Graph
+import car.pace.cofu.ui.Route
+import car.pace.cofu.ui.navigate
 import car.pace.cofu.util.LogAndBreadcrumb
 
 @Composable

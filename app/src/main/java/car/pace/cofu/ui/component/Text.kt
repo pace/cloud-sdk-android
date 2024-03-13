@@ -13,7 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import car.pace.cofu.R
-import car.pace.cofu.ui.navigation.graph.Route
+import car.pace.cofu.ui.Route
 import car.pace.cofu.ui.theme.AppTheme
 
 @Composable

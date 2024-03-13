@@ -32,6 +32,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
 import car.pace.cofu.data.PermissionRepository.Companion.locationPermissions
+import car.pace.cofu.data.location.rememberLocationState
 import car.pace.cofu.ui.component.ClusterMarker
 import car.pace.cofu.ui.component.DefaultDialog
 import car.pace.cofu.ui.component.ExpandableFloatingActionButton
@@ -40,7 +41,6 @@ import car.pace.cofu.ui.component.LoadingMap
 import car.pace.cofu.ui.component.MarkerAnchor
 import car.pace.cofu.ui.component.NonHierarchicalClustering
 import car.pace.cofu.ui.component.SearchFloatingActionButton
-import car.pace.cofu.ui.location.rememberLocationState
 import car.pace.cofu.ui.map.MapViewModel.Companion.fallbackLocation
 import car.pace.cofu.ui.onboarding.twofactor.biometric.findActivity
 import car.pace.cofu.ui.theme.AppTheme
