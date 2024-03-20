@@ -1,5 +1,5 @@
 <div align="center">
-<img src="./icon.png" width="150" height="150" />
+<img src="./icon.png" width="144" height="144" />
 
 <h1 align="center">
     Connected Fueling Android App
