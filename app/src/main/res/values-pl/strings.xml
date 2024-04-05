@@ -59,6 +59,8 @@
     <string name="common_use_confirm">Potwierdzenie</string>
     <string name="common_use_deactivate">Dezaktywuj</string>
     <string name="common_use_decline">Spadek</string>
+    <string name="common_use_error_description">Spróbuj ponownie</string>
+    <string name="common_use_error_title">Ups, coś poszło nie tak</string>
     <string name="common_use_friday">Piątek</string>
     <string name="common_use_monday">Poniedziałek</string>
     <string name="common_use_network_error">Połączenie z Internetem nie powiodło się. Spróbuj ponownie później.</string>
@@ -185,8 +187,10 @@
     <string name="payment_methods_loading_title">Ładowanie metod płatności i kart paliwowych...</string>
     <string name="search_title">Lokalizacje wyszukiwania</string>
     <string name="transactions_details_title">Szczegóły transakcji</string>
-    <string name="transactions_empty_title">Brak transakcji</string>
+    <string name="transactions_empty_description">Po dokonaniu pierwszej płatności za pomocą aplikacji transakcje zostaną wyświetlone tutaj</string>
+    <string name="transactions_empty_title">Nie masz jeszcze żadnych transakcji</string>
     <string name="transactions_last_transaction_title">Ostatnia transakcja</string>
+    <string name="transactions_loading_title">Transakcje ładowania</string>
     <string name="transactions_receipt_title">Pokwitowanie</string>
     <string name="transactions_station_details_title">Szczegóły stacji</string>
     <string name="transactions_tap_on_receipt_title">Dotknij paragonu, aby go zapisać</string>

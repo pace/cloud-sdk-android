@@ -59,6 +59,8 @@
     <string name="common_use_confirm">Confermare</string>
     <string name="common_use_deactivate">Disattivare</string>
     <string name="common_use_decline">Rifiuta</string>
+    <string name="common_use_error_description">Si prega di riprovare</string>
+    <string name="common_use_error_title">Ops, qualcosa è andato storto</string>
     <string name="common_use_friday">Venerdì</string>
     <string name="common_use_monday">Lunedì</string>
     <string name="common_use_network_error">La connessione a Internet non è riuscita. Riprovare più tardi.</string>
@@ -185,8 +187,10 @@
     <string name="payment_methods_loading_title">Caricamento dei metodi di pagamento e delle carte carburante...</string>
     <string name="search_title">Ricerca di località</string>
     <string name="transactions_details_title">Dettagli della transazione</string>
-    <string name="transactions_empty_title">Nessuna transazione ancora</string>
+    <string name="transactions_empty_description">Dopo il primo pagamento con l\'app, le vostre transazioni saranno visualizzate qui</string>
+    <string name="transactions_empty_title">Non ci sono ancora transazioni</string>
     <string name="transactions_last_transaction_title">L\'ultima transazione</string>
+    <string name="transactions_loading_title">Transazioni di carico</string>
     <string name="transactions_receipt_title">Ricevuta</string>
     <string name="transactions_station_details_title">Dettagli della stazione</string>
     <string name="transactions_tap_on_receipt_title">Toccare la ricevuta per salvarla</string>

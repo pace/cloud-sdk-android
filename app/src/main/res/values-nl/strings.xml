@@ -59,6 +59,8 @@
     <string name="common_use_confirm">Bevestig</string>
     <string name="common_use_deactivate">Deactiveer</string>
     <string name="common_use_decline">Daling</string>
+    <string name="common_use_error_description">Probeer het opnieuw</string>
+    <string name="common_use_error_title">Oeps, er ging iets mis</string>
     <string name="common_use_friday">Vrijdag</string>
     <string name="common_use_monday">Maandag</string>
     <string name="common_use_network_error">Verbinding met internet mislukt. Probeer het later opnieuw.</string>
@@ -185,8 +187,10 @@
     <string name="payment_methods_loading_title">Betaalmethoden en tankkaarten laden...</string>
     <string name="search_title">Locaties zoeken</string>
     <string name="transactions_details_title">Transactiegegevens</string>
-    <string name="transactions_empty_title">Nog geen transacties</string>
+    <string name="transactions_empty_description">Na je eerste betaling met de app worden je transacties hier weergegeven</string>
+    <string name="transactions_empty_title">Je hebt nog geen transacties</string>
     <string name="transactions_last_transaction_title">Je laatste transactie</string>
+    <string name="transactions_loading_title">Transacties laden</string>
     <string name="transactions_receipt_title">Ontvangstbewijs</string>
     <string name="transactions_station_details_title">Details station</string>
     <string name="transactions_tap_on_receipt_title">Tik op het ontvangstbewijs om het op te slaan</string>

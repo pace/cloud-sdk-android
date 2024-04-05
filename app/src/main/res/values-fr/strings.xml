@@ -59,6 +59,8 @@
     <string name="common_use_confirm">Confirmer</string>
     <string name="common_use_deactivate">Désactiver</string>
     <string name="common_use_decline">Décliner</string>
+    <string name="common_use_error_description">Veuillez réessayer</string>
+    <string name="common_use_error_title">Oups, quelque chose s\'est mal passé</string>
     <string name="common_use_friday">Vendredi</string>
     <string name="common_use_monday">Lundi</string>
     <string name="common_use_network_error">Échec de la connexion à Internet. Réessaie plus tard.</string>
@@ -185,8 +187,10 @@
     <string name="payment_methods_loading_title">Chargement des moyens de paiement et des cartes de carburant...</string>
     <string name="search_title">Chercher des lieux</string>
     <string name="transactions_details_title">Détails de la transaction</string>
-    <string name="transactions_empty_title">Pas encore de transactions</string>
+    <string name="transactions_empty_description">Après ton premier paiement avec l\'application, tes transactions s\'affichent ici</string>
+    <string name="transactions_empty_title">Tu n\'as pas encore de transactions</string>
     <string name="transactions_last_transaction_title">Ta dernière transaction</string>
+    <string name="transactions_loading_title">Charger des transactions</string>
     <string name="transactions_receipt_title">Document</string>
     <string name="transactions_station_details_title">Détails de la station</string>
     <string name="transactions_tap_on_receipt_title">Tape sur le document pour l\'enregistrer</string>
