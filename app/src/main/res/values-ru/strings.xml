@@ -59,6 +59,8 @@
     <string name="common_use_confirm">Подтвердите</string>
     <string name="common_use_deactivate">Деактивировать</string>
     <string name="common_use_decline">Снижение</string>
+    <string name="common_use_error_description">Пожалуйста, попробуйте еще раз</string>
+    <string name="common_use_error_title">Упс, что-то пошло не так</string>
     <string name="common_use_friday">Пятница</string>
     <string name="common_use_monday">Понедельник</string>
     <string name="common_use_network_error">Не удалось подключиться к Интернету. Повторите попытку позже.</string>
@@ -185,8 +187,10 @@
     <string name="payment_methods_loading_title">Загрузка способов оплаты и топливных карт...</string>
     <string name="search_title">Места поиска</string>
     <string name="transactions_details_title">Детали сделки</string>
-    <string name="transactions_empty_title">Транзакций пока нет</string>
+    <string name="transactions_empty_description">После первого платежа с помощью приложения ваши транзакции будут отображаться здесь</string>
+    <string name="transactions_empty_title">У вас еще нет транзакций</string>
     <string name="transactions_last_transaction_title">Ваша последняя транзакция</string>
+    <string name="transactions_loading_title">Транзакции загрузки</string>
     <string name="transactions_receipt_title">Квитанция</string>
     <string name="transactions_station_details_title">Информация о станции</string>
     <string name="transactions_tap_on_receipt_title">Нажмите на квитанцию, чтобы сохранить ее</string>

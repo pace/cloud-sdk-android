@@ -59,6 +59,8 @@
     <string name="common_use_confirm">Bestätigen</string>
     <string name="common_use_deactivate">Deaktivieren</string>
     <string name="common_use_decline">Ablehnen</string>
+    <string name="common_use_error_description">Bitte versuche es erneut</string>
+    <string name="common_use_error_title">Ups, etwas ist schiefgelaufen</string>
     <string name="common_use_friday">Freitag</string>
     <string name="common_use_monday">Montag</string>
     <string name="common_use_network_error">Verbindung zum Internet fehlgeschlagen. Versuche es später erneut.</string>
@@ -185,8 +187,10 @@
     <string name="payment_methods_loading_title">Lade Bezahlmethoden und Tankkarten...</string>
     <string name="search_title">Orte suchen</string>
     <string name="transactions_details_title">Transaktionsdetails</string>
-    <string name="transactions_empty_title">Noch keine Transaktionen</string>
+    <string name="transactions_empty_description">Nach deiner ersten Zahlung mit der App werden deine Transaktionen hier angezeigt</string>
+    <string name="transactions_empty_title">Du hast noch keine Transaktionen</string>
     <string name="transactions_last_transaction_title">Deine letzte Transaktion</string>
+    <string name="transactions_loading_title">Lade Transaktionen</string>
     <string name="transactions_receipt_title">Beleg</string>
     <string name="transactions_station_details_title">Stationsdetails</string>
     <string name="transactions_tap_on_receipt_title">Tippe auf den Beleg, um ihn zu speichern</string>

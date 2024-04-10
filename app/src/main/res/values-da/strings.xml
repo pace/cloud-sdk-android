@@ -59,6 +59,8 @@
     <string name="common_use_confirm">Bekræft</string>
     <string name="common_use_deactivate">Deaktiver</string>
     <string name="common_use_decline">Nedgang</string>
+    <string name="common_use_error_description">Prøv venligst igen</string>
+    <string name="common_use_error_title">Ups, noget gik galt</string>
     <string name="common_use_friday">Fredag</string>
     <string name="common_use_monday">Mandag</string>
     <string name="common_use_network_error">Forbindelsen til internettet mislykkedes. Prøv igen senere.</string>
@@ -185,8 +187,10 @@
     <string name="payment_methods_loading_title">Indlæsning af betalingsmetoder og brændstofkort...</string>
     <string name="search_title">Søg efter steder</string>
     <string name="transactions_details_title">Detaljer om transaktionen</string>
-    <string name="transactions_empty_title">Ingen transaktioner endnu</string>
+    <string name="transactions_empty_description">Efter din første betaling med appen vil dine transaktioner blive vist her</string>
+    <string name="transactions_empty_title">Du har ikke nogen transaktioner endnu</string>
     <string name="transactions_last_transaction_title">Din sidste transaktion</string>
+    <string name="transactions_loading_title">Indlæs transaktioner</string>
     <string name="transactions_receipt_title">Kvittering</string>
     <string name="transactions_station_details_title">Detaljer om stationen</string>
     <string name="transactions_tap_on_receipt_title">Tryk på kvitteringen for at gemme den</string>

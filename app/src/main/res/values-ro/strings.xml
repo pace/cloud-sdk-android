@@ -59,6 +59,8 @@
     <string name="common_use_confirm">Confirmați</string>
     <string name="common_use_deactivate">Dezactivați</string>
     <string name="common_use_decline">Declin</string>
+    <string name="common_use_error_description">Vă rugăm să încercați din nou</string>
+    <string name="common_use_error_title">Oops, ceva a mers prost</string>
     <string name="common_use_friday">Vineri</string>
     <string name="common_use_monday">Luni</string>
     <string name="common_use_network_error">Conexiunea la Internet a eșuat. Încercați din nou mai târziu.</string>
@@ -185,8 +187,10 @@
     <string name="payment_methods_loading_title">Încărcarea metodelor de plată și a cardurilor de combustibil...</string>
     <string name="search_title">Căutați locații</string>
     <string name="transactions_details_title">Detaliile tranzacției</string>
-    <string name="transactions_empty_title">Nu există încă tranzacții</string>
+    <string name="transactions_empty_description">După prima ta plată cu aplicația, tranzacțiile tale vor fi afișate aici</string>
+    <string name="transactions_empty_title">Nu aveți încă nicio tranzacție</string>
     <string name="transactions_last_transaction_title">Ultima dvs. tranzacție</string>
+    <string name="transactions_loading_title">Încărcați tranzacții</string>
     <string name="transactions_receipt_title">Chitanță</string>
     <string name="transactions_station_details_title">Detalii despre stație</string>
     <string name="transactions_tap_on_receipt_title">Apăsați pe chitanță pentru a o salva</string>

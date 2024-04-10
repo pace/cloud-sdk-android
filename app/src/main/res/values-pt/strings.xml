@@ -59,6 +59,8 @@
     <string name="common_use_confirm">Confirmar</string>
     <string name="common_use_deactivate">Desativar</string>
     <string name="common_use_decline">Declínio</string>
+    <string name="common_use_error_description">Tente novamente</string>
+    <string name="common_use_error_title">Oops, algo correu mal</string>
     <string name="common_use_friday">Sexta-feira</string>
     <string name="common_use_monday">Segunda-feira</string>
     <string name="common_use_network_error">A ligação à Internet falhou. Tente novamente mais tarde.</string>
@@ -185,8 +187,10 @@
     <string name="payment_methods_loading_title">Carregamento de métodos de pagamento e cartões de combustível...</string>
     <string name="search_title">Locais de pesquisa</string>
     <string name="transactions_details_title">Detalhes da transação</string>
-    <string name="transactions_empty_title">Ainda não há transacções</string>
+    <string name="transactions_empty_description">Após o seu primeiro pagamento com a aplicação, as suas transacções serão apresentadas aqui</string>
+    <string name="transactions_empty_title">Ainda não tem nenhuma transação</string>
     <string name="transactions_last_transaction_title">A sua última transação</string>
+    <string name="transactions_loading_title">Carregar transacções</string>
     <string name="transactions_receipt_title">Recibo</string>
     <string name="transactions_station_details_title">Detalhes da estação</string>
     <string name="transactions_tap_on_receipt_title">Toque no recibo para o guardar</string>

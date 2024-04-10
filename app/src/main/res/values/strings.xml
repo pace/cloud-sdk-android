@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Open settings</string>
-    <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">No gas stations where found nearby your location.</string>
+    <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">No gas stations were found nearby your location.</string>
     <string name="DASHBOARD.EMPTY_VIEW.TITLE">Unfortunately no gas stations near you</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">We are searching for the nearest gas stations in your area. This may take a moment.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Searching gas stations...</string>
@@ -59,6 +59,8 @@
     <string name="common_use_confirm">Confirm</string>
     <string name="common_use_deactivate">Deactivate</string>
     <string name="common_use_decline">Decline</string>
+    <string name="common_use_error_description">Please try again</string>
+    <string name="common_use_error_title">Oops, something went wrong</string>
     <string name="common_use_friday">Friday</string>
     <string name="common_use_monday">Monday</string>
     <string name="common_use_network_error">Connection to the Internet failed. Try again later.</string>
@@ -185,8 +187,10 @@
     <string name="payment_methods_loading_title">Loading payment methods and fuel cards…</string>
     <string name="search_title">Search places</string>
     <string name="transactions_details_title">Transaction details</string>
-    <string name="transactions_empty_title">No transactions yet</string>
+    <string name="transactions_empty_description">After your first payment with the app, your transactions will appear here</string>
+    <string name="transactions_empty_title">You don\'t have any transactions yet</string>
     <string name="transactions_last_transaction_title">Your last transaction</string>
+    <string name="transactions_loading_title">Load transactions</string>
     <string name="transactions_receipt_title">Receipt</string>
     <string name="transactions_station_details_title">Station details</string>
     <string name="transactions_tap_on_receipt_title">Tap on the receipt to save it</string>
