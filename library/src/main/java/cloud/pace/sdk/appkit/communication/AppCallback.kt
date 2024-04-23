@@ -95,11 +95,19 @@ interface AppCallback {
 
     /**
      * Is called when the app sends an image.
-     * If it is not overwritten, it opens the image in the system share sheet.
+     * If it is not overwritten, it opens the share sheet to share the image.
      *
      * @param bitmap The image as bitmap.
      */
     fun onImageDataReceived(bitmap: Bitmap)
+
+    /**
+     * Is called when the app sends a file, which can currently only be a PDF.
+     * If it is not overwritten, it opens the share sheet to share the file.
+     *
+     * @param fileData The file data as byte array.
+     */
+    fun onFileDataReceived(fileData: ByteArray)
 
     /**
      * Is called when the app sends a text to share.
@@ -196,6 +204,10 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
     override fun onCustomSchemeError(context: Context?, scheme: String) {}
     override fun onImageDataReceived(bitmap: Bitmap) {
         appModel.showShareSheet(bitmap)
+    }
+
+    override fun onFileDataReceived(fileData: ByteArray) {
+        appModel.showShareSheet(fileData)
     }
 
     override fun onShareTextReceived(text: String, title: String) {

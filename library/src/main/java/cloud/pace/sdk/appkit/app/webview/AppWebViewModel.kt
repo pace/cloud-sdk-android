@@ -14,6 +14,8 @@ import cloud.pace.sdk.R
 import cloud.pace.sdk.api.utils.RequestUtils
 import cloud.pace.sdk.appkit.communication.AppEventManager
 import cloud.pace.sdk.appkit.communication.AppModel
+import cloud.pace.sdk.appkit.communication.AppModelImpl.Companion.PDF_EXTENSION
+import cloud.pace.sdk.appkit.communication.AppModelImpl.Companion.PNG_EXTENSION
 import cloud.pace.sdk.appkit.communication.InvalidTokenReason
 import cloud.pace.sdk.appkit.communication.LogoutResponse
 import cloud.pace.sdk.appkit.communication.generated.Communication
@@ -33,6 +35,7 @@ import cloud.pace.sdk.appkit.communication.generated.model.request.OpenURLInNewT
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetSecureDataRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetTOTPRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetUserPropertyRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.ShareFileRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.ShareTextRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.StartNavigationRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.VerifyLocationRequest
@@ -101,6 +104,8 @@ import cloud.pace.sdk.appkit.communication.generated.model.response.SetTOTPError
 import cloud.pace.sdk.appkit.communication.generated.model.response.SetTOTPResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.SetUserPropertyError
 import cloud.pace.sdk.appkit.communication.generated.model.response.SetUserPropertyResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.ShareFileError
+import cloud.pace.sdk.appkit.communication.generated.model.response.ShareFileResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.ShareTextError
 import cloud.pace.sdk.appkit.communication.generated.model.response.ShareTextResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.StartNavigationError
@@ -558,10 +563,12 @@ class AppWebViewModelImpl(
             ImageDataResult(ImageDataResult.Failure(ImageDataResult.Failure.StatusCode.RequestTimeout, ImageDataError("Timeout for imageData"))),
             ImageDataResult(ImageDataResult.Failure(ImageDataResult.Failure.StatusCode.InternalServerError, ImageDataError("An error occurred")))
         ) {
-            val decodedString = Base64.decode(imageDataRequest.image, Base64.DEFAULT)
-            val bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
-            appModel.onImageDataReceived(bitmap)
-            ImageDataResult(ImageDataResult.Success())
+            val successful = handleImageData(imageDataRequest.image)
+            if (successful) {
+                ImageDataResult(ImageDataResult.Success())
+            } else {
+                ImageDataResult(ImageDataResult.Failure(ImageDataResult.Failure.StatusCode.BadRequest, ImageDataError("Could not decode shared Base64 string to bitmap")))
+            }
         }
     }
 
@@ -880,6 +887,53 @@ class AppWebViewModelImpl(
         ) {
             appModel.onNavigationRequestReceived(startNavigationRequest.lat, startNavigationRequest.lon, startNavigationRequest.name)
             StartNavigationResult(StartNavigationResult.Success())
+        }
+    }
+
+    override suspend fun shareFile(timeout: Long?, shareFileRequest: ShareFileRequest): ShareFileResult {
+        return handle(
+            timeout,
+            ShareFileResult(ShareFileResult.Failure(ShareFileResult.Failure.StatusCode.RequestTimeout, ShareFileError("Timeout for shareFile"))),
+            ShareFileResult(ShareFileResult.Failure(ShareFileResult.Failure.StatusCode.InternalServerError, ShareFileError("An error occurred")))
+        ) {
+            when {
+                shareFileRequest.fileExtension.equals(PDF_EXTENSION, true) -> {
+                    try {
+                        val bytes = Base64.decode(shareFileRequest.payload, Base64.DEFAULT)
+                        appModel.onFileDataReceived(bytes)
+                        ShareFileResult(ShareFileResult.Success())
+                    } catch (e: Exception) {
+                        val message = "Could not decode shared Base64 string to pdf"
+                        Timber.e(e, message)
+                        ShareFileResult(ShareFileResult.Failure(ShareFileResult.Failure.StatusCode.BadRequest, ShareFileError(message)))
+                    }
+                }
+
+                shareFileRequest.fileExtension.equals(PNG_EXTENSION, true) -> {
+                    val successful = handleImageData(shareFileRequest.payload)
+                    if (successful) {
+                        ShareFileResult(ShareFileResult.Success())
+                    } else {
+                        ShareFileResult(ShareFileResult.Failure(ShareFileResult.Failure.StatusCode.BadRequest, ShareFileError("Could not decode shared Base64 string to bitmap")))
+                    }
+                }
+
+                else -> {
+                    ShareFileResult(ShareFileResult.Failure(ShareFileResult.Failure.StatusCode.MethodNotAllowed, ShareFileError("Unsupported file extension: ${shareFileRequest.fileExtension}")))
+                }
+            }
+        }
+    }
+
+    private fun handleImageData(image: String): Boolean {
+        return try {
+            val decodedString = Base64.decode(image, Base64.DEFAULT)
+            val bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+            appModel.onImageDataReceived(bitmap)
+            true
+        } catch (e: Exception) {
+            Timber.e(e, "Could not decode shared Base64 string to bitmap")
+            false
         }
     }
 
