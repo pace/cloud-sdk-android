@@ -53,6 +53,7 @@
     <string name="common_start_navigation">Start navigation</string>
     <string name="common_use_accept">Acceptere</string>
     <string name="common_use_are_you_sure">Er du sikker?</string>
+    <string name="common_use_attention">Opmærksomhed</string>
     <string name="common_use_back">Tilbage</string>
     <string name="common_use_cancel">Annuller</string>
     <string name="common_use_close">Luk</string>
@@ -81,6 +82,7 @@
     <string name="firebase_notification_channel_name">Nyheder</string>
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Benzin</string>
+    <string name="fueling_legal_warning_description">National lovgivning forbyder brug af smartphones på forpladsen. Sørg for, at du kun bruger din telefon i din bil.</string>
     <string name="fueling_tab_label">Påfyldning af brændstof</string>
     <string name="gas_station_closed_hint">Tankstationen er i øjeblikket lukket.</string>
     <string name="gas_station_closes_soon_hint">Tankstationen lukker kl. %s</string>

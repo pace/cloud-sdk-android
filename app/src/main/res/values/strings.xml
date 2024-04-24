@@ -53,6 +53,7 @@
     <string name="common_start_navigation">Start navigation</string>
     <string name="common_use_accept">Accept</string>
     <string name="common_use_are_you_sure">Are you sure?</string>
+    <string name="common_use_attention">Attention</string>
     <string name="common_use_back">Back</string>
     <string name="common_use_cancel">Cancel</string>
     <string name="common_use_close">Close</string>
@@ -81,6 +82,7 @@
     <string name="firebase_notification_channel_name">News</string>
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Petrol</string>
+    <string name="fueling_legal_warning_description">National law prohibits the use of smartphones on the forecourt. Please ensure that you only use your phone in your vehicle.</string>
     <string name="fueling_tab_label">Fueling</string>
     <string name="gas_station_closed_hint">The gas station is currently closed.</string>
     <string name="gas_station_closes_soon_hint">Petrol station closes at %s</string>

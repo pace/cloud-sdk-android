@@ -14,6 +14,7 @@ import car.pace.cofu.util.IntentUtils
 import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.UiState.Loading.toUiState
+import car.pace.cofu.util.extension.isInFrance
 import car.pace.cofu.util.extension.toLatLng
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.poikit.poi.GasStation
@@ -77,6 +78,8 @@ class DetailViewModel @Inject constructor(
             refresh.emit(Unit)
         }
     }
+
+    fun shouldShowLegalWarning(gasStation: GasStation): Boolean = gasStation.isInFrance()
 
     fun startFueling(context: Context, gasStation: GasStation) {
         LogAndBreadcrumb.i(LogAndBreadcrumb.DETAIL, "Start fueling")

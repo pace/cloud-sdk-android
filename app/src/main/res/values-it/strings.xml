@@ -53,6 +53,7 @@
     <string name="common_start_navigation">Inizia la navigazione</string>
     <string name="common_use_accept">Accettare</string>
     <string name="common_use_are_you_sure">Sei sicuro?</string>
+    <string name="common_use_attention">Attenzione</string>
     <string name="common_use_back">Indietro</string>
     <string name="common_use_cancel">Cancella</string>
     <string name="common_use_close">Chiudere</string>
@@ -81,6 +82,7 @@
     <string name="firebase_notification_channel_name">Notizie</string>
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Benzina</string>
+    <string name="fueling_legal_warning_description">La legge nazionale vieta l\'uso di smartphone sul piazzale. Vi preghiamo di utilizzare il telefono solo nel vostro veicolo.</string>
     <string name="fueling_tab_label">Rifornimento di carburante</string>
     <string name="gas_station_closed_hint">La stazione di servizio è attualmente chiusa.</string>
     <string name="gas_station_closes_soon_hint">La stazione di servizio chiude al %s</string>

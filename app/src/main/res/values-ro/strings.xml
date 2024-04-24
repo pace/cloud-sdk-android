@@ -53,6 +53,7 @@
     <string name="common_start_navigation">Începeți navigarea</string>
     <string name="common_use_accept">Accept</string>
     <string name="common_use_are_you_sure">Ești sigur?</string>
+    <string name="common_use_attention">Atenție</string>
     <string name="common_use_back">Înapoi</string>
     <string name="common_use_cancel">Anulează</string>
     <string name="common_use_close">Închideți</string>
@@ -81,6 +82,7 @@
     <string name="firebase_notification_channel_name">Știri</string>
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Benzină</string>
+    <string name="fueling_legal_warning_description">Legislația națională interzice utilizarea telefoanelor inteligente în zona de staționare. Vă rugăm să vă asigurați că vă folosiți telefonul doar în vehiculul dumneavoastră.</string>
     <string name="fueling_tab_label">Realimentare cu combustibil</string>
     <string name="gas_station_closed_hint">Benzinăria este în prezent închisă.</string>
     <string name="gas_station_closes_soon_hint">Benzinăria se închide la %s</string>

@@ -53,6 +53,7 @@
     <string name="common_start_navigation">Начать навигацию</string>
     <string name="common_use_accept">Принимать</string>
     <string name="common_use_are_you_sure">Вы уверены?</string>
+    <string name="common_use_attention">Внимание</string>
     <string name="common_use_back">Назад</string>
     <string name="common_use_cancel">Отмена</string>
     <string name="common_use_close">Закрыть</string>
@@ -81,6 +82,7 @@
     <string name="firebase_notification_channel_name">Новости</string>
     <string name="fuel_group_diesel">Дизель</string>
     <string name="fuel_group_petrol">Бензин</string>
+    <string name="fueling_legal_warning_description">Национальное законодательство запрещает использование смартфонов на территории автосалона. Пожалуйста, убедитесь, что вы пользуетесь телефоном только в своем автомобиле.</string>
     <string name="fueling_tab_label">Заправка</string>
     <string name="gas_station_closed_hint">В настоящее время автозаправочная станция закрыта.</string>
     <string name="gas_station_closes_soon_hint">Заправочная станция закрывается в %s</string>
