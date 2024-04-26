@@ -34,9 +34,7 @@ import kotlinx.coroutines.launch
 import net.openid.appauth.AuthorizationException
 import timber.log.Timber
 import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
+import java.util.Date
 
 interface AppModel {
 
@@ -58,12 +56,14 @@ interface AppModel {
     fun disable(host: String)
     fun getAccessToken(reason: InvalidTokenReason, oldToken: String?, onResult: (Completion<GetAccessTokenResponse>) -> Unit)
     fun showShareSheet(bitmap: Bitmap)
+    fun showShareSheet(fileData: ByteArray)
     fun showShareSheet(text: String, title: String)
     fun startNavigation(lat: Double, lon: Double)
     fun onLogin(context: Context, result: Completion<String?>)
     fun onLogout(onResult: (LogoutResponse) -> Unit)
     fun onCustomSchemeError(context: Context?, scheme: String)
     fun onImageDataReceived(bitmap: Bitmap)
+    fun onFileDataReceived(fileData: ByteArray)
     fun onShareTextReceived(text: String, title: String)
     fun setUserProperty(key: String, value: String, update: Boolean)
     fun logEvent(key: String, parameters: Map<String, Any>)
@@ -196,43 +196,34 @@ class AppModelImpl(
     override fun showShareSheet(bitmap: Bitmap) {
         try {
             // Save bitmap to cache directory
-            val cachePath = File(context.cacheDir, IMAGES_DIRECTORY_NAME)
+            val cachePath = File(context.cacheDir, SHARED_DIRECTORY_NAME)
             cachePath.mkdirs()
 
-            val receipt = File(cachePath, RECEIPT_FILENAME)
-            val stream = FileOutputStream(receipt) // overwrites this image every time
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-            stream.flush()
-            stream.close()
-
-            // Open share sheet
-            val contentUri = FileProvider.getUriForFile(context, "${context.packageName}.pace_cloud_sdk_file_provider", receipt)
-            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                putExtra(Intent.EXTRA_STREAM, contentUri)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                type = context.contentResolver.getType(contentUri)
+            val timestamp = Date().time
+            val receipt = File(cachePath, "${RECEIPT_FILENAME}_$timestamp.$PNG_EXTENSION")
+            receipt.outputStream().use {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
             }
 
-            val chooserIntent = createChooser(shareIntent, null)
-            chooserIntent.addFlags(FLAG_ACTIVITY_NEW_TASK)
-
-            val resInfoList = context.packageManager.queryIntentActivities(chooserIntent, PackageManager.MATCH_DEFAULT_ONLY)
-            resInfoList.forEach {
-                val packageName = it.activityInfo.packageName
-                context.grantUriPermission(packageName, contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
-
-            startActivity(context, chooserIntent, null)
-        } catch (e: FileNotFoundException) {
-            Timber.w(e, "Could not create FileOutputStream to write the receipt file")
-        } catch (e: IOException) {
-            Timber.w(e, "Could not create or save the receipt bitmap")
-        } catch (e: IllegalArgumentException) {
-            Timber.w(e, "The receipt file is outside the paths supported by the FileProvider")
-        } catch (e: ActivityNotFoundException) {
-            Timber.i(e, "No Activity found to execute the share intent")
+            shareFile(receipt)
         } catch (e: Exception) {
-            Timber.w(e, "Could not create, save or share the receipt bitmap")
+            Timber.e(e, "Could not write png file")
+        }
+    }
+
+    override fun showShareSheet(fileData: ByteArray) {
+        try {
+            // Save pdf to cache directory
+            val cachePath = File(context.cacheDir, SHARED_DIRECTORY_NAME)
+            cachePath.mkdirs()
+
+            val timestamp = Date().time
+            val receipt = File(cachePath, "${RECEIPT_FILENAME}_$timestamp.$PDF_EXTENSION")
+            receipt.writeBytes(fileData)
+
+            shareFile(receipt)
+        } catch (e: Exception) {
+            Timber.e(e, "Could not write pdf file")
         }
     }
 
@@ -255,6 +246,33 @@ class AppModelImpl(
             Timber.i(e, "No Activity found to execute the share intent of the text $text with title $title")
         } catch (e: Exception) {
             Timber.w(e, "Could not share the text $text with title $title")
+        }
+    }
+
+    private fun shareFile(file: File) {
+        try {
+            // Open share sheet
+            val contentUri = FileProvider.getUriForFile(context, "${context.packageName}.pace_cloud_sdk_file_provider", file)
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                putExtra(Intent.EXTRA_STREAM, contentUri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                type = context.contentResolver.getType(contentUri)
+            }
+
+            val chooserIntent = createChooser(shareIntent, null)
+            chooserIntent.addFlags(FLAG_ACTIVITY_NEW_TASK)
+
+            val resInfoList = context.packageManager.queryIntentActivities(chooserIntent, PackageManager.MATCH_DEFAULT_ONLY)
+            resInfoList.forEach {
+                val packageName = it.activityInfo.packageName
+                context.grantUriPermission(packageName, contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            startActivity(context, chooserIntent, null)
+        } catch (e: IllegalArgumentException) {
+            Timber.w(e, "The file ${file.absolutePath} is outside the paths supported by the FileProvider")
+        } catch (e: ActivityNotFoundException) {
+            Timber.i(e, "No Activity found to execute the share intent")
         }
     }
 
@@ -299,6 +317,12 @@ class AppModelImpl(
     override fun onImageDataReceived(bitmap: Bitmap) {
         coroutineScope.launch {
             callback?.onImageDataReceived(bitmap)
+        }
+    }
+
+    override fun onFileDataReceived(fileData: ByteArray) {
+        coroutineScope.launch {
+            callback?.onFileDataReceived(fileData)
         }
     }
 
@@ -363,7 +387,9 @@ class AppModelImpl(
     }
 
     companion object {
-        private const val IMAGES_DIRECTORY_NAME = "images"
-        private const val RECEIPT_FILENAME = "receipt.png"
+        private const val SHARED_DIRECTORY_NAME = "shared"
+        private const val RECEIPT_FILENAME = "receipt"
+        const val PNG_EXTENSION = "png"
+        const val PDF_EXTENSION = "pdf"
     }
 }
