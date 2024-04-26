@@ -53,6 +53,7 @@
     <string name="common_start_navigation">Spuštění navigace</string>
     <string name="common_use_accept">Akceptovat</string>
     <string name="common_use_are_you_sure">Jste si jistý?</string>
+    <string name="common_use_attention">Pozor</string>
     <string name="common_use_back">Zpět</string>
     <string name="common_use_cancel">Zrušit</string>
     <string name="common_use_close">Zavřít</string>
@@ -81,6 +82,7 @@
     <string name="firebase_notification_channel_name">Zprávy</string>
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Benzín</string>
+    <string name="fueling_legal_warning_description">Vnitrostátní zákony zakazují používání chytrých telefonů na parkovišti. Dbejte na to, abyste telefon používali pouze ve vozidle.</string>
     <string name="fueling_tab_label">Doplňování paliva</string>
     <string name="gas_station_closed_hint">Čerpací stanice je v současné době uzavřena.</string>
     <string name="gas_station_closes_soon_hint">Čerpací stanice se zavírá v %s</string>

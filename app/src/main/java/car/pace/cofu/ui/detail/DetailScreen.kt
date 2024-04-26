@@ -51,6 +51,7 @@ import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
 import car.pace.cofu.ui.component.Description
 import car.pace.cofu.ui.component.ErrorCard
+import car.pace.cofu.ui.component.FuelingLegalWarningDialog
 import car.pace.cofu.ui.component.LoadingCard
 import car.pace.cofu.ui.component.LoadingMap
 import car.pace.cofu.ui.component.MarkerAnchor
@@ -109,6 +110,7 @@ fun DetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val userLocation by viewModel.userLocation.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    var showLegalWarning by remember { mutableStateOf<GasStation?>(null) }
 
     DetailScreenContent(
         uiState = uiState,
@@ -116,12 +118,29 @@ fun DetailScreen(
         onNavigateUp = onNavigateUp,
         onRefresh = viewModel::refresh,
         onStartFueling = {
-            viewModel.startFueling(context, it)
+            if (viewModel.shouldShowLegalWarning(it)) {
+                showLegalWarning = it
+            } else {
+                viewModel.startFueling(context, it)
+            }
         },
         onStartNavigation = {
             viewModel.startNavigation(context, it)
         }
     )
+
+    val legalWarningStation = showLegalWarning
+    if (legalWarningStation != null) {
+        FuelingLegalWarningDialog(
+            onConfirm = {
+                showLegalWarning = null
+                viewModel.startFueling(context, legalWarningStation)
+            },
+            onDismiss = {
+                showLegalWarning = null
+            }
+        )
+    }
 }
 
 @Composable

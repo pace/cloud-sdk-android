@@ -53,6 +53,7 @@
     <string name="common_start_navigation">Rozpocznij nawigację</string>
     <string name="common_use_accept">Zaakceptować</string>
     <string name="common_use_are_you_sure">Jesteś pewien?</string>
+    <string name="common_use_attention">Uwaga</string>
     <string name="common_use_back">Powrót</string>
     <string name="common_use_cancel">Anuluj</string>
     <string name="common_use_close">Zamknij</string>
@@ -81,6 +82,7 @@
     <string name="firebase_notification_channel_name">Aktualności</string>
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Benzyna</string>
+    <string name="fueling_legal_warning_description">Prawo krajowe zabrania używania smartfonów na terenie parkingu. Z telefonu należy korzystać wyłącznie w pojeździe.</string>
     <string name="fueling_tab_label">Tankowanie</string>
     <string name="gas_station_closed_hint">Stacja benzynowa jest obecnie zamknięta.</string>
     <string name="gas_station_closes_soon_hint">Stacja benzynowa zostanie zamknięta o %s</string>

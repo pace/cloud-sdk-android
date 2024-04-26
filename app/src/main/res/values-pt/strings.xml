@@ -53,6 +53,7 @@
     <string name="common_start_navigation">Iniciar navegação</string>
     <string name="common_use_accept">Aceitar</string>
     <string name="common_use_are_you_sure">Tens a certeza?</string>
+    <string name="common_use_attention">Atenção</string>
     <string name="common_use_back">Voltar</string>
     <string name="common_use_cancel">Cancelar</string>
     <string name="common_use_close">Fechar</string>
@@ -81,6 +82,7 @@
     <string name="firebase_notification_channel_name">Notícias</string>
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Gasolina</string>
+    <string name="fueling_legal_warning_description">A legislação nacional proíbe a utilização de telemóveis no pátio. Por favor, certifique-se de que utiliza o seu telemóvel apenas no seu veículo.</string>
     <string name="fueling_tab_label">Reabastecimento</string>
     <string name="gas_station_closed_hint">A estação de serviço está actualmente encerrada.</string>
     <string name="gas_station_closes_soon_hint">A bomba de gasolina fecha a %s</string>

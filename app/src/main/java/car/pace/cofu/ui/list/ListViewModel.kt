@@ -17,6 +17,7 @@ import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
 import car.pace.cofu.util.IntentUtils
 import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
+import car.pace.cofu.util.extension.isInFrance
 import car.pace.cofu.util.extension.userIsNearStation
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.poikit.poi.GasStation
@@ -99,6 +100,8 @@ class ListViewModel @Inject constructor(
         analytics.logEvent(FuelingStarted)
         AppKit.openFuelingApp(context = context, id = gasStation.id, callback = analytics.TrackingAppCallback())
     }
+
+    fun shouldShowLegalWarning(gasStation: GasStation): Boolean = gasStation.isInFrance()
 
     fun startNavigation(context: Context, gasStation: GasStation) {
         LogAndBreadcrumb.i(LogAndBreadcrumb.LIST, "Start navigation to gas station")

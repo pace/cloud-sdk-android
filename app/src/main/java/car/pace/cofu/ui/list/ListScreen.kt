@@ -20,8 +20,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -37,6 +39,7 @@ import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
 import car.pace.cofu.ui.component.Description
 import car.pace.cofu.ui.component.ErrorCard
+import car.pace.cofu.ui.component.FuelingLegalWarningDialog
 import car.pace.cofu.ui.component.LoadingCard
 import car.pace.cofu.ui.component.LogoTopBar
 import car.pace.cofu.ui.component.PrimaryButton
@@ -83,6 +86,7 @@ fun ListScreen(
         onLocationEnabledChanged = viewModel::onLocationEnabledChanged,
         onLocationPermissionChanged = viewModel::onLocationPermissionChanged
     )
+    var showLegalWarning by remember { mutableStateOf<GasStation?>(null) }
 
     ListScreenContent(
         uiState = uiState,
@@ -92,12 +96,29 @@ fun ListScreen(
         onRequestPermission = locationState::launchMultiplePermissionRequest,
         onRequestLocationServices = locationState::launchLocationServicesRequest,
         onStartFueling = {
-            viewModel.startFueling(context, it)
+            if (viewModel.shouldShowLegalWarning(it)) {
+                showLegalWarning = it
+            } else {
+                viewModel.startFueling(context, it)
+            }
         },
         onStartNavigation = {
             viewModel.startNavigation(context, it)
         }
     )
+
+    val legalWarningStation = showLegalWarning
+    if (legalWarningStation != null) {
+        FuelingLegalWarningDialog(
+            onConfirm = {
+                showLegalWarning = null
+                viewModel.startFueling(context, legalWarningStation)
+            },
+            onDismiss = {
+                showLegalWarning = null
+            }
+        )
+    }
 }
 
 @Composable

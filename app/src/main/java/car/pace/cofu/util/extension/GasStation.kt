@@ -122,6 +122,10 @@ fun GasStation.formatPrice(fuelTypeGroup: FuelTypeGroup): String? {
     return price?.formatPrice(priceFormat = priceFormat, currency = currency)
 }
 
+fun GasStation.isInFrance(): Boolean {
+    return address?.countryCode?.equals("FR", true) == true
+}
+
 @Composable
 fun Price.formatPrice(
     priceFormat: String?,

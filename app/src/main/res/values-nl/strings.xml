@@ -53,6 +53,7 @@
     <string name="common_start_navigation">Start navigatie</string>
     <string name="common_use_accept">Aanvaarden</string>
     <string name="common_use_are_you_sure">Weet je het zeker?</string>
+    <string name="common_use_attention">Attentie</string>
     <string name="common_use_back">Terug</string>
     <string name="common_use_cancel">Annuleren</string>
     <string name="common_use_close">Sluit</string>
@@ -81,6 +82,7 @@
     <string name="firebase_notification_channel_name">Nieuws</string>
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Benzine</string>
+    <string name="fueling_legal_warning_description">De nationale wetgeving verbiedt het gebruik van smartphones op het voorplein. Zorg ervoor dat u uw telefoon alleen in uw voertuig gebruikt.</string>
     <string name="fueling_tab_label">Bijtanken</string>
     <string name="gas_station_closed_hint">Het tankstation is momenteel gesloten.</string>
     <string name="gas_station_closes_soon_hint">Tankstation sluit om %s</string>

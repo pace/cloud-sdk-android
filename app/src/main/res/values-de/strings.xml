@@ -53,6 +53,7 @@
     <string name="common_start_navigation">Navigation starten</string>
     <string name="common_use_accept">Zustimmen</string>
     <string name="common_use_are_you_sure">Bist du sicher?</string>
+    <string name="common_use_attention">Achtung</string>
     <string name="common_use_back">Zurück</string>
     <string name="common_use_cancel">Abbrechen</string>
     <string name="common_use_close">Schließen</string>
@@ -81,6 +82,7 @@
     <string name="firebase_notification_channel_name">Neuigkeiten</string>
     <string name="fuel_group_diesel">Diesel</string>
     <string name="fuel_group_petrol">Benzin</string>
+    <string name="fueling_legal_warning_description">Das nationale Gesetz verbietet die Nutzung des Smartphones auf dem Vorplatz. Bitte stelle sicher, dass du das Telefon nur in deinem Fahrzeug benutzt.</string>
     <string name="fueling_tab_label">Tanken</string>
     <string name="gas_station_closed_hint">Die Tankstelle ist aktuell geschlossen.</string>
     <string name="gas_station_closes_soon_hint">Tankstelle schließt um %s Uhr</string>
