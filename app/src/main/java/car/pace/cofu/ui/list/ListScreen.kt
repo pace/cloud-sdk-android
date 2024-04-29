@@ -37,6 +37,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import car.pace.cofu.BuildConfig
 import car.pace.cofu.R
+import car.pace.cofu.data.location.rememberLocationState
 import car.pace.cofu.ui.component.Description
 import car.pace.cofu.ui.component.ErrorCard
 import car.pace.cofu.ui.component.FuelingLegalWarningDialog
@@ -48,7 +49,6 @@ import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.component.dropShadow
 import car.pace.cofu.ui.detail.ClosedHint
 import car.pace.cofu.ui.detail.DistanceLabel
-import car.pace.cofu.ui.location.rememberLocationState
 import car.pace.cofu.ui.onboarding.twofactor.biometric.findActivity
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.ui.theme.Success

@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.PaymentMethodRepository
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_PAYMENT_METHOD_MANAGEMENT_AVAILABLE
-import car.pace.cofu.features.analytics.Analytics
+import car.pace.cofu.data.analytics.Analytics
 import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.UiState.Loading.toUiState

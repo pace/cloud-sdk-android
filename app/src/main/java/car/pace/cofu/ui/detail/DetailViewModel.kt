@@ -5,10 +5,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.GasStationRepository
-import car.pace.cofu.data.LocationRepository
-import car.pace.cofu.features.analytics.Analytics
-import car.pace.cofu.features.analytics.FuelingStarted
-import car.pace.cofu.features.analytics.StationNavigationUsed
+import car.pace.cofu.data.analytics.Analytics
+import car.pace.cofu.data.analytics.FuelingStarted
+import car.pace.cofu.data.analytics.StationNavigationUsed
+import car.pace.cofu.data.location.LocationRepository
 import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
 import car.pace.cofu.util.IntentUtils
 import car.pace.cofu.util.LogAndBreadcrumb

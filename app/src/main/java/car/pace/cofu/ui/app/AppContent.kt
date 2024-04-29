@@ -16,10 +16,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import car.pace.cofu.ui.AppNavHost
+import car.pace.cofu.ui.Graph
+import car.pace.cofu.ui.bottomBarGraphs
 import car.pace.cofu.ui.component.BottomBar
-import car.pace.cofu.ui.navigation.AppNavHost
-import car.pace.cofu.ui.navigation.graph.Graph
-import car.pace.cofu.ui.navigation.graph.bottomBarGraphs
 import car.pace.cofu.ui.onboarding.twofactor.biometric.findActivity
 import car.pace.cofu.ui.theme.AppTheme
 import kotlinx.coroutines.launch

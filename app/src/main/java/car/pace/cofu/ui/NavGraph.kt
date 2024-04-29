@@ -1,4 +1,4 @@
-package car.pace.cofu.ui.navigation.graph
+package car.pace.cofu.ui
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope

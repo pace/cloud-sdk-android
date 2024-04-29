@@ -6,7 +6,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.hilt.navigation.compose.hiltViewModel
-import car.pace.cofu.ui.navigation.graph.Route
+import car.pace.cofu.ui.Route
 import car.pace.cofu.ui.onboarding.authentication.AuthenticationPage
 import car.pace.cofu.ui.onboarding.fueltype.FuelTypePage
 import car.pace.cofu.ui.onboarding.legal.LegalPage

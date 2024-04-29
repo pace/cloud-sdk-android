@@ -1,4 +1,4 @@
-package car.pace.cofu.data
+package car.pace.cofu.data.location
 
 import car.pace.cofu.di.coroutine.ApplicationScope
 import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS

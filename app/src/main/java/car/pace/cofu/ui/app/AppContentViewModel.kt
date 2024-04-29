@@ -9,7 +9,7 @@ import car.pace.cofu.data.PermissionRepository
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_ONBOARDING_DONE
 import car.pace.cofu.data.UserRepository
-import car.pace.cofu.ui.navigation.graph.Graph
+import car.pace.cofu.ui.Graph
 import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
 import car.pace.cofu.util.LogAndBreadcrumb
 import cloud.pace.sdk.idkit.model.InvalidSession

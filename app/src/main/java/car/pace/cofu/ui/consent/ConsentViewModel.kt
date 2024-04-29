@@ -8,7 +8,7 @@ import car.pace.cofu.data.LegalRepository
 import car.pace.cofu.data.PermissionRepository
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_NOTIFICATION_PERMISSION_REQUESTED
-import car.pace.cofu.features.analytics.Analytics
+import car.pace.cofu.data.analytics.Analytics
 import car.pace.cofu.util.LogAndBreadcrumb
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

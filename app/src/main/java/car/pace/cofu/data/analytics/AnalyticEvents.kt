@@ -4,7 +4,7 @@
 //
 // Please do not edit!
 //
-package car.pace.cofu.features.analytics
+package car.pace.cofu.data.analytics
 
 import android.os.Bundle
 import androidx.core.os.bundleOf

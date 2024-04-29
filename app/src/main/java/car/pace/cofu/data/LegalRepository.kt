@@ -1,7 +1,7 @@
 package car.pace.cofu.data
 
 import android.content.Context
-import car.pace.cofu.features.analytics.Analytics
+import car.pace.cofu.data.analytics.Analytics
 import car.pace.cofu.ui.consent.Consent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Locale

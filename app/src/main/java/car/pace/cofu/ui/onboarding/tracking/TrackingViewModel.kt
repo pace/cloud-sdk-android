@@ -3,7 +3,7 @@ package car.pace.cofu.ui.onboarding.tracking
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.LegalRepository
-import car.pace.cofu.features.analytics.Analytics
+import car.pace.cofu.data.analytics.Analytics
 import car.pace.cofu.ui.consent.Consent
 import car.pace.cofu.util.Constants
 import car.pace.cofu.util.LogAndBreadcrumb

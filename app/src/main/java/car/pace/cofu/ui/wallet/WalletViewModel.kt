@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import car.pace.cofu.BuildConfig
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.UserRepository
-import car.pace.cofu.ui.navigation.graph.Route
+import car.pace.cofu.ui.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

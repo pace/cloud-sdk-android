@@ -2,7 +2,7 @@ package car.pace.cofu.ui.onboarding.paymentmethod
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
-import car.pace.cofu.features.analytics.Analytics
+import car.pace.cofu.data.analytics.Analytics
 import cloud.pace.sdk.appkit.AppKit
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
