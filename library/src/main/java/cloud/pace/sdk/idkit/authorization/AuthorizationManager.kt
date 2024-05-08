@@ -101,10 +101,12 @@ internal class AuthorizationManager(
                     Timber.e(exception, "Failed to discover configuration")
                     completion(Failure(exception))
                 }
+
                 configuration != null -> {
                     Timber.i("Configuration discovery successful")
                     completion(Success(ServiceConfiguration(configuration.authorizationEndpoint, configuration.tokenEndpoint, configuration.endSessionEndpoint, configuration.registrationEndpoint)))
                 }
+
                 else -> {
                     val throwable = FailedRetrievingConfigurationWhileDiscovering
                     Timber.w(throwable, "Failed to discover configuration")
@@ -183,6 +185,7 @@ internal class AuthorizationManager(
                     }
                 }
             } ?: Failure(InternalError)
+
             is Canceled -> Failure(OperationCanceled)
         }
     }
@@ -197,10 +200,12 @@ internal class AuthorizationManager(
                 Timber.e(exception, "Failed to handle authorization response")
                 completion(Failure(exception))
             }
+
             response != null -> {
                 sessionHolder.session?.update(response, exception)
                 performTokenRequest(response.createTokenExchangeRequest(), completion)
             }
+
             else -> {
                 val throwable = FailedRetrievingSessionWhileAuthorizing
                 Timber.w(throwable, "Failed to handle authorization response")
@@ -294,6 +299,7 @@ internal class AuthorizationManager(
                     }
                 }
             } ?: Failure(InternalError)
+
             is Canceled -> Failure(OperationCanceled)
         }
     }
@@ -307,11 +313,13 @@ internal class AuthorizationManager(
                 Timber.e(exception, "Failed to handle end session response")
                 completion(Failure(exception))
             }
+
             response != null -> {
                 API.addAuthorizationHeader(null)
                 sessionHolder.clearSessionAndPreferences()
                 completion(Success(Unit))
             }
+
             else -> {
                 val throwable = FailedRetrievingSessionWhileEnding
                 Timber.w(throwable, "Failed to handle end session response")
@@ -344,6 +352,7 @@ internal class AuthorizationManager(
         authorizationRequest = AuthorizationRequest.Builder(serviceConfiguration, clientId, configuration.responseType, Uri.parse(configuration.redirectUri))
             .setScopes(configuration.scopes?.plus("openid") ?: listOf("openid")) // Make sure that 'openid' is passed as scope so that the idToken for the end session request is returned
             .setAdditionalParameters(configuration.additionalParameters)
+            .setPrompt(AuthorizationRequest.Prompt.LOGIN)
             .build()
     }
 
@@ -390,12 +399,14 @@ internal class AuthorizationManager(
                 Timber.e(exception, "Failed to handle token response")
                 completion(Failure(exception))
             }
+
             tokenResponse != null -> {
                 val accessToken = sessionHolder.cachedToken()
                 accessToken?.let { API.addAuthorizationHeader(it) }
                 completion(Success(accessToken))
                 Timber.i("Token refresh successful")
             }
+
             else -> {
                 val throwable = FailedRetrievingSessionWhileAuthorizing
                 Timber.w(throwable, "Failed to handle token response")
