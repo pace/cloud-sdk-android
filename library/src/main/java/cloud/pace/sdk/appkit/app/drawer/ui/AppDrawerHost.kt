@@ -12,23 +12,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import cloud.pace.sdk.R
-import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.AppKit.defaultAppCallback
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
+import cloud.pace.sdk.appkit.model.App
 import cloud.pace.sdk.ui.theme.PACETheme
 import cloud.pace.sdk.utils.KoinConfig
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.LocalKoinApplication
 import org.koin.compose.LocalKoinScope
 import org.koin.core.annotation.KoinInternalApi
-import timber.log.Timber
 
 @Composable
 fun AppDrawerHost(
@@ -46,7 +43,10 @@ fun AppDrawerHost(
 @Composable
 fun AppDrawerHost(
     modifier: Modifier = Modifier,
-    callback: AppCallbackImpl = defaultAppCallback
+    callback: AppCallbackImpl = defaultAppCallback,
+    appDrawer: @Composable (app: App, appCount: Int) -> Unit = { app, appCount ->
+        AppDrawer(app, appCount, callback)
+    }
 ) {
     PACETheme {
         CompositionLocalProvider(
@@ -54,7 +54,6 @@ fun AppDrawerHost(
             LocalKoinScope provides KoinConfig.cloudSDKKoinApp.koin.scopeRegistry.rootScope
         ) {
             val viewModel = koinViewModel<AppDrawerViewModel>()
-            val context = LocalContext.current
 
             BoxWithConstraints(
                 modifier = modifier,
@@ -78,18 +77,7 @@ fun AppDrawerHost(
                     val maxApps = apps.take(size)
 
                     maxApps.forEach {
-                        AppDrawer(
-                            iconUrl = it.iconUrl,
-                            caption = it.description,
-                            distance = if (apps.size > 1) it.distance else null,
-                            headline = it.name,
-                            iconBackgroundColor = it.iconBackgroundColor.toColorOrNull(),
-                            backgroundColor = it.textBackgroundColor.toColorOrNull(),
-                            textColor = it.textColor.toColorOrNull(),
-                            onClick = {
-                                AppKit.openAppActivity(context = context, app = it, callback = callback)
-                            }
-                        )
+                        appDrawer(it, maxApps.size)
                     }
 
                     LaunchedEffect(maxApps, callback) {
@@ -98,17 +86,5 @@ fun AppDrawerHost(
                 }
             }
         }
-    }
-}
-
-private fun String?.toColorOrNull(): Color? {
-    this ?: return null
-
-    return try {
-        val colorInt = android.graphics.Color.parseColor(this)
-        Color(colorInt)
-    } catch (e: Exception) {
-        Timber.e(e, "Could not parse $this to color")
-        null
     }
 }

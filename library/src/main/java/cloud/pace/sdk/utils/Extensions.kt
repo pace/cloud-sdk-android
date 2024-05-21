@@ -2,7 +2,9 @@ package cloud.pace.sdk.utils
 
 import android.content.res.Resources
 import android.util.TypedValue
+import androidx.compose.ui.graphics.Color
 import cloud.pace.sdk.PACECloudSDK
+import timber.log.Timber
 import java.security.SecureRandom
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -72,3 +74,15 @@ inline fun <reified T> Set<*>.asSetOfType(): Set<T>? =
         @Suppress("UNCHECKED_CAST")
         this as Set<T> else
         null
+
+fun String?.toColorOrNull(): Color? {
+    this ?: return null
+
+    return try {
+        val colorInt = android.graphics.Color.parseColor(this)
+        Color(colorInt)
+    } catch (e: Exception) {
+        Timber.e(e, "Could not parse $this to color")
+        null
+    }
+}

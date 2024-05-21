@@ -20,7 +20,6 @@ class CloudSDKApplication : Application() {
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),
                 apiKey = "YOUR_API_KEY",
                 environment = Environment.DEVELOPMENT,
-                geoAppsScope = "pace-drive-android",
                 oidConfiguration = CustomOIDConfiguration(redirectUri = "cloud-sdk-example://callback")
             )
         )
