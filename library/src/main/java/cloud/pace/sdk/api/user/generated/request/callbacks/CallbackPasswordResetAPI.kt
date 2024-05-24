@@ -35,33 +35,14 @@ user is deleted in order to prevent theft.
         @POST("callbacks/password-reset")
         fun callbackPasswordReset(
             @HeaderMap headers: Map<String, String>,
-            @retrofit2.http.Body body: Body
+            @retrofit2.http.Body body: UserPIN
         ): Call<ResponseBody>
-    }
-
-    /* During a password reset the user is only able to provide the HAVE
-    using the email address. In order to retain the user data the user
-    has to provide a second factor, either HAVE or KNOW.
-    The `prove` can be done with *PIN* (KNOW) or the *device OTP* (HAVE).
-    This callback is called before the password of the user is reset.
-    If the user is able to provide his/her `prove` correctly the data of
-    the user remain untouched. In case the `prove` is in correctly provided
-    for more than 3 times, the critical data e.g. payment data of the
-    user is deleted in order to prevent theft.
-    * `404` is returned in case the user has no `prove` defined.
-    * `410` is returned in case the `prove` didn't match multiple times,
-      the user data will be deleted for safety reasons.
-    * `422` is returned in case the the `prove` is incorrect.
-     */
-    class Body {
-
-        var data: UserPINBody? = null
     }
 
     open class Request : BaseRequest() {
 
         fun callbackPasswordReset(
-            body: Body,
+            body: UserPIN,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
@@ -78,7 +59,7 @@ user is deleted in order to prevent theft.
     }
 
     fun UserAPI.CallbacksAPI.callbackPasswordReset(
-        body: Body,
+        body: UserPIN,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null

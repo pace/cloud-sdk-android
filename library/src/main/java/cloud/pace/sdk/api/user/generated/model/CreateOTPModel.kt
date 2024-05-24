@@ -12,13 +12,10 @@ import java.util.Date
 class CreateOTP {
 
     var expiresAt: Date? = null
-
     /* one time password */
     var otp: String? = null
-
     /* user account password */
     var password: String? = null
-
     /* user account PIN */
     var pin: String? = null
 }

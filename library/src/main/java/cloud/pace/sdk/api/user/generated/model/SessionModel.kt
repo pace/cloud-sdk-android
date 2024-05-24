@@ -11,7 +11,6 @@ class Session {
 
     /* sets the login otp to true (passed) or false (not passed) */
     var passedLoginOTP: Boolean? = null
-
     /* The ID of the user that owns the session */
     var userId: String? = null
 }

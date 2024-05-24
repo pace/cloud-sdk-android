@@ -8,7 +8,7 @@ import cloud.pace.sdk.api.user.UserAPI.totp
 import cloud.pace.sdk.api.user.generated.model.CreateOTP
 import cloud.pace.sdk.api.user.generated.model.DeviceTOTPBody
 import cloud.pace.sdk.api.user.generated.model.PinOrPassword
-import cloud.pace.sdk.api.user.generated.model.UserPINBody
+import cloud.pace.sdk.api.user.generated.model.UserPINAndOTPBody
 import cloud.pace.sdk.api.user.generated.request.credentials.CheckUserPINAPI.checkUserPIN
 import cloud.pace.sdk.api.user.generated.request.credentials.CheckUserPasswordAPI.checkUserPassword
 import cloud.pace.sdk.api.user.generated.request.credentials.CheckUserPinOrPasswordAPI.checkUserPinOrPassword
@@ -288,10 +288,10 @@ internal class CredentialsManager(
     }
 
     private fun getUserPINBody(pin: String, otp: String) =
-        UserPINBody().apply {
+        UserPINAndOTPBody().apply {
             id = UUID.randomUUID().toString()
-            type = UserPINBody.Type.PIN
-            attributes = UserPINBody.Attributes().apply {
+            type = UserPINAndOTPBody.Type.PIN
+            attributes = UserPINAndOTPBody.Attributes().apply {
                 this.pin = pin
                 this.otp = otp
             }

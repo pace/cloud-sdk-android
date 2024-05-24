@@ -15,7 +15,8 @@ class Terms : Resource() {
 
     /* Location to the terms of service that need to be accepted */
     var acceptUrl: String? = null
-
+    /* Terms of service formatted as HTML */
+    var html: String? = null
     /* Terms of service formatted as markdown */
     var markdown: String? = null
     var version: Double? = null

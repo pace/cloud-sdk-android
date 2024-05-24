@@ -13,12 +13,10 @@ import java.util.Date
 class AuditLogRecord {
 
     var actionData: Map<String, Any>? = null
-
     /* Date the action happened */
     var actionDate: Date? = null
     var actionName: String? = null
     var resource: Resource? = null
-
     /* Name of the service this action was performed on, e.g., pay or fueling */
     var service: String? = null
 
