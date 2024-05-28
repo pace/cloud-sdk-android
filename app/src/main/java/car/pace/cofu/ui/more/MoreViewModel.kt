@@ -3,6 +3,7 @@ package car.pace.cofu.ui.more
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
+import car.pace.cofu.DataSource
 import car.pace.cofu.MenuEntries
 import car.pace.cofu.ui.Route
 import car.pace.cofu.util.BuildProvider
@@ -18,7 +19,7 @@ class MoreViewModel @Inject constructor() : ViewModel() {
         val route: Route,
         val icon: ImageVector?,
         @StringRes val labelRes: Int?,
-        @StringRes val urlRes: Int? = null
+        val dataSource: DataSource? = null
     )
 
     val items = buildList {
@@ -44,18 +45,18 @@ class MoreViewModel @Inject constructor() : ViewModel() {
 
         addAll(
             MenuEntries.entries.map {
-                Route.WEBSITE.toMoreItem(it.key, it.value)
+                Route.WEB_CONTENT.toMoreItem(it.key, it.value)
             }
         )
     }
 
     private fun Route.toMoreItem(
         @StringRes labelRes: Int? = null,
-        @StringRes urlRes: Int? = null
+        dataSource: DataSource? = null
     ) = MoreItem(
         route = this,
         icon = this.icon,
         labelRes = labelRes ?: this.labelRes,
-        urlRes = urlRes
+        dataSource = dataSource
     )
 }

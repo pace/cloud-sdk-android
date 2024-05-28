@@ -1,4 +1,4 @@
-package car.pace.cofu.ui.more.legal
+package car.pace.cofu.ui.more.document
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
@@ -15,15 +15,15 @@ import car.pace.cofu.ui.consent.Consent
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun LegalDocumentScreen(
-    viewModel: LegalDocumentViewModel = hiltViewModel(),
-    legalConsent: Consent.Legal,
+fun DocumentScreen(
+    viewModel: DocumentViewModel = hiltViewModel(),
+    document: Consent.Document,
     onNavigateUp: () -> Unit
 ) {
     Column {
         val context = LocalContext.current
         val url = remember {
-            viewModel.getUrl(legalConsent)
+            viewModel.getUrl(document)
         }
         val client = remember {
             viewModel.createClient(context)

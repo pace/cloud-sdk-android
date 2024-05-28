@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import car.pace.cofu.data.LegalRepository
+import car.pace.cofu.data.DocumentRepository
 import car.pace.cofu.data.PermissionRepository
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_NOTIFICATION_PERMISSION_REQUESTED
@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ConsentViewModel @Inject constructor(
     private val analytics: Analytics,
-    private val legalRepository: LegalRepository,
+    private val documentRepository: DocumentRepository,
     private val permissionRepository: PermissionRepository,
     private val sharedPreferencesRepository: SharedPreferencesRepository
 ) : ViewModel() {
@@ -24,7 +24,7 @@ class ConsentViewModel @Inject constructor(
     var pageIndex by mutableIntStateOf(0)
 
     private val pages = buildList {
-        addAll(legalRepository.getChangedDocuments())
+        addAll(documentRepository.getChangedDocuments())
 
         if (permissionRepository.canRequestNotificationPermission()) {
             add(Consent.Notification)
@@ -36,18 +36,18 @@ class ConsentViewModel @Inject constructor(
     fun getPage(index: Int) = pages.getOrNull(index)
 
     fun acceptTerms() {
-        legalRepository.saveHash(Consent.Legal.Terms)
+        documentRepository.saveHash(Consent.Document.Terms)
         pageIndex++
     }
 
     fun acceptPrivacy() {
-        legalRepository.saveHash(Consent.Legal.Privacy)
+        documentRepository.saveHash(Consent.Document.Privacy)
         pageIndex++
     }
 
     fun acceptTracking() {
         analytics.enableAnalyticsFeature(LogAndBreadcrumb.CONSENT, true)
-        legalRepository.saveHash(Consent.Legal.Tracking)
+        documentRepository.saveHash(Consent.Document.Tracking)
         pageIndex++
     }
 

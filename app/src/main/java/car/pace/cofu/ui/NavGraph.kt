@@ -3,6 +3,7 @@ package car.pace.cofu.ui
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
@@ -24,7 +25,7 @@ import car.pace.cofu.ui.detail.DetailScreen
 import car.pace.cofu.ui.list.ListScreen
 import car.pace.cofu.ui.map.MapScreen
 import car.pace.cofu.ui.more.MoreScreen
-import car.pace.cofu.ui.more.legal.LegalDocumentScreen
+import car.pace.cofu.ui.more.document.DocumentScreen
 import car.pace.cofu.ui.more.licenses.LicensesScreen
 import car.pace.cofu.ui.more.permissions.PermissionsScreen
 import car.pace.cofu.ui.more.tracking.TrackingScreen
@@ -58,8 +59,8 @@ fun NavGraphBuilder.onboardingGraph(
             enterTransition = { scaleIntoContainer() },
             popExitTransition = { scaleOutOfContainer() }
         ) {
-            LegalDocumentScreen(
-                legalConsent = Consent.Legal.Terms,
+            DocumentScreen(
+                document = Consent.Document.Terms,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -68,8 +69,8 @@ fun NavGraphBuilder.onboardingGraph(
             enterTransition = { scaleIntoContainer() },
             popExitTransition = { scaleOutOfContainer() }
         ) {
-            LegalDocumentScreen(
-                legalConsent = Consent.Legal.Privacy,
+            DocumentScreen(
+                document = Consent.Document.Privacy,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -78,8 +79,8 @@ fun NavGraphBuilder.onboardingGraph(
             enterTransition = { scaleIntoContainer() },
             popExitTransition = { scaleOutOfContainer() }
         ) {
-            LegalDocumentScreen(
-                legalConsent = Consent.Legal.Tracking,
+            DocumentScreen(
+                document = Consent.Document.Tracking,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -110,8 +111,8 @@ fun NavGraphBuilder.consentGraph(
             enterTransition = { scaleIntoContainer() },
             popExitTransition = { scaleOutOfContainer() }
         ) {
-            LegalDocumentScreen(
-                legalConsent = Consent.Legal.Terms,
+            DocumentScreen(
+                document = Consent.Document.Terms,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -120,8 +121,8 @@ fun NavGraphBuilder.consentGraph(
             enterTransition = { scaleIntoContainer() },
             popExitTransition = { scaleOutOfContainer() }
         ) {
-            LegalDocumentScreen(
-                legalConsent = Consent.Legal.Privacy,
+            DocumentScreen(
+                document = Consent.Document.Privacy,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -130,8 +131,8 @@ fun NavGraphBuilder.consentGraph(
             enterTransition = { scaleIntoContainer() },
             popExitTransition = { scaleOutOfContainer() }
         ) {
-            LegalDocumentScreen(
-                legalConsent = Consent.Legal.Tracking,
+            DocumentScreen(
+                document = Consent.Document.Tracking,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -228,7 +229,7 @@ fun NavGraphBuilder.walletGraph(
 }
 
 fun NavGraphBuilder.moreGraph(
-    onNavigate: (Route) -> Unit,
+    onNavigate: (String) -> Unit,
     onNavigateUp: () -> Unit
 ) {
     navigation(
@@ -241,32 +242,32 @@ fun NavGraphBuilder.moreGraph(
             )
         }
         childComposable(Route.TERMS.route) {
-            LegalDocumentScreen(
-                legalConsent = Consent.Legal.Terms,
+            DocumentScreen(
+                document = Consent.Document.Terms,
                 onNavigateUp = onNavigateUp
             )
         }
         childComposable(Route.PRIVACY.route) {
-            LegalDocumentScreen(
-                legalConsent = Consent.Legal.Privacy,
+            DocumentScreen(
+                document = Consent.Document.Privacy,
                 onNavigateUp = onNavigateUp
             )
         }
         childComposable(Route.TRACKING.route) {
             TrackingScreen(
-                onNavigate = onNavigate,
+                onNavigate = { onNavigate(it.route) },
                 onNavigateUp = onNavigateUp
             )
         }
         childComposable(Route.ANALYSIS.route) {
-            LegalDocumentScreen(
-                legalConsent = Consent.Legal.Tracking,
+            DocumentScreen(
+                document = Consent.Document.Tracking,
                 onNavigateUp = onNavigateUp
             )
         }
         childComposable(Route.IMPRINT.route) {
-            LegalDocumentScreen(
-                legalConsent = Consent.Legal.Imprint,
+            DocumentScreen(
+                document = Consent.Document.Imprint,
                 onNavigateUp = onNavigateUp
             )
         }
@@ -277,6 +278,23 @@ fun NavGraphBuilder.moreGraph(
         }
         childComposable(Route.PERMISSIONS.route) {
             PermissionsScreen(
+                onNavigateUp = onNavigateUp
+            )
+        }
+        childComposable(
+            route = "${Route.WEB_CONTENT.route}/{fileNameRes}",
+            arguments = listOf(
+                navArgument("fileNameRes") {
+                    type = NavType.ReferenceType
+                }
+            )
+        ) {
+            val fileNameRes = it.arguments?.getInt("fileNameRes") ?: return@childComposable
+            val context = LocalContext.current
+            val fileName = context.getString(fileNameRes)
+
+            DocumentScreen(
+                document = Consent.Document.Custom(fileName),
                 onNavigateUp = onNavigateUp
             )
         }

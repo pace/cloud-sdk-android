@@ -14,6 +14,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import car.pace.cofu.DataSource
 import car.pace.cofu.R
 import car.pace.cofu.ui.Route
 import car.pace.cofu.ui.component.DefaultListItem
@@ -25,7 +26,7 @@ import car.pace.cofu.util.IntentUtils
 @Composable
 fun MoreScreen(
     viewModel: MoreViewModel = hiltViewModel(),
-    onNavigate: (Route) -> Unit
+    onNavigate: (String) -> Unit
 ) {
     Column {
         TextTopBar(
@@ -48,11 +49,21 @@ fun MoreScreen(
                     modifier = Modifier.clickable(
                         role = Role.Button,
                         onClick = {
-                            if (it.route == Route.WEBSITE) {
-                                val url = it.urlRes?.let { url -> context.getString(url) }
-                                IntentUtils.launchInCustomTabIfAvailable(context, url)
+                            if (it.route == Route.WEB_CONTENT) {
+                                when (val dataSource = it.dataSource) {
+                                    is DataSource.Remote -> {
+                                        val url = context.getString(dataSource.urlRes)
+                                        IntentUtils.launchInCustomTabIfAvailable(context, url)
+                                    }
+
+                                    is DataSource.Local -> {
+                                        onNavigate("${Route.WEB_CONTENT.route}/${dataSource.fileNameRes}")
+                                    }
+
+                                    null -> return@clickable
+                                }
                             } else {
-                                onNavigate(it.route)
+                                onNavigate(it.route.route)
                             }
                         }
                     ),

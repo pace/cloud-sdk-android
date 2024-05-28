@@ -2,7 +2,7 @@ package car.pace.cofu.ui.onboarding.tracking
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import car.pace.cofu.data.LegalRepository
+import car.pace.cofu.data.DocumentRepository
 import car.pace.cofu.data.analytics.Analytics
 import car.pace.cofu.ui.consent.Consent
 import car.pace.cofu.util.Constants
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.stateIn
 @HiltViewModel
 class TrackingViewModel @Inject constructor(
     private val analytics: Analytics,
-    private val legalRepository: LegalRepository
+    private val documentRepository: DocumentRepository
 ) : ViewModel() {
 
     val trackingEnabled = analytics.userEnabledTracking.stateIn(
@@ -31,7 +31,7 @@ class TrackingViewModel @Inject constructor(
             analytics.logAppInstall()
         }
 
-        legalRepository.saveHash(Consent.Legal.Tracking)
+        documentRepository.saveHash(Consent.Document.Tracking)
     }
 
     fun disableAnalytics(tag: String) {

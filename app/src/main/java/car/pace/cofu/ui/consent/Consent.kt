@@ -12,16 +12,17 @@ import car.pace.cofu.util.extension.openAsset
 
 sealed class Consent {
 
-    sealed class Legal(
-        val fileName: String,
+    sealed class Document(
+        open val fileName: String,
         val hashPrefKey: String?,
         val languagePrefKey: String?
     ) : Consent() {
 
-        data object Terms : Legal(fileName = "usage_terms", hashPrefKey = PREF_KEY_TERMS_HASH, languagePrefKey = PREF_KEY_TERMS_LANGUAGE)
-        data object Privacy : Legal(fileName = "privacy_statement", hashPrefKey = PREF_KEY_PRIVACY_HASH, languagePrefKey = PREF_KEY_PRIVACY_LANGUAGE)
-        data object Tracking : Legal(fileName = "usage_analysis", hashPrefKey = PREF_KEY_TRACKING_HASH, languagePrefKey = PREF_KEY_TRACKING_LANGUAGE)
-        data object Imprint : Legal(fileName = "imprint", hashPrefKey = null, languagePrefKey = null)
+        data object Terms : Document(fileName = "usage_terms", hashPrefKey = PREF_KEY_TERMS_HASH, languagePrefKey = PREF_KEY_TERMS_LANGUAGE)
+        data object Privacy : Document(fileName = "privacy_statement", hashPrefKey = PREF_KEY_PRIVACY_HASH, languagePrefKey = PREF_KEY_PRIVACY_LANGUAGE)
+        data object Tracking : Document(fileName = "usage_analysis", hashPrefKey = PREF_KEY_TRACKING_HASH, languagePrefKey = PREF_KEY_TRACKING_LANGUAGE)
+        data object Imprint : Document(fileName = "imprint", hashPrefKey = null, languagePrefKey = null)
+        data class Custom(override val fileName: String) : Document(fileName = fileName, hashPrefKey = null, languagePrefKey = null)
 
         fun getUrl(language: String): String {
             val fullFileName = getFullFileName(language)
