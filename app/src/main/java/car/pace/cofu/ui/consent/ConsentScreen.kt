@@ -66,9 +66,9 @@ fun ConsentScreen(
         userScrollEnabled = false
     ) {
         when (viewModel.getPage(it)) {
-            Consent.Legal.Terms -> TermsConsentPage(onNavigate = onNavigate, onAccept = viewModel::acceptTerms)
-            Consent.Legal.Privacy -> PrivacyConsentPage(onNavigate = onNavigate, onAccept = viewModel::acceptPrivacy)
-            Consent.Legal.Tracking -> TrackingConsentPage(onNavigate = onNavigate, onDecline = viewModel::declineTracking, onAccept = viewModel::acceptTracking)
+            Consent.Document.Terms -> TermsConsentPage(onNavigate = onNavigate, onAccept = viewModel::acceptTerms)
+            Consent.Document.Privacy -> PrivacyConsentPage(onNavigate = onNavigate, onAccept = viewModel::acceptPrivacy)
+            Consent.Document.Tracking -> TrackingConsentPage(onNavigate = onNavigate, onDecline = viewModel::declineTracking, onAccept = viewModel::acceptTracking)
             Consent.Notification -> NotificationConsentPage {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     viewModel.notificationPermissionRequested()

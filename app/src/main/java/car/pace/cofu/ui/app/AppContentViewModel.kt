@@ -3,7 +3,7 @@ package car.pace.cofu.ui.app
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import car.pace.cofu.data.LegalRepository
+import car.pace.cofu.data.DocumentRepository
 import car.pace.cofu.data.PaymentMethodKindsRepository
 import car.pace.cofu.data.PermissionRepository
 import car.pace.cofu.data.SharedPreferencesRepository
@@ -25,7 +25,7 @@ class AppContentViewModel @Inject constructor(
     private val sharedPreferencesRepository: SharedPreferencesRepository,
     private val userRepository: UserRepository,
     private val paymentMethodKindsRepository: PaymentMethodKindsRepository,
-    private val legalRepository: LegalRepository,
+    private val documentRepository: DocumentRepository,
     private val permissionRepository: PermissionRepository
 ) : ViewModel() {
 
@@ -68,7 +68,7 @@ class AppContentViewModel @Inject constructor(
     private fun getStartDestination(onboardingDone: Boolean): Graph {
         return when {
             !onboardingDone -> Graph.ONBOARDING
-            legalRepository.isUpdateAvailable() || permissionRepository.canRequestNotificationPermission() -> Graph.CONSENT
+            documentRepository.isUpdateAvailable() || permissionRepository.canRequestNotificationPermission() -> Graph.CONSENT
             else -> Graph.LIST
         }
     }

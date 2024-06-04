@@ -105,7 +105,7 @@ enum class Route(
     ANALYSIS(route = "analysis_route", graph = Graph.MORE),
     IMPRINT(route = "imprint_route", graph = Graph.MORE, labelRes = R.string.MENU_ITEMS_IMPRINT, icon = Icons.Outlined.Domain),
     LICENSES(route = "licenses_route", graph = Graph.MORE, labelRes = R.string.MENU_ITEMS_LICENCES, icon = Icons.Outlined.TwoPager),
-    WEBSITE(route = "website_route", graph = Graph.MORE, icon = Icons.Outlined.Language, showBottomBar = false),
+    WEB_CONTENT(route = "web_content_route", graph = Graph.MORE, icon = Icons.Outlined.Language),
     AUTHORIZATION(route = "authorization_route", graph = Graph.WALLET, icon = Icons.Outlined.Signature, labelRes = R.string.wallet_two_factor_authentication_title),
     DELETE_ACCOUNT("delete_account", Graph.WALLET, icon = Icons.Outlined.PersonRemove, labelRes = R.string.wallet_account_deletion_title, showBottomBar = false),
     PERMISSIONS(route = "permissions_route", graph = Graph.MORE, labelRes = R.string.menu_items_permissions, icon = Icons.Outlined.VpnKey);

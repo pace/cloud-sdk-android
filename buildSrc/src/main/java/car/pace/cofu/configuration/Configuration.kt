@@ -34,11 +34,13 @@ data class MenuEntry(
 )
 
 data class MenuEntriesId(
+    val id: String,
     val menu_entry: List<MenuEntryLocalization>
 )
 
 data class MenuEntryLocalization(
     val languages_code: String,
     val name: String,
-    val url: String
+    val url: String,
+    val html: Any?
 )

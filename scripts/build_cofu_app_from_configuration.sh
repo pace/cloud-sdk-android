@@ -4,7 +4,6 @@ CONFIGURATION_ASSET_DIRECTORY=configuration/assets
 DRAWABLE_DIRECTORY=app/src/main/res/drawable
 RES_DIRECTORY=app/src/main/res
 ASSET_DIRECTORY=app/src/main/assets
-LEGAL_DOCUMENTS=("usage_terms" "privacy_statement" "usage_analysis" "imprint")
 
 # The extension for some files is a wildcard, as several file extensions are allowed
 mv configuration/configuration.json configuration.json
@@ -23,11 +22,8 @@ do
     echo "Moved launcher icon $f to $output"
 done
 
-for item in "${LEGAL_DOCUMENTS[@]}";
-do
-    rm ${ASSET_DIRECTORY}/${item}*
-done
-echo "Removed all fallback legal documents."
+rm -r ${ASSET_DIRECTORY}/*
+echo "Removed all dummy assets"
 
 for f in ${CONFIGURATION_ASSET_DIRECTORY}/*.htm*
 do
@@ -39,18 +35,20 @@ do
     language=${language%.*}
     output=${ASSET_DIRECTORY}/${filename}_${language}.${extension}
     mv "$f" "$output"
-    echo "Moved legal document $f to $output"
+    echo "Moved document $f to $output"
 done
 
-for item in "${LEGAL_DOCUMENTS[@]}";
+for f in ${ASSET_DIRECTORY}/*
 do
-    legal_file=${ASSET_DIRECTORY}/${item}_en.html
-    if [ ! -e "$legal_file" ]; then
-        echo "Error: File '$legal_file' does not exist in base language."
+    filename=$(basename -- "$f")
+    filename=${filename%_*}
+    base_file=${ASSET_DIRECTORY}/${filename}_en.html
+    if [ ! -e "$base_file" ]; then
+        echo "Error: Document '$base_file' does not exist in base language"
         exit 1
     fi
 done
-echo "All legal files exist in base language."
+echo "All documents exist in base language"
 
 shopt -s extglob
 onboarding_header=false

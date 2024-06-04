@@ -2,7 +2,7 @@ package car.pace.cofu
 
 import android.content.Context
 import android.content.res.AssetManager
-import car.pace.cofu.data.LegalRepository
+import car.pace.cofu.data.DocumentRepository
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.analytics.Analytics
 import car.pace.cofu.ui.consent.Consent
@@ -17,108 +17,108 @@ import java.util.Locale
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class LegalRepositoryTest {
+class DocumentRepositoryTest {
 
     private val context = mockk<Context>(relaxed = true)
     private val sharedPreferencesRepository = mockk<SharedPreferencesRepository>(relaxed = true)
     private val analytics = mockk<Analytics>(relaxed = true)
-    private lateinit var legalRepository: LegalRepository
+    private lateinit var documentRepository: DocumentRepository
 
     @Test
     fun `legal document update is not available`() {
         init()
-        assertEquals(false, legalRepository.isUpdateAvailable())
+        assertEquals(false, documentRepository.isUpdateAvailable())
     }
 
     @Test
     fun `legal document update is available`() {
         init(newTermsHash = "newTermsHash")
-        assertEquals(true, legalRepository.isUpdateAvailable())
+        assertEquals(true, documentRepository.isUpdateAvailable())
     }
 
     @Test
     fun `no legal document changed`() {
         init()
-        assertEquals(emptyList<Consent.Legal>(), legalRepository.getChangedDocuments())
+        assertEquals(emptyList<Consent.Document>(), documentRepository.getChangedDocuments())
     }
 
     @Test
     fun `one legal document changed`() {
         init(newPrivacyHash = "newPrivacyHash")
-        assertEquals(listOf(Consent.Legal.Privacy), legalRepository.getChangedDocuments())
+        assertEquals(listOf(Consent.Document.Privacy), documentRepository.getChangedDocuments())
     }
 
     @Test
     fun `two legal documents changed`() {
         init(newTermsHash = "newTermsHash", newTrackingHash = "newTrackingHash")
-        assertEquals(listOf(Consent.Legal.Terms, Consent.Legal.Tracking), legalRepository.getChangedDocuments())
+        assertEquals(listOf(Consent.Document.Terms, Consent.Document.Tracking), documentRepository.getChangedDocuments())
     }
 
     @Test
     fun `auto accept terms and privacy updates`() {
         init(acceptedTermsHash = null, acceptedPrivacyHash = null, newTermsHash = "newTermsHash", newPrivacyHash = "newPrivacyHash", isTrackingEnabled = false)
         every { any<InputStream>().hash(any()) } returns "newTermsHash" andThen "newTermsHash" andThen "newPrivacyHash" andThen "newPrivacyHash"
-        assertEquals(emptyList<Consent.Legal>(), legalRepository.getChangedDocuments())
+        assertEquals(emptyList<Consent.Document>(), documentRepository.getChangedDocuments())
 
         verify {
-            sharedPreferencesRepository.putValue(Consent.Legal.Terms.hashPrefKey!!, "newTermsHash")
-            sharedPreferencesRepository.putValue(Consent.Legal.Terms.languagePrefKey!!, "en")
-            sharedPreferencesRepository.putValue(Consent.Legal.Privacy.hashPrefKey!!, "newPrivacyHash")
-            sharedPreferencesRepository.putValue(Consent.Legal.Privacy.languagePrefKey!!, "en")
+            sharedPreferencesRepository.putValue(Consent.Document.Terms.hashPrefKey!!, "newTermsHash")
+            sharedPreferencesRepository.putValue(Consent.Document.Terms.languagePrefKey!!, "en")
+            sharedPreferencesRepository.putValue(Consent.Document.Privacy.hashPrefKey!!, "newPrivacyHash")
+            sharedPreferencesRepository.putValue(Consent.Document.Privacy.languagePrefKey!!, "en")
         }
     }
 
     @Test
     fun `only ask for tracking update`() {
         init(acceptedTermsHash = null, acceptedPrivacyHash = null, acceptedTrackingHash = null, newTermsHash = "newTermsHash", newPrivacyHash = "newPrivacyHash", newTrackingHash = "newTrackingHash")
-        assertEquals(listOf(Consent.Legal.Tracking), legalRepository.getChangedDocuments())
+        assertEquals(listOf(Consent.Document.Tracking), documentRepository.getChangedDocuments())
     }
 
     @Test
     fun `no legal update if new hash is null`() {
         init(newTermsHash = null)
-        assertEquals(emptyList<Consent.Legal>(), legalRepository.getChangedDocuments())
+        assertEquals(emptyList<Consent.Document>(), documentRepository.getChangedDocuments())
     }
 
     @Test
     fun `no tracking update if user disabled tracking`() {
         init(newTrackingHash = "newTrackingHash", isTrackingEnabled = false)
-        assertEquals(emptyList<Consent.Legal>(), legalRepository.getChangedDocuments())
+        assertEquals(emptyList<Consent.Document>(), documentRepository.getChangedDocuments())
     }
 
     @Test
     fun `initial language is used`() {
         init()
-        assertEquals("en", legalRepository.getLanguage(Consent.Legal.Terms))
-        assertEquals("en", legalRepository.getLanguage(Consent.Legal.Privacy))
-        assertEquals("en", legalRepository.getLanguage(Consent.Legal.Tracking))
+        assertEquals("en", documentRepository.getLanguage(Consent.Document.Terms))
+        assertEquals("en", documentRepository.getLanguage(Consent.Document.Privacy))
+        assertEquals("en", documentRepository.getLanguage(Consent.Document.Tracking))
     }
 
     @Test
     fun `system language is used`() {
         init(initialLanguage = null, systemLanguage = Locale.GERMAN)
-        assertEquals("de", legalRepository.getLanguage(Consent.Legal.Terms))
-        assertEquals("de", legalRepository.getLanguage(Consent.Legal.Privacy))
-        assertEquals("de", legalRepository.getLanguage(Consent.Legal.Tracking))
+        assertEquals("de", documentRepository.getLanguage(Consent.Document.Terms))
+        assertEquals("de", documentRepository.getLanguage(Consent.Document.Privacy))
+        assertEquals("de", documentRepository.getLanguage(Consent.Document.Tracking))
     }
 
     @Test
     fun `fallback language is used`() {
         init(initialLanguage = null, systemLanguage = Locale.ITALIAN)
-        assertEquals("en", legalRepository.getLanguage(Consent.Legal.Terms))
-        assertEquals("en", legalRepository.getLanguage(Consent.Legal.Privacy))
-        assertEquals("en", legalRepository.getLanguage(Consent.Legal.Tracking))
+        assertEquals("en", documentRepository.getLanguage(Consent.Document.Terms))
+        assertEquals("en", documentRepository.getLanguage(Consent.Document.Privacy))
+        assertEquals("en", documentRepository.getLanguage(Consent.Document.Tracking))
     }
 
     @Test
     fun `hash and language are saved`() {
         init(newPrivacyHash = "newPrivacyHash")
         every { any<InputStream>().hash(any()) } returns "newPrivacyHash"
-        legalRepository.saveHash(Consent.Legal.Privacy)
+        documentRepository.saveHash(Consent.Document.Privacy)
 
         verify {
-            sharedPreferencesRepository.putValue(Consent.Legal.Privacy.hashPrefKey!!, "newPrivacyHash")
-            sharedPreferencesRepository.putValue(Consent.Legal.Privacy.languagePrefKey!!, "en")
+            sharedPreferencesRepository.putValue(Consent.Document.Privacy.hashPrefKey!!, "newPrivacyHash")
+            sharedPreferencesRepository.putValue(Consent.Document.Privacy.languagePrefKey!!, "en")
         }
     }
 
@@ -135,12 +135,12 @@ class LegalRepositoryTest {
     ) {
         Locale.setDefault(systemLanguage)
 
-        every { sharedPreferencesRepository.getString(Consent.Legal.Terms.hashPrefKey!!, null) } returns acceptedTermsHash
-        every { sharedPreferencesRepository.getString(Consent.Legal.Privacy.hashPrefKey!!, null) } returns acceptedPrivacyHash
-        every { sharedPreferencesRepository.getString(Consent.Legal.Tracking.hashPrefKey!!, null) } returns acceptedTrackingHash
-        every { sharedPreferencesRepository.getString(Consent.Legal.Terms.languagePrefKey!!, null) } returns initialLanguage
-        every { sharedPreferencesRepository.getString(Consent.Legal.Privacy.languagePrefKey!!, null) } returns initialLanguage
-        every { sharedPreferencesRepository.getString(Consent.Legal.Tracking.languagePrefKey!!, null) } returns initialLanguage
+        every { sharedPreferencesRepository.getString(Consent.Document.Terms.hashPrefKey!!, null) } returns acceptedTermsHash
+        every { sharedPreferencesRepository.getString(Consent.Document.Privacy.hashPrefKey!!, null) } returns acceptedPrivacyHash
+        every { sharedPreferencesRepository.getString(Consent.Document.Tracking.hashPrefKey!!, null) } returns acceptedTrackingHash
+        every { sharedPreferencesRepository.getString(Consent.Document.Terms.languagePrefKey!!, null) } returns initialLanguage
+        every { sharedPreferencesRepository.getString(Consent.Document.Privacy.languagePrefKey!!, null) } returns initialLanguage
+        every { sharedPreferencesRepository.getString(Consent.Document.Tracking.languagePrefKey!!, null) } returns initialLanguage
         every { analytics.isTrackingEnabled() } returns isTrackingEnabled
 
         val inputStream = mockk<InputStream>(relaxed = true)
@@ -151,14 +151,14 @@ class LegalRepositoryTest {
         val assetManager = mockk<AssetManager>(relaxed = true)
         every { context.assets } returns assetManager
         every { assetManager.list(any()) } returns arrayOf(
-            Consent.Legal.Terms.getFullFileName("en"),
-            Consent.Legal.Privacy.getFullFileName("en"),
-            Consent.Legal.Tracking.getFullFileName("en"),
-            Consent.Legal.Terms.getFullFileName("de"),
-            Consent.Legal.Privacy.getFullFileName("de"),
-            Consent.Legal.Tracking.getFullFileName("de")
+            Consent.Document.Terms.getFullFileName("en"),
+            Consent.Document.Privacy.getFullFileName("en"),
+            Consent.Document.Tracking.getFullFileName("en"),
+            Consent.Document.Terms.getFullFileName("de"),
+            Consent.Document.Privacy.getFullFileName("de"),
+            Consent.Document.Tracking.getFullFileName("de")
         )
 
-        legalRepository = LegalRepository(context, sharedPreferencesRepository, analytics)
+        documentRepository = DocumentRepository(context, sharedPreferencesRepository, analytics)
     }
 }
