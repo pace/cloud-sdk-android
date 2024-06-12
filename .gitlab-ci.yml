@@ -5,13 +5,6 @@ before_script:
     - chmod +x ./gradlew
     - echo $DEFAULT_CONFIGURATION | tr ' ' '\r\n' > configuration.json
     - echo "$FIREBASE_DEV_JSON" > app/google-services.json
-    - export TAG_COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
-    - echo "CI_COMMIT_SHA:" $CI_COMMIT_SHA
-    - echo "Commit time to be used as build number:" $TAG_COMMIT_TIME
-    - export BUILD_NUMBER=$(date -u -d @$TAG_COMMIT_TIME +"%Y%m%d%H")
-    - echo "Build number:" $BUILD_NUMBER
-    - export VERSION_NAME=$(date -u -d @$TAG_COMMIT_TIME +"%y.%V.%u")
-    - echo "Version name:" $VERSION_NAME
 stages:
     - test
     - release
@@ -45,6 +38,10 @@ stages:
 .release_schedule_rule: &release_schedule_rule
     rules:
         -   if: $SCHEDULED_JOB == "connectedfueling-app-release"
+
+.empty_release_schedule_rule: &empty_release_schedule_rule
+  rules:
+    -   if: $SCHEDULED_JOB == "connectedfueling-app-empty-release"
 
 .tag_rule: &tag_rule
     rules:
@@ -98,6 +95,13 @@ create_release:
     stage: release
     <<: *release_schedule_rule
     script:
+        - export TAG_COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
+        - echo "CI_COMMIT_SHA:" $CI_COMMIT_SHA
+        - echo "Commit time to be used as build number:" $TAG_COMMIT_TIME
+        - export BUILD_NUMBER=$(date -u -d @$TAG_COMMIT_TIME +"%Y%m%d%H")
+        - echo "Build number:" $BUILD_NUMBER
+        - export VERSION_NAME=$(date -u -d @$TAG_COMMIT_TIME +"%y.%V.%u")
+        - echo "Version name:" $VERSION_NAME
         - if $(eval $CONDITION); then echo "Releasing..."; else echo "Nothing to do"; exit 0; fi
         - export CUSTOM_TAG_NAME="${TAG_PREFIX}v${VERSION_NAME}.${BUILD_NUMBER}"
         - echo "Creating tag with tag name:" $CUSTOM_TAG_NAME
@@ -107,6 +111,26 @@ create_release:
         - node --unhandled-rejections=strict create.js
     variables:
         TAG_PREFIX: "connectedfueling-app-"
+
+create_empty_release:
+  extends: .docker_image
+  image: node:latest
+  stage: release
+  <<: *empty_release_schedule_rule
+  script:
+    - if $(eval $CONDITION); then echo "Releasing..."; else echo "Nothing to do"; exit 0; fi
+    - echo "Current time to be used as new build and version number"
+    - export BUILD_NUMBER=$(TZ=Etc/Utc date "+%Y%m%d%H")
+    - export VERSION_NAME=$(TZ=Etc/Utc date "+%y.%V.%u")
+    - export CUSTOM_TAG_NAME="${TAG_PREFIX}v${VERSION_NAME}.${BUILD_NUMBER}"
+    - export EMPTY_RELEASE="true"
+    - echo "Creating tag with tag name:" $CUSTOM_TAG_NAME
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/pace/mobile/common.git tmp/common
+    - cd tmp/common/scripts/release
+    - yarn install
+    - node --unhandled-rejections=strict create.js
+  variables:
+    TAG_PREFIX: "connectedfueling-app-"
 
 fetch_apps:
     extends: .docker_image
