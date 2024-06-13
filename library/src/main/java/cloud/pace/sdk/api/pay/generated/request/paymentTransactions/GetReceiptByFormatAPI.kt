@@ -8,13 +8,15 @@
 package cloud.pace.sdk.api.pay.generated.request.paymentTransactions
 
 import cloud.pace.sdk.api.pay.PayAPI
-import cloud.pace.sdk.api.pay.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.HeaderMap
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 object GetReceiptByFormatAPI {
 

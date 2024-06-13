@@ -36,8 +36,14 @@ class TransactionCreateBody {
         lateinit var providerPRN: String
         var vat: VAT? = null
 
+        /* additional data for omv */
+        var additionalData: String? = null
+
         /* Currency as specified in ISO-4217. */
         var currency: String? = null
+
+        /* Driver/vehicle identification */
+        var driverVehicleID: String? = null
         var fuel: Fuel? = null
 
         /* Fuel amount */

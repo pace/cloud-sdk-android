@@ -13,12 +13,15 @@ import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 
 @JsonApi(type = "paymentMethod")
-class PaymentMethodOMVCreate : Resource() {
+class FleetPaymentMethodOMVCreate : Resource() {
 
     lateinit var kind: Kind
 
     /* Identifier or PAN (Primary Account Number) representing the OMV Card. The identifier is payment provider specific and provided by the payment provider. */
     lateinit var pan: String
+
+    /* ID of the user that is required when user ID is not present in the authorization token. */
+    lateinit var userId: String
 
     /* The date the card is expiring in YYMM format. */
     var expiry: String? = null

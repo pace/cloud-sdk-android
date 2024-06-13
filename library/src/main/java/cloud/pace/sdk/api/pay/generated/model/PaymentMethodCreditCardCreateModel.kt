@@ -20,6 +20,10 @@ class PaymentMethodCreditCardCreate : Resource() {
     /* Token representing the credit card information. The token is payment provider specific and provided by the payment provider.
 Example: In-Browser, the Payment Provider Credit Card Widget will return a token after adding a credit card. This token should be
 used here.
+The expected token format if used with concardis as JS SDK provider is the following:
+`prn:concardis:instruments:$paymentInstrumentID$:threeds:$threeDSAuthenticationID$`
+Parts enclosed with `$` are place-holders, please fill in the values you receive from the SDK.
+A 3DS authentication id is mandatory.
  */
     lateinit var cardToken: String
 

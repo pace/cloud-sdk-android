@@ -19,7 +19,13 @@ class Transaction : Resource() {
 
     var vat: VAT? = null
 
-    /* Initial creation date of the transaction (https://tools.ietf.org/html/rfc3339#section-5.6).
+    /* additional data for omv */
+    var additionalData: String? = null
+
+    /* ID of the authorization payment token */
+    var authorizePaymentTokenId: String? = null
+
+    /* Initial creation date of the transaction (UTC) (https://tools.ietf.org/html/rfc3339#section-5.6).
  */
     var createdAt: Date? = null
 
@@ -32,6 +38,12 @@ class Transaction : Resource() {
 
     /* Amount that was discounted. Only if any discounts were applied earlier. */
     var discountAmount: Double? = null
+
+    /* Driver/vehicle identification */
+    var driverVehicleID: String? = null
+
+    /* Description of the error that occured */
+    var error: String? = null
     var fuel: Fuel? = null
 
     /* PACE resource name */
@@ -53,6 +65,12 @@ class Transaction : Resource() {
     /* Payment token value */
     var paymentToken: String? = null
 
+    /* Request ID of the payment token */
+    var paymentTokenRequestID: String? = null
+
+    /* Request ID of the payment transaction */
+    var paymentTransactionRequestID: String? = null
+
     /* If a discount was applied, this is the already fully discounted transaction sum */
     var priceIncludingVAT: Double? = null
 
@@ -70,7 +88,7 @@ class Transaction : Resource() {
     var purposePRN: String? = null
     var references: List<String>? = null
 
-    /* Date of the last update (https://tools.ietf.org/html/rfc3339#section-5.6).
+    /* Date of the last update (UTC) (https://tools.ietf.org/html/rfc3339#section-5.6).
  */
     var updatedAt: Date? = null
 
