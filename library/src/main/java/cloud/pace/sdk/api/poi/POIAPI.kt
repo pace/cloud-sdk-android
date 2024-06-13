@@ -12,38 +12,20 @@ import cloud.pace.sdk.api.API
 /** POI API */
 object POIAPI {
 
-    const val VERSION = "2022-1"
+    const val VERSION = "2024-1"
     internal val baseUrl = "${API.baseUrl}/poi/$VERSION/"
 
-    class AdminAPI
     class AppsAPI
-    class DataDumpsAPI
-    class DeliveryAPI
-    class EventsAPI
     class GasStationsAPI
-    class MetadataFiltersAPI
     class POIAPI
-    class PoliciesAPI
-    class PriceHistoriesAPI
     class PricesAPI
-    class SourcesAPI
     class StatsAPI
-    class SubscriptionsAPI
     class TilesAPI
 
-    val API.admin: AdminAPI by lazy { AdminAPI() }
     val API.apps: AppsAPI by lazy { AppsAPI() }
-    val API.dataDumps: DataDumpsAPI by lazy { DataDumpsAPI() }
-    val API.delivery: DeliveryAPI by lazy { DeliveryAPI() }
-    val API.events: EventsAPI by lazy { EventsAPI() }
     val API.gasStations: GasStationsAPI by lazy { GasStationsAPI() }
-    val API.metadataFilters: MetadataFiltersAPI by lazy { MetadataFiltersAPI() }
     val API.poi: POIAPI by lazy { POIAPI() }
-    val API.policies: PoliciesAPI by lazy { PoliciesAPI() }
-    val API.priceHistories: PriceHistoriesAPI by lazy { PriceHistoriesAPI() }
     val API.prices: PricesAPI by lazy { PricesAPI() }
-    val API.sources: SourcesAPI by lazy { SourcesAPI() }
     val API.stats: StatsAPI by lazy { StatsAPI() }
-    val API.subscriptions: SubscriptionsAPI by lazy { SubscriptionsAPI() }
     val API.tiles: TilesAPI by lazy { TilesAPI() }
 }

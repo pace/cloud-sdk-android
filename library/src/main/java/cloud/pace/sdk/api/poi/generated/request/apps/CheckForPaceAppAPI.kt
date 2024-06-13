@@ -8,12 +8,14 @@
 package cloud.pace.sdk.api.poi.generated.request.apps
 
 import cloud.pace.sdk.api.poi.POIAPI
-import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.poi.generated.model.LocationBasedAppsWithRefs
 import cloud.pace.sdk.api.request.BaseRequest
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.HeaderMap
+import retrofit2.http.Query
 
 object CheckForPaceAppAPI {
 

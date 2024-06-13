@@ -3,9 +3,7 @@ package cloud.pace.sdk.appkit.app.api
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.poi.POIAPI.apps
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
-import cloud.pace.sdk.api.poi.generated.model.LocationBasedApps
 import cloud.pace.sdk.api.poi.generated.request.apps.GetAppAPI.getApp
-import cloud.pace.sdk.api.poi.generated.request.apps.GetAppsAPI.getApps
 import cloud.pace.sdk.poikit.geo.GeoAPIClient
 import cloud.pace.sdk.poikit.geo.GeoAPIResponse
 import cloud.pace.sdk.poikit.utils.ApiException
@@ -18,7 +16,6 @@ import timber.log.Timber
 interface AppAPI {
 
     suspend fun getGeoApiApps(): Result<GeoAPIResponse>
-    fun getAllApps(completion: (Result<LocationBasedApps>) -> Unit)
     fun getAppByAppId(appId: String, completion: (Result<LocationBasedApp>) -> Unit)
 }
 
@@ -42,10 +39,6 @@ class AppAPIImpl(private val geoApiClient: GeoAPIClient) : AppAPI {
             Timber.e(e, "GeoJson request failed")
             Result.failure(e)
         }
-    }
-
-    override fun getAllApps(completion: (Result<LocationBasedApps>) -> Unit) {
-        API.apps.getApps().executeWithRetry(completion)
     }
 
     override fun getAppByAppId(appId: String, completion: (Result<LocationBasedApp>) -> Unit) {

@@ -8,10 +8,17 @@
 package cloud.pace.sdk.api.poi.generated.request.poi
 
 import cloud.pace.sdk.api.poi.POIAPI
-import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.poi.generated.model.FuelPrice
+import cloud.pace.sdk.api.poi.generated.model.GasStation
+import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
+import cloud.pace.sdk.api.poi.generated.model.POIType
+import cloud.pace.sdk.api.poi.generated.model.POIs
+import cloud.pace.sdk.api.poi.generated.model.ReferenceStatus
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.HeaderMap
+import retrofit2.http.Query
 
 object GetPoisAPI {
 

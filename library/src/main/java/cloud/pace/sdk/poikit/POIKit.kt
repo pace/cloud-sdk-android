@@ -3,11 +3,8 @@ package cloud.pace.sdk.poikit
 import android.location.Location
 import androidx.lifecycle.*
 import cloud.pace.sdk.api.API
-import cloud.pace.sdk.api.poi.POIAPI.metadataFilters
 import cloud.pace.sdk.api.poi.POIAPI.prices
-import cloud.pace.sdk.api.poi.generated.model.Categories
 import cloud.pace.sdk.api.poi.generated.model.RegionalPrices
-import cloud.pace.sdk.api.poi.generated.request.metadataFilters.GetMetadataFiltersAPI.getMetadataFilters
 import cloud.pace.sdk.api.poi.generated.request.prices.GetRegionalPricesAPI.getRegionalPrices
 import cloud.pace.sdk.poikit.geo.CofuGasStation
 import cloud.pace.sdk.poikit.geo.GeoAPIManager
@@ -161,10 +158,6 @@ object POIKit : CloudSDKKoinComponent {
 
     fun searchAddress(request: AddressSearchRequest): Observable<PhotonResult> {
         return addressSearchApi.searchAddress(request)
-    }
-
-    fun getDynamicFilters(latitude: Double, longitude: Double, completion: (Completion<Categories>) -> Unit) {
-        API.metadataFilters.getMetadataFilters(latitude.toFloat(), longitude.toFloat()).handleCallback(completion)
     }
 
     /**

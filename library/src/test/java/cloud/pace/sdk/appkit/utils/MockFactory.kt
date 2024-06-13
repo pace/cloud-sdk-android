@@ -5,7 +5,6 @@ import android.location.LocationManager
 import android.os.Handler
 import androidx.lifecycle.MutableLiveData
 import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
-import cloud.pace.sdk.api.poi.generated.model.LocationBasedApps
 import cloud.pace.sdk.appkit.app.api.AppAPI
 import cloud.pace.sdk.appkit.app.api.AppRepository
 import cloud.pace.sdk.appkit.app.api.UriManager
@@ -75,10 +74,6 @@ open class TestLocationProvider(
 open class TestAppRepository : AppRepository {
 
     override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
-        return Success(emptyList())
-    }
-
-    override suspend fun getAllApps(): Completion<List<App>> {
         return Success(emptyList())
     }
 
@@ -217,7 +212,6 @@ open class TestWebClientCallback : AppWebViewClient.WebClientCallback {
 open class TestAppAPI : AppAPI {
 
     override suspend fun getGeoApiApps(): Result<GeoAPIResponse> = mockk()
-    override fun getAllApps(completion: (Result<LocationBasedApps>) -> Unit) {}
     override fun getAppByAppId(appId: String, completion: (Result<LocationBasedApp>) -> Unit) {}
 }
 

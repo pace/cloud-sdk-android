@@ -144,15 +144,6 @@ internal class AppManager(private val dispatchers: DispatcherProvider = DefaultD
         }
     }
 
-    internal fun requestApps(completion: (Completion<List<App>>) -> Unit) {
-        coroutineScope.launch {
-            val result = appRepository.getAllApps()
-            withContext(dispatchers.main()) {
-                completion(result)
-            }
-        }
-    }
-
     internal fun fetchAppsByUrl(url: String, references: List<String>, completion: (Completion<List<App>>) -> Unit) {
         coroutineScope.launch {
             val result = appRepository.getAppsByUrl(url, references)

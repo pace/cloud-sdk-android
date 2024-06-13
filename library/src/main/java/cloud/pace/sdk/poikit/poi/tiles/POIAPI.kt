@@ -22,7 +22,6 @@ interface POIAPI {
 
     suspend fun getGasStation(
         id: String,
-        compileopeningHours: Boolean? = null,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
@@ -42,11 +41,10 @@ class POIAPIImpl : POIAPI {
 
     override suspend fun getGasStation(
         id: String,
-        compileopeningHours: Boolean?,
         readTimeout: Long?,
         additionalHeaders: Map<String, String>?,
         additionalParameters: Map<String, String>?
     ): Response<cloud.pace.sdk.api.poi.generated.model.GasStation> {
-        return API.gasStations.getGasStation(id, compileopeningHours, readTimeout, additionalHeaders, additionalParameters).awaitResponse()
+        return API.gasStations.getGasStation(id, readTimeout, additionalHeaders, additionalParameters).awaitResponse()
     }
 }

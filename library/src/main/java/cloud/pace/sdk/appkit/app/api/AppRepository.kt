@@ -27,7 +27,6 @@ import timber.log.Timber
 interface AppRepository {
 
     suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>>
-    suspend fun getAllApps(): Completion<List<App>>
     suspend fun getAppsByUrl(url: String, references: List<String>): Completion<List<App>>
     suspend fun getUrlByAppId(appId: String): Completion<String?>
     fun getFuelingUrl(poiId: String, completion: (String) -> Unit)
@@ -61,37 +60,6 @@ class AppRepositoryImpl(
             }
         }.getOrElse {
             Timber.e(it, "Failed to create location based apps with IDs: ${apps.map(GeoGasStation::id)}")
-            return Failure(it)
-        }
-
-        return Success(locationBasedApps)
-    }
-
-    override suspend fun getAllApps(): Completion<List<App>> {
-        val locationBasedApps = runCatching {
-            val apps = suspendCancellableCoroutine { continuation ->
-                appApi.getAllApps { response ->
-                    response.onSuccess {
-                        continuation.resumeIfActive(it)
-                    }
-
-                    response.onFailure {
-                        continuation.resumeWithExceptionIfActive(it)
-                    }
-                }
-            }
-
-            supervisorScope {
-                apps
-                    .map {
-                        async { createLocationBasedApps(it.pwaUrl, null) }
-                    }
-                    .flatMap {
-                        runCatching { it.await() }.getOrNull() ?: emptyList()
-                    }
-            }
-        }.getOrElse {
-            Timber.e(it, "Failed to create location based apps")
             return Failure(it)
         }
 

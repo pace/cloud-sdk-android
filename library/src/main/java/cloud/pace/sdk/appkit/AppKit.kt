@@ -60,15 +60,6 @@ object AppKit : CloudSDKKoinComponent {
     }
 
     /**
-     * Returns a list of all apps.
-     *
-     * @param completion Returns a list of [App]s on success or a [Throwable] on failure.
-     */
-    fun requestApps(completion: (Completion<List<App>>) -> Unit) {
-        appManager.requestApps(completion)
-    }
-
-    /**
      * Fetches the app with the given [url] and [references] (e.g. referenced gas station UUIDs).
      *
      * @param completion Returns a list of [App]s on success or a [Throwable] on failure.
