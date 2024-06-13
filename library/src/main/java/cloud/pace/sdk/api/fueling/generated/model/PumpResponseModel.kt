@@ -17,6 +17,9 @@ class PumpResponse : Resource() {
 
     var vat: VAT? = null
 
+    /* Only if status is locked: available fuel products at the given pump */
+    var availableProducts: List<Product>? = null
+
     /* Currency as specified in ISO-4217. */
     var currency: String? = null
 

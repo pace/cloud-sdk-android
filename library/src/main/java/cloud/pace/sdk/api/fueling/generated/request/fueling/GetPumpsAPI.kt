@@ -8,10 +8,13 @@
 package cloud.pace.sdk.api.fueling.generated.request.fueling
 
 import cloud.pace.sdk.api.fueling.FuelingAPI
-import cloud.pace.sdk.api.fueling.generated.model.*
+import cloud.pace.sdk.api.fueling.generated.model.GetPumpsResponse
+import cloud.pace.sdk.api.fueling.generated.model.Pump
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.HeaderMap
+import retrofit2.http.Path
 
 object GetPumpsAPI {
 

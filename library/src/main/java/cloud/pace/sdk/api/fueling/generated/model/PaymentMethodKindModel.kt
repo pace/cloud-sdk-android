@@ -41,21 +41,14 @@ This field is optional and if not present should be assumed to indicate `implici
     /* data privacy information */
     class DataPrivacy {
 
-        /* Localized hint that data privacy terms apply. The hint comes formatted in multiple ways, which are all equally valid if given. Additional formats might be added in the future. */
-        var hint: Hint? = null
-
         /* Localized data privacy terms. The terms come formatted in multiple ways, which are all equally valid if given. Additional formats might be added in the future. */
         var terms: Terms? = null
 
-        /* Localized hint that data privacy terms apply. The hint comes formatted in multiple ways, which are all equally valid if given. Additional formats might be added in the future. */
-        class Hint {
-
-            /* Hint formatted as markdown. Contains only links to the reference <code>terms</code>. Does not contain other links. Other than that, only contains markdown syntax for <a href="https://daringfireball.net/projects/markdown/syntax#p">Paragraphs and Line Breaks</a> and <a href="https://daringfireball.net/projects/markdown/syntax#em">Emphasis</a>. */
-            var markdown: String? = null
-        }
-
         /* Localized data privacy terms. The terms come formatted in multiple ways, which are all equally valid if given. Additional formats might be added in the future. */
         class Terms {
+
+            /* Terms formatted as markdown. Does not contain external resources like images. */
+            var html: String? = null
 
             /* Terms formatted as markdown. Does not contain external resources like images. */
             var markdown: String? = null

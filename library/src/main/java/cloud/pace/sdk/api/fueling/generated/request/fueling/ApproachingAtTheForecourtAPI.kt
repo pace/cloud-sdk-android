@@ -8,10 +8,20 @@
 package cloud.pace.sdk.api.fueling.generated.request.fueling
 
 import cloud.pace.sdk.api.fueling.FuelingAPI
-import cloud.pace.sdk.api.fueling.generated.model.*
+import cloud.pace.sdk.api.fueling.generated.model.ApproachingResponse
+import cloud.pace.sdk.api.fueling.generated.model.FuelPrice
+import cloud.pace.sdk.api.fueling.generated.model.GasStation
+import cloud.pace.sdk.api.fueling.generated.model.GasStationNote
+import cloud.pace.sdk.api.fueling.generated.model.PaymentMethod
+import cloud.pace.sdk.api.fueling.generated.model.PaymentMethodKind
+import cloud.pace.sdk.api.fueling.generated.model.Pump
+import cloud.pace.sdk.api.fueling.generated.model.Transaction
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.HeaderMap
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 object ApproachingAtTheForecourtAPI {
 

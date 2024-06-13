@@ -8,7 +8,8 @@
 package cloud.pace.sdk.api.fueling.generated.request.discount
 
 import cloud.pace.sdk.api.fueling.FuelingAPI
-import cloud.pace.sdk.api.fueling.generated.model.*
+import cloud.pace.sdk.api.fueling.generated.model.DiscountInquiryBody
+import cloud.pace.sdk.api.fueling.generated.model.Discounts
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
 import retrofit2.http.*

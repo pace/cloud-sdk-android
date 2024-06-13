@@ -30,6 +30,9 @@ class ApproachingResponse : Resource() {
     private var transactions: HasMany<Transaction> = HasMany()
     fun getTransactions() = transactions.get(document)
 
+    private var unsupportedPaymentMethodKinds: HasMany<PaymentMethodKind> = HasMany()
+    fun getUnsupportedPaymentMethodKinds() = unsupportedPaymentMethodKinds.get(document)
+
     private var unsupportedPaymentMethods: HasMany<PaymentMethod> = HasMany()
     fun getUnsupportedPaymentMethods() = unsupportedPaymentMethods.get(document)
 }

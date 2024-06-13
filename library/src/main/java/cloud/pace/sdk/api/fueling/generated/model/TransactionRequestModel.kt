@@ -21,6 +21,9 @@ class TransactionRequest : Resource() {
     /* Pump ID */
     lateinit var pumpId: String
 
+    /* additional data for omv */
+    var additionalData: String? = null
+
     /* A callback URL to report the status of the transaction to, once completed. Only relevant if unattendedPayment is true */
     var callbackURL: String? = null
 
@@ -29,6 +32,10 @@ class TransactionRequest : Resource() {
 
     /* Currency as specified in ISO-4217. */
     var currency: String? = null
+
+    /* Driver/vehicle identification */
+    var driverVehicleID: String? = null
+    var metadata: List<TransactionMetadata>? = null
 
     /* Current mileage in meters */
     var mileage: Int? = null
@@ -81,6 +88,10 @@ class TransactionRequest : Resource() {
         @Json(name = "dieselGtl")
         DIESELGTL("dieselGtl"),
 
+        @SerializedName("dieselB0")
+        @Json(name = "dieselB0")
+        DIESELB0("dieselB0"),
+
         @SerializedName("dieselB7")
         @Json(name = "dieselB7")
         DIESELB7("dieselB7"),
@@ -89,9 +100,29 @@ class TransactionRequest : Resource() {
         @Json(name = "dieselB15")
         DIESELB15("dieselB15"),
 
+        @SerializedName("dieselB20")
+        @Json(name = "dieselB20")
+        DIESELB20("dieselB20"),
+
+        @SerializedName("dieselBMix")
+        @Json(name = "dieselBMix")
+        DIESELBMIX("dieselBMix"),
+
         @SerializedName("dieselPremium")
         @Json(name = "dieselPremium")
         DIESELPREMIUM("dieselPremium"),
+
+        @SerializedName("dieselHvo")
+        @Json(name = "dieselHvo")
+        DIESELHVO("dieselHvo"),
+
+        @SerializedName("dieselRed")
+        @Json(name = "dieselRed")
+        DIESELRED("dieselRed"),
+
+        @SerializedName("dieselSynthetic")
+        @Json(name = "dieselSynthetic")
+        DIESELSYNTHETIC("dieselSynthetic"),
 
         @SerializedName("lpg")
         @Json(name = "lpg")
