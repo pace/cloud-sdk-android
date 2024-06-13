@@ -5,54 +5,49 @@
  * https://github.com/pace/SwagGen
  */
 
-package cloud.pace.sdk.api.user.generated.request.user
+package cloud.pace.sdk.api.user.generated.request.attributes
 
 import cloud.pace.sdk.api.request.BaseRequest
 import cloud.pace.sdk.api.user.UserAPI
 import cloud.pace.sdk.api.user.generated.model.*
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
-object VerifyEmailAPI {
+object GetUserAttributesAPI {
 
-    interface VerifyEmailService {
-        /* Verify Email */
-        /* Verifies that the given Email is not already used.
+    interface GetUserAttributesService {
+        /* Get the users keycloak attributes */
+        /* Requests a list of attributes as set in keycloak, assuming the client has
+the required scope.
  */
-        @POST("user/email/verify")
-        fun verifyEmail(
+        @GET("attributes")
+        fun getUserAttributes(
             @HeaderMap headers: Map<String, String>,
-            @retrofit2.http.Body body: Email
-        ): Call<ResponseBody>
+        ): Call<Map<String, Any>>
     }
 
     open class Request : BaseRequest() {
 
-        fun verifyEmail(
-            body: Email,
+        fun getUserAttributes(
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
-        ): Call<ResponseBody> {
-            val headers = headers(false, "application/json", "application/json", additionalHeaders)
+        ): Call<Map<String, Any>> {
+            val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(UserAPI.baseUrl, additionalParameters, readTimeout)
-                .create(VerifyEmailService::class.java)
-                .verifyEmail(
-                    headers,
-                    body
+                .create(GetUserAttributesService::class.java)
+                .getUserAttributes(
+                    headers
                 )
         }
     }
 
-    fun UserAPI.UserAPI.verifyEmail(
-        body: Email,
+    fun UserAPI.AttributesAPI.getUserAttributes(
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ) = Request().verifyEmail(
-        body,
+    ) = Request().getUserAttributes(
         readTimeout,
         additionalHeaders,
         additionalParameters

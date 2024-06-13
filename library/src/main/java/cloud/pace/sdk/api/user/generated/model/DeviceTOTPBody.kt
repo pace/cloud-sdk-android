@@ -13,7 +13,6 @@ import com.squareup.moshi.Json
 class DeviceTOTPBody {
 
     var attributes: Attributes? = null
-
     /* The ID of the device totp */
     var id: String? = null
     var type: Type? = null
@@ -28,22 +27,16 @@ class DeviceTOTPBody {
 
         /* Algorithm to use for HMAC */
         var algorithm: Algorithm? = null
-
         /* Required length of the generated OTP */
         var digits: Int? = null
-
         /* user otp */
         var otp: String? = null
-
         /* user account password */
         var password: String? = null
-
         /* Number of seconds a TOTP hash is valid for. */
         var period: Int? = null
-
         /* user account PIN */
         var pin: String? = null
-
         /* TOTP secret to generate TOTP tokens (encoded base32) */
         var secret: String? = null
 
@@ -52,15 +45,12 @@ class DeviceTOTPBody {
             @SerializedName("SHA1")
             @Json(name = "SHA1")
             SHA1("SHA1"),
-
             @SerializedName("SHA256")
             @Json(name = "SHA256")
             SHA256("SHA256"),
-
             @SerializedName("SHA512")
             @Json(name = "SHA512")
             SHA512("SHA512"),
-
             @SerializedName("MD5")
             @Json(name = "MD5")
             MD5("MD5")

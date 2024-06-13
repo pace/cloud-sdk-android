@@ -11,7 +11,6 @@ class PinOrPassword {
 
     /* indicates if password is set and validated */
     var password: Boolean? = null
-
     /* indicates if PIN is set and validated */
     var pin: Boolean? = null
 }

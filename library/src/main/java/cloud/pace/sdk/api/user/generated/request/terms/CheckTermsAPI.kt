@@ -37,23 +37,18 @@ In order to identify the user any oauth2 token must be passed.
         @SerializedName("PACE ID")
         @Json(name = "PACE ID")
         PACEID("PACE ID"),
-
         @SerializedName("PACE Connected Fueling")
         @Json(name = "PACE Connected Fueling")
         PACECONNECTEDFUELING("PACE Connected Fueling"),
-
         @SerializedName("PACE Pay")
         @Json(name = "PACE Pay")
         PACEPAY("PACE Pay"),
-
         @SerializedName("PACE Community")
         @Json(name = "PACE Community")
         PACECOMMUNITY("PACE Community"),
-
         @SerializedName("PACE Car App")
         @Json(name = "PACE Car App")
         PACECARAPP("PACE Car App"),
-
         @SerializedName("PACE Drive App")
         @Json(name = "PACE Drive App")
         PACEDRIVEAPP("PACE Drive App")

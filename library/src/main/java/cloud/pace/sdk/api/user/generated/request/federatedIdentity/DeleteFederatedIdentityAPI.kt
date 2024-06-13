@@ -5,7 +5,7 @@
  * https://github.com/pace/SwagGen
  */
 
-package cloud.pace.sdk.api.user.generated.request.user
+package cloud.pace.sdk.api.user.generated.request.federatedIdentity
 
 import cloud.pace.sdk.api.request.BaseRequest
 import cloud.pace.sdk.api.user.UserAPI
@@ -14,45 +14,45 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
-object VerifyEmailAPI {
+object DeleteFederatedIdentityAPI {
 
-    interface VerifyEmailService {
-        /* Verify Email */
-        /* Verifies that the given Email is not already used.
+    interface DeleteFederatedIdentityService {
+        /* Delete federated identity */
+        /* Delete federated identity for the user with the given identity provider
  */
-        @POST("user/email/verify")
-        fun verifyEmail(
+        @DELETE("federated-identities/{identityProvider}")
+        fun deleteFederatedIdentity(
             @HeaderMap headers: Map<String, String>,
-            @retrofit2.http.Body body: Email
+            @Path("identityProvider") identityProvider: String? = null
         ): Call<ResponseBody>
     }
 
     open class Request : BaseRequest() {
 
-        fun verifyEmail(
-            body: Email,
+        fun deleteFederatedIdentity(
+            identityProvider: String? = null,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
         ): Call<ResponseBody> {
-            val headers = headers(false, "application/json", "application/json", additionalHeaders)
+            val headers = headers(true, "application/json", "application/json", additionalHeaders)
 
             return retrofit(UserAPI.baseUrl, additionalParameters, readTimeout)
-                .create(VerifyEmailService::class.java)
-                .verifyEmail(
+                .create(DeleteFederatedIdentityService::class.java)
+                .deleteFederatedIdentity(
                     headers,
-                    body
+                    identityProvider
                 )
         }
     }
 
-    fun UserAPI.UserAPI.verifyEmail(
-        body: Email,
+    fun UserAPI.FederatedIdentityAPI.deleteFederatedIdentity(
+        identityProvider: String? = null,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ) = Request().verifyEmail(
-        body,
+    ) = Request().deleteFederatedIdentity(
+        identityProvider,
         readTimeout,
         additionalHeaders,
         additionalParameters

@@ -25,7 +25,7 @@ preferences namespace, only with the respective scope e.g. `user:preferences:rea
 a client might be able to read the preferences of a different client.
 The preferences should not have more than 10 key-value pairs per app.
 Any key must not be longer than 128 bytes and any
-value not longer than 255 bytes (including complex json objects).
+value not longer than 10 megabytes (including complex json objects).
  */
         @JvmSuppressWildcards
         @PUT("preferences/{clientId}")

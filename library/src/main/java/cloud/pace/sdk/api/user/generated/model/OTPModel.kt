@@ -14,7 +14,6 @@ class OTP {
 
     /* one time password */
     var otp: String? = null
-
     /* the one time password type to validate against. If none provided all default types are checked.
 * `login` login otp ([created and send via email](#operation/SendUsersLoginOTP))
 * `account` user account otp ([created on demand via pin / password](#operation/CreateOTP).)
@@ -33,15 +32,12 @@ class OTP {
         @SerializedName("login")
         @Json(name = "login")
         LOGIN("login"),
-
         @SerializedName("account")
         @Json(name = "account")
         ACCOUNT("account"),
-
         @SerializedName("totp")
         @Json(name = "totp")
         TOTP("totp"),
-
         @SerializedName("device-totp")
         @Json(name = "device-totp")
         DEVICETOTP("device-totp")

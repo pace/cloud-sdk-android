@@ -39,7 +39,7 @@ The following rules apply to verify the PIN:
      */
     class Body {
 
-        var data: UserPINBody? = null
+        var data: UserPINAndOTPBody? = null
     }
 
     open class Request : BaseRequest() {

@@ -7,10 +7,11 @@
 
 package cloud.pace.sdk.api.user.generated.model
 
-class UserPIN {
+import moe.banana.jsonapi2.JsonApi
+import moe.banana.jsonapi2.Resource
 
-    /* 4-digit code */
-    var pin: String? = null
-    /* allows skipping credential verification */
-    var skip: Boolean? = null
+@JsonApi(type = "scopes")
+class Scopes : Resource() {
+
+    var scopes: List<String>? = null
 }

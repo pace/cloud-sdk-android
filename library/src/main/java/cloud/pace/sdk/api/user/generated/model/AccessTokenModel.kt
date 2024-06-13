@@ -10,10 +10,8 @@ package cloud.pace.sdk.api.user.generated.model
 class AccessToken {
 
     var accessToken: String? = null
-
     /* Number of seconds the token is valid */
     var expiresIn: Int? = null
-
     /* Optional. Token for refreshing this grant */
     var refreshToken: String? = null
     var scope: String? = null

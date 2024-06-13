@@ -53,7 +53,7 @@ RFCs for reference:
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
         ): Call<OAuth2Token> {
-            val headers = headers(true, "application/x-www-form-urlencoded", "application/x-www-form-urlencoded", additionalHeaders)
+            val headers = headers(false, "application/x-www-form-urlencoded", "application/x-www-form-urlencoded", additionalHeaders)
 
             return retrofit(UserAPI.baseUrl, additionalParameters, readTimeout)
                 .create(TokenExchangeService::class.java)

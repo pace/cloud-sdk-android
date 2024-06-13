@@ -5,53 +5,56 @@
  * https://github.com/pace/SwagGen
  */
 
-package cloud.pace.sdk.api.user.generated.request.user
+package cloud.pace.sdk.api.user.generated.request.maintenance
 
 import cloud.pace.sdk.api.request.BaseRequest
 import cloud.pace.sdk.api.user.UserAPI
 import cloud.pace.sdk.api.user.generated.model.*
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
-object VerifyEmailAPI {
+object PostMaintenanceCheckScopesAPI {
 
-    interface VerifyEmailService {
-        /* Verify Email */
-        /* Verifies that the given Email is not already used.
- */
-        @POST("user/email/verify")
-        fun verifyEmail(
+    interface PostMaintenanceCheckScopesService {
+        /* Compares the scopes between our api-definitions and Keycloak */
+        @POST("maintenance/check-scopes")
+        fun postMaintenanceCheckScopes(
             @HeaderMap headers: Map<String, String>,
-            @retrofit2.http.Body body: Email
-        ): Call<ResponseBody>
+            @retrofit2.http.Body body: Body
+        ): Call<Scopes>
+    }
+
+    /* Compares the scopes between our api-definitions and Keycloak */
+    class Body {
+
+        var data: ScopesBody? = null
     }
 
     open class Request : BaseRequest() {
 
-        fun verifyEmail(
-            body: Email,
+        fun postMaintenanceCheckScopes(
+            body: Body,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
-        ): Call<ResponseBody> {
-            val headers = headers(false, "application/json", "application/json", additionalHeaders)
+        ): Call<Scopes> {
+            val headers = headers(false, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(UserAPI.baseUrl, additionalParameters, readTimeout)
-                .create(VerifyEmailService::class.java)
-                .verifyEmail(
+                .create(PostMaintenanceCheckScopesService::class.java)
+                .postMaintenanceCheckScopes(
                     headers,
                     body
                 )
         }
     }
 
-    fun UserAPI.UserAPI.verifyEmail(
-        body: Email,
+    fun UserAPI.MaintenanceAPI.postMaintenanceCheckScopes(
+        body: Body,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ) = Request().verifyEmail(
+    ) = Request().postMaintenanceCheckScopes(
         body,
         readTimeout,
         additionalHeaders,
