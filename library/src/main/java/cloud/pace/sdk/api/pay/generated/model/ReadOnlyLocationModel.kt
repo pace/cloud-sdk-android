@@ -11,8 +11,10 @@ class ReadOnlyLocation {
 
     var address: Address? = null
     var brand: String? = null
+    var brandId: String? = null
     var latitude: Float? = null
     var longitude: Float? = null
+    var stationName: String? = null
 
     class Address {
 

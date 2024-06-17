@@ -5,66 +5,60 @@
  * https://github.com/pace/SwagGen
  */
 
-package cloud.pace.sdk.api.pay.generated.request.paymentTokens
+package cloud.pace.sdk.api.pay.generated.request.fleetPaymentMethods
 
 import cloud.pace.sdk.api.pay.PayAPI
+import cloud.pace.sdk.api.pay.generated.model.FleetPaymentMethodOMVCreateBody
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethod
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethodKind
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethodVendor
 import cloud.pace.sdk.api.pay.generated.model.PaymentToken
-import cloud.pace.sdk.api.pay.generated.model.PaymentTokenCreateGooglePayBody
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
 import retrofit2.http.*
 
-object AuthorizeGooglePayPaymentTokenAPI {
+object CreateFleetPaymentMethodOMVAPI {
 
-    interface AuthorizeGooglePayPaymentTokenService {
-        /* Authorize a payment using Google Pay by providing a Google Pay token. */
-        /* When successful, returns a paymentToken value. Requires the caller to interact with Google Pay
-to create the `googlePay` specific authorization data.
- */
-        @POST("payment-method-kinds/googlepay/authorize")
-        fun authorizeGooglePayPaymentToken(
+    interface CreateFleetPaymentMethodOMVService {
+        /* Register a OMV card as a payment method */
+        @POST("fleet/payment-methods/omv")
+        fun createFleetPaymentMethodOMV(
             @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: Body
-        ): Call<PaymentToken>
+        ): Call<PaymentMethod>
     }
 
-    /* When successful, returns a paymentToken value. Requires the caller to interact with Google Pay
-    to create the `googlePay` specific authorization data.
-     */
     class Body {
 
-        var data: PaymentTokenCreateGooglePayBody? = null
+        var data: FleetPaymentMethodOMVCreateBody? = null
     }
 
     open class Request : BaseRequest() {
 
-        fun authorizeGooglePayPaymentToken(
+        fun createFleetPaymentMethodOMV(
             body: Body,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
-        ): Call<PaymentToken> {
+        ): Call<PaymentMethod> {
             val resources = listOf(PaymentMethod::class.java, PaymentMethodKind::class.java, PaymentMethodVendor::class.java, PaymentToken::class.java)
             val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout, resources)
-                .create(AuthorizeGooglePayPaymentTokenService::class.java)
-                .authorizeGooglePayPaymentToken(
+                .create(CreateFleetPaymentMethodOMVService::class.java)
+                .createFleetPaymentMethodOMV(
                     headers,
                     body
                 )
         }
     }
 
-    fun PayAPI.PaymentTokensAPI.authorizeGooglePayPaymentToken(
+    fun PayAPI.FleetPaymentMethodsAPI.createFleetPaymentMethodOMV(
         body: Body,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ) = Request().authorizeGooglePayPaymentToken(
+    ) = Request().createFleetPaymentMethodOMV(
         body,
         readTimeout,
         additionalHeaders,

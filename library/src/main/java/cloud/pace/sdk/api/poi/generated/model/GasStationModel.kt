@@ -19,6 +19,7 @@ class GasStation : Resource() {
     var address: Address? = null
     var amenities: List<String>? = null
     var brand: String? = null
+    var brandID: String? = null
     var contact: Contact? = null
     var food: List<String>? = null
     var latitude: Float? = null

@@ -8,7 +8,7 @@
 package cloud.pace.sdk.api.pay.generated.request.paymentTransactions
 
 import cloud.pace.sdk.api.pay.PayAPI
-import cloud.pace.sdk.api.pay.generated.model.*
+import cloud.pace.sdk.api.pay.generated.model.TransactionIDListBody
 import cloud.pace.sdk.api.request.BaseRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -23,8 +23,13 @@ object ResendReceiptAPI {
         @POST("receipts/resend")
         fun resendReceipt(
             @HeaderMap headers: Map<String, String>,
-            /* Language preference of localized response properties. The full standard of RFC 7231 (https://tools.ietf.org/html/rfc7231#section-5.3.5) is supported. */
-            @Header("Accept-Language") acceptLanguage: String? = null,
+            /* (Optional) Specify the language you want the returned receipt to be localized in.
+Returns the receipt in the default language that is available if the specified language is not available.
+Language does not have to be valid language. For example, `language=local` means that the receipt should be displayed
+in the language that is determined to be spoken in the area that the point of intereset at which the receipt has been generated at.
+*Prefer using the `Accept-Language` header if you use this endpoint on an end-user device.*
+ */
+            @Query("language") language: String? = null,
             @retrofit2.http.Body body: Body
         ): Call<ResponseBody>
     }
@@ -39,7 +44,7 @@ object ResendReceiptAPI {
     open class Request : BaseRequest() {
 
         fun resendReceipt(
-            acceptLanguage: String? = null,
+            language: String? = null,
             body: Body,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
@@ -51,20 +56,20 @@ object ResendReceiptAPI {
                 .create(ResendReceiptService::class.java)
                 .resendReceipt(
                     headers,
-                    acceptLanguage,
+                    language,
                     body
                 )
         }
     }
 
     fun PayAPI.PaymentTransactionsAPI.resendReceipt(
-        acceptLanguage: String? = null,
+        language: String? = null,
         body: Body,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
     ) = Request().resendReceipt(
-        acceptLanguage,
+        language,
         body,
         readTimeout,
         additionalHeaders,

@@ -14,15 +14,17 @@ This API is responsible for managing payment methods for users as well as author
  */
 object PayAPI {
 
-    const val VERSION = "2022-1"
+    const val VERSION = "2024-2"
     internal val baseUrl = "${API.baseUrl}/pay/$VERSION/"
 
+    class FleetPaymentMethodsAPI
     class NewPaymentMethodsAPI
     class PaymentMethodKindsAPI
     class PaymentMethodsAPI
     class PaymentTokensAPI
     class PaymentTransactionsAPI
 
+    val API.fleetPaymentMethods: FleetPaymentMethodsAPI by lazy { FleetPaymentMethodsAPI() }
     val API.newPaymentMethods: NewPaymentMethodsAPI by lazy { NewPaymentMethodsAPI() }
     val API.paymentMethodKinds: PaymentMethodKindsAPI by lazy { PaymentMethodKindsAPI() }
     val API.paymentMethods: PaymentMethodsAPI by lazy { PaymentMethodsAPI() }

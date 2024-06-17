@@ -8,10 +8,12 @@
 package cloud.pace.sdk.api.poi.generated.request.stats
 
 import cloud.pace.sdk.api.poi.POIAPI
-import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.poi.generated.model.Stats
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.HeaderMap
+import retrofit2.http.Query
 
 object GetStatsAPI {
 
@@ -22,7 +24,9 @@ object GetStatsAPI {
         fun getStats(
             @HeaderMap headers: Map<String, String>,
             /* Comma separated strings that represent the fields to be returned in the response alongside the default response */
-            @Query("fields") fields: String? = null
+            @Query("fields") fields: String? = null,
+            /* Adds stats for stations that are coming soon */
+            @Query("includeAll") includeAll: Boolean? = null
         ): Call<Stats>
     }
 
@@ -30,6 +34,7 @@ object GetStatsAPI {
 
         fun getStats(
             fields: String? = null,
+            includeAll: Boolean? = null,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
@@ -40,18 +45,21 @@ object GetStatsAPI {
                 .create(GetStatsService::class.java)
                 .getStats(
                     headers,
-                    fields
+                    fields,
+                    includeAll
                 )
         }
     }
 
     fun POIAPI.StatsAPI.getStats(
         fields: String? = null,
+        includeAll: Boolean? = null,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
     ) = Request().getStats(
         fields,
+        includeAll,
         readTimeout,
         additionalHeaders,
         additionalParameters

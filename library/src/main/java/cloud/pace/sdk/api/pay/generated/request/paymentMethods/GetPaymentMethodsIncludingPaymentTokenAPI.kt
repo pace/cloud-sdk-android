@@ -8,12 +8,19 @@
 package cloud.pace.sdk.api.pay.generated.request.paymentMethods
 
 import cloud.pace.sdk.api.pay.PayAPI
-import cloud.pace.sdk.api.pay.generated.model.*
+import cloud.pace.sdk.api.pay.generated.model.PRN
+import cloud.pace.sdk.api.pay.generated.model.PaymentMethod
+import cloud.pace.sdk.api.pay.generated.model.PaymentMethodKind
+import cloud.pace.sdk.api.pay.generated.model.PaymentMethodVendor
+import cloud.pace.sdk.api.pay.generated.model.PaymentMethods
+import cloud.pace.sdk.api.pay.generated.model.PaymentToken
 import cloud.pace.sdk.api.request.BaseRequest
 import com.google.gson.annotations.SerializedName
 import com.squareup.moshi.Json
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.HeaderMap
+import retrofit2.http.Query
 
 object GetPaymentMethodsIncludingPaymentTokenAPI {
 

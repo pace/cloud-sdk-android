@@ -8,10 +8,16 @@
 package cloud.pace.sdk.api.poi.generated.request.poi
 
 import cloud.pace.sdk.api.poi.POIAPI
-import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.poi.generated.model.FuelPrice
+import cloud.pace.sdk.api.poi.generated.model.GasStation
+import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
+import cloud.pace.sdk.api.poi.generated.model.POI
+import cloud.pace.sdk.api.poi.generated.model.ReferenceStatus
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.HeaderMap
+import retrofit2.http.Path
 
 object GetPoiAPI {
 
@@ -22,14 +28,14 @@ object GetPoiAPI {
         fun getPoi(
             @HeaderMap headers: Map<String, String>,
             /* ID of the POI */
-            @Path("poiId") poiId: String? = null
+            @Path("poiId") poiId: String
         ): Call<POI>
     }
 
     open class Request : BaseRequest() {
 
         fun getPoi(
-            poiId: String? = null,
+            poiId: String,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
@@ -47,7 +53,7 @@ object GetPoiAPI {
     }
 
     fun POIAPI.POIAPI.getPoi(
-        poiId: String? = null,
+        poiId: String,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null

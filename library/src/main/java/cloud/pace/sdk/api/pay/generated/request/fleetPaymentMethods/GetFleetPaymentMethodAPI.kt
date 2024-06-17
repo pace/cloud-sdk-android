@@ -5,67 +5,59 @@
  * https://github.com/pace/SwagGen
  */
 
-package cloud.pace.sdk.api.pay.generated.request.paymentTokens
+package cloud.pace.sdk.api.pay.generated.request.fleetPaymentMethods
 
 import cloud.pace.sdk.api.pay.PayAPI
+import cloud.pace.sdk.api.pay.generated.model.FleetPaymentMethod
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethod
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethodKind
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethodVendor
 import cloud.pace.sdk.api.pay.generated.model.PaymentToken
-import cloud.pace.sdk.api.pay.generated.model.PaymentTokenCreateGooglePayBody
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.HeaderMap
+import retrofit2.http.Path
 
-object AuthorizeGooglePayPaymentTokenAPI {
+object GetFleetPaymentMethodAPI {
 
-    interface AuthorizeGooglePayPaymentTokenService {
-        /* Authorize a payment using Google Pay by providing a Google Pay token. */
-        /* When successful, returns a paymentToken value. Requires the caller to interact with Google Pay
-to create the `googlePay` specific authorization data.
- */
-        @POST("payment-method-kinds/googlepay/authorize")
-        fun authorizeGooglePayPaymentToken(
+    interface GetFleetPaymentMethodService {
+        /* Get a payment method */
+        @GET("fleet/payment-methods/{paymentMethodId}")
+        fun getFleetPaymentMethod(
             @HeaderMap headers: Map<String, String>,
-            @retrofit2.http.Body body: Body
-        ): Call<PaymentToken>
-    }
-
-    /* When successful, returns a paymentToken value. Requires the caller to interact with Google Pay
-    to create the `googlePay` specific authorization data.
-     */
-    class Body {
-
-        var data: PaymentTokenCreateGooglePayBody? = null
+            /* ID of the paymentMethod */
+            @Path("paymentMethodId") paymentMethodId: String
+        ): Call<FleetPaymentMethod>
     }
 
     open class Request : BaseRequest() {
 
-        fun authorizeGooglePayPaymentToken(
-            body: Body,
+        fun getFleetPaymentMethod(
+            paymentMethodId: String,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
-        ): Call<PaymentToken> {
+        ): Call<FleetPaymentMethod> {
             val resources = listOf(PaymentMethod::class.java, PaymentMethodKind::class.java, PaymentMethodVendor::class.java, PaymentToken::class.java)
             val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout, resources)
-                .create(AuthorizeGooglePayPaymentTokenService::class.java)
-                .authorizeGooglePayPaymentToken(
+                .create(GetFleetPaymentMethodService::class.java)
+                .getFleetPaymentMethod(
                     headers,
-                    body
+                    paymentMethodId
                 )
         }
     }
 
-    fun PayAPI.PaymentTokensAPI.authorizeGooglePayPaymentToken(
-        body: Body,
+    fun PayAPI.FleetPaymentMethodsAPI.getFleetPaymentMethod(
+        paymentMethodId: String,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ) = Request().authorizeGooglePayPaymentToken(
-        body,
+    ) = Request().getFleetPaymentMethod(
+        paymentMethodId,
         readTimeout,
         additionalHeaders,
         additionalParameters

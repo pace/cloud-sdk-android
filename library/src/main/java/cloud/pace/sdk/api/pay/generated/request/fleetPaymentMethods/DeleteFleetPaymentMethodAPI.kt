@@ -5,7 +5,7 @@
  * https://github.com/pace/SwagGen
  */
 
-package cloud.pace.sdk.api.pay.generated.request.paymentTokens
+package cloud.pace.sdk.api.pay.generated.request.fleetPaymentMethods
 
 import cloud.pace.sdk.api.pay.PayAPI
 import cloud.pace.sdk.api.request.BaseRequest
@@ -14,23 +14,27 @@ import retrofit2.Call
 import retrofit2.http.DELETE
 import retrofit2.http.HeaderMap
 import retrofit2.http.Path
+import retrofit2.http.Query
 
-object DeletePaymentTokenAPI {
+object DeleteFleetPaymentMethodAPI {
 
-    interface DeletePaymentTokenService {
-        /* Delete the paymentToken record. */
-        @DELETE("payment-tokens/{paymentTokenId}")
-        fun deletePaymentToken(
+    interface DeleteFleetPaymentMethodService {
+        /* Delete a payment method */
+        @DELETE("fleet/payment-methods/{paymentMethodId}")
+        fun deleteFleetPaymentMethod(
             @HeaderMap headers: Map<String, String>,
-            /* paymentToken ID. */
-            @Path("paymentTokenId") paymentTokenId: String
+            /* ID of the paymentMethod */
+            @Path("paymentMethodId") paymentMethodId: String,
+            /* ID of the user that is required when user ID is not present in the authorization token. */
+            @Query("userId") userId: String
         ): Call<ResponseBody>
     }
 
     open class Request : BaseRequest() {
 
-        fun deletePaymentToken(
-            paymentTokenId: String,
+        fun deleteFleetPaymentMethod(
+            paymentMethodId: String,
+            userId: String,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
@@ -38,21 +42,24 @@ object DeletePaymentTokenAPI {
             val headers = headers(true, "application/json", "application/json", additionalHeaders)
 
             return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout)
-                .create(DeletePaymentTokenService::class.java)
-                .deletePaymentToken(
+                .create(DeleteFleetPaymentMethodService::class.java)
+                .deleteFleetPaymentMethod(
                     headers,
-                    paymentTokenId
+                    paymentMethodId,
+                    userId
                 )
         }
     }
 
-    fun PayAPI.PaymentTokensAPI.deletePaymentToken(
-        paymentTokenId: String,
+    fun PayAPI.FleetPaymentMethodsAPI.deleteFleetPaymentMethod(
+        paymentMethodId: String,
+        userId: String,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ) = Request().deletePaymentToken(
-        paymentTokenId,
+    ) = Request().deleteFleetPaymentMethod(
+        paymentMethodId,
+        userId,
         readTimeout,
         additionalHeaders,
         additionalParameters

@@ -8,10 +8,15 @@
 package cloud.pace.sdk.api.poi.generated.request.gasStations
 
 import cloud.pace.sdk.api.poi.POIAPI
-import cloud.pace.sdk.api.poi.generated.model.*
+import cloud.pace.sdk.api.poi.generated.model.FuelPrice
+import cloud.pace.sdk.api.poi.generated.model.GasStation
+import cloud.pace.sdk.api.poi.generated.model.LocationBasedApp
+import cloud.pace.sdk.api.poi.generated.model.ReferenceStatus
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.HeaderMap
+import retrofit2.http.Path
 
 object GetGasStationAPI {
 
@@ -23,9 +28,7 @@ object GetGasStationAPI {
         fun getGasStation(
             @HeaderMap headers: Map<String, String>,
             /* Gas station ID */
-            @Path("id") id: String,
-            /* Reduces the opening hours rules. After compilation, only rules with the action open will remain in the response. */
-            @Query("compile[openingHours]") compileopeningHours: Boolean? = null
+            @Path("id") id: String
         ): Call<GasStation>
     }
 
@@ -33,7 +36,6 @@ object GetGasStationAPI {
 
         fun getGasStation(
             id: String,
-            compileopeningHours: Boolean? = null,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
@@ -45,21 +47,18 @@ object GetGasStationAPI {
                 .create(GetGasStationService::class.java)
                 .getGasStation(
                     headers,
-                    id,
-                    compileopeningHours
+                    id
                 )
         }
     }
 
     fun POIAPI.GasStationsAPI.getGasStation(
         id: String,
-        compileopeningHours: Boolean? = null,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
     ) = Request().getGasStation(
         id,
-        compileopeningHours,
         readTimeout,
         additionalHeaders,
         additionalParameters

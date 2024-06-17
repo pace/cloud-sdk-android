@@ -8,7 +8,9 @@
 package cloud.pace.sdk.api.pay.generated.request.paymentTransactions
 
 import cloud.pace.sdk.api.pay.PayAPI
-import cloud.pace.sdk.api.pay.generated.model.*
+import cloud.pace.sdk.api.pay.generated.model.Discount
+import cloud.pace.sdk.api.pay.generated.model.Transaction
+import cloud.pace.sdk.api.pay.generated.model.TransactionCreateBody
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
 import retrofit2.http.*

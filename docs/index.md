@@ -21,6 +21,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [18.x.x -> 19.x.x](#from-18xx-to-19xx)
         + [19.x.x -> 20.x.x](#from-19xx-to-20xx)
         + [20.x.x -> 21.x.x](#from-20xx-to-21xx)
+        + [21.x.x -> 22.x.x](#from-21xx-to-22xx)
 
 ## Documentation
 The full documentation and instructions on how to integrate PACE Cloud SDK can be found [here](https://docs.pace.cloud/en/integrating/mobile-app)
@@ -170,6 +171,9 @@ The `GasStations` properties `paymentMethods`, `amenities`, `foods`, `loyaltyPro
 ### From 20.x.x to 21.x.x
 - We have refactored our `Configuration` object that is used in the `PACECloudSDK.setup(...)` function: We have added `clientID` as property to `Configuration` and removed it from `CustomOIDConfiguration`.
 - We have raised the min sdk version to 26 (Android 8).
+
+### From 21.x.x to 22.x.x
+- Updated Fueling, Pay, User and POI API
 
 ## SDK API Docs
 

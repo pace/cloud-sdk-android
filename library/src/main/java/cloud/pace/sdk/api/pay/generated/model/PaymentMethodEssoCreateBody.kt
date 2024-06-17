@@ -29,6 +29,9 @@ class PaymentMethodEssoCreateBody {
 
         lateinit var kind: Kind
 
+        /* Indicates whether the card should be onboarded as a dual card. */
+        var dualcard: Boolean? = null
+
         /* The date the card is expiring */
         var expiry: Date? = null
 

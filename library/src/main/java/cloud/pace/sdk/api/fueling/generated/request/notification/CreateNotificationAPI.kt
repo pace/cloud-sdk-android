@@ -8,11 +8,12 @@
 package cloud.pace.sdk.api.fueling.generated.request.notification
 
 import cloud.pace.sdk.api.fueling.FuelingAPI
-import cloud.pace.sdk.api.fueling.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.HeaderMap
+import retrofit2.http.POST
+import retrofit2.http.Query
 
 object CreateNotificationAPI {
 

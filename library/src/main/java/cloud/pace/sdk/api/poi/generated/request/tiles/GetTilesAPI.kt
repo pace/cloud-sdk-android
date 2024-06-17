@@ -10,50 +10,52 @@ package cloud.pace.sdk.api.poi.generated.request.tiles
 import TileQueryRequestOuterClass
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.poi.POIAPI
-import cloud.pace.sdk.api.poi.generated.model.*
 import cloud.pace.sdk.api.request.BaseRequest
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.tiles.converter.TilesConverterFactory
 import moe.banana.jsonapi2.Resource
 import retrofit2.Call
 import retrofit2.Retrofit
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.HeaderMap
+import retrofit2.http.POST
 
 object GetTilesAPI {
 
     interface GetTilesService {
         /**
-         * Query for tiles.
-         * Get a list of map tiles in the Protobuf binary wire format.
+         * Query for tiles
          *
-         * Protobuf binary wire format of the following definition:
-         * ```
-         * syntax = "proto3";
-         * message TileQueryRequest {
-         * uint32 zoom = 1;
-         * repeated AreaQuery areas = 2;
-         * repeated IndividualTileQuery tiles = 3;
-         * }
-         * message AreaQuery {
-         * // if NE(1,1) + SW(1,1) == { tile(1,1) }
-         * // if NE(2,1) + SW(1,2) == { tile(1,1), tile(2,1), tile(1,2), tile(2,2) }
-         * Coordinate north_east = 1;
-         * Coordinate south_west = 2;
-         * uint64 invalidation_token = 3; // e.g. timestamp or sequence number
-         * }
-         * message IndividualTileQuery {
-         * Coordinate geo = 1;
-         * uint64 invalidation_token = 3; // e.g. timestamp or sequence number
-         * }
-         * message Coordinate {
-         * uint32 x = 1; // tile coordinate
-         * uint32 y = 2; // tile coordinate
-         * }
-         * ```
+         * Get a list of map tiles in the Protobuf binary wire format.
          */
         @POST("v1/tiles/query")
         fun getTiles(
             @HeaderMap headers: Map<String, String>,
+            /** Protobuf binary wire format of the following definition
+             * ```
+             * syntax = "proto3";
+             * message TileQueryRequest {
+             *   uint32 zoom = 1;
+             *   repeated AreaQuery areas = 2;
+             *   repeated IndividualTileQuery tiles = 3;
+             * }
+             * message AreaQuery {
+             *   // if NE(1,1) + SW(1,1) == { tile(1,1) }
+             *   // if NE(2,1) + SW(1,2) == { tile(1,1), tile(2,1), tile(1,2), tile(2,2) }
+             *   Coordinate north_east = 1;
+             *   Coordinate south_west = 2;
+             *   uint64 invalidation_token = 3; // e.g. timestamp or sequence number
+             * }
+             * message IndividualTileQuery {
+             *   Coordinate geo = 1;
+             *   uint64 invalidation_token = 3; // e.g. timestamp or sequence number
+             * }
+             * message Coordinate {
+             *   uint32 x = 1; // tile coordinate
+             *   uint32 y = 2; // tile coordinate
+             * }
+             * ```
+             */
             @Body body: TileQueryRequestOuterClass.TileQueryRequest
         ): Call<List<GasStation>>
     }

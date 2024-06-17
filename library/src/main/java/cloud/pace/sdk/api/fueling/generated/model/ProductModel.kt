@@ -5,6 +5,9 @@
  * https://github.com/pace/SwagGen
  */
 
-package cloud.pace.sdk.api.poi.generated.model
+package cloud.pace.sdk.api.fueling.generated.model
 
-typealias Categories = List<Category>
+class Product {
+
+    var name: String? = null
+}

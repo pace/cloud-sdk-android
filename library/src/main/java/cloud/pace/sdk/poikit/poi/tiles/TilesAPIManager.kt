@@ -103,7 +103,7 @@ class TilesAPIManagerImpl(private val poiApi: POIAPI) : TilesAPIManager {
     private suspend fun getGasStation(id: String, redirectCount: Int = 1): cloud.pace.sdk.api.poi.generated.model.GasStation {
         if (redirectCount > MAX_REDIRECTS) throw Exception("Too many redirects (max: $MAX_REDIRECTS) for gas station with ID: $id")
 
-        val response = poiApi.getGasStation(id, false)
+        val response = poiApi.getGasStation(id)
 
         return when {
             response.isSuccessful -> response.body() ?: throw Exception("Gas station response body is null. Gas station ID: $id")

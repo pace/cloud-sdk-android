@@ -20,6 +20,9 @@ class ProcessPaymentResponse : Resource() {
 
     /* Amount that was discounted. Only if any discounts were applied earlier. */
     var discountAmount: Double? = null
+
+    /* Driver/vehicle identification */
+    var driverVehicleID: String? = null
     var gasStationId: String? = null
 
     /* Mileage in meters */
