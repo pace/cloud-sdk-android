@@ -1,3 +1,13 @@
+22.0.0 Release notes (2024-06-17)
+=============================================================
+
+### Breaking Changes
+
+* Update POI API
+* Update Fueling API
+* Update Pay API
+* Update User API
+
 21.3.0 Release notes (2024-05-21)
 =============================================================
 
