@@ -39,7 +39,6 @@ fun AppDrawerHost(
     )
 }
 
-@OptIn(KoinInternalApi::class)
 @Composable
 fun AppDrawerHost(
     modifier: Modifier = Modifier,
@@ -48,43 +47,52 @@ fun AppDrawerHost(
         AppDrawer(app, appCount, callback)
     }
 ) {
+    AppDrawerHost { apps ->
+        BoxWithConstraints(
+            modifier = modifier,
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            val space = dimensionResource(id = R.dimen.app_drawer_spacing)
+            val drawerHeight = dimensionResource(id = R.dimen.app_drawer_height)
+            val size = remember(maxHeight) {
+                // Calculate number of elements that fit into max height
+                maxHeight.div(space + drawerHeight).toInt().coerceAtLeast(0)
+            }
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(
+                    space = space,
+                    alignment = Alignment.Bottom
+                ),
+                horizontalAlignment = Alignment.End
+            ) {
+                val maxApps = apps.take(size)
+
+                maxApps.forEach {
+                    appDrawer(it, maxApps.size)
+                }
+
+                LaunchedEffect(maxApps, callback) {
+                    callback.onShow(maxApps)
+                }
+            }
+        }
+    }
+}
+
+@OptIn(KoinInternalApi::class)
+@Composable
+fun AppDrawerHost(
+    content: @Composable (apps: List<App>) -> Unit
+) {
     PACETheme {
         CompositionLocalProvider(
             LocalKoinApplication provides KoinConfig.cloudSDKKoinApp.koin,
             LocalKoinScope provides KoinConfig.cloudSDKKoinApp.koin.scopeRegistry.rootScope
         ) {
             val viewModel = koinViewModel<AppDrawerViewModel>()
-
-            BoxWithConstraints(
-                modifier = modifier,
-                contentAlignment = Alignment.BottomEnd
-            ) {
-                val space = dimensionResource(id = R.dimen.app_drawer_spacing)
-                val drawerHeight = dimensionResource(id = R.dimen.app_drawer_height)
-                val size = remember(maxHeight) {
-                    // Calculate number of elements that fit into max height
-                    maxHeight.div(space + drawerHeight).toInt().coerceAtLeast(0)
-                }
-
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(
-                        space = space,
-                        alignment = Alignment.Bottom
-                    ),
-                    horizontalAlignment = Alignment.End
-                ) {
-                    val apps by viewModel.apps.collectAsStateWithLifecycle(minActiveState = Lifecycle.State.RESUMED)
-                    val maxApps = apps.take(size)
-
-                    maxApps.forEach {
-                        appDrawer(it, maxApps.size)
-                    }
-
-                    LaunchedEffect(maxApps, callback) {
-                        callback.onShow(maxApps)
-                    }
-                }
-            }
+            val apps by viewModel.apps.collectAsStateWithLifecycle(minActiveState = Lifecycle.State.RESUMED)
+            content(apps)
         }
     }
 }

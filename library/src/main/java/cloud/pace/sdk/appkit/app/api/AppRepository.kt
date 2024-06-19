@@ -143,7 +143,8 @@ class AppRepositoryImpl(
                     textBackgroundColor = manifest?.themeColor,
                     display = manifest?.display,
                     poiId = it.key,
-                    distance = distance
+                    distance = distance,
+                    brandUrl = appUrl
                 )
             }
     }

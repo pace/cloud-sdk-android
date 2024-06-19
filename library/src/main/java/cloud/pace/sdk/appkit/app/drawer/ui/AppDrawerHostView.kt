@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.AbstractComposeView
 import cloud.pace.sdk.appkit.AppKit.defaultAppCallback
 
@@ -20,9 +19,6 @@ class AppDrawerHostView @JvmOverloads constructor(
 
     @Composable
     override fun Content() {
-        AppDrawerHost(
-            modifier = Modifier,
-            callback = callback
-        )
+        AppDrawerHost(callback = callback)
     }
 }
