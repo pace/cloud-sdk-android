@@ -145,7 +145,7 @@ android {
 
 dependencies {
     // PACE Cloud SDK
-    implementation("cloud.pace:sdk:21.1.0")
+    implementation("cloud.pace:sdk:22.0.0")
 
     // Jetpack Compose
     val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
