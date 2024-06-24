@@ -59,7 +59,7 @@ internal class AppManager(private val dispatchers: DispatcherProvider = DefaultD
 
         Timber.i("Check local available apps at $userLocation")
 
-        when (val apps = appRepository.getLocationBasedApps(userLocation.latitude, userLocation.longitude)) {
+        when (val apps = appRepository.getLocationBasedApps(userLocation.latitude, userLocation.longitude, userLocation.accuracy.toDouble())) {
             is Success -> {
                 val result = apps.result
                 Timber.d("Received ${result.size} apps: ${result.map { it.url }}")

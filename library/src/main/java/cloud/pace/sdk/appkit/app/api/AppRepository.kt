@@ -26,7 +26,7 @@ import timber.log.Timber
 
 interface AppRepository {
 
-    suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>>
+    suspend fun getLocationBasedApps(latitude: Double, longitude: Double, locationAccuracy: Double? = null): Completion<List<App>>
     suspend fun getAppsByUrl(url: String, references: List<String>): Completion<List<App>>
     suspend fun getUrlByAppId(appId: String): Completion<String?>
     fun getFuelingUrl(poiId: String, completion: (String) -> Unit)
@@ -40,7 +40,7 @@ class AppRepositoryImpl(
     private val manifestClient: ManifestClient
 ) : AppRepository {
 
-    override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
+    override suspend fun getLocationBasedApps(latitude: Double, longitude: Double, locationAccuracy: Double?): Completion<List<App>> {
         val apps = geoApiManager.apps(latitude, longitude).getOrElse {
             return Failure(it)
         }
@@ -51,7 +51,7 @@ class AppRepositoryImpl(
 
                 apps
                     .map {
-                        async { it.toLocationBasedApps(userLocation) }
+                        async { it.toLocationBasedApps(userLocation, locationAccuracy) }
                     }
                     .flatMap {
                         runCatching { it.await() }.getOrNull() ?: emptyList()
@@ -113,16 +113,16 @@ class AppRepositoryImpl(
         }
     }
 
-    private suspend fun GeoGasStation.toLocationBasedApps(userLocation: LatLng): List<App> {
+    private suspend fun GeoGasStation.toLocationBasedApps(userLocation: LatLng, locationAccuracy: Double? = null): List<App> {
         val references = listOf(id)
         val distance = coordinate?.let { userLocation.distanceTo(it).toInt() }
 
         return appUrls[FUELING_TYPE]?.map {
-            createLocationBasedApps(it, references, distance)
+            createLocationBasedApps(it, references, distance, locationAccuracy)
         }?.flatten() ?: emptyList()
     }
 
-    private suspend fun createLocationBasedApps(appUrl: String?, references: List<String>?, distance: Int? = null): List<App> {
+    private suspend fun createLocationBasedApps(appUrl: String?, references: List<String>?, distance: Int? = null, locationAccuracy: Double? = null): List<App> {
         appUrl ?: return emptyList()
 
         val manifest = runCatching { manifestClient.getManifest(appUrl) }.getOrNull()
@@ -144,7 +144,8 @@ class AppRepositoryImpl(
                     display = manifest?.display,
                     poiId = it.key,
                     distance = distance,
-                    brandUrl = appUrl
+                    brandUrl = appUrl,
+                    locationAccuracy = locationAccuracy
                 )
             }
     }

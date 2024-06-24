@@ -73,7 +73,7 @@ open class TestLocationProvider(
 
 open class TestAppRepository : AppRepository {
 
-    override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
+    override suspend fun getLocationBasedApps(latitude: Double, longitude: Double, locationAccuracy: Double?): Completion<List<App>> {
         return Success(emptyList())
     }
 
