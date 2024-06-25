@@ -140,7 +140,7 @@ fetch_apps:
     script:
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/pace/mobile/common.git tmp/common
         - pip3 install -r tmp/common/scripts/whitelabel-app/requirements.txt
-        - python3 tmp/common/scripts/whitelabel-app/generate_build_apps_yaml.py --directus-base-url $DIRECTUS_BASE_URL --access-token $DIRECTUS_ACCESS_TOKEN
+        - python3 tmp/common/scripts/whitelabel-app/generate_build_apps_yaml.py --directus-base-url $DIRECTUS_BASE_URL --access-token=${DIRECTUS_ACCESS_TOKEN}
     artifacts:
         paths:
             - build-apps.yml
