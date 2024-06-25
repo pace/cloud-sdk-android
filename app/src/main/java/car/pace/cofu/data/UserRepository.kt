@@ -1,16 +1,22 @@
 package car.pace.cofu.data
 
+import android.os.LocaleList
 import androidx.appcompat.app.AppCompatActivity
 import car.pace.cofu.data.analytics.Analytics
 import car.pace.cofu.util.extension.MailNotSentException
 import car.pace.cofu.util.extension.resume
+import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.user.UserAPI.totp
+import cloud.pace.sdk.api.user.generated.request.totp.SendmailOTPAPI.sendmailOTP
+import cloud.pace.sdk.api.utils.RequestUtils.ACCEPT_LANGUAGE_HEADER
 import cloud.pace.sdk.idkit.IDKit
-import cloud.pace.sdk.utils.Failure
-import cloud.pace.sdk.utils.Success
-import cloud.pace.sdk.utils.resumeIfActive
+import cloud.pace.sdk.idkit.model.InternalError
+import cloud.pace.sdk.idkit.model.InvalidSession
+import java.net.HttpURLConnection
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.suspendCancellableCoroutine
+import retrofit2.awaitResponse
 
 @Singleton
 class UserRepository @Inject constructor(
@@ -44,16 +50,26 @@ class UserRepository @Inject constructor(
         IDKit.setPINWithOTP(pin, otp, it::resume)
     }
 
-    suspend fun sendMailOTP(): Result<Unit> = suspendCancellableCoroutine {
-        IDKit.sendMailOTP { completion ->
-            val success = (completion as? Success)?.result
-            if (success != null) {
-                it.resumeIfActive(Result.success(Unit))
-            } else {
-                val throwable = (completion as? Failure)?.throwable ?: MailNotSentException()
-                it.resumeIfActive(Result.failure(throwable))
-            }
+    suspend fun sendMailOTP(): Result<Unit> {
+        val acceptLanguage = LocaleList.getDefault().toLanguageTags()
+        val headers = mapOf(ACCEPT_LANGUAGE_HEADER to acceptLanguage)
+        val response = runCatching {
+            API.totp.sendmailOTP(additionalHeaders = headers).awaitResponse()
         }
+
+        return response.fold(
+            onSuccess = {
+                when {
+                    it.isSuccessful -> Result.success(Unit)
+                    it.code() >= HttpURLConnection.HTTP_INTERNAL_ERROR -> Result.failure(InternalError)
+                    it.code() == HttpURLConnection.HTTP_UNAUTHORIZED -> Result.failure(InvalidSession)
+                    else -> Result.failure(MailNotSentException())
+                }
+            },
+            onFailure = {
+                Result.failure(it)
+            }
+        )
     }
 
     suspend fun resetAppData(activity: AppCompatActivity) {
