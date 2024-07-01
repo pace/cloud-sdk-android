@@ -4,28 +4,26 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.LocalElevationOverlay
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.SwipeableDefaults
 import androidx.compose.material.SwipeableDefaults.resistanceConfig
 import androidx.compose.material.SwipeableState
@@ -33,7 +31,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberSwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -101,53 +98,76 @@ fun AppDrawer(
     initialDrawerValue: DrawerValue = DrawerValue.Closed,
     onClick: () -> Unit
 ) {
-    val height = dimensionResource(id = R.dimen.app_drawer_height)
+    val coroutineScope = rememberCoroutineScope()
+    val swipeableState = rememberSwipeableState(
+        initialValue = initialDrawerValue,
+        animationSpec = spring(dampingRatio = 0.6f, stiffness = 1000f)
+    )
+    val collapsed by remember {
+        derivedStateOf {
+            swipeableState.targetValue == DrawerValue.Closed
+        }
+    }
 
-    BoxWithConstraints(
-        modifier = Modifier
-            .padding(start = 20.dp)
-            .fillMaxWidth()
-            .requiredHeight(height),
-        contentAlignment = Alignment.CenterEnd
-    ) {
-        // Disable elevation overlay in Card so that the background color is not lighter
-        CompositionLocalProvider(LocalElevationOverlay provides null) {
-            val coroutineScope = rememberCoroutineScope()
-            val iconBoxSizePx = with(LocalDensity.current) { height.toPx() }
-            val collapsedOffset = constraints.maxWidth - iconBoxSizePx
-            val swipeableState = rememberSwipeableState(
-                initialValue = initialDrawerValue,
-                animationSpec = spring(dampingRatio = 0.6f, stiffness = 1000f)
-            )
-            val collapsed by remember {
-                derivedStateOf {
-                    swipeableState.targetValue == DrawerValue.Closed
-                }
-            }
-
-            AppDrawerContent(
-                modifier = Modifier.appDrawer(
-                    swipeableState = swipeableState,
-                    collapsedOffset = collapsedOffset,
-                    onClick = onClick
-                ),
-                iconUrl = iconUrl,
-                caption = caption,
-                distance = distance,
-                headline = headline,
-                isExpanded = !collapsed,
-                iconBackgroundColor = iconBackgroundColor,
-                backgroundColor = backgroundColor,
-                textColor = textColor
-            ) {
+    AppDrawerColumn(swipeableState = swipeableState) {
+        AppDrawerContent(
+            iconUrl = iconUrl,
+            caption = caption,
+            distance = distance,
+            headline = headline,
+            isExpanded = !collapsed,
+            iconBackgroundColor = iconBackgroundColor,
+            backgroundColor = backgroundColor,
+            textColor = textColor,
+            onClose = {
                 coroutineScope.launch {
                     swipeableState.animateTo(DrawerValue.Closed)
                 }
+            },
+            onClick = {
+                if (collapsed) {
+                    coroutineScope.launch {
+                        swipeableState.animateTo(DrawerValue.Open)
+                    }
+                } else {
+                    onClick()
+                }
             }
-        }
+        )
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun AppDrawerColumn(
+    modifier: Modifier = Modifier,
+    collapsedWidth: Dp = dimensionResource(id = R.dimen.app_drawer_height),
+    swipeableState: SwipeableState<DrawerValue> = rememberSwipeableState(
+        initialValue = DrawerValue.Closed,
+        animationSpec = spring(dampingRatio = 0.6f, stiffness = 1000f)
+    ),
+    content: @Composable ColumnScope.() -> Unit
+) {
+    BoxWithConstraints(
+        modifier = modifier
+            .padding(start = 20.dp)
+            .fillMaxWidth(),
+        contentAlignment = Alignment.CenterEnd
+    ) {
+        val collapsedWidthPx = with(LocalDensity.current) { collapsedWidth.toPx() }
+        val collapsedOffset = constraints.maxWidth - collapsedWidthPx
+
+        Column(
+            modifier = Modifier.appDrawer(
+                swipeableState = swipeableState,
+                collapsedOffset = collapsedOffset
+            ),
+            content = content
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AppDrawerContent(
     modifier: Modifier = Modifier,
@@ -160,19 +180,21 @@ fun AppDrawerContent(
     iconBackgroundColor: Color? = null,
     backgroundColor: Color? = null,
     textColor: Color? = null,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    onClick: () -> Unit
 ) {
     val drawerIconBackgroundColor = iconBackgroundColor ?: Title
     val drawerBackgroundColor = backgroundColor ?: PACEBlue
     val drawerTextColor = textColor ?: Title
 
-    Card(
+    Surface(
+        onClick = onClick,
         modifier = modifier,
         shape = RoundedCornerShape(
             topStartPercent = 50,
             bottomStartPercent = 50
         ),
-        backgroundColor = drawerBackgroundColor,
+        color = drawerBackgroundColor,
         elevation = 10.dp
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -331,16 +353,10 @@ fun AppDrawerCloseButton(
 @Composable
 fun Modifier.appDrawer(
     swipeableState: SwipeableState<DrawerValue>,
-    collapsedOffset: Float,
-    onClick: () -> Unit
+    collapsedOffset: Float
 ): Modifier {
     val coroutineScope = rememberCoroutineScope()
     val anchors = mapOf(0f to DrawerValue.Open, collapsedOffset to DrawerValue.Closed)
-    val collapsed by remember {
-        derivedStateOf {
-            swipeableState.targetValue == DrawerValue.Closed
-        }
-    }
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
@@ -366,15 +382,6 @@ fun Modifier.appDrawer(
                 factorAtMax = SwipeableDefaults.StandardResistanceFactor
             )
         )
-        .clickable {
-            if (collapsed) {
-                coroutineScope.launch {
-                    swipeableState.animateTo(DrawerValue.Open)
-                }
-            } else {
-                onClick()
-            }
-        }
 }
 
 @Preview(showBackground = true)

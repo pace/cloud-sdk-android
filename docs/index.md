@@ -22,6 +22,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [19.x.x -> 20.x.x](#from-19xx-to-20xx)
         + [20.x.x -> 21.x.x](#from-20xx-to-21xx)
         + [21.x.x -> 22.x.x](#from-21xx-to-22xx)
+        + [22.x.x -> 23.x.x](#from-22xx-to-23xx)
 
 ## Documentation
 The full documentation and instructions on how to integrate PACE Cloud SDK can be found [here](https://docs.pace.cloud/en/integrating/mobile-app)
@@ -174,6 +175,12 @@ The `GasStations` properties `paymentMethods`, `amenities`, `foods`, `loyaltyPro
 
 ### From 21.x.x to 22.x.x
 - Updated Fueling, Pay, User and POI API
+
+### From 22.x.x to 23.x.x
+- Reworked the AppDrawer ripple effect to match its shape:
+  - If you do not override the `AppDrawer` in the `AppDrawerHost`, no changes are required.
+  - If you use the `appDrawer` modifier in your custom `AppDrawer` UI, you need to move the `onClick` function to its content, e.g. to the `AppDrawerContent`.
+  - You can use the newly introduced `AppDrawerColumn` as a wrapper around your content so that the swipe gestures are handled for you.
 
 ## SDK API Docs
 
