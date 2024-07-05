@@ -11,5 +11,6 @@ data class App(
     val textColor: String? = null,
     val display: String? = null,
     val poiId: String? = null,
-    val distance: Int? = null
+    val distance: Int? = null,
+    val brandUrl: String? = null
 )
