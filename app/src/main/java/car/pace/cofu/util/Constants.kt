@@ -9,7 +9,7 @@ object Constants {
     const val LOCATION_UPDATE_INTERVAL_MILLIS = 5_000L
     const val LOCATION_UPDATE_DISTANCE_METERS = 50f
     const val GAS_STATION_SEARCH_RADIUS = 10_000
-    const val COFU_DISTANCE_METERS = 500
+    const val COFU_DISTANCE_METERS = 250
     const val STREET_ZOOM_LEVEL = 15f
     const val COUNTRY_ZOOM_LEVEL = 6f
     const val MIN_REDUCED_MARKER_DETAIL = 10.7f
