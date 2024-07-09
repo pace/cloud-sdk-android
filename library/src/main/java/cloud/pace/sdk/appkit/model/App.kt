@@ -12,5 +12,6 @@ data class App(
     val display: String? = null,
     val poiId: String? = null,
     val distance: Int? = null,
-    val brandUrl: String? = null
+    val brandUrl: String? = null,
+    val locationAccuracy: Double? = null
 )

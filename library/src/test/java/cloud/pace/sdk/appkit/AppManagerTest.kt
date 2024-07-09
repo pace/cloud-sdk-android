@@ -53,6 +53,7 @@ class AppManagerTest : CloudSDKKoinComponent {
         `when`(mockLocation.latitude).then { 49.012722 }
         `when`(mockLocation.longitude).then { 8.427326 }
         `when`(mockLocation.speed).then { 3f }
+        `when`(mockLocation.accuracy).then { 2f }
 
         mockkObject(PACECloudSDK)
         every { PACECloudSDK.configuration.speedThresholdInKmPerHour } returns 50
@@ -76,7 +77,7 @@ class AppManagerTest : CloudSDKKoinComponent {
         )
 
         val appRepository = object : TestAppRepository() {
-            override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
+            override suspend fun getLocationBasedApps(latitude: Double, longitude: Double, locationAccuracy: Double?): Completion<List<App>> {
                 return Success(listOf(app1))
             }
         }
@@ -130,7 +131,7 @@ class AppManagerTest : CloudSDKKoinComponent {
         )
 
         val appRepository = object : TestAppRepository() {
-            override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
+            override suspend fun getLocationBasedApps(latitude: Double, longitude: Double, locationAccuracy: Double?): Completion<List<App>> {
                 return Success(listOf(app1))
             }
         }
@@ -212,7 +213,7 @@ class AppManagerTest : CloudSDKKoinComponent {
     @Test
     fun `no app due to network error`() {
         val appRepository = object : TestAppRepository() {
-            override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
+            override suspend fun getLocationBasedApps(latitude: Double, longitude: Double, locationAccuracy: Double?): Completion<List<App>> {
                 return Failure(Exception())
             }
         }
@@ -288,7 +289,7 @@ class AppManagerTest : CloudSDKKoinComponent {
         )
 
         val appRepository = object : TestAppRepository() {
-            override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
+            override suspend fun getLocationBasedApps(latitude: Double, longitude: Double, locationAccuracy: Double?): Completion<List<App>> {
                 return Success(listOf(app1))
             }
         }
@@ -296,6 +297,7 @@ class AppManagerTest : CloudSDKKoinComponent {
         every { location.latitude } returns 49.012722
         every { location.longitude } returns 8.427326
         every { location.speed } returns 3f
+        every { location.accuracy } returns 2f
         every { location.speedAccuracyMetersPerSecond } returns 2f
 
         val testModule = module {
@@ -379,7 +381,7 @@ class AppManagerTest : CloudSDKKoinComponent {
         )
 
         val appRepository = object : TestAppRepository() {
-            override suspend fun getLocationBasedApps(latitude: Double, longitude: Double): Completion<List<App>> {
+            override suspend fun getLocationBasedApps(latitude: Double, longitude: Double, locationAccuracy: Double?): Completion<List<App>> {
                 return Success(listOf(app1, app2, app3))
             }
         }
