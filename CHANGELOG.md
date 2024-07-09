@@ -1,3 +1,15 @@
+23.0.0 Release notes (2024-07-09)
+=============================================================
+
+### Breaking Changes
+
+* Adjust AppDrawer ripple effect to match content shape
+
+### Internal
+
+* Add location accurancy to app objects
+* Make the content of the AppDrawerHost configurable and extend App model
+
 22.0.0 Release notes (2024-06-17)
 =============================================================
 
