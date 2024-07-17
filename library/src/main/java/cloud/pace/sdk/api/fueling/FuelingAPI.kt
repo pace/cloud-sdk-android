@@ -9,10 +9,10 @@ package cloud.pace.sdk.api.fueling
 
 import cloud.pace.sdk.api.API
 
-/** Fueling API */
+/** The PACE Fueling API is responsible for managing fueling related actions. */
 object FuelingAPI {
 
-    const val VERSION = "2024-2"
+    const val VERSION = "2024-3"
     internal val baseUrl = "${API.baseUrl}/fueling/$VERSION/"
 
     class DiscountAPI
