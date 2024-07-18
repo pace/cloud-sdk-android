@@ -180,8 +180,6 @@ open class GasStation(id: String, geometry: ArrayList<Geometry.CommandGeo>) :
 
         values[OSM_PAYMENT_METHODS]?.let { value ->
             val methods = value.split(",")
-
-            cofuPaymentMethods = methods.filter { it.startsWith("cofu:") }.toMutableList()
             paymentMethods = methods.toMutableList()
         }
 

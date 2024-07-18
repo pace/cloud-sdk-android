@@ -285,6 +285,7 @@ class GeoAPIManagerImpl(
         const val TYPE_KEY = "type"
         const val URL_KEY = "url"
         const val CONNECTED_FUELING_STATUS_KEY = "connectedFuelingStatus"
+        const val PAYMENT_METHOD_KINDS_KEY = "paymentMethodKinds"
 
         private const val CACHE_MAX_AGE = 60 * 60 * 1000 // 60 min
         private const val CACHE_RADIUS = 30 * 1000 // 30 km
