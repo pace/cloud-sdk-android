@@ -1,3 +1,11 @@
+23.0.1 Release notes (2024-07-18)
+=============================================================
+
+### Internal
+
+* Retrieve CoFu payment method kinds from GeoJson instead of tiles API
+* Update Fueling API to 2024-3
+
 23.0.0 Release notes (2024-07-09)
 =============================================================
 
