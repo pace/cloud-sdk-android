@@ -86,6 +86,9 @@ class Transaction : Resource() {
 
     /* PACE resource name */
     var purposePRN: String? = null
+
+    /* Additional information that will be rendered on the receipt */
+    var receiptInformation: List<String>? = null
     var references: List<String>? = null
 
     /* Date of the last update (UTC) (https://tools.ietf.org/html/rfc3339#section-5.6).

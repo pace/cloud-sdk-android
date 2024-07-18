@@ -70,6 +70,9 @@ class TransactionCreateBody {
         /* The given productFlow (e.g. preAuth, postPay) */
         var productFlow: String? = null
 
+        /* Additional information that will be rendered on the receipt */
+        var receiptInformation: List<String>? = null
+
         /* Set to true if the payment is for an unattended process */
         var unattended: Boolean? = null
 

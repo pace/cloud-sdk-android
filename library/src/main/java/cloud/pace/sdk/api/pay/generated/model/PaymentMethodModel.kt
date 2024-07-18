@@ -34,6 +34,9 @@ class PaymentMethod : Resource() {
     /* Implicit (`true`) payment methods are read-only and cannot be deleted, e.g., ApplePay */
     var implicit: Boolean? = null
 
+    /* Indicates if the payment method is eligible for discounts. */
+    var isEligibleForDiscounts: Boolean? = null
+
     /* one of sepa, creditcard, paypal, paydirekt, dkv, applepay, ... */
     var kind: String? = null
 
