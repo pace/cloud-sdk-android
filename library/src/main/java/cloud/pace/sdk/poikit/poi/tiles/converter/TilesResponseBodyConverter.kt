@@ -3,6 +3,7 @@ package cloud.pace.sdk.poikit.poi.tiles.converter
 import TileQueryResponseOuterClass
 import cloud.pace.sdk.poikit.POIKit
 import cloud.pace.sdk.poikit.geo.ConnectedFuelingStatus
+import cloud.pace.sdk.poikit.geo.GeoAPIManagerImpl.Companion.PAYMENT_METHOD_KINDS_KEY
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.Geometry
 import cloud.pace.sdk.poikit.poi.LocationPoint
@@ -43,6 +44,9 @@ class TilesResponseBodyConverter : Converter<ResponseBody, List<GasStation>> {
                             updatedAt = Date()
                             cofuGasStation = cofuGasStationsMap[it.id]
                             isOnlineCoFuGasStation = cofuGasStation?.connectedFuelingStatus == ConnectedFuelingStatus.ONLINE
+
+                            val paymentMethodKinds = cofuGasStation?.properties?.get(PAYMENT_METHOD_KINDS_KEY) as? List<*>
+                            cofuPaymentMethods = paymentMethodKinds?.filterIsInstance<String>()?.toMutableList() ?: mutableListOf()
                         }
                     }
                 } catch (e: Exception) {
