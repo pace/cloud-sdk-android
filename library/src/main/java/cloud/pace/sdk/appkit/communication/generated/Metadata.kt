@@ -25,6 +25,7 @@ public object Metadata {
         "/applePayAvailabilityCheck", "/back", "/appInterceptableLink", "/setUserProperty",
         "/logEvent", "/getConfig", "/getTraceId", "/getLocation", "/appRedirect",
         "/isBiometricAuthEnabled", "/isSignedIn", "/isRemoteConfigAvailable", "/shareText",
-        "/googlePayAvailabilityCheck", "/googlePayPayment", "/startNavigation", "/shareFile"
+        "/googlePayAvailabilityCheck", "/googlePayPayment", "/startNavigation", "/shareFile",
+        "/receiptEmail", "/receiptAttachments"
     )
 }
