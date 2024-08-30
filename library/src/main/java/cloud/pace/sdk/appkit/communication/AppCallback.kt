@@ -176,6 +176,22 @@ interface AppCallback {
      * @param name The name of the location.
      */
     fun onNavigationRequestReceived(lat: Double, lon: Double, name: String)
+
+    /**
+     * Is called when the app asks for an additional email to send the receipt to besides the user's email
+     *
+     * @param paymentMethod For which payment method the email is requested
+     * @param email Call this function to specify an email or not
+     */
+    fun onReceiptEmailRequestReceived(paymentMethod: String, email: (String?) -> Unit)
+
+    /**
+     * Is called when the app asks for additional attachments that should be printed on the fueling receipt
+     *
+     * @param paymentMethod For which payment method the attachments are requested
+     * @param attachments Call this function to specify attachments or not
+     */
+    fun onReceiptAttachmentsRequestReceived(paymentMethod: String, attachments: (List<String>?) -> Unit)
 }
 
 abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
@@ -234,5 +250,13 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
 
     override fun onNavigationRequestReceived(lat: Double, lon: Double, name: String) {
         appModel.startNavigation(lat, lon)
+    }
+
+    override fun onReceiptEmailRequestReceived(paymentMethod: String, email: (String?) -> Unit) {
+        email(null)
+    }
+
+    override fun onReceiptAttachmentsRequestReceived(paymentMethod: String, attachments: (List<String>?) -> Unit) {
+        attachments(null)
     }
 }

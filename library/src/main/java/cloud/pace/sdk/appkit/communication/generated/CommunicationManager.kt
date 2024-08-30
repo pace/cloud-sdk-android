@@ -18,6 +18,8 @@ import cloud.pace.sdk.appkit.communication.generated.model.request.GooglePayPaym
 import cloud.pace.sdk.appkit.communication.generated.model.request.ImageDataRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.LogEventRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.OpenURLInNewTabRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.ReceiptAttachmentsRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.ReceiptEmailRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.Request
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetSecureDataRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetTOTPRequest
@@ -665,6 +667,56 @@ public data class CommunicationManager(
                         }
                     } else {
                         val result = listener.shareFile(timeout, body)
+                        withContext(Dispatchers.Main) {
+                            respond(Response(request.id, result.status, request.header, result.body))
+                        }
+                    }
+                }
+            }
+
+            "/receiptEmail" -> {
+                CoroutineScope(Dispatchers.Default).launch {
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
+                        TimeUnit.SECONDS.toMillis(it)
+                    }
+                    val receiptEmailRequest = gson.fromJson<ReceiptEmailRequest>(message)
+                    val body = receiptEmailRequest?.body
+                    if (body == null) {
+                        withContext(Dispatchers.Main) {
+                            respond(
+                                Response(
+                                    request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
+                                    Message("Could not deserialize the JSON request message")
+                                )
+                            )
+                        }
+                    } else {
+                        val result = listener.receiptEmail(timeout, body)
+                        withContext(Dispatchers.Main) {
+                            respond(Response(request.id, result.status, request.header, result.body))
+                        }
+                    }
+                }
+            }
+
+            "/receiptAttachments" -> {
+                CoroutineScope(Dispatchers.Default).launch {
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
+                        TimeUnit.SECONDS.toMillis(it)
+                    }
+                    val receiptAttachmentsRequest = gson.fromJson<ReceiptAttachmentsRequest>(message)
+                    val body = receiptAttachmentsRequest?.body
+                    if (body == null) {
+                        withContext(Dispatchers.Main) {
+                            respond(
+                                Response(
+                                    request.id, HttpURLConnection.HTTP_BAD_REQUEST, request.header,
+                                    Message("Could not deserialize the JSON request message")
+                                )
+                            )
+                        }
+                    } else {
+                        val result = listener.receiptAttachments(timeout, body)
                         withContext(Dispatchers.Main) {
                             respond(Response(request.id, result.status, request.header, result.body))
                         }

@@ -32,6 +32,8 @@ import cloud.pace.sdk.appkit.communication.generated.model.request.GooglePayPaym
 import cloud.pace.sdk.appkit.communication.generated.model.request.ImageDataRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.LogEventRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.OpenURLInNewTabRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.ReceiptAttachmentsRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.ReceiptEmailRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetSecureDataRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetTOTPRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetUserPropertyRequest
@@ -97,6 +99,12 @@ import cloud.pace.sdk.appkit.communication.generated.model.response.LogoutError
 import cloud.pace.sdk.appkit.communication.generated.model.response.LogoutResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.OpenURLInNewTabError
 import cloud.pace.sdk.appkit.communication.generated.model.response.OpenURLInNewTabResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.ReceiptAttachmentsError
+import cloud.pace.sdk.appkit.communication.generated.model.response.ReceiptAttachmentsResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.ReceiptAttachmentsResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.ReceiptEmailError
+import cloud.pace.sdk.appkit.communication.generated.model.response.ReceiptEmailResponse
+import cloud.pace.sdk.appkit.communication.generated.model.response.ReceiptEmailResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.Result
 import cloud.pace.sdk.appkit.communication.generated.model.response.SetSecureDataError
 import cloud.pace.sdk.appkit.communication.generated.model.response.SetSecureDataResult
@@ -921,6 +929,30 @@ class AppWebViewModelImpl(
                 else -> {
                     ShareFileResult(ShareFileResult.Failure(ShareFileResult.Failure.StatusCode.MethodNotAllowed, ShareFileError("Unsupported file extension: ${shareFileRequest.fileExtension}")))
                 }
+            }
+        }
+    }
+
+    override suspend fun receiptEmail(timeout: Long?, receiptEmailRequest: ReceiptEmailRequest): ReceiptEmailResult {
+        return handleAsync(
+            timeout,
+            ReceiptEmailResult(ReceiptEmailResult.Failure(ReceiptEmailResult.Failure.StatusCode.RequestTimeout, ReceiptEmailError("Timeout for receiptEmail"))),
+            ReceiptEmailResult(ReceiptEmailResult.Failure(ReceiptEmailResult.Failure.StatusCode.InternalServerError, ReceiptEmailError("An error occurred")))
+        ) { continuation ->
+            appModel.onReceiptEmailRequestReceived(receiptEmailRequest.paymentMethod) {
+                continuation.resumeIfActive(ReceiptEmailResult(ReceiptEmailResult.Success(ReceiptEmailResponse(it))))
+            }
+        }
+    }
+
+    override suspend fun receiptAttachments(timeout: Long?, receiptAttachmentsRequest: ReceiptAttachmentsRequest): ReceiptAttachmentsResult {
+        return handleAsync(
+            timeout,
+            ReceiptAttachmentsResult(ReceiptAttachmentsResult.Failure(ReceiptAttachmentsResult.Failure.StatusCode.RequestTimeout, ReceiptAttachmentsError("Timeout for receiptAttachments"))),
+            ReceiptAttachmentsResult(ReceiptAttachmentsResult.Failure(ReceiptAttachmentsResult.Failure.StatusCode.InternalServerError, ReceiptAttachmentsError("An error occurred")))
+        ) { continuation ->
+            appModel.onReceiptAttachmentsRequestReceived(receiptAttachmentsRequest.paymentMethod) {
+                continuation.resumeIfActive(ReceiptAttachmentsResult(ReceiptAttachmentsResult.Success(ReceiptAttachmentsResponse(it))))
             }
         }
     }

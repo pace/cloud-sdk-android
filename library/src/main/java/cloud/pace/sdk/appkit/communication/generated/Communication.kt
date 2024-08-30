@@ -18,6 +18,8 @@ import cloud.pace.sdk.appkit.communication.generated.model.request.GooglePayPaym
 import cloud.pace.sdk.appkit.communication.generated.model.request.ImageDataRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.LogEventRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.OpenURLInNewTabRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.ReceiptAttachmentsRequest
+import cloud.pace.sdk.appkit.communication.generated.model.request.ReceiptEmailRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetSecureDataRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetTOTPRequest
 import cloud.pace.sdk.appkit.communication.generated.model.request.SetUserPropertyRequest
@@ -48,6 +50,8 @@ import cloud.pace.sdk.appkit.communication.generated.model.response.IsSignedInRe
 import cloud.pace.sdk.appkit.communication.generated.model.response.LogEventResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.LogoutResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.OpenURLInNewTabResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.ReceiptAttachmentsResult
+import cloud.pace.sdk.appkit.communication.generated.model.response.ReceiptEmailResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.SetSecureDataResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.SetTOTPResult
 import cloud.pace.sdk.appkit.communication.generated.model.response.SetUserPropertyResult
@@ -345,4 +349,25 @@ public interface Communication {
      * @param shareFileRequest The shareFile request body object
      */
     public suspend fun shareFile(timeout: Long?, shareFileRequest: ShareFileRequest): ShareFileResult
+
+    /**
+     * Asks the client for an optional additional receipt email.
+     *
+     * @param timeout The timeout of receiptEmail in milliseconds or null if no timeout should be used
+     * @param receiptEmailRequest The receiptEmail request body object
+     */
+    public suspend fun receiptEmail(timeout: Long?, receiptEmailRequest: ReceiptEmailRequest):
+        ReceiptEmailResult
+
+    /**
+     * Asks the client for optional attachments to be included in the fueling receipt.
+     *
+     * @param timeout The timeout of receiptAttachments in milliseconds or null if no timeout should
+     * be used
+     * @param receiptAttachmentsRequest The receiptAttachments request body object
+     */
+    public suspend fun receiptAttachments(
+        timeout: Long?,
+        receiptAttachmentsRequest: ReceiptAttachmentsRequest
+    ): ReceiptAttachmentsResult
 }
