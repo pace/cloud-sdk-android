@@ -1,3 +1,14 @@
+23.1.0 Release notes (2024-09-12)
+=============================================================
+
+### Enhancements
+
+* Add sdk handlers for optional receipt email and receipt attachments
+
+### Internal
+
+* Update Payment API to 2024-3
+
 23.0.1 Release notes (2024-07-18)
 =============================================================
 
