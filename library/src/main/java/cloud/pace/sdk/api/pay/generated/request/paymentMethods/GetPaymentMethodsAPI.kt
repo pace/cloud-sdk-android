@@ -16,6 +16,7 @@ import cloud.pace.sdk.api.pay.generated.model.PaymentToken
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.HeaderMap
 
 object GetPaymentMethodsAPI {
@@ -25,12 +26,15 @@ object GetPaymentMethodsAPI {
         @GET("payment-methods")
         fun getPaymentMethods(
             @HeaderMap headers: Map<String, String>,
+            /* Language preference of localized response properties. The full standard of RFC 7231 (https://tools.ietf.org/html/rfc7231#section-5.3.5) is supported. */
+            @Header("Accept-Language") acceptLanguage: String? = null
         ): Call<PaymentMethods>
     }
 
     open class Request : BaseRequest() {
 
         fun getPaymentMethods(
+            acceptLanguage: String? = null,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
@@ -41,16 +45,19 @@ object GetPaymentMethodsAPI {
             return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout, resources)
                 .create(GetPaymentMethodsService::class.java)
                 .getPaymentMethods(
-                    headers
+                    headers,
+                    acceptLanguage
                 )
         }
     }
 
     fun PayAPI.PaymentMethodsAPI.getPaymentMethods(
+        acceptLanguage: String? = null,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
     ) = Request().getPaymentMethods(
+        acceptLanguage,
         readTimeout,
         additionalHeaders,
         additionalParameters

@@ -10,11 +10,11 @@ package cloud.pace.sdk.api.pay
 import cloud.pace.sdk.api.API
 
 /** Welcome to the PACE Payment API documentation.
-This API is responsible for managing payment methods for users as well as authorizing payments on behalf of PACE services.
+The PACE Payment API is responsible for managing payment methods for users as well as authorizing payments on behalf of PACE services.
  */
 object PayAPI {
 
-    const val VERSION = "2024-2"
+    const val VERSION = "2024-3"
     internal val baseUrl = "${API.baseUrl}/pay/$VERSION/"
 
     class FleetPaymentMethodsAPI

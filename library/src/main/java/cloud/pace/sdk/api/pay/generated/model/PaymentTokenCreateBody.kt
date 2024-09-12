@@ -35,6 +35,9 @@ class PaymentTokenCreateBody {
 
         /* Set this flag to `true` if you accept the authorized amount to be lower than the requested amount. */
         var allowPartialAmount: Boolean? = null
+
+        /* The billing e-mail address */
+        var billingEmail: String? = null
         var discountTokens: List<String>? = null
 
         /* The code and method for two factor authentication, if required by the payment method */

@@ -22,11 +22,15 @@ class PaymentMethodKind : Resource() {
     /* Indicates whether the payment method is a fuel card. Fuelcard `no` means no. */
     var fuelcard: Boolean? = null
 
-    /* Indicates whether the payment method can be onboarded/modified. Implict `true` means no. Otherwise yes.
-Most payment method kinds are no implicit, i.e., `implicit=false`.
+    /* Indicates whether the payment method has been onboarded implicitely, e.g., an on-device payment method such as Apple Pay or Google Pay.
 This field is optional and if not present should be assumed to indicate `implicit=false`.
  */
     var implicit: Boolean? = null
+
+    /* Indicates whether the payment method can be onboarded/modified. Managed `true` means no. Otherwise yes.
+Most payment method kinds are not managed, i.e., `managed=false`.
+ */
+    var managed: Boolean? = null
 
     /* localized name */
     var name: String? = null
