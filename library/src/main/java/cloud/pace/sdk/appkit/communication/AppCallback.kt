@@ -188,10 +188,11 @@ interface AppCallback {
     /**
      * Is called when the app asks for additional attachments that should be printed on the fueling receipt
      *
+     * @param context The [cloud.pace.sdk.appkit.app.AppActivity] context.
      * @param paymentMethod For which payment method the attachments are requested
      * @param attachments Call this function to specify attachments or not
      */
-    fun onReceiptAttachmentsRequestReceived(paymentMethod: String, attachments: (List<String>?) -> Unit)
+    fun onReceiptAttachmentsRequestReceived(context: Context, paymentMethod: String, attachments: (List<String>?) -> Unit)
 }
 
 abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
@@ -256,7 +257,7 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
         email(null)
     }
 
-    override fun onReceiptAttachmentsRequestReceived(paymentMethod: String, attachments: (List<String>?) -> Unit) {
+    override fun onReceiptAttachmentsRequestReceived(context: Context, paymentMethod: String, attachments: (List<String>?) -> Unit) {
         attachments(null)
     }
 }

@@ -951,7 +951,7 @@ class AppWebViewModelImpl(
             ReceiptAttachmentsResult(ReceiptAttachmentsResult.Failure(ReceiptAttachmentsResult.Failure.StatusCode.RequestTimeout, ReceiptAttachmentsError("Timeout for receiptAttachments"))),
             ReceiptAttachmentsResult(ReceiptAttachmentsResult.Failure(ReceiptAttachmentsResult.Failure.StatusCode.InternalServerError, ReceiptAttachmentsError("An error occurred")))
         ) { continuation ->
-            appModel.onReceiptAttachmentsRequestReceived(receiptAttachmentsRequest.paymentMethod) {
+            appModel.onReceiptAttachmentsRequestReceived(context, receiptAttachmentsRequest.paymentMethod) {
                 continuation.resumeIfActive(ReceiptAttachmentsResult(ReceiptAttachmentsResult.Success(ReceiptAttachmentsResponse(it))))
             }
         }
