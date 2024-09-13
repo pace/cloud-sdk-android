@@ -75,7 +75,7 @@ interface AppModel {
     fun onGooglePayPayment(googlePayPaymentRequest: GooglePayPaymentRequest, onResult: (Completion<GooglePayPaymentResponse>) -> Unit)
     fun onNavigationRequestReceived(lat: Double, lon: Double, name: String)
     fun onReceiptEmailRequestReceived(paymentMethod: String, email: (String?) -> Unit)
-    fun onReceiptAttachmentsRequestReceived(paymentMethod: String, attachments: (List<String>?) -> Unit)
+    fun onReceiptAttachmentsRequestReceived(context: Context, paymentMethod: String, attachments: (List<String>?) -> Unit)
 
     class Result<T>(val onResult: (T) -> Unit)
 }
@@ -394,9 +394,9 @@ class AppModelImpl(
         }
     }
 
-    override fun onReceiptAttachmentsRequestReceived(paymentMethod: String, attachments: (List<String>?) -> Unit) {
+    override fun onReceiptAttachmentsRequestReceived(context: Context, paymentMethod: String, attachments: (List<String>?) -> Unit) {
         coroutineScope.launch {
-            callback?.onReceiptAttachmentsRequestReceived(paymentMethod, attachments)
+            callback?.onReceiptAttachmentsRequestReceived(context, paymentMethod, attachments)
         }
     }
 
