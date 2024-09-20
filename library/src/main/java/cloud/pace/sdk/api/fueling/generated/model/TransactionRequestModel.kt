@@ -44,6 +44,9 @@ class TransactionRequest : Resource() {
     var numberPlate: String? = null
     var priceIncludingVAT: Double? = null
 
+    /* Additional information that will be rendered on the receipt */
+    var receiptInformation: List<String>? = null
+
     /* Set to 'true' if you want the payment to be cleared automatically in the background after fueling */
     var unattendedPayment: Boolean? = null
 
@@ -162,6 +165,14 @@ class TransactionRequest : Resource() {
 
         @SerializedName("heatingOil")
         @Json(name = "heatingOil")
-        HEATINGOIL("heatingOil")
+        HEATINGOIL("heatingOil"),
+
+        @SerializedName("washerFluid")
+        @Json(name = "washerFluid")
+        WASHERFLUID("washerFluid"),
+
+        @SerializedName("twoStroke")
+        @Json(name = "twoStroke")
+        TWOSTROKE("twoStroke")
     }
 }

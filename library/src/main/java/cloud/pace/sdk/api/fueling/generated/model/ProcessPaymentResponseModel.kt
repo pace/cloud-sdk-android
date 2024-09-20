@@ -32,6 +32,9 @@ class ProcessPaymentResponse : Resource() {
     var priceWithoutVAT: Double? = null
     var pumpId: String? = null
 
+    /* Additional information that will be rendered on the receipt */
+    var receiptInformation: List<String>? = null
+
     /* Vehicle identification number */
     var vin: String? = null
 

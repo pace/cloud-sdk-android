@@ -140,6 +140,14 @@ class FuelPrice : Resource() {
 
         @SerializedName("heatingOil")
         @Json(name = "heatingOil")
-        HEATINGOIL("heatingOil")
+        HEATINGOIL("heatingOil"),
+
+        @SerializedName("washerFluid")
+        @Json(name = "washerFluid")
+        WASHERFLUID("washerFluid"),
+
+        @SerializedName("twoStroke")
+        @Json(name = "twoStroke")
+        TWOSTROKE("twoStroke")
     }
 }
