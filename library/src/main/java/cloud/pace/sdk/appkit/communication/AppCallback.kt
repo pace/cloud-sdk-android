@@ -132,8 +132,9 @@ interface AppCallback {
      *
      * @param key The event key
      * @param parameters Optional parameters to be logged
+     * @param context Optional context in which the event is logged. These must not be logged.
      */
-    fun logEvent(key: String, parameters: Map<String, Any>)
+    fun logEvent(key: String, parameters: Map<String, Any>, context: Map<String, Any>?)
 
     /**
      * Is called when the app requests a configuration.
@@ -232,7 +233,7 @@ abstract class AppCallbackImpl : AppCallback, CloudSDKKoinComponent {
     }
 
     override fun setUserProperty(key: String, value: String, update: Boolean) {}
-    override fun logEvent(key: String, parameters: Map<String, Any>) {}
+    override fun logEvent(key: String, parameters: Map<String, Any>, context: Map<String, Any>?) {}
     override fun getConfig(key: String, config: (String?) -> Unit) {
         config(null)
     }

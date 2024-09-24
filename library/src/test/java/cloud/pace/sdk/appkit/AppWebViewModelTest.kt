@@ -328,9 +328,9 @@ class AppWebViewModelTest {
         val key = "foo"
         val parameters = mapOf("string" to "value", "number" to 1.0, "boolean" to true, "list" to listOf("element1", 3.0, false))
 
-        val result = viewModel.logEvent(5000, LogEventRequest(key, parameters))
+        val result = viewModel.logEvent(5000, LogEventRequest(key, parameters, null))
 
-        verify(appCallback, times(1)).logEvent(key, parameters)
+        verify(appCallback, times(1)).logEvent(key, parameters, null)
         assertEquals(204, result.status)
         assertNull(result.body)
     }

@@ -640,7 +640,7 @@ class AppWebViewModelImpl(
             LogEventResult(LogEventResult.Failure(LogEventResult.Failure.StatusCode.InternalServerError, LogEventError("An error occurred")))
 
         ) {
-            appModel.logEvent(logEventRequest.key, logEventRequest.parameters ?: emptyMap())
+            appModel.logEvent(logEventRequest.key, logEventRequest.parameters ?: emptyMap(), logEventRequest.context)
             LogEventResult(LogEventResult.Success())
         }
     }

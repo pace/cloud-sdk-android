@@ -66,7 +66,7 @@ interface AppModel {
     fun onFileDataReceived(fileData: ByteArray)
     fun onShareTextReceived(text: String, title: String)
     fun setUserProperty(key: String, value: String, update: Boolean)
-    fun logEvent(key: String, parameters: Map<String, Any>)
+    fun logEvent(key: String, parameters: Map<String, Any>, context: Map<String, Any>?)
     fun getConfig(key: String, config: (String?) -> Unit)
     fun isAppRedirectAllowed(app: String, isAllowed: (Boolean) -> Unit)
     fun isSignedIn(isSignedIn: (Boolean) -> Unit)
@@ -340,9 +340,9 @@ class AppModelImpl(
         }
     }
 
-    override fun logEvent(key: String, parameters: Map<String, Any>) {
+    override fun logEvent(key: String, parameters: Map<String, Any>, context: Map<String, Any>?) {
         coroutineScope.launch {
-            callback?.logEvent(key, parameters)
+            callback?.logEvent(key, parameters, context)
         }
     }
 
