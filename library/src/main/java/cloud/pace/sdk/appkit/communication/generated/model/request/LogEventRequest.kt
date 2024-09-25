@@ -14,5 +14,9 @@ public data class LogEventRequest(
     /**
      * Dictionary of additional event parameters
      */
-    public val parameters: Map<String, Any>?
+    public val parameters: Map<String, Any>?,
+    /**
+     * Provide additional context for the SDK which will not be logged
+     */
+    public val context: Map<String, Any>?
 )

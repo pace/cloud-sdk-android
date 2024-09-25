@@ -23,6 +23,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [20.x.x -> 21.x.x](#from-20xx-to-21xx)
         + [21.x.x -> 22.x.x](#from-21xx-to-22xx)
         + [22.x.x -> 23.x.x](#from-22xx-to-23xx)
+        + [23.x.x -> 24.x.x](#from-23xx-to-24xx)
 
 ## Documentation
 The full documentation and instructions on how to integrate PACE Cloud SDK can be found [here](https://docs.pace.cloud/en/integrating/mobile-app)
@@ -181,6 +182,9 @@ The `GasStations` properties `paymentMethods`, `amenities`, `foods`, `loyaltyPro
   - If you do not override the `AppDrawer` in the `AppDrawerHost`, no changes are required.
   - If you use the `appDrawer` modifier in your custom `AppDrawer` UI, you need to move the `onClick` function to its content, e.g. to the `AppDrawerContent`.
   - You can use the newly introduced `AppDrawerColumn` as a wrapper around your content so that the swipe gestures are handled for you.
+
+### From 23.x.x to 24.x.x
+- The `logEvent` SDK handler now includes an optional `context`. This context is to be used to provide a context in which the event is logged and must not be forwarded to the analytics backend.
 
 ## SDK API Docs
 
