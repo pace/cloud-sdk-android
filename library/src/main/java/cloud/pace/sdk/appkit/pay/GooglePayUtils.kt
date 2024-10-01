@@ -20,6 +20,10 @@ object GooglePayUtils {
 
     const val LOAD_PAYMENT_DATA_REQUEST_CODE = 991
 
+    private val PRODUCTION_ALLOWED_AUTH_METHODS = listOf("CRYPTOGRAM_3DS")
+
+    private val TEST_ALLOWED_AUTH_METHODS = listOf("PAN_ONLY", "CRYPTOGRAM_3DS")
+
     /**
      * Creates an instance of Google Pay's [PaymentsClient] for use in an [Activity] using the environment set in [WalletConstants].
      *
@@ -38,6 +42,7 @@ object GooglePayUtils {
      * Creates an [IsReadyToPayRequest] which can be uses to check if the user is ready to pay with Google Pay.
      */
     fun getIsReadyToPayRequest(): IsReadyToPayRequest {
+        val allowedAuthMethods = JSONArray(if (PACECloudSDK.environment == Environment.PRODUCTION) PRODUCTION_ALLOWED_AUTH_METHODS else TEST_ALLOWED_AUTH_METHODS)
         val json = JSONObject().apply {
             put("apiVersion", 2)
             put("apiVersionMinor", 0)
@@ -49,14 +54,13 @@ object GooglePayUtils {
                         put(
                             "parameters",
                             JSONObject().apply {
-                                put("allowedAuthMethods", JSONArray(listOf("CRYPTOGRAM_3DS")))
+                                put("allowedAuthMethods", allowedAuthMethods)
                                 put("allowedCardNetworks", JSONArray(listOf("MASTERCARD", "VISA")))
                             }
                         )
                     }
                 )
             )
-            put("existingPaymentMethodRequired", true)
         }
 
         return IsReadyToPayRequest.fromJson(json.toString())
