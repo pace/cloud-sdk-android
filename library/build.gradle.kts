@@ -1,7 +1,4 @@
-import com.google.protobuf.gradle.generateProtoTasks
 import com.google.protobuf.gradle.id
-import com.google.protobuf.gradle.protobuf
-import com.google.protobuf.gradle.protoc
 
 plugins {
     id("com.android.library")
@@ -15,6 +12,7 @@ plugins {
 }
 
 android {
+    namespace = "cloud.pace.sdk"
     compileSdk = Versions.COMPILE_SDK
 
     defaultConfig {
@@ -44,25 +42,26 @@ android {
 
     sourceSets {
         getByName("main") {
-            java.srcDir("${protobuf.protobuf.generatedFilesBaseDir}/main/javalite")
+            java.srcDir("${protobuf.generatedFilesBaseDir}/main/javalite")
             java.srcDir("$projectDir/src/main/proto")
         }
         getByName("androidTest").assets.srcDirs("$projectDir/schemas")
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
         freeCompilerArgs = freeCompilerArgs + listOf("-module-name", "${Config.GROUP_ID}.${Config.ARTIFACT_ID}")
     }
 
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
     }
 
     composeOptions {
@@ -180,7 +179,7 @@ tasks.withType<ProcessResources> {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.17.3"
+        artifact = "com.google.protobuf:protoc:4.28.2"
     }
     // this is a task which wil generate classes for our proto files
     generateProtoTasks {
