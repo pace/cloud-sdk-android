@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cloud.pace.sdk">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--  Since target SDK 31 (Android 12) ACCESS_FINE_LOCATION must be requested with ACCESS_COARSE_LOCATION  -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
