@@ -186,9 +186,5 @@ The `GasStations` properties `paymentMethods`, `amenities`, `foods`, `loyaltyPro
 ### From 23.x.x to 24.x.x
 - The `logEvent` SDK handler now includes an optional `context`. This context is to be used to provide a context in which the event is logged and must not be forwarded to the analytics backend.
 
-## SDK API Docs
-
-Here is a complete list of all our SDK API documentations:
-
-- [latest](/latest/-p-a-c-e-cloud-s-d-k/index.html) – the current `master`
-- [3.0.1](/3.0.1/-p-a-c-e-cloud-s-d-k/index.html)
+### From 24.x.x to 25.x.x
+- The functions `getRoute` and `searchAddress` were removed from the POIKit. If you used these functionalities, you need to provide your own implementation.

@@ -13,26 +13,16 @@ import cloud.pace.sdk.poikit.poi.tiles.TilesAPIManager
 import cloud.pace.sdk.poikit.pricehistory.PriceHistory
 import cloud.pace.sdk.poikit.pricehistory.PriceHistoryClient
 import cloud.pace.sdk.poikit.pricehistory.PriceHistoryFuelType
-import cloud.pace.sdk.poikit.routing.NavigationApiClient
-import cloud.pace.sdk.poikit.routing.NavigationMode
-import cloud.pace.sdk.poikit.routing.NavigationRequest
-import cloud.pace.sdk.poikit.routing.Route
-import cloud.pace.sdk.poikit.search.AddressSearchClient
-import cloud.pace.sdk.poikit.search.AddressSearchRequest
-import cloud.pace.sdk.poikit.search.PhotonResult
 import cloud.pace.sdk.poikit.utils.POIKitConfig
 import cloud.pace.sdk.utils.*
 import cloud.pace.sdk.utils.LocationProviderImpl.Companion.DEFAULT_LOCATION_REQUEST
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.maps.model.VisibleRegion
-import io.reactivex.rxjava3.core.Observable
 import org.koin.core.component.inject
 import java.util.*
 
 object POIKit : CloudSDKKoinComponent {
 
-    private val navigationApi: NavigationApiClient by inject()
-    private val addressSearchApi: AddressSearchClient by inject()
     private val priceHistoryApi: PriceHistoryClient by inject()
     private val locationProvider: LocationProvider by inject()
     private val geoApiManager: GeoAPIManager by inject()
@@ -132,32 +122,8 @@ object POIKit : CloudSDKKoinComponent {
         return tilesApiManager.getTiles(idWithLocation, zoomLevel)
     }
 
-    fun getRoute(destination: LocationPoint, completion: (Completion<Route?>) -> Unit) {
-        onBackgroundThread {
-            when (val location = locationProvider.currentLocation(false)) {
-                is Success -> {
-                    location.result?.let {
-                        val navigationRequest = NavigationRequest(
-                            UUID.randomUUID().toString(),
-                            listOf(LocationPoint(it.latitude, it.longitude), destination),
-                            alternatives = false,
-                            navigationMode = NavigationMode.CAR
-                        )
-                        navigationApi.getRoute(navigationRequest, completion)
-                    } ?: completion(Failure(Exception("Could not get current location")))
-                }
-
-                is Failure -> completion(Failure(location.throwable))
-            }
-        }
-    }
-
     fun getRegionalPrice(latitude: Double, longitude: Double, completion: (Completion<List<RegionalPrices>>) -> Unit) {
         API.prices.getRegionalPrices(latitude.toFloat(), longitude.toFloat()).handleCallback(completion)
-    }
-
-    fun searchAddress(request: AddressSearchRequest): Observable<PhotonResult> {
-        return addressSearchApi.searchAddress(request)
     }
 
     /**
