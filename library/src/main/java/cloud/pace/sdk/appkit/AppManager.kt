@@ -20,7 +20,6 @@ import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.InvalidSpeed
 import cloud.pace.sdk.utils.LocationProvider
 import cloud.pace.sdk.utils.Success
-import cloud.pace.sdk.utils.Theme
 import cloud.pace.sdk.utils.URL.fueling
 import cloud.pace.sdk.utils.equalsTo
 import kotlinx.coroutines.CoroutineScope
@@ -162,33 +161,32 @@ internal class AppManager(private val dispatchers: DispatcherProvider = DefaultD
         }
     }
 
-    internal fun openAppActivity(context: Context, url: String, theme: Theme, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
+    internal fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
         callback.onOpen(null)
-        startAppActivity(context, url, theme, enableBackToFinish, callback)
+        startAppActivity(context, url, enableBackToFinish, callback)
     }
 
-    internal fun openAppActivity(context: Context, app: App, theme: Theme, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
+    internal fun openAppActivity(context: Context, app: App, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
         callback.onOpen(app)
-        startAppActivity(context, app.url, theme, enableBackToFinish, callback)
+        startAppActivity(context, app.url, enableBackToFinish, callback)
     }
 
-    internal fun openFuelingApp(context: Context, id: String? = null, theme: Theme, enableBackToFinish: Boolean = true, callback: AppCallbackImpl) {
+    internal fun openFuelingApp(context: Context, id: String? = null, enableBackToFinish: Boolean = true, callback: AppCallbackImpl) {
         if (id == null) {
-            openAppActivity(context, fueling, theme, enableBackToFinish, callback)
+            openAppActivity(context, fueling, enableBackToFinish, callback)
         } else {
             appRepository.getFuelingUrl(id) {
-                openAppActivity(context, it, theme, enableBackToFinish, callback)
+                openAppActivity(context, it, enableBackToFinish, callback)
             }
         }
     }
 
-    private fun startAppActivity(context: Context, url: String, theme: Theme, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
+    private fun startAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, callback: AppCallbackImpl) {
         appModel.callback = callback
 
         val intent = Intent(context, AppActivity::class.java)
         intent.putExtra(AppActivity.BACK_TO_FINISH, enableBackToFinish)
         intent.putExtra(AppActivity.APP_URL, url)
-        intent.putExtra(AppActivity.IS_DARK_MODE, theme == Theme.DARK)
         context.startActivity(intent)
     }
 

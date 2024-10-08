@@ -12,17 +12,7 @@ import org.koin.core.component.inject
 object AppKit : CloudSDKKoinComponent {
 
     private val appManager: AppManager by inject()
-    internal lateinit var userAgent: String
     internal val defaultAppCallback = object : AppCallbackImpl() {}
-
-    /**
-     * Specifies whether the light or dark theme should be used for the apps.
-     */
-    var theme: Theme = Theme.LIGHT
-        set(value) {
-            field = value
-            updateUserAgent()
-        }
 
     /**
      * Specifies the minimum location accuracy in meters to request location based apps.
@@ -40,11 +30,11 @@ object AppKit : CloudSDKKoinComponent {
         SetupLogger.logSDKWarningIfNeeded()
     }
 
-    internal fun updateUserAgent() {
+    internal fun getUserAgent(): String {
         val config = PACECloudSDK.configuration
-        userAgent = listOf(
+        return listOf(
             PACECloudSDK.getBaseUserAgent(),
-            if (theme == Theme.LIGHT) "PWASDK-Theme/Light" else "PWASDK-Theme/Dark",
+            if (ThemeUtils.getTheme() == Theme.LIGHT) "PWASDK-Theme/Light" else "PWASDK-Theme/Dark",
             "IdentityManagement/${config.authenticationMode.value}",
             config.extensions.joinToString(" ")
         ).filter { it.isNotEmpty() }.joinToString(separator = " ")
@@ -86,7 +76,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openAppActivity(context: Context, url: String, enableBackToFinish: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, url, theme, enableBackToFinish, callback)
+        appManager.openAppActivity(context, url, enableBackToFinish, callback)
     }
 
     /**
@@ -98,7 +88,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openAppActivity(context: Context, app: App, enableBackToFinish: Boolean = false, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, app, theme, enableBackToFinish, callback)
+        appManager.openAppActivity(context, app, enableBackToFinish, callback)
     }
 
     /**
@@ -110,7 +100,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openPaceID(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, URL.paceID, theme, enableBackToFinish, callback)
+        appManager.openAppActivity(context, URL.paceID, enableBackToFinish, callback)
     }
 
     /**
@@ -122,7 +112,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openPaymentApp(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, URL.payment, theme, enableBackToFinish, callback)
+        appManager.openAppActivity(context, URL.payment, enableBackToFinish, callback)
     }
 
     /**
@@ -134,7 +124,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openTransactions(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, URL.transactions, theme, enableBackToFinish, callback)
+        appManager.openAppActivity(context, URL.transactions, enableBackToFinish, callback)
     }
 
     /**
@@ -147,7 +137,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openFuelingApp(context: Context, id: String? = null, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openFuelingApp(context, id, theme, enableBackToFinish, callback)
+        appManager.openFuelingApp(context, id, enableBackToFinish, callback)
     }
 
     /**
@@ -159,7 +149,7 @@ object AppKit : CloudSDKKoinComponent {
      */
     @JvmOverloads
     fun openDashboard(context: Context, enableBackToFinish: Boolean = true, callback: AppCallbackImpl = defaultAppCallback) {
-        appManager.openAppActivity(context, URL.dashboard, theme, enableBackToFinish, callback)
+        appManager.openAppActivity(context, URL.dashboard, enableBackToFinish, callback)
     }
 
     /**

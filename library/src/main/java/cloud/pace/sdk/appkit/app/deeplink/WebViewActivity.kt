@@ -36,7 +36,7 @@ class WebViewActivity : AppCompatActivity() {
                     javaScriptEnabled = true
                     domStorageEnabled = true
                     setSupportMultipleWindows(true)
-                    userAgentString = AppKit.userAgent
+                    userAgentString = AppKit.getUserAgent()
                 }
                 webViewClient = object : WebViewClient() {
                     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {

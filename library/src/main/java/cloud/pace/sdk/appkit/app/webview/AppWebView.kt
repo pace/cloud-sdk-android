@@ -1,7 +1,6 @@
 package cloud.pace.sdk.appkit.app.webview
 
 import android.content.Context
-import android.graphics.Color
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -85,7 +84,7 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
             setSupportMultipleWindows(true)
 
             // Set user agent
-            userAgentString = AppKit.userAgent
+            userAgentString = AppKit.getUserAgent()
         }
 
         communicationManager = CommunicationManager(webViewModel) {
@@ -101,11 +100,8 @@ class AppWebView(context: Context, attributeSet: AttributeSet) : RelativeLayout(
     /**
      * Initializes [AppWebView] with [AppWebViewClient] and loads the [url] in the WebView.
      */
-    fun init(url: String, isDarkMode: Boolean?) {
+    fun init(url: String) {
         webViewModel.init(url)
-
-        val backgroundColor = if (isDarkMode == true) Color.BLACK else Color.WHITE
-        binding.webView.setBackgroundColor(backgroundColor)
     }
 
     /**

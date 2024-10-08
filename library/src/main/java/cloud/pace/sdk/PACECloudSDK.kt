@@ -127,7 +127,6 @@ object PACECloudSDK {
         metaCollector = MetaCollector(configuration.isMetaCollectorEnabled)
 
         AppKit.locationAccuracy = configuration.locationAccuracy
-        AppKit.updateUserAgent()
 
         SetupLogger.apiKey = configuration.apiKey
         SetupLogger.redirectScheme = DeviceUtils.getPACERedirectScheme(context)
@@ -158,7 +157,6 @@ object PACECloudSDK {
     fun setUserAgentExtensions(extensions: List<String>) {
         if (::configuration.isInitialized) {
             configuration.extensions = extensions
-            AppKit.updateUserAgent()
         }
     }
 

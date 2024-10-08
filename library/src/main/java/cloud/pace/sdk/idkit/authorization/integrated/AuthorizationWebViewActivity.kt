@@ -82,7 +82,7 @@ class AuthorizationWebViewActivity : AppCompatActivity(), CloudSDKKoinComponent 
             settings.apply {
                 javaScriptEnabled = true
                 domStorageEnabled = true
-                userAgentString = AppKit.userAgent
+                userAgentString = AppKit.getUserAgent()
             }
             webViewClient = object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {

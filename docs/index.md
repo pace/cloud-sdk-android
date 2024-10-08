@@ -24,6 +24,8 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [21.x.x -> 22.x.x](#from-21xx-to-22xx)
         + [22.x.x -> 23.x.x](#from-22xx-to-23xx)
         + [23.x.x -> 24.x.x](#from-23xx-to-24xx)
+        + [24.x.x -> 25.x.x](#from-24xx-to-25xx)
+        + [25.x.x -> 26.x.x](#from-25xx-to-26xx)
 
 ## Documentation
 The full documentation and instructions on how to integrate PACE Cloud SDK can be found [here](https://docs.pace.cloud/en/integrating/mobile-app)
@@ -188,3 +190,6 @@ The `GasStations` properties `paymentMethods`, `amenities`, `foods`, `loyaltyPro
 
 ### From 24.x.x to 25.x.x
 - The functions `getRoute` and `searchAddress` were removed from the POIKit. If you used these functionalities, you need to provide your own implementation.
+
+### From 25.x.x to 26.x.x
+- The `theme` property in `AppKit` was removed. The apps ui mode is now used instead to decide whether the PACECloudSDK activities should be displayed in light or dark mode.

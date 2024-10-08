@@ -9,6 +9,9 @@ import android.net.Uri
 import android.os.Build
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.browser.customtabs.CustomTabsIntent.COLOR_SCHEME_DARK
+import androidx.browser.customtabs.CustomTabsIntent.COLOR_SCHEME_LIGHT
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -37,6 +40,8 @@ import cloud.pace.sdk.utils.IntentResult
 import cloud.pace.sdk.utils.Ok
 import cloud.pace.sdk.utils.SetupLogger
 import cloud.pace.sdk.utils.Success
+import cloud.pace.sdk.utils.Theme
+import cloud.pace.sdk.utils.ThemeUtils
 import cloud.pace.sdk.utils.getResultFor
 import cloud.pace.sdk.utils.resumeIfActive
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -151,7 +156,8 @@ internal class AuthorizationManager(
                 authorizationService.performAuthorizationRequest(
                     authorizationRequest,
                     PendingIntent.getActivity(context, 0, Intent(context, completedActivity), flags),
-                    canceledPendingIntent
+                    canceledPendingIntent,
+                    getCustomTabIntentForAuthorization()
                 )
             } catch (e: ActivityNotFoundException) {
                 Timber.i(e, "No supported browser installed to launch the authorization request")
@@ -165,7 +171,7 @@ internal class AuthorizationManager(
             Success(AuthorizationWebViewActivity.createStartIntent(context, authorizationRequest))
         } else {
             try {
-                Success(authorizationService.getAuthorizationRequestIntent(authorizationRequest))
+                Success(authorizationService.getAuthorizationRequestIntent(authorizationRequest, getCustomTabIntentForAuthorization()))
             } catch (e: ActivityNotFoundException) {
                 Timber.i(e, "No supported browser installed to launch the authorization request")
                 showNoSupportedBrowserToast()
@@ -258,7 +264,8 @@ internal class AuthorizationManager(
                     authorizationService.performEndSessionRequest(
                         it,
                         PendingIntent.getActivity(context, 0, Intent(context, completedActivity), flags),
-                        canceledPendingIntent
+                        canceledPendingIntent,
+                        getCustomTabIntentForAuthorization()
                     )
                 } catch (e: ActivityNotFoundException) {
                     Timber.i(e, "No supported browser installed to launch the end session request")
@@ -276,7 +283,7 @@ internal class AuthorizationManager(
             Success(AuthorizationWebViewActivity.createStartIntent(context, endSessionRequest))
         } else {
             try {
-                Success(authorizationService.getEndSessionRequestIntent(endSessionRequest))
+                Success(authorizationService.getEndSessionRequestIntent(endSessionRequest, getCustomTabIntentForAuthorization()))
             } catch (e: ActivityNotFoundException) {
                 Timber.i(e, "No supported browser installed to launch the end session request")
                 showNoSupportedBrowserToast()
@@ -417,6 +424,15 @@ internal class AuthorizationManager(
         } catch (e: CanceledException) {
             Timber.e(e, "Failed to send cancel intent")
         }
+    }
+
+    private fun getCustomTabIntentForAuthorization(): CustomTabsIntent {
+        val theme = ThemeUtils.getTheme()
+        val colorScheme = when (theme) {
+            Theme.DARK -> COLOR_SCHEME_DARK
+            Theme.LIGHT -> COLOR_SCHEME_LIGHT
+        }
+        return authorizationService.createCustomTabsIntentBuilder().setColorScheme(colorScheme).build()
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
