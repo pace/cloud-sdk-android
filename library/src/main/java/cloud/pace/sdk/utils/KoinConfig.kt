@@ -37,8 +37,6 @@ import cloud.pace.sdk.poikit.poi.tiles.POIAPIImpl
 import cloud.pace.sdk.poikit.poi.tiles.TilesAPIManager
 import cloud.pace.sdk.poikit.poi.tiles.TilesAPIManagerImpl
 import cloud.pace.sdk.poikit.pricehistory.PriceHistoryClient
-import cloud.pace.sdk.poikit.routing.NavigationApiClient
-import cloud.pace.sdk.poikit.search.AddressSearchClient
 import com.google.android.gms.location.LocationServices
 import net.openid.appauth.AppAuthConfiguration
 import net.openid.appauth.AuthorizationService
@@ -60,8 +58,6 @@ object KoinConfig {
             modules(
                 module {
                     factory<LocationProvider> { LocationProviderImpl(get(), get()) }
-                    single { NavigationApiClient(configuration.environment, configuration.apiKey) }
-                    single { AddressSearchClient(configuration.environment, configuration.apiKey) }
                     single { GeoAPIClient(configuration.environment, get()) }
                     single { PriceHistoryClient(configuration.environment) }
                     single { UserInfoApiClient(configuration.oidConfiguration?.oidConfiguration(configuration.environment)?.userInfoEndpoint) }
