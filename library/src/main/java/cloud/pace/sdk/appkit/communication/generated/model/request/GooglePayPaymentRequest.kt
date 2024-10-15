@@ -20,6 +20,10 @@ public data class GooglePayPaymentRequest(
      */
     public val merchantInfo: MerchantInfo?,
     /**
+     * Set to true to request an email address to be provided in the payment response
+     */
+    public val emailRequired: Boolean?,
+    /**
      * Specifies support for one or more payment methods supported by the Google Pay API.
      */
     public val allowedPaymentMethods: List<AllowedPaymentMethods>?,
