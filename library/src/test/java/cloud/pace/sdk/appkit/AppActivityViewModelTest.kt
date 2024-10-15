@@ -37,7 +37,6 @@ import org.mockito.junit.MockitoJUnitRunner
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(MockitoJUnitRunner::class)
 class AppActivityViewModelTest : KoinTest {
-
     @get:Rule
     var coroutineTestRule = CoroutineTestRule()
 
@@ -48,15 +47,16 @@ class AppActivityViewModelTest : KoinTest {
     private val appModel = AppModelImpl(mockContext, coroutineTestRule.testDispatcherProvider)
     private val viewModel: AppActivityViewModel by inject()
 
-    private val testModule = module {
-        single<AppModel> {
-            appModel
-        }
+    private val testModule =
+        module {
+            single<AppModel> {
+                appModel
+            }
 
-        viewModel<AppActivityViewModel> {
-            AppActivityViewModelImpl(get())
+            viewModel<AppActivityViewModel> {
+                AppActivityViewModelImpl(get())
+            }
         }
-    }
 
     @Before
     fun init() {
@@ -111,7 +111,12 @@ class AppActivityViewModelTest : KoinTest {
         viewModel.authorize.observeForever(observer)
 
         appModel.authorize(onResult)
-        assertEquals(onResult, viewModel.authorize.value?.peekContent()?.onResult)
+        assertEquals(
+            onResult,
+            viewModel.authorize.value
+                ?.peekContent()
+                ?.onResult,
+        )
 
         viewModel.authorize.removeObserver(observer)
     }
@@ -124,7 +129,12 @@ class AppActivityViewModelTest : KoinTest {
         viewModel.endSession.observeForever(observer)
 
         appModel.endSession(onResult)
-        assertEquals(onResult, viewModel.endSession.value?.peekContent()?.onResult)
+        assertEquals(
+            onResult,
+            viewModel.endSession.value
+                ?.peekContent()
+                ?.onResult,
+        )
 
         viewModel.endSession.removeObserver(observer)
     }
@@ -146,7 +156,8 @@ class AppActivityViewModelTest : KoinTest {
     @Test
     fun `google pay payment is requested`() {
         val onResult: (Completion<GooglePayPaymentResponse>) -> Unit = {}
-        val googlePayPaymentRequest = GooglePayPaymentRequest(2, 0, null, listOf(), mockk())
+        val googlePayPaymentRequest =
+            GooglePayPaymentRequest(apiVersion = 2, apiVersionMinor = 0, merchantInfo = null, emailRequired = true, allowedPaymentMethods = listOf(), transactionInfo = mockk())
 
         val observer = Observer<Event<Pair<GooglePayPaymentRequest, (Completion<GooglePayPaymentResponse>) -> Unit>>> {}
         viewModel.googlePayPayment.observeForever(observer)
