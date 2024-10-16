@@ -1,3 +1,20 @@
+25.0.0 Release notes (2024-10-16)
+=============================================================
+
+### Breaking Changes
+
+* Remove navigation and address search features
+
+### Enhancements
+
+* Add mail requirement flag to google pay request
+* Allow PAN_ONLY cards in test environment
+
+### Internal
+
+* Remove unused html docs
+* Update project configs and dependencies for Android Studio compatibility
+
 24.0.0 Release notes (2024-09-25)
 =============================================================
 
