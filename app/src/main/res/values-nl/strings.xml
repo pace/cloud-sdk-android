@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Open instellingen</string>
-    <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Er werden geen benzinestations in uw buurt gevonden.</string>
+    <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Er werden geen tankstations in uw buurt gevonden.</string>
     <string name="DASHBOARD.EMPTY_VIEW.TITLE">Helaas geen tankstations bij jou in de buurt</string>
-    <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Wij zoeken de dichtstbijzijnde benzinestations in uw buurt. Dit kan even duren.</string>
-    <string name="DASHBOARD.LOADING_VIEW.TITLE">Zoek benzinestations...</string>
+    <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Wij zoeken de dichtstbijzijnde tankstations in uw buurt. Dit kan even duren.</string>
+    <string name="DASHBOARD.LOADING_VIEW.TITLE">Zoek tankstations...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">De locatie-instellingen konden niet worden geopend. Activeer de locatiediensten handmatig in de systeeminstellingen.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">Register</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">Uw gegevens worden nog steeds opgeslagen in uw PACE-ID account.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Wil je je echt afmelden?</string>
     <string name="DASHBOARD.NAVIGATION.ERROR">Geen navigatie-app gevonden</string>
     <string name="DASHBOARD.PERMISSION.SETTINGS_ERROR">De toestemmingsinstellingen konden niet worden geopend. Geef handmatig toestemming voor toegang tot uw locatie in de systeeminstellingen.</string>
-    <string name="DASHBOARD.SECTIONS.NEAREST_GAS_STATION">Dichtstbijzijnde benzinestation</string>
-    <string name="DASHBOARD.SECTIONS.OTHER_GAS_STATIONS">Meer benzinestations</string>
+    <string name="DASHBOARD.SECTIONS.NEAREST_GAS_STATION">Dichtstbijzijnde tankstation</string>
+    <string name="DASHBOARD.SECTIONS.OTHER_GAS_STATIONS">Meer tankstations</string>
     <string name="FUEL_TYPE.DIESEL">DIESEL</string>
     <string name="FUEL_TYPE.SUPER">SUPER</string>
     <string name="FUEL_TYPE.SUPER_E10">SUPER E10</string>
     <string name="FUEL_TYPE.SUPER_PLUS">SUPER PLUS</string>
     <string name="FUEL_TYPE_SELECTION">Welke brandstofprijzen moeten we u laten zien?</string>
     <string name="GLOBAL.ACTIONS.CLOSE">Sluiten</string>
-    <string name="HOME.LOADING_FAILED_TEXT">Benzinestations konden niet worden geladen. Controleer uw verbinding!</string>
+    <string name="HOME.LOADING_FAILED_TEXT">Tankstations konden niet worden geladen. Controleer uw verbinding!</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TEXT">We zijn u momenteel aan het lokaliseren. Dit kan even duren.</string>
     <string name="HOME.LOOKING_FOR_LOCATION_TITLE">Op zoek naar locatie…</string>
     <string name="HOME.PRICE_NOT_AVAILABLE_DESCRIPTION">Voor dit tankstation en uw brandstoftype zijn momenteel geen prijzen beschikbaar.</string>

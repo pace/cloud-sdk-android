@@ -2,7 +2,7 @@
 <resources>
     <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Åbn indstillinger</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Der blev ikke fundet nogen tankstationer i nærheden af din placering.</string>
-    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Desværre ingen benzinstationer i nærheden af dig</string>
+    <string name="DASHBOARD.EMPTY_VIEW.TITLE">Desværre ingen tankstationer i nærheden af dig</string>
     <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Vi søger efter de nærmeste tankstationer i dit område. Det kan tage et øjeblik.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Søger på tankstationer...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Placeringsindstillingerne kunne ikke åbnes. Aktiver venligst placeringstjenesterne manuelt i systemindstillingerne.</string>
@@ -211,5 +211,5 @@
     <string name="wallet_two_factor_authentication_pin_setup_successful">PIN-kode indstillet korrekt</string>
     <string name="wallet_two_factor_authentication_pin_title">Indstil PIN-kode</string>
     <string name="wallet_two_factor_authentication_title">Godkendelsesprocedure</string>
-    <string name="zoom_in_note">Zoom ind for at finde benzinstationer</string>
+    <string name="zoom_in_note">Zoom ind for at finde tankstationer</string>
 </resources>
