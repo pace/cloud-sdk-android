@@ -123,7 +123,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.10"
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
 
     lint {
@@ -145,10 +145,10 @@ android {
 
 dependencies {
     // PACE Cloud SDK
-    implementation("cloud.pace:sdk:22.0.0")
+    implementation("cloud.pace:sdk:25.0.0")
 
     // Jetpack Compose
-    val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
+    val composeBom = platform("androidx.compose:compose-bom:2024.10.00")
     implementation(composeBom)
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
@@ -161,7 +161,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("com.google.maps.android:maps-compose:4.3.2")
     implementation("com.google.maps.android:maps-compose-utils:4.3.2")
-    implementation("com.google.accompanist:accompanist-permissions:0.35.0-alpha")
+    implementation("com.google.accompanist:accompanist-permissions:0.36.0")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.github.composeuisuite:ohteepee:1.0.3")
 

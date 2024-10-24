@@ -20,9 +20,7 @@ class Analytics @Inject constructor(
         .getValue(SharedPreferencesRepository.PREF_KEY_TRACKING_ENABLED, userEnabledTracking())
 
     inner class TrackingAppCallback(private val onCloseCallback: (() -> Unit)? = null) : AppCallbackImpl() {
-        override fun logEvent(key: String, parameters: Map<String, Any>) {
-            super.logEvent(key, parameters)
-
+        override fun logEvent(key: String, parameters: Map<String, Any>, context: Map<String, Any>?) {
             when (key) {
                 PAYMENT_METHOD_CREATION_STARTED -> logEvent(CardBoardingStarted)
                 PAYMENT_METHOD_ADDED -> logEvent(CardBoardingDone(parameters["kind"] as? String?))
