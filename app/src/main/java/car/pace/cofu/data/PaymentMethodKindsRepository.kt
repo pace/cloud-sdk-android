@@ -29,7 +29,7 @@ class PaymentMethodKindsRepository @Inject constructor(
     suspend fun checkPaymentMethodKinds() = getPaymentMethodKinds().fold(
         onSuccess = {
             val twoFactorNeeded = it.any { kind -> kind.twoFactor == true }
-            val paymentMethodManagementEnabled = it.any { kind -> kind.implicit != true }
+            val paymentMethodManagementEnabled = it.any { kind -> kind.managed != true && kind.implicit != true }
 
             sharedPreferencesRepository.putValue(SharedPreferencesRepository.PREF_KEY_TWO_FACTOR_AVAILABLE, twoFactorNeeded)
             sharedPreferencesRepository.putValue(SharedPreferencesRepository.PREF_KEY_PAYMENT_METHOD_MANAGEMENT_AVAILABLE, paymentMethodManagementEnabled)
