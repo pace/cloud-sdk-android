@@ -56,7 +56,7 @@ code_style:
 unit_test:
     extends: .docker_image
     script:
-        - ./gradlew testDebugUnitTest
+        - ./gradlew testDevelopmentDebugUnitTest
     <<: *only_merge_requests
 
 android_test:
@@ -64,7 +64,7 @@ android_test:
     script:
         - "/usr/local/share/android-sdk/tools/emulator -avd api28 > /dev/null 2>&1 -skin 480x854 -no-audio -no-boot-anim -no-snapshot -memory 2048 &"
         - "/usr/local/share/android-sdk/platform-tools/adb wait-for-device"
-        - ./gradlew connectedDebugAndroidTest
+        - ./gradlew connectedDevelopmentDebugAndroidTest
 
 pace_cloud_sdk_version_check:
     extends: .docker_image
