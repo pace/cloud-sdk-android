@@ -72,10 +72,6 @@ android {
         buildConfigField("String", "PRIMARY_COLOR", "\"" + configuration.primary_branding_color + "\"")
         buildConfigField("String", "SECONDARY_COLOR", "\"" + configuration.secondary_branding_color + "\"")
 
-        // appAuthRedirectScheme is needed for AppAuth in IDKit and pace_redirect_scheme is needed for deep linking in AppKit
-        manifestPlaceholders["appAuthRedirectScheme"] = configuration.client_id
-        manifestPlaceholders["pace_redirect_scheme"] = "${configuration.client_id}.${UUID.randomUUID()}"
-
         resourceConfigurations += arrayOf("en", "cs", "de", "es", "fr", "it", "nl", "pl", "pt", "ro", "ru")
 
         // Setup crash and analytics reporting
@@ -106,6 +102,43 @@ android {
 
         debug {
             signingConfig = signingConfigs.getByName("debug")
+        }
+    }
+
+    flavorDimensions += "environment"
+
+    productFlavors {
+        create("development") {
+            applicationIdSuffix = ".development"
+            dimension = "environment"
+            buildConfigField("int", "ENVIRONMENT", "cloud.pace.sdk.utils.Environment.DEVELOPMENT.ordinal()")
+
+            manifestPlaceholders["environment"] = "dev"
+
+            // appAuthRedirectScheme is needed for AppAuth in IDKit and pace_redirect_scheme is needed for deep linking in AppKit
+            manifestPlaceholders["appAuthRedirectScheme"] = "${configuration.client_id}-dev"
+            manifestPlaceholders["pace_redirect_scheme"] = "${configuration.client_id}-dev.${UUID.randomUUID()}"
+        }
+
+        create("production") {
+            dimension = "environment"
+            buildConfigField("int", "ENVIRONMENT", "cloud.pace.sdk.utils.Environment.PRODUCTION.ordinal()")
+
+            manifestPlaceholders["environment"] = "prod"
+            // appAuthRedirectScheme is needed for AppAuth in IDKit and pace_redirect_scheme is needed for deep linking in AppKit
+            manifestPlaceholders["appAuthRedirectScheme"] = configuration.client_id
+            manifestPlaceholders["pace_redirect_scheme"] = "${configuration.client_id}.${UUID.randomUUID()}"
+        }
+
+        create("sandbox") {
+            applicationIdSuffix = ".sandbox"
+            dimension = "environment"
+            buildConfigField("int", "ENVIRONMENT", "cloud.pace.sdk.utils.Environment.SANDBOX.ordinal()")
+
+            manifestPlaceholders["environment"] = "sandbox"
+            // appAuthRedirectScheme is needed for AppAuth in IDKit and pace_redirect_scheme is needed for deep linking in AppKit
+            manifestPlaceholders["appAuthRedirectScheme"] = "${configuration.client_id}-sandbox"
+            manifestPlaceholders["pace_redirect_scheme"] = "${configuration.client_id}-sandbox.${UUID.randomUUID()}"
         }
     }
 

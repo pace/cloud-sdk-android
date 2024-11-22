@@ -89,4 +89,4 @@ apt-get update && apt-get install -y jq
 jq ". + { \"list_show_custom_header\": $list_header, \"onboarding_show_custom_header\": $onboarding_header, \"detail_screen_show_icon\": $detail_icon }" configuration.json > temp.json && mv temp.json configuration.json
 
 ./gradlew clean
-./gradlew app:bundleRelease -PbuildNumber=$BUILD_NUMBER -PversionName=$VERSION_NAME
+./gradlew app:bundleProductionRelease -PbuildNumber=$BUILD_NUMBER -PversionName=$VERSION_NAME

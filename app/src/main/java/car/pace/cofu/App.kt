@@ -28,6 +28,8 @@ class App : Application() {
     @Inject
     lateinit var analytics: Analytics
 
+    private val environment = Environment.values()[BuildConfig.ENVIRONMENT]
+
     override fun onCreate() {
         super.onCreate()
 
@@ -57,7 +59,7 @@ class App : Application() {
                 clientAppBuild = BuildConfig.VERSION_CODE.toString(),
                 apiKey = "none",
                 authenticationMode = AuthenticationMode.NATIVE,
-                environment = Environment.PRODUCTION,
+                environment = environment,
                 oidConfiguration = CustomOIDConfiguration(
                     redirectUri = BuildConfig.REDIRECT_URI,
                     additionalParameters = BuildConfig.DEFAULT_IDP?.let { mapOf("kc_idp_hint" to it) }
