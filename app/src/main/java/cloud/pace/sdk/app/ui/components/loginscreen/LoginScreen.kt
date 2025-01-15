@@ -3,17 +3,21 @@ package cloud.pace.sdk.app.ui.components.loginscreen
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +34,9 @@ import cloud.pace.sdk.app.ui.components.NoSupportedBrowserDialog
 @Composable
 fun ShowLoginScreen(showDialog: Boolean, onDialogDismiss: () -> Unit, openLogin: () -> Unit) {
     Scaffold(
+        modifier = Modifier
+            .background(MaterialTheme.colors.primarySurface)
+            .safeDrawingPadding(),
         topBar = {
             TopAppBar(
                 title = {

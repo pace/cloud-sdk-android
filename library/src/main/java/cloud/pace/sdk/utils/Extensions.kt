@@ -2,7 +2,12 @@ package cloud.pace.sdk.utils
 
 import android.content.res.Resources
 import android.util.TypedValue
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.ui.graphics.Color
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import cloud.pace.sdk.PACECloudSDK
 import timber.log.Timber
 import java.security.SecureRandom
@@ -84,5 +89,21 @@ fun String?.toColorOrNull(): Color? {
     } catch (e: Exception) {
         Timber.e(e, "Could not parse $this to color")
         null
+    }
+}
+
+fun View.applyInsets() {
+    // Apply insets on all sides to not overlap content with system bars
+    ViewCompat.setOnApplyWindowInsetsListener(this) { rootView, windowInsets ->
+        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+        rootView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            leftMargin = insets.left
+            topMargin = insets.top
+            rightMargin = insets.right
+            bottomMargin = insets.bottom
+        }
+
+        WindowInsetsCompat.CONSUMED
     }
 }

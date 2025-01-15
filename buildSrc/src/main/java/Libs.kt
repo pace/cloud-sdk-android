@@ -1,5 +1,6 @@
 object Libs {
 
+    const val ACTIVITY = "androidx.activity:activity-ktx:${Versions.ACTIVITY}"
     const val APPAUTH = "net.openid:appauth:${Versions.APPAUTH}"
     const val ANDROID_GRADLE_PLUGIN = "com.android.tools.build:gradle:${Versions.ANDROID_GRADLE_PLUGIN}"
     const val APPCOMPAT = "androidx.appcompat:appcompat:${Versions.APPCOMPAT}"

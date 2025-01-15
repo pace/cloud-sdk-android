@@ -3,10 +3,11 @@ object Versions {
     const val DEFAULT_VERSION_CODE_LIBRARY = 1
     const val DEFAULT_VERSION_NAME_LIBRARY = "18.0.0"
 
-    const val COMPILE_SDK = 34
-    const val TARGET_SDK = 34
+    const val COMPILE_SDK = 35
+    const val TARGET_SDK = 35
     const val MIN_SDK = 26
 
+    const val ACTIVITY = "1.9.3"
     const val APPAUTH = "0.11.1"
     const val ANDROID_GRADLE_PLUGIN = "8.2.2"
     const val APPCOMPAT = "1.6.1"

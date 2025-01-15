@@ -22,7 +22,7 @@ class CustomBrowserMatcher(private val context: Context) : BrowserMatcher {
         }
 
         val packageInfo = packageInfo
-        return if (packageInfo != null && CHROME_CUSTOM_TAB.matches(BrowserDescriptor(packageInfo, true)) && packageInfo.applicationInfo.enabled) {
+        return if (packageInfo != null && CHROME_CUSTOM_TAB.matches(BrowserDescriptor(packageInfo, true)) && packageInfo.applicationInfo?.enabled == true) {
             Timber.i(
                 "A supported Chrome custom tab is installed and enabled but this browser descriptor is not the Chrome custom tab. " +
                     "Return false so that AppAuth continues with next browser."
@@ -37,7 +37,7 @@ class CustomBrowserMatcher(private val context: Context) : BrowserMatcher {
     private fun getInstalledChromePackageInfo(): PackageInfo? {
         return try {
             context.packageManager.getPackageInfo(Browsers.Chrome.PACKAGE_NAME, PackageManager.GET_SIGNATURES).also {
-                Timber.d("Chrome is installed: version = ${it.versionName}, enabled = ${it.applicationInfo.enabled}")
+                Timber.d("Chrome is installed: version = ${it.versionName}, enabled = ${it.applicationInfo?.enabled}")
             }
         } catch (e: PackageManager.NameNotFoundException) {
             Timber.i(e, "Chrome is not installed")

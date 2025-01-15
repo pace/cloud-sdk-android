@@ -109,6 +109,7 @@ dependencies {
     implementation(Libs.LIFECYCLE_PROCESS_KTX)
     implementation(Libs.BIOMETRIC)
     implementation(Libs.BROWSER)
+    implementation(Libs.ACTIVITY)
 
     // Jetpack Compose
     // The api declaration and the animation dependency is needed for clients without Jetpack Compose
