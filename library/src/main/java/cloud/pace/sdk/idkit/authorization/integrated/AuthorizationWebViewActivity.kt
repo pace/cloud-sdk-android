@@ -12,10 +12,12 @@ import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.utils.CloudSDKKoinComponent
 import cloud.pace.sdk.utils.DeviceUtils
+import cloud.pace.sdk.utils.applyInsets
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationException.AuthorizationRequestErrors
 import net.openid.appauth.AuthorizationManagementRequest
@@ -37,6 +39,7 @@ class AuthorizationWebViewActivity : AppCompatActivity(), CloudSDKKoinComponent 
     private var appAuthRedirectScheme: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         val state = savedInstanceState ?: intent.extras
@@ -114,6 +117,7 @@ class AuthorizationWebViewActivity : AppCompatActivity(), CloudSDKKoinComponent 
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
 
         setContentView(webView)
+        webView.applyInsets()
     }
 
     private fun intercept(newUri: Uri?): Boolean {

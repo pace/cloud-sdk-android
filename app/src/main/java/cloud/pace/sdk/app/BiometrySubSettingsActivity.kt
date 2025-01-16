@@ -3,6 +3,7 @@ package cloud.pace.sdk.app
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.mutableStateOf
 import cloud.pace.sdk.app.ui.components.settings.BiometrySubSettingView
@@ -20,7 +21,9 @@ internal var biometryStatus = mutableStateOf(false)
 
 class BiometrySubSettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
         setContent {
             PACETheme {
                 BiometrySubSettingView(

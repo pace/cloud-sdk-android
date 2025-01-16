@@ -2,6 +2,7 @@ package cloud.pace.sdk.appkit.app
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import cloud.pace.sdk.api.utils.RequestUtils
@@ -27,6 +28,7 @@ import cloud.pace.sdk.utils.ErrorListener
 import cloud.pace.sdk.utils.Failure
 import cloud.pace.sdk.utils.Ok
 import cloud.pace.sdk.utils.Success
+import cloud.pace.sdk.utils.applyInsets
 import cloud.pace.sdk.utils.getResultFor
 import cloud.pace.sdk.utils.viewBinding
 import com.google.android.gms.wallet.AutoResolveHelper
@@ -52,8 +54,11 @@ class AppActivity : AppCompatActivity(), CloudSDKKoinComponent {
     private var completableDeferred: CompletableDeferred<PaymentResult>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
         setContentView(binding.root)
+        binding.root.applyInsets()
 
         paymentsClient = GooglePayUtils.createPaymentsClient(this)
 

@@ -2,6 +2,7 @@ package cloud.pace.sdk.appkit.app.deeplink
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import cloud.pace.sdk.appkit.app.deeplink.DeepLinkManagementActivity.Companion.REDIRECT
 import cloud.pace.sdk.utils.ErrorListener
@@ -10,6 +11,7 @@ import timber.log.Timber
 class RedirectUriReceiverActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         Timber.d("Forward the following intent data to DeepLinkManagementActivity: ${intent.data?.toString()}")

@@ -8,6 +8,7 @@ import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.appkit.app.webview.DefaultWebChromeClient
@@ -18,6 +19,7 @@ import cloud.pace.sdk.appkit.app.webview.DefaultWebChromeClient.Companion.SMS_SC
 import cloud.pace.sdk.appkit.app.webview.DefaultWebChromeClient.Companion.TEL_SCHEME
 import cloud.pace.sdk.utils.DeviceUtils
 import cloud.pace.sdk.utils.ErrorListener
+import cloud.pace.sdk.utils.applyInsets
 import timber.log.Timber
 
 class WebViewActivity : AppCompatActivity() {
@@ -25,6 +27,7 @@ class WebViewActivity : AppCompatActivity() {
     private lateinit var webView: WebView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         val uri = intent.data
@@ -54,6 +57,7 @@ class WebViewActivity : AppCompatActivity() {
             CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
 
             setContentView(webView)
+            webView.applyInsets()
         } else {
             ErrorListener.reportError(NullPointerException("URL to load in payment WebView cannot be null. Finish WebViewActivity."))
             finish()

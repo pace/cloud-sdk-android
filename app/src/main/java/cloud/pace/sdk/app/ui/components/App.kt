@@ -2,11 +2,13 @@ package cloud.pace.sdk.app.ui.components
 
 import android.location.Location
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Icon
@@ -19,6 +21,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Menu
+import androidx.compose.material.primarySurface
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -68,6 +71,9 @@ fun App(
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
     Scaffold(
+        modifier = Modifier
+            .background(MaterialTheme.colors.primarySurface)
+            .safeDrawingPadding(),
         scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
