@@ -24,6 +24,7 @@ This framework combines multipe functionalities provided by PACE i.e. authorizin
         + [21.x.x -> 22.x.x](#from-21xx-to-22xx)
         + [22.x.x -> 23.x.x](#from-22xx-to-23xx)
         + [23.x.x -> 24.x.x](#from-23xx-to-24xx)
+        + [24.x.x -> 25.x.x](#from-24xx-to-25xx)
 
 ## Documentation
 The full documentation and instructions on how to integrate PACE Cloud SDK can be found [here](https://docs.pace.cloud/en/integrating/mobile-app)
