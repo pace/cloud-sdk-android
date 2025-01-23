@@ -1,3 +1,11 @@
+25.0.1 Release notes (2025-01-23)
+=============================================================
+
+### Internal
+
+* Use app ui mode for AppActivity
+* Update target and compile SDK version to 35 (Android 15)
+
 25.0.0 Release notes (2024-10-16)
 =============================================================
 
