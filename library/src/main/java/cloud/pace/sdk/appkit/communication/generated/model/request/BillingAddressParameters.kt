@@ -6,6 +6,10 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param format Billing address format required to complete the transaction.
+ * @param phoneNumberRequired Set to true if a phone number is required to process the transaction.
+ */
 public data class BillingAddressParameters(
     /**
      * Billing address format required to complete the transaction.
@@ -14,5 +18,5 @@ public data class BillingAddressParameters(
     /**
      * Set to true if a phone number is required to process the transaction.
      */
-    public val phoneNumberRequired: Boolean
+    public val phoneNumberRequired: Boolean,
 )

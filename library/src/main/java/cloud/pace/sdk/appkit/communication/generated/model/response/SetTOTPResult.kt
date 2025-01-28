@@ -7,12 +7,12 @@
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
 public data class SetTOTPError(
-    public val message: String? = null
+    public val message: String? = null,
 ) : ResponseBody()
 
 public class SetTOTPResult private constructor(
     status: Int,
-    body: ResponseBody?
+    body: ResponseBody?,
 ) : Result(status, body) {
     public constructor(success: Success) : this(200, null)
 
@@ -22,10 +22,10 @@ public class SetTOTPResult private constructor(
 
     public class Failure(
         public val statusCode: StatusCode,
-        public val response: SetTOTPError
+        public val response: SetTOTPError,
     ) {
         public enum class StatusCode(
-            public val code: Int
+            public val code: Int,
         ) {
             BadRequest(400),
             Unauthorized(401),

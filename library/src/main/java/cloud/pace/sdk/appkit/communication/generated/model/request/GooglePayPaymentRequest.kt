@@ -6,30 +6,47 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param apiVersion Major API version. The value is 2 for this specification.
+ * @param apiVersionMinor Minor API version. The value is 0 for this specification.
+ * @param merchantInfo Information about the merchant that requests payment data.
+ * @param allowedPaymentMethods Specifies support for one or more payment methods supported by the Google Pay API.
+ * @param transactionInfo Details about the authorization of the transaction based upon whether the user agrees to the transaction or not. Includes total price and price status.
+ * @param emailRequired Set to true to request an email address.
+ * @param shippingAddressRequired Set to true to request a full shipping address.
+ * @param shippingAddressParameters If shippingAddressParameters is set to true, specify shipping address restrictions.
+ */
 public data class GooglePayPaymentRequest(
     /**
      * Major API version. The value is 2 for this specification.
      */
-    public val apiVersion: Int?,
+    public val apiVersion: Int,
     /**
      * Minor API version. The value is 0 for this specification.
      */
-    public val apiVersionMinor: Int?,
+    public val apiVersionMinor: Int,
     /**
      * Information about the merchant that requests payment data.
      */
     public val merchantInfo: MerchantInfo?,
     /**
-     * Set to true to request an email address to be provided in the payment response
+     * Specifies support for one or more payment methods supported by the Google Pay API.
+     */
+    public val allowedPaymentMethods: List<AllowedPaymentMethods>,
+    /**
+     * Details about the authorization of the transaction based upon whether the user agrees to the transaction or not. Includes total price and price status.
+     */
+    public val transactionInfo: TransactionInfo,
+    /**
+     * Set to true to request an email address.
      */
     public val emailRequired: Boolean?,
     /**
-     * Specifies support for one or more payment methods supported by the Google Pay API.
+     * Set to true to request a full shipping address.
      */
-    public val allowedPaymentMethods: List<AllowedPaymentMethods>?,
+    public val shippingAddressRequired: Boolean?,
     /**
-     * Details about the authorization of the transaction based upon whether the user agrees to the
-     * transaction or not. Includes total price and price status.
+     * If shippingAddressParameters is set to true, specify shipping address restrictions.
      */
-    public val transactionInfo: TransactionInfo
+    public val shippingAddressParameters: ShippingAddressParameters?,
 )

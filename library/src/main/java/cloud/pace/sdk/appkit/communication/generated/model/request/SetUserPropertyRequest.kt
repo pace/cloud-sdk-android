@@ -6,6 +6,11 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param key The key for the user property
+ * @param value The value to set the user property to
+ * @param update If true, an already existing peroperty with the same key will be overwritten
+ */
 public data class SetUserPropertyRequest(
     /**
      * The key for the user property
@@ -18,5 +23,5 @@ public data class SetUserPropertyRequest(
     /**
      * If true, an already existing peroperty with the same key will be overwritten
      */
-    public val update: Boolean?
+    public val update: Boolean?,
 )

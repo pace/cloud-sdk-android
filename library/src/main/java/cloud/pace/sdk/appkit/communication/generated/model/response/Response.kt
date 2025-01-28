@@ -9,17 +9,17 @@ package cloud.pace.sdk.appkit.communication.generated.model.response
 public data class Response(
     public val id: String?,
     public val status: Int?,
-    public val header: Map<String, Any>?,
-    public val body: ResponseBody?
+    public val `header`: Map<String, Any>?,
+    public val body: ResponseBody?,
 )
 
 public open class ResponseBody
 
 public open class Result(
     public val status: Int,
-    public val body: ResponseBody?
+    public val body: ResponseBody?,
 )
 
 public data class Message(
-    public val message: String?
+    public val message: String?,
 ) : ResponseBody()

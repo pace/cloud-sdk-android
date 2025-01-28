@@ -157,7 +157,16 @@ class AppActivityViewModelTest : KoinTest {
     fun `google pay payment is requested`() {
         val onResult: (Completion<GooglePayPaymentResponse>) -> Unit = {}
         val googlePayPaymentRequest =
-            GooglePayPaymentRequest(apiVersion = 2, apiVersionMinor = 0, merchantInfo = null, emailRequired = true, allowedPaymentMethods = listOf(), transactionInfo = mockk())
+            GooglePayPaymentRequest(
+                apiVersion = 2,
+                apiVersionMinor = 0,
+                merchantInfo = null,
+                emailRequired = true,
+                allowedPaymentMethods = listOf(),
+                transactionInfo = mockk(),
+                shippingAddressRequired = false,
+                shippingAddressParameters = null
+            )
 
         val observer = Observer<Event<Pair<GooglePayPaymentRequest, (Completion<GooglePayPaymentResponse>) -> Unit>>> {}
         viewModel.googlePayPayment.observeForever(observer)

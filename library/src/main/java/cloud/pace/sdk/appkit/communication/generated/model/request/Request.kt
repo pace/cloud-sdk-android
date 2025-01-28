@@ -10,6 +10,6 @@ public data class Request<T>(
     public val id: String?,
     public val method: String?,
     public val uri: String?,
-    public val header: Map<String, Any>?,
-    public val body: T?
+    public val `header`: Map<String, Any>?,
+    public val body: T?,
 )

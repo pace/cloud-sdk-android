@@ -8,31 +8,31 @@ package cloud.pace.sdk.appkit.communication.generated.model.response
 
 public data class GetAccessTokenResponse(
     public val accessToken: String,
-    public val isInitialToken: Boolean?
+    public val isInitialToken: Boolean?,
 ) : ResponseBody()
 
 public data class GetAccessTokenError(
-    public val message: String? = null
+    public val message: String? = null,
 ) : ResponseBody()
 
 public class GetAccessTokenResult private constructor(
     status: Int,
-    body: ResponseBody?
+    body: ResponseBody?,
 ) : Result(status, body) {
     public constructor(success: Success) : this(200, success.response)
 
     public constructor(failure: Failure) : this(failure.statusCode.code, failure.response)
 
     public class Success(
-        public val response: GetAccessTokenResponse
+        public val response: GetAccessTokenResponse,
     )
 
     public class Failure(
         public val statusCode: StatusCode,
-        public val response: GetAccessTokenError
+        public val response: GetAccessTokenError,
     ) {
         public enum class StatusCode(
-            public val code: Int
+            public val code: Int,
         ) {
             BadRequest(400),
             RequestTimeout(408),

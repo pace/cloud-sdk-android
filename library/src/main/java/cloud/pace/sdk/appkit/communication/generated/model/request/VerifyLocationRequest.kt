@@ -6,6 +6,11 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param lat The latitude of the location to be verified.
+ * @param lon The longitude of the location to be verified.
+ * @param threshold The maximum location offset / inaccuracy in meters.
+ */
 public data class VerifyLocationRequest(
     /**
      * The latitude of the location to be verified.
@@ -18,5 +23,5 @@ public data class VerifyLocationRequest(
     /**
      * The maximum location offset / inaccuracy in meters.
      */
-    public val threshold: Double
+    public val threshold: Double,
 )

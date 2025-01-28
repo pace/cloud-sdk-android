@@ -8,31 +8,31 @@ package cloud.pace.sdk.appkit.communication.generated.model.response
 
 public data class VerifyLocationResponse(
     public val verified: Boolean,
-    public val accuracy: Double?
+    public val accuracy: Double?,
 ) : ResponseBody()
 
 public data class VerifyLocationError(
-    public val message: String? = null
+    public val message: String? = null,
 ) : ResponseBody()
 
 public class VerifyLocationResult private constructor(
     status: Int,
-    body: ResponseBody?
+    body: ResponseBody?,
 ) : Result(status, body) {
     public constructor(success: Success) : this(200, success.response)
 
     public constructor(failure: Failure) : this(failure.statusCode.code, failure.response)
 
     public class Success(
-        public val response: VerifyLocationResponse
+        public val response: VerifyLocationResponse,
     )
 
     public class Failure(
         public val statusCode: StatusCode,
-        public val response: VerifyLocationError
+        public val response: VerifyLocationError,
     ) {
         public enum class StatusCode(
-            public val code: Int
+            public val code: Int,
         ) {
             BadRequest(400),
             NotFound(404),

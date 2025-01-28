@@ -6,6 +6,13 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param secret A Base 32 encoded string.
+ * @param period The time in seconds a generated TOTP hash is valid for.
+ * @param digits The required length of the generated TOTP.
+ * @param algorithm Algorithm to use for HMAC, accepted values: `SHA1`, `SHA256`, `SHA512`.
+ * @param key The key under which the TOTP secret data should be stored.
+ */
 public data class SetTOTPRequest(
     /**
      * A Base 32 encoded string.
@@ -26,5 +33,5 @@ public data class SetTOTPRequest(
     /**
      * The key under which the TOTP secret data should be stored.
      */
-    public val key: String
+    public val key: String,
 )

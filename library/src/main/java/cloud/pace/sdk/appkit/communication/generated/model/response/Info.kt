@@ -6,24 +6,27 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
+/**
+ * @param cardDetails The details about the card. This value is commonly the last four digits of the selected payment account number.
+ * @param assuranceDetails This object provides information about the validation performed on the returned payment data if assuranceDetailsRequired is set to true in the CardParameters.
+ * @param cardNetwork The payment card network of the selected payment. Returned values match the format of allowedCardNetworks in CardParameters.
+ * @param billingAddress Shipping address, if shippingAddressRequired is set to true in the PaymentDataRequest.
+ */
 public data class Info(
     /**
-     * The details about the card. This value is commonly the last four digits of the selected payment
-     * account number.
+     * The details about the card. This value is commonly the last four digits of the selected payment account number.
      */
     public val cardDetails: String,
     /**
-     * This object provides information about the validation performed on the returned payment data if
-     * assuranceDetailsRequired is set to true in the CardParameters.
+     * This object provides information about the validation performed on the returned payment data if assuranceDetailsRequired is set to true in the CardParameters.
      */
     public val assuranceDetails: AssuranceDetails,
     /**
-     * The payment card network of the selected payment. Returned values match the format of
-     * allowedCardNetworks in CardParameters.
+     * The payment card network of the selected payment. Returned values match the format of allowedCardNetworks in CardParameters.
      */
     public val cardNetwork: String,
     /**
      * Shipping address, if shippingAddressRequired is set to true in the PaymentDataRequest.
      */
-    public val billingAddress: BillingAddress?
+    public val billingAddress: BillingAddress?,
 )

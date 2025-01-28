@@ -7,12 +7,12 @@
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
 public data class CloseError(
-    public val message: String? = null
+    public val message: String? = null,
 ) : ResponseBody()
 
 public class CloseResult private constructor(
     status: Int,
-    body: ResponseBody?
+    body: ResponseBody?,
 ) : Result(status, body) {
     public constructor(success: Success) : this(204, null)
 
@@ -22,10 +22,10 @@ public class CloseResult private constructor(
 
     public class Failure(
         public val statusCode: StatusCode,
-        public val response: CloseError
+        public val response: CloseError,
     ) {
         public enum class StatusCode(
-            public val code: Int
+            public val code: Int,
         ) {
             BadRequest(400),
             RequestTimeout(408),

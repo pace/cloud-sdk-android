@@ -6,17 +6,22 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param apiVersion Major API version. The value is 2 for this specification.
+ * @param apiVersionMinor Minor API version. The value is 0 for this specification.
+ * @param allowedPaymentMethods Specifies support for one or more payment methods supported by the Google Pay API.
+ */
 public data class GooglePayAvailabilityCheckRequest(
     /**
      * Major API version. The value is 2 for this specification.
      */
-    public val apiVersion: Int?,
+    public val apiVersion: Int,
     /**
      * Minor API version. The value is 0 for this specification.
      */
-    public val apiVersionMinor: Int?,
+    public val apiVersionMinor: Int,
     /**
      * Specifies support for one or more payment methods supported by the Google Pay API.
      */
-    public val allowedPaymentMethods: List<AllowedPaymentMethods>
+    public val allowedPaymentMethods: List<AllowedPaymentMethods>,
 )

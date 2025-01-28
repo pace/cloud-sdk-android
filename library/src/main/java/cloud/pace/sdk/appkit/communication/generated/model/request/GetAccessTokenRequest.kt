@@ -6,14 +6,17 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param reason The reason for requesting a new access token. Currently the value can either be `unauthorized` or `other`.
+ * @param oldToken The token which was used before by the app.
+ */
 public data class GetAccessTokenRequest(
     /**
-     * The reason for requesting a new access token. Currently the value can either be `unauthorized`
-     * or `other`.
+     * The reason for requesting a new access token. Currently the value can either be `unauthorized` or `other`.
      */
     public val reason: String,
     /**
      * The token which was used before by the app.
      */
-    public val oldToken: String?
+    public val oldToken: String?,
 )

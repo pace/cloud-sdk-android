@@ -6,19 +6,22 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param type A short identifier for the supported payment method. CARD is the only supported value for this parameter.
+ * @param parameters Parameters required to configure the provided payment method type.
+ * @param tokenizationSpecification Configure an account or decryption provider to receive payment information. This property is required for the CARD payment method.
+ */
 public data class AllowedPaymentMethods(
     /**
-     * A short identifier for the supported payment method. CARD is the only supported value for this
-     * parameter.
+     * A short identifier for the supported payment method. CARD is the only supported value for this parameter.
      */
-    public val type: String?,
+    public val type: String,
     /**
      * Parameters required to configure the provided payment method type.
      */
     public val parameters: AllowedPaymentMethodsParameters,
     /**
-     * Configure an account or decryption provider to receive payment information. This property is
-     * required for the CARD payment method.
+     * Configure an account or decryption provider to receive payment information. This property is required for the CARD payment method.
      */
-    public val tokenizationSpecification: TokenizationSpecification?
+    public val tokenizationSpecification: TokenizationSpecification?,
 )

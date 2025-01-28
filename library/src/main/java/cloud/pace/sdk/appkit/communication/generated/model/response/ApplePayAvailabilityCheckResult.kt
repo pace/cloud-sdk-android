@@ -7,31 +7,31 @@
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
 public data class ApplePayAvailabilityCheckResponse(
-    public val isAvailable: Boolean
+    public val isAvailable: Boolean,
 ) : ResponseBody()
 
 public data class ApplePayAvailabilityCheckError(
-    public val message: String? = null
+    public val message: String? = null,
 ) : ResponseBody()
 
 public class ApplePayAvailabilityCheckResult private constructor(
     status: Int,
-    body: ResponseBody?
+    body: ResponseBody?,
 ) : Result(status, body) {
     public constructor(success: Success) : this(200, success.response)
 
     public constructor(failure: Failure) : this(failure.statusCode.code, failure.response)
 
     public class Success(
-        public val response: ApplePayAvailabilityCheckResponse
+        public val response: ApplePayAvailabilityCheckResponse,
     )
 
     public class Failure(
         public val statusCode: StatusCode,
-        public val response: ApplePayAvailabilityCheckError
+        public val response: ApplePayAvailabilityCheckError,
     ) {
         public enum class StatusCode(
-            public val code: Int
+            public val code: Int,
         ) {
             BadRequest(400),
             RequestTimeout(408),

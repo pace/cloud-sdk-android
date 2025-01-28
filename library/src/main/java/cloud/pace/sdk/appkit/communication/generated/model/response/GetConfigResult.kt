@@ -7,31 +7,31 @@
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
 public data class GetConfigResponse(
-    public val `value`: String
+    public val `value`: String,
 ) : ResponseBody()
 
 public data class GetConfigError(
-    public val message: String? = null
+    public val message: String? = null,
 ) : ResponseBody()
 
 public class GetConfigResult private constructor(
     status: Int,
-    body: ResponseBody?
+    body: ResponseBody?,
 ) : Result(status, body) {
     public constructor(success: Success) : this(200, success.response)
 
     public constructor(failure: Failure) : this(failure.statusCode.code, failure.response)
 
     public class Success(
-        public val response: GetConfigResponse
+        public val response: GetConfigResponse,
     )
 
     public class Failure(
         public val statusCode: StatusCode,
-        public val response: GetConfigError
+        public val response: GetConfigError,
     ) {
         public enum class StatusCode(
-            public val code: Int
+            public val code: Int,
         ) {
             BadRequest(400),
             NotFound(404),

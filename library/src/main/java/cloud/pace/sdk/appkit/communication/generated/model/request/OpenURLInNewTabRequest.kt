@@ -6,6 +6,11 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param url The url to be opened
+ * @param cancelUrl The url to be loaded if `url` cannot be opened.
+ * @param integrated Whether the tab should be opened in the SDK's web view instead of the system's browser.
+ */
 public data class OpenURLInNewTabRequest(
     /**
      * The url to be opened
@@ -18,5 +23,5 @@ public data class OpenURLInNewTabRequest(
     /**
      * Whether the tab should be opened in the SDK's web view instead of the system's browser.
      */
-    public val integrated: Boolean?
+    public val integrated: Boolean?,
 )
