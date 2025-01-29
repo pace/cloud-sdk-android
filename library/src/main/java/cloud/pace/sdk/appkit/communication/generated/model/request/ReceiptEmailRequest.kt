@@ -6,9 +6,12 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param paymentMethod The id of the user payment method.
+ */
 public data class ReceiptEmailRequest(
     /**
      * The id of the user payment method.
      */
-    public val paymentMethod: String
+    public val paymentMethod: String,
 )

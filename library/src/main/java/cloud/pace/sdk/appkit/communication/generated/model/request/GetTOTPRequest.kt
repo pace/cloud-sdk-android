@@ -6,6 +6,10 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param serverTime This time is used in conjunction with the saved period to generate the TOTP.
+ * @param key The TOTP secret data key used to generate a TOTP.
+ */
 public data class GetTOTPRequest(
     /**
      * This time is used in conjunction with the saved period to generate the TOTP.
@@ -14,5 +18,5 @@ public data class GetTOTPRequest(
     /**
      * The TOTP secret data key used to generate a TOTP.
      */
-    public val key: String
+    public val key: String,
 )

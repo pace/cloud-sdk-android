@@ -6,9 +6,12 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param key The key for the config value
+ */
 public data class GetConfigRequest(
     /**
      * The key for the config value
      */
-    public val key: String
+    public val key: String,
 )

@@ -40,25 +40,22 @@ import java.net.HttpURLConnection
 import java.util.concurrent.TimeUnit
 
 /**
- * The middleware between the PACE Cloud SDK and the PWA that routes the message to the correct
- * handler and serialized/deserialized the request and response JSON correctly.
+ * The middleware between the PACE Cloud SDK and the PWA that routes the message to the correct handler and serialized/deserialized the request and response JSON correctly.
  */
 public data class CommunicationManager(
     /**
-     * Register the [Communication] listener that invokes the correct message handler when a new PWA
-     * message arrives.
+     * Register the [Communication] listener that invokes the correct message handler when a new PWA message arrives.
      */
     public val listener: Communication,
     /**
      * Called when the response JSON string should be sent to the PWA.
      */
-    public val onResponse: (String) -> Unit
+    public val onResponse: (String) -> Unit,
 ) {
     private val gson: Gson = Gson()
 
     /**
-     * Call this method when the PWA sends a new JSON message. The [CommunicationManager]
-     * automatically invokes the correct [Communication] handler.
+     * Call this method when the PWA sends a new JSON message. The [CommunicationManager] automatically invokes the correct [Communication] handler.
      *
      * @param message The JSON message string
      */
@@ -67,9 +64,8 @@ public data class CommunicationManager(
         when (request?.uri) {
             "/introspect" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val result = listener.introspect(timeout)
                     withContext(Dispatchers.Main) {
                         respond(Response(request.id, result.status, request.header, result.body))
@@ -79,9 +75,8 @@ public data class CommunicationManager(
 
             "/close" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val result = listener.close(timeout)
                     withContext(Dispatchers.Main) {
                         respond(Response(request.id, result.status, request.header, result.body))
@@ -91,9 +86,8 @@ public data class CommunicationManager(
 
             "/logout" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val result = listener.logout(timeout)
                     withContext(Dispatchers.Main) {
                         respond(Response(request.id, result.status, request.header, result.body))
@@ -103,9 +97,8 @@ public data class CommunicationManager(
 
             "/getBiometricStatus" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val result = listener.getBiometricStatus(timeout)
                     withContext(Dispatchers.Main) {
                         respond(Response(request.id, result.status, request.header, result.body))
@@ -115,9 +108,8 @@ public data class CommunicationManager(
 
             "/setTOTP" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val setTOTPRequest = gson.fromJson<SetTOTPRequest>(message)
                     val body = setTOTPRequest?.body
                     if (body == null) {
@@ -132,7 +124,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.setTOTP(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -140,9 +139,8 @@ public data class CommunicationManager(
 
             "/getTOTP" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val getTOTPRequest = gson.fromJson<GetTOTPRequest>(message)
                     val body = getTOTPRequest?.body
                     if (body == null) {
@@ -157,7 +155,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.getTOTP(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -165,9 +170,8 @@ public data class CommunicationManager(
 
             "/setSecureData" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val setSecureDataRequest = gson.fromJson<SetSecureDataRequest>(message)
                     val body = setSecureDataRequest?.body
                     if (body == null) {
@@ -182,7 +186,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.setSecureData(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -190,9 +201,8 @@ public data class CommunicationManager(
 
             "/getSecureData" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val getSecureDataRequest = gson.fromJson<GetSecureDataRequest>(message)
                     val body = getSecureDataRequest?.body
                     if (body == null) {
@@ -207,7 +217,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.getSecureData(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -215,9 +232,8 @@ public data class CommunicationManager(
 
             "/disable" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val disableRequest = gson.fromJson<DisableRequest>(message)
                     val body = disableRequest?.body
                     if (body == null) {
@@ -232,7 +248,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.disable(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -240,9 +263,8 @@ public data class CommunicationManager(
 
             "/openURLInNewTab" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val openURLInNewTabRequest = gson.fromJson<OpenURLInNewTabRequest>(message)
                     val body = openURLInNewTabRequest?.body
                     if (body == null) {
@@ -257,7 +279,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.openURLInNewTab(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -265,9 +294,8 @@ public data class CommunicationManager(
 
             "/verifyLocation" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val verifyLocationRequest = gson.fromJson<VerifyLocationRequest>(message)
                     val body = verifyLocationRequest?.body
                     if (body == null) {
@@ -282,7 +310,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.verifyLocation(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -290,9 +325,8 @@ public data class CommunicationManager(
 
             "/getAccessToken" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val getAccessTokenRequest = gson.fromJson<GetAccessTokenRequest>(message)
                     val body = getAccessTokenRequest?.body
                     if (body == null) {
@@ -307,7 +341,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.getAccessToken(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -315,9 +356,8 @@ public data class CommunicationManager(
 
             "/imageData" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val imageDataRequest = gson.fromJson<ImageDataRequest>(message)
                     val body = imageDataRequest?.body
                     if (body == null) {
@@ -332,7 +372,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.imageData(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -340,9 +387,8 @@ public data class CommunicationManager(
 
             "/applePayAvailabilityCheck" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val applePayAvailabilityCheckRequest =
                         gson.fromJson<ApplePayAvailabilityCheckRequest>(message)
                     val body = applePayAvailabilityCheckRequest?.body
@@ -358,7 +404,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.applePayAvailabilityCheck(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -366,9 +419,8 @@ public data class CommunicationManager(
 
             "/back" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val result = listener.back(timeout)
                     withContext(Dispatchers.Main) {
                         respond(Response(request.id, result.status, request.header, result.body))
@@ -378,9 +430,8 @@ public data class CommunicationManager(
 
             "/appInterceptableLink" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val result = listener.appInterceptableLink(timeout)
                     withContext(Dispatchers.Main) {
                         respond(Response(request.id, result.status, request.header, result.body))
@@ -390,9 +441,8 @@ public data class CommunicationManager(
 
             "/setUserProperty" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val setUserPropertyRequest = gson.fromJson<SetUserPropertyRequest>(message)
                     val body = setUserPropertyRequest?.body
                     if (body == null) {
@@ -407,7 +457,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.setUserProperty(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -415,9 +472,8 @@ public data class CommunicationManager(
 
             "/logEvent" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val logEventRequest = gson.fromJson<LogEventRequest>(message)
                     val body = logEventRequest?.body
                     if (body == null) {
@@ -432,7 +488,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.logEvent(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -440,9 +503,8 @@ public data class CommunicationManager(
 
             "/getConfig" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val getConfigRequest = gson.fromJson<GetConfigRequest>(message)
                     val body = getConfigRequest?.body
                     if (body == null) {
@@ -457,7 +519,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.getConfig(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -465,9 +534,8 @@ public data class CommunicationManager(
 
             "/getTraceId" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val result = listener.getTraceId(timeout)
                     withContext(Dispatchers.Main) {
                         respond(Response(request.id, result.status, request.header, result.body))
@@ -477,9 +545,8 @@ public data class CommunicationManager(
 
             "/getLocation" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val result = listener.getLocation(timeout)
                     withContext(Dispatchers.Main) {
                         respond(Response(request.id, result.status, request.header, result.body))
@@ -489,9 +556,8 @@ public data class CommunicationManager(
 
             "/appRedirect" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val appRedirectRequest = gson.fromJson<AppRedirectRequest>(message)
                     val body = appRedirectRequest?.body
                     if (body == null) {
@@ -506,7 +572,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.appRedirect(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -514,9 +587,8 @@ public data class CommunicationManager(
 
             "/isBiometricAuthEnabled" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val result = listener.isBiometricAuthEnabled(timeout)
                     withContext(Dispatchers.Main) {
                         respond(Response(request.id, result.status, request.header, result.body))
@@ -526,9 +598,8 @@ public data class CommunicationManager(
 
             "/isSignedIn" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val result = listener.isSignedIn(timeout)
                     withContext(Dispatchers.Main) {
                         respond(Response(request.id, result.status, request.header, result.body))
@@ -538,9 +609,8 @@ public data class CommunicationManager(
 
             "/isRemoteConfigAvailable" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val result = listener.isRemoteConfigAvailable(timeout)
                     withContext(Dispatchers.Main) {
                         respond(Response(request.id, result.status, request.header, result.body))
@@ -550,9 +620,8 @@ public data class CommunicationManager(
 
             "/shareText" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val shareTextRequest = gson.fromJson<ShareTextRequest>(message)
                     val body = shareTextRequest?.body
                     if (body == null) {
@@ -567,7 +636,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.shareText(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -575,9 +651,8 @@ public data class CommunicationManager(
 
             "/googlePayAvailabilityCheck" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val googlePayAvailabilityCheckRequest =
                         gson.fromJson<GooglePayAvailabilityCheckRequest>(message)
                     val body = googlePayAvailabilityCheckRequest?.body
@@ -593,7 +668,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.googlePayAvailabilityCheck(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -601,9 +683,8 @@ public data class CommunicationManager(
 
             "/googlePayPayment" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val googlePayPaymentRequest = gson.fromJson<GooglePayPaymentRequest>(message)
                     val body = googlePayPaymentRequest?.body
                     if (body == null) {
@@ -618,7 +699,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.googlePayPayment(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -626,9 +714,8 @@ public data class CommunicationManager(
 
             "/startNavigation" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val startNavigationRequest = gson.fromJson<StartNavigationRequest>(message)
                     val body = startNavigationRequest?.body
                     if (body == null) {
@@ -643,7 +730,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.startNavigation(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -651,9 +745,8 @@ public data class CommunicationManager(
 
             "/shareFile" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val shareFileRequest = gson.fromJson<ShareFileRequest>(message)
                     val body = shareFileRequest?.body
                     if (body == null) {
@@ -668,7 +761,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.shareFile(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -676,9 +776,8 @@ public data class CommunicationManager(
 
             "/receiptEmail" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
                     val receiptEmailRequest = gson.fromJson<ReceiptEmailRequest>(message)
                     val body = receiptEmailRequest?.body
                     if (body == null) {
@@ -693,7 +792,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.receiptEmail(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -701,10 +807,10 @@ public data class CommunicationManager(
 
             "/receiptAttachments" -> {
                 CoroutineScope(Dispatchers.Default).launch {
-                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()?.let {
-                        TimeUnit.SECONDS.toMillis(it)
-                    }
-                    val receiptAttachmentsRequest = gson.fromJson<ReceiptAttachmentsRequest>(message)
+                    val timeout = (request.header?.get("Keep-Alive") as? Double)?.toLong()
+                        ?.let { TimeUnit.SECONDS.toMillis(it) }
+                    val receiptAttachmentsRequest =
+                        gson.fromJson<ReceiptAttachmentsRequest>(message)
                     val body = receiptAttachmentsRequest?.body
                     if (body == null) {
                         withContext(Dispatchers.Main) {
@@ -718,7 +824,14 @@ public data class CommunicationManager(
                     } else {
                         val result = listener.receiptAttachments(timeout, body)
                         withContext(Dispatchers.Main) {
-                            respond(Response(request.id, result.status, request.header, result.body))
+                            respond(
+                                Response(
+                                    request.id,
+                                    result.status,
+                                    request.header,
+                                    result.body
+                                )
+                            )
                         }
                     }
                 }
@@ -728,7 +841,9 @@ public data class CommunicationManager(
                 CoroutineScope(Dispatchers.Main).launch {
                     respond(
                         Response(
-                            request?.id, HttpURLConnection.HTTP_BAD_METHOD, request?.header,
+                            request?.id,
+                            HttpURLConnection.HTTP_BAD_METHOD,
+                            request?.header,
                             Message("Could not route the following request to the correct handler: $request")
                         )
                     )

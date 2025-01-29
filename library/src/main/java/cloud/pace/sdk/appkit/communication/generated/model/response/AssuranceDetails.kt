@@ -6,17 +6,17 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
+/**
+ * @param accountVerified If true, indicates that Cardholder possession validation has been performed on returned payment credential.
+ * @param cardHolderAuthenticated If true, indicates that identification and verifications (ID&V) was performed on the returned payment credential. If false, the same risk-based authentication can be performed as you would for card transactions. This risk-based authentication can include, but not limited to, step-up with 3D Secure protocol if applicable.
+ */
 public data class AssuranceDetails(
     /**
-     * If true, indicates that Cardholder possession validation has been performed on returned payment
-     * credential.
+     * If true, indicates that Cardholder possession validation has been performed on returned payment credential.
      */
     public val accountVerified: Boolean,
     /**
-     * If true, indicates that identification and verifications (ID&V) was performed on the returned
-     * payment credential. If false, the same risk-based authentication can be performed as you would for
-     * card transactions. This risk-based authentication can include, but not limited to, step-up with 3D
-     * Secure protocol if applicable.
+     * If true, indicates that identification and verifications (ID&V) was performed on the returned payment credential. If false, the same risk-based authentication can be performed as you would for card transactions. This risk-based authentication can include, but not limited to, step-up with 3D Secure protocol if applicable.
      */
-    public val cardHolderAuthenticated: Boolean
+    public val cardHolderAuthenticated: Boolean,
 )

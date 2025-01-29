@@ -6,9 +6,12 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param key The key of the requested secure data value.
+ */
 public data class GetSecureDataRequest(
     /**
      * The key of the requested secure data value.
      */
-    public val key: String
+    public val key: String,
 )

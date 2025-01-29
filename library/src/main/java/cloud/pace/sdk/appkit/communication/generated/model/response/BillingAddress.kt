@@ -6,6 +6,18 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
+/**
+ * @param name The full name of the addressee.
+ * @param postalCode The postal or ZIP code.
+ * @param countryCode ISO 3166-1 alpha-2 country code.
+ * @param phoneNumber A telephone number, if phoneNumberRequired is set to true in the PaymentDataRequest.
+ * @param address1 The first line of the address.
+ * @param address2 The second line of the address.
+ * @param address3 The third line of the address.
+ * @param locality City, town, neighborhood, or suburb.
+ * @param administrativeArea A country subdivision, such as a state or province.
+ * @param sortingCode The sorting code.
+ */
 public data class BillingAddress(
     /**
      * The full name of the addressee.
@@ -46,5 +58,5 @@ public data class BillingAddress(
     /**
      * The sorting code.
      */
-    public val sortingCode: String
+    public val sortingCode: String,
 )

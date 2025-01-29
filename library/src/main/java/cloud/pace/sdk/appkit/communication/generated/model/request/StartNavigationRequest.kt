@@ -6,6 +6,11 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param lat The latitude of the location to be navigated to.
+ * @param lon The longitude of the location to be navigated to.
+ * @param name The name of the location.
+ */
 public data class StartNavigationRequest(
     /**
      * The latitude of the location to be navigated to.
@@ -18,5 +23,5 @@ public data class StartNavigationRequest(
     /**
      * The name of the location.
      */
-    public val name: String
+    public val name: String,
 )

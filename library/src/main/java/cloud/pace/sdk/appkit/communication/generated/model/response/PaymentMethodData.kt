@@ -6,18 +6,22 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
+/**
+ * @param type PaymentMethod type selected in the Google Pay payment sheet.
+ * @param info The value of this property depends on the payment method type returned. Since we only support CARD for now, this object contains the CardInfo response.
+ * @param tokenizationData Payment tokenization data for the selected payment method.
+ */
 public data class PaymentMethodData(
     /**
      * PaymentMethod type selected in the Google Pay payment sheet.
      */
     public val type: String,
     /**
-     * The value of this property depends on the payment method type returned. Since we only support
-     * CARD for now, this object contains the CardInfo response.
+     * The value of this property depends on the payment method type returned. Since we only support CARD for now, this object contains the CardInfo response.
      */
     public val info: Info,
     /**
      * Payment tokenization data for the selected payment method.
      */
-    public val tokenizationData: TokenizationData
+    public val tokenizationData: TokenizationData,
 )

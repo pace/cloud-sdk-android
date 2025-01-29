@@ -6,10 +6,12 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param app The app the current PWA is redirecting to, e.g. `fuel-station-finder`, `fueling`, `pay`, or `legal`
+ */
 public data class AppRedirectRequest(
     /**
-     * The app the current PWA is redirecting to, e.g. `fuel-station-finder`, `fueling`, `pay`, or
-     * `legal`
+     * The app the current PWA is redirecting to, e.g. `fuel-station-finder`, `fueling`, `pay`, or `legal`
      */
-    public val app: String
+    public val app: String,
 )

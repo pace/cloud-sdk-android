@@ -7,31 +7,31 @@
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
 public data class GetSecureDataResponse(
-    public val `value`: String
+    public val `value`: String,
 ) : ResponseBody()
 
 public data class GetSecureDataError(
-    public val message: String? = null
+    public val message: String? = null,
 ) : ResponseBody()
 
 public class GetSecureDataResult private constructor(
     status: Int,
-    body: ResponseBody?
+    body: ResponseBody?,
 ) : Result(status, body) {
     public constructor(success: Success) : this(200, success.response)
 
     public constructor(failure: Failure) : this(failure.statusCode.code, failure.response)
 
     public class Success(
-        public val response: GetSecureDataResponse
+        public val response: GetSecureDataResponse,
     )
 
     public class Failure(
         public val statusCode: StatusCode,
-        public val response: GetSecureDataError
+        public val response: GetSecureDataError,
     ) {
         public enum class StatusCode(
-            public val code: Int
+            public val code: Int,
         ) {
             BadRequest(400),
             Unauthorized(401),

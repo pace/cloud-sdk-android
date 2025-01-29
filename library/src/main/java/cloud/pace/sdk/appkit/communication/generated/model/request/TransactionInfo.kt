@@ -6,6 +6,15 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param currencyCode The ISO 4217 alphabetic currency code of the payment request.
+ * @param countryCode The ISO 3166-1 alpha-2 country codes country code of the payment request, e.g. DE
+ * @param transactionId A unique ID that identifies a transaction attempt. Merchants can use an existing ID or generate a specific one for Google Pay transaction attempts. This field is required when you send callbacks to the Google Transaction Events API.
+ * @param totalPriceStatus The status of the total price used
+ * @param totalPrice Total monetary value of the transaction with an optional decimal precision of two decimal places. The format of the string should follow the regex format ^[0-9]+(\.[0-9][0-9])?$
+ * @param totalPriceLabel Custom label for the total price within the display items.
+ * @param checkoutOption Affects the submit button text displayed in the Google Pay payment sheet.
+ */
 public data class TransactionInfo(
     /**
      * The ISO 4217 alphabetic currency code of the payment request.
@@ -16,9 +25,7 @@ public data class TransactionInfo(
      */
     public val countryCode: String,
     /**
-     * A unique ID that identifies a transaction attempt. Merchants can use an existing ID or generate
-     * a specific one for Google Pay transaction attempts. This field is required when you send callbacks
-     * to the Google Transaction Events API.
+     * A unique ID that identifies a transaction attempt. Merchants can use an existing ID or generate a specific one for Google Pay transaction attempts. This field is required when you send callbacks to the Google Transaction Events API.
      */
     public val transactionId: String?,
     /**
@@ -26,8 +33,7 @@ public data class TransactionInfo(
      */
     public val totalPriceStatus: String,
     /**
-     * Total monetary value of the transaction with an optional decimal precision of two decimal
-     * places. The format of the string should follow the regex format ^[0-9]+(\.[0-9][0-9])?$
+     * Total monetary value of the transaction with an optional decimal precision of two decimal places. The format of the string should follow the regex format ^[0-9]+(\.[0-9][0-9])?$
      */
     public val totalPrice: String,
     /**
@@ -37,5 +43,5 @@ public data class TransactionInfo(
     /**
      * Affects the submit button text displayed in the Google Pay payment sheet.
      */
-    public val checkoutOption: String?
+    public val checkoutOption: String?,
 )

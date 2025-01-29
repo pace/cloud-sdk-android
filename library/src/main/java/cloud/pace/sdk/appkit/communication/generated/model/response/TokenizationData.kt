@@ -6,14 +6,17 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.response
 
+/**
+ * @param type The type of tokenization to be applied to the selected payment method. This value matches the type set in PaymentMethodTokenizationSpecification.
+ * @param token The generated payment method token.
+ */
 public data class TokenizationData(
     /**
-     * The type of tokenization to be applied to the selected payment method. This value matches the
-     * type set in PaymentMethodTokenizationSpecification.
+     * The type of tokenization to be applied to the selected payment method. This value matches the type set in PaymentMethodTokenizationSpecification.
      */
     public val type: String,
     /**
      * The generated payment method token.
      */
-    public val token: String?
+    public val token: String?,
 )

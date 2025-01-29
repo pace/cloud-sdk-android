@@ -6,6 +6,10 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param key The key under which the secure data should be stored.
+ * @param value The secure value to be stored.
+ */
 public data class SetSecureDataRequest(
     /**
      * The key under which the secure data should be stored.
@@ -14,5 +18,5 @@ public data class SetSecureDataRequest(
     /**
      * The secure value to be stored.
      */
-    public val `value`: String
+    public val `value`: String,
 )

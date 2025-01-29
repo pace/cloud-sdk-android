@@ -6,6 +6,10 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param title A title/description to be displayed when sharing
+ * @param text the string to be shared
+ */
 public data class ShareTextRequest(
     /**
      * A title/description to be displayed when sharing
@@ -14,5 +18,5 @@ public data class ShareTextRequest(
     /**
      * the string to be shared
      */
-    public val text: String
+    public val text: String,
 )

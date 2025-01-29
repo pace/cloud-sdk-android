@@ -6,14 +6,17 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param type A payment method tokenization type is supported for the given PaymentMethod. For CARD payment method, use PAYMENT_GATEWAY or DIRECT.
+ * @param parameters Parameters specific to the selected payment method tokenization type.
+ */
 public data class TokenizationSpecification(
     /**
-     * A payment method tokenization type is supported for the given PaymentMethod. For CARD payment
-     * method, use PAYMENT_GATEWAY or DIRECT.
+     * A payment method tokenization type is supported for the given PaymentMethod. For CARD payment method, use PAYMENT_GATEWAY or DIRECT.
      */
     public val type: String,
     /**
      * Parameters specific to the selected payment method tokenization type.
      */
-    public val parameters: TokenizationSpecificationParameters
+    public val parameters: TokenizationSpecificationParameters,
 )

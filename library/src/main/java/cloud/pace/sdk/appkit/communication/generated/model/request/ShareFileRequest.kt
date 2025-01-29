@@ -6,6 +6,10 @@
 //
 package cloud.pace.sdk.appkit.communication.generated.model.request
 
+/**
+ * @param payload The base64 encoded version of the file.
+ * @param fileExtension The file extension the payload needs to be converted to.
+ */
 public data class ShareFileRequest(
     /**
      * The base64 encoded version of the file.
@@ -14,5 +18,5 @@ public data class ShareFileRequest(
     /**
      * The file extension the payload needs to be converted to.
      */
-    public val fileExtension: String
+    public val fileExtension: String,
 )
