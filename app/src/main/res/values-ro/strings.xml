@@ -188,6 +188,9 @@
     <string name="payment_methods_loading_description">Vă încărcăm metodele de plată și cardurile de combustibil. Vă rugăm să așteptați un moment.</string>
     <string name="payment_methods_loading_title">Încărcarea metodelor de plată și a cardurilor de combustibil...</string>
     <string name="search_title">Căutați locații</string>
+    <string name="transactions_details_error_description">Detaliile tranzacției nu au putut fi încărcate. Verificați conexiunea!</string>
+    <string name="transactions_details_loading_description">Încărcăm detaliile tranzacției. Vă rugăm să așteptați un moment.</string>
+    <string name="transactions_details_loading_title">Încărcați detaliile tranzacției...</string>
     <string name="transactions_details_title">Detaliile tranzacției</string>
     <string name="transactions_empty_description">După prima ta plată cu aplicația, tranzacțiile tale vor fi afișate aici</string>
     <string name="transactions_empty_title">Nu aveți încă nicio tranzacție</string>

@@ -20,51 +20,12 @@ import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 import car.pace.cofu.util.Constants.COFU_DISTANCE_METERS
 import car.pace.cofu.util.price.PriceFormatter
 import car.pace.cofu.util.price.toUnicodeString
-import cloud.pace.sdk.poikit.poi.Address
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.Price
 import cloud.pace.sdk.poikit.utils.distanceTo
 import com.google.android.gms.maps.model.LatLng
 import java.util.Date
 import java.util.Locale
-
-@Composable
-fun Address.twoLineAddress() = remember {
-    if (street == null) {
-        ""
-    } else {
-        val firstLineAddress = firstLineAddress()
-        val secondLineAddress = secondLineAddress()
-        if (secondLineAddress.isNullOrEmpty()) firstLineAddress else "$firstLineAddress\n$secondLineAddress"
-    }
-}.orEmpty()
-
-@Composable
-fun Address.oneLineAddress() = remember {
-    if (street == null) {
-        ""
-    } else {
-        val firstLineAddress = firstLineAddress()
-        val secondLineAddress = secondLineAddress()
-        if (secondLineAddress.isNullOrEmpty()) firstLineAddress else "$firstLineAddress, $secondLineAddress"
-    }
-}.orEmpty()
-
-private fun Address.firstLineAddress(): String? {
-    return if (street == null) {
-        ""
-    } else {
-        if (houseNumber == null) street else "$street $houseNumber"
-    }
-}
-
-private fun Address.secondLineAddress(): String? {
-    return if (street == null) {
-        ""
-    } else {
-        if (city == null) "" else if (postalCode == null) city else "$postalCode $city"
-    }
-}
 
 @Composable
 fun LatLng.distanceText(destination: LatLng?): String? {

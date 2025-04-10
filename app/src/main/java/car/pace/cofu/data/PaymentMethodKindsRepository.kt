@@ -1,6 +1,7 @@
 package car.pace.cofu.data
 
 import car.pace.cofu.util.LogAndBreadcrumb
+import car.pace.cofu.util.RequestUtils.getHeaders
 import car.pace.cofu.util.extension.resume
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.pay.PayAPI.paymentMethodKinds
@@ -52,7 +53,7 @@ class PaymentMethodKindsRepository @Inject constructor(
     )
 
     private suspend fun getPaymentMethodKinds() = suspendCancellableCoroutine {
-        API.paymentMethodKinds.getPaymentMethodKinds().executeWithRetry(completion = it::resume)
+        API.paymentMethodKinds.getPaymentMethodKinds(additionalHeaders = getHeaders()).executeWithRetry(completion = it::resume)
     }
 
     private fun <T> Call<T>.executeWithRetry(retryCount: Int = 0, completion: (Completion<T>) -> Unit) {

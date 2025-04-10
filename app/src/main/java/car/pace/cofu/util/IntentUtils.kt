@@ -9,8 +9,10 @@ import android.os.Build
 import android.provider.Settings
 import androidx.appcompat.app.AlertDialog
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.FileProvider
 import car.pace.cofu.R
 import cloud.pace.sdk.poikit.poi.GasStation
+import java.io.File
 
 object IntentUtils {
 
@@ -136,6 +138,23 @@ object IntentUtils {
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    /**
+     * Creates an app chooser intent to share a file.
+     *
+     * @param context The context to use for creating the intent.
+     * @param file The file to share.
+     *
+     * @return An intent that can be used to share the file.
+     */
+    fun getShareFileIntent(context: Context, file: File): Intent {
+        val fileUri = FileProvider.getUriForFile(context, context.packageName, file)
+        return Intent(Intent.ACTION_SEND).apply {
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            setDataAndType(fileUri, context.contentResolver.getType(fileUri))
+            putExtra(Intent.EXTRA_STREAM, fileUri)
         }
     }
 }

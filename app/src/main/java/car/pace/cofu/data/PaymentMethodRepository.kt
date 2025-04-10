@@ -1,12 +1,15 @@
 package car.pace.cofu.data
 
 import car.pace.cofu.di.coroutine.ApplicationScope
+import car.pace.cofu.util.RequestUtils.getHeaders
 import car.pace.cofu.util.extension.GOOGLE_PAY
 import car.pace.cofu.util.extension.PaymentMethodItem
 import car.pace.cofu.util.extension.toPaymentMethodItems
 import car.pace.cofu.util.extension.unsupportedPaymentMethods
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.pay.PayAPI.paymentMethods
+import cloud.pace.sdk.api.pay.generated.model.PaymentMethod
+import cloud.pace.sdk.api.pay.generated.request.paymentMethods.GetPaymentMethodAPI.getPaymentMethod
 import cloud.pace.sdk.api.pay.generated.request.paymentMethods.GetPaymentMethodsIncludingCreditCheckAPI
 import cloud.pace.sdk.api.pay.generated.request.paymentMethods.GetPaymentMethodsIncludingCreditCheckAPI.getPaymentMethodsIncludingCreditCheck
 import cloud.pace.sdk.appkit.pay.GooglePayUtils.isReadyToPay
@@ -46,6 +49,10 @@ class PaymentMethodRepository @Inject constructor(
         return _paymentMethods.value
     }
 
+    suspend fun getPaymentMethod(id: String): Result<PaymentMethod> = runCatching {
+        API.paymentMethods.getPaymentMethod(paymentMethodId = id, additionalHeaders = getHeaders()).await()
+    }
+
     fun refreshPaymentMethods() {
         externalScope.launch {
             refresh()
@@ -54,7 +61,7 @@ class PaymentMethodRepository @Inject constructor(
 
     private suspend fun refresh() {
         _paymentMethods.value = runCatching {
-            API.paymentMethods.getPaymentMethodsIncludingCreditCheck(GetPaymentMethodsIncludingCreditCheckAPI.Filterstatus.VALID).await()
+            API.paymentMethods.getPaymentMethodsIncludingCreditCheck(filterstatus = GetPaymentMethodsIncludingCreditCheckAPI.Filterstatus.VALID, additionalHeaders = getHeaders()).await()
                 .filter {
                     it.kind !in unsupportedPaymentMethods && it.kind != GOOGLE_PAY || paymentsClient.isReadyToPay()
                 }

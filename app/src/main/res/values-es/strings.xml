@@ -188,6 +188,9 @@
     <string name="payment_methods_loading_description">Cargamos sus métodos de pago y tarjetas de combustible. Por favor, espere un momento.</string>
     <string name="payment_methods_loading_title">Carga de medios de pago y tarjetas de combustible...</string>
     <string name="search_title">Buscar lugares</string>
+    <string name="transactions_details_error_description">No se han podido cargar los detalles de la transacción. Compruebe su conexión.</string>
+    <string name="transactions_details_loading_description">Estamos cargando los detalles de la transacción. Por favor, espere un momento.</string>
+    <string name="transactions_details_loading_title">Cargar detalles de la transacción...</string>
     <string name="transactions_details_title">Detalles de la transacción</string>
     <string name="transactions_empty_description">Después de su primer pago con la aplicación, sus transacciones se mostrarán aquí</string>
     <string name="transactions_empty_title">Aún no tienes transacciones</string>

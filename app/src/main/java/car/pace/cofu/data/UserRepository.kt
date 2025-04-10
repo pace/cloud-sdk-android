@@ -1,14 +1,13 @@
 package car.pace.cofu.data
 
-import android.os.LocaleList
 import androidx.appcompat.app.AppCompatActivity
 import car.pace.cofu.data.analytics.Analytics
+import car.pace.cofu.util.RequestUtils.getHeaders
 import car.pace.cofu.util.extension.MailNotSentException
 import car.pace.cofu.util.extension.resume
 import cloud.pace.sdk.api.API
 import cloud.pace.sdk.api.user.UserAPI.totp
 import cloud.pace.sdk.api.user.generated.request.totp.SendmailOTPAPI.sendmailOTP
-import cloud.pace.sdk.api.utils.RequestUtils.ACCEPT_LANGUAGE_HEADER
 import cloud.pace.sdk.idkit.IDKit
 import cloud.pace.sdk.idkit.model.InternalError
 import cloud.pace.sdk.idkit.model.InvalidSession
@@ -51,10 +50,8 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun sendMailOTP(): Result<Unit> {
-        val acceptLanguage = LocaleList.getDefault().toLanguageTags()
-        val headers = mapOf(ACCEPT_LANGUAGE_HEADER to acceptLanguage)
         val response = runCatching {
-            API.totp.sendmailOTP(additionalHeaders = headers).awaitResponse()
+            API.totp.sendmailOTP(additionalHeaders = getHeaders()).awaitResponse()
         }
 
         return response.fold(

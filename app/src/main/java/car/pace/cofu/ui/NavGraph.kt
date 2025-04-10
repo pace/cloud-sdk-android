@@ -34,6 +34,7 @@ import car.pace.cofu.ui.wallet.WalletScreen
 import car.pace.cofu.ui.wallet.authorization.AuthorisationScreen
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeScreen
 import car.pace.cofu.ui.wallet.paymentmethods.PaymentMethodsScreen
+import car.pace.cofu.ui.wallet.transactions.detail.TransactionDetailScreen
 
 fun NavGraphBuilder.onboardingGraph(
     onNavigate: (Route) -> Unit,
@@ -196,7 +197,7 @@ fun NavGraphBuilder.mapGraph(
 }
 
 fun NavGraphBuilder.walletGraph(
-    onNavigate: (Route) -> Unit,
+    onNavigate: (String) -> Unit,
     onNavigateUp: () -> Unit,
     onLogout: () -> Unit
 ) {
@@ -206,12 +207,24 @@ fun NavGraphBuilder.walletGraph(
     ) {
         parentComposable(Route.WALLET.route) {
             WalletScreen(
-                onNavigate = onNavigate,
+                onNavigate = { onNavigate(it.route) },
                 onLogout = onLogout
             )
         }
         childComposable(Route.PAYMENT_METHODS.route) {
             PaymentMethodsScreen(
+                onNavigateUp = onNavigateUp
+            )
+        }
+        childComposable(
+            route = "${Route.TRANSACTION_DETAIL.route}/{id}",
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            TransactionDetailScreen(
                 onNavigateUp = onNavigateUp
             )
         }

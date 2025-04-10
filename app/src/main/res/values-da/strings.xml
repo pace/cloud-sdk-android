@@ -188,6 +188,9 @@
     <string name="payment_methods_loading_description">Vi indlæser dine betalingsmetoder og brændstofkort. Vent venligst et øjeblik.</string>
     <string name="payment_methods_loading_title">Indlæsning af betalingsmetoder og brændstofkort...</string>
     <string name="search_title">Søg efter steder</string>
+    <string name="transactions_details_error_description">Transaktionsoplysningerne kunne ikke indlæses. Tjek din forbindelse!</string>
+    <string name="transactions_details_loading_description">Vi er ved at indlæse transaktionsoplysningerne. Vent venligst et øjeblik.</string>
+    <string name="transactions_details_loading_title">Indlæs transaktionsdetaljer...</string>
     <string name="transactions_details_title">Detaljer om transaktionen</string>
     <string name="transactions_empty_description">Efter din første betaling med appen vil dine transaktioner blive vist her</string>
     <string name="transactions_empty_title">Du har ikke nogen transaktioner endnu</string>
