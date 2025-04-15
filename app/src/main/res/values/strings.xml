@@ -194,7 +194,9 @@
     <string name="transactions_details_title">Transaction details</string>
     <string name="transactions_empty_description">After your first payment with the app, your transactions will appear here</string>
     <string name="transactions_empty_title">You don\'t have any transactions yet</string>
+    <string name="transactions_error_description">Your transactions could not be loaded. Check your connection!</string>
     <string name="transactions_last_transaction_title">Your last transaction</string>
+    <string name="transactions_loading_description">We are loading your transactions. Please wait a moment.</string>
     <string name="transactions_loading_title">Load transactions</string>
     <string name="transactions_receipt_title">Receipt</string>
     <string name="transactions_station_details_title">Station details</string>

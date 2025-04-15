@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.outlined.ArrowForwardIos
 import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -79,7 +79,7 @@ fun DefaultListItem(
 
             if (switchInfo == null) {
                 Icon(
-                    imageVector = Icons.Outlined.ArrowForwardIos,
+                    imageVector = Icons.AutoMirrored.Outlined.ArrowForwardIos,
                     contentDescription = null,
                     modifier = Modifier
                         .padding(start = 12.dp)

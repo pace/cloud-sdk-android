@@ -2,6 +2,7 @@ package car.pace.cofu.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.Domain
 import androidx.compose.material.icons.outlined.Language
@@ -10,7 +11,6 @@ import androidx.compose.material.icons.outlined.LocalGasStation
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.PersonRemove
-import androidx.compose.material.icons.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.VpnKey
 import androidx.compose.ui.graphics.vector.ImageVector
 import car.pace.cofu.BuildConfig
@@ -96,7 +96,7 @@ enum class Route(
     MAP_DETAIL(route = "map_detail_route", graph = Graph.MAP),
     WALLET(route = "wallet_route", graph = Graph.WALLET),
     PAYMENT_METHODS(route = "payment_methods_route", graph = Graph.WALLET, icon = Icons.Outlined.AccountBalanceWallet, labelRes = R.string.wallet_payment_methods_title),
-    TRANSACTIONS(route = "transactions_route", graph = Graph.WALLET, icon = Icons.Outlined.ReceiptLong, labelRes = R.string.wallet_transactions_title, showBottomBar = false),
+    TRANSACTIONS(route = "transactions_route", graph = Graph.WALLET, icon = Icons.AutoMirrored.Outlined.ReceiptLong, labelRes = R.string.wallet_transactions_title, showBottomBar = true),
     TRANSACTION_DETAIL(route = "transaction_detail_route", graph = Graph.WALLET),
     FUEL_TYPE(route = "fuelType_route", graph = Graph.WALLET, icon = Icons.Outlined.LocalGasStation, labelRes = R.string.wallet_fuel_type_selection_title),
     MORE(route = "more_route", graph = Graph.MORE),

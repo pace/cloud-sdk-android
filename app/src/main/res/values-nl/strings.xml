@@ -194,7 +194,9 @@
     <string name="transactions_details_title">Transactiegegevens</string>
     <string name="transactions_empty_description">Na je eerste betaling met de app worden je transacties hier weergegeven</string>
     <string name="transactions_empty_title">Je hebt nog geen transacties</string>
+    <string name="transactions_error_description">Je transacties konden niet worden geladen. Controleer uw verbinding!</string>
     <string name="transactions_last_transaction_title">Je laatste transactie</string>
+    <string name="transactions_loading_description">We zijn je transacties aan het laden. Een ogenblik geduld alstublieft.</string>
     <string name="transactions_loading_title">Transacties laden</string>
     <string name="transactions_receipt_title">Ontvangstbewijs</string>
     <string name="transactions_station_details_title">Details station</string>

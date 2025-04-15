@@ -194,7 +194,9 @@
     <string name="transactions_details_title">Detaljer om transaktionen</string>
     <string name="transactions_empty_description">Efter din første betaling med appen vil dine transaktioner blive vist her</string>
     <string name="transactions_empty_title">Du har ikke nogen transaktioner endnu</string>
+    <string name="transactions_error_description">Dine transaktioner kunne ikke indlæses. Tjek din forbindelse!</string>
     <string name="transactions_last_transaction_title">Din sidste transaktion</string>
+    <string name="transactions_loading_description">Vi er ved at indlæse dine transaktioner. Vent venligst et øjeblik.</string>
     <string name="transactions_loading_title">Indlæs transaktioner</string>
     <string name="transactions_receipt_title">Kvittering</string>
     <string name="transactions_station_details_title">Detaljer om stationen</string>

@@ -127,11 +127,6 @@ fun WalletScreenContent(
                         role = Role.Button,
                         onClick = {
                             when (it) {
-                                Route.TRANSACTIONS -> {
-                                    LogAndBreadcrumb.d(LogAndBreadcrumb.WALLET, "Transactions gets displayed")
-                                    AppKit.openTransactions(context)
-                                }
-
                                 Route.DELETE_ACCOUNT -> {
                                     LogAndBreadcrumb.d(LogAndBreadcrumb.WALLET, "PACE ID gets displayed")
                                     AppKit.openPaceID(context)

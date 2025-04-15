@@ -194,7 +194,9 @@
     <string name="transactions_details_title">Detaliile tranzacției</string>
     <string name="transactions_empty_description">După prima ta plată cu aplicația, tranzacțiile tale vor fi afișate aici</string>
     <string name="transactions_empty_title">Nu aveți încă nicio tranzacție</string>
+    <string name="transactions_error_description">Tranzacțiile dvs. nu au putut fi încărcate. Verificați conexiunea!</string>
     <string name="transactions_last_transaction_title">Ultima dvs. tranzacție</string>
+    <string name="transactions_loading_description">Vă încărcăm tranzacțiile. Vă rugăm să așteptați un moment.</string>
     <string name="transactions_loading_title">Încărcați tranzacții</string>
     <string name="transactions_receipt_title">Chitanță</string>
     <string name="transactions_station_details_title">Detalii despre stație</string>

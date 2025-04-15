@@ -34,6 +34,7 @@ import car.pace.cofu.ui.wallet.WalletScreen
 import car.pace.cofu.ui.wallet.authorization.AuthorisationScreen
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeScreen
 import car.pace.cofu.ui.wallet.paymentmethods.PaymentMethodsScreen
+import car.pace.cofu.ui.wallet.transactions.TransactionsScreen
 import car.pace.cofu.ui.wallet.transactions.detail.TransactionDetailScreen
 
 fun NavGraphBuilder.onboardingGraph(
@@ -237,6 +238,11 @@ fun NavGraphBuilder.walletGraph(
             AuthorisationScreen(
                 onNavigateUp = onNavigateUp
             )
+        }
+        childComposable(Route.TRANSACTIONS.route) {
+            TransactionsScreen(onNavigateUp = onNavigateUp) {
+                onNavigate("${Route.TRANSACTION_DETAIL.route}/$it")
+            }
         }
     }
 }

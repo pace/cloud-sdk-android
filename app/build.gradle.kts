@@ -116,7 +116,7 @@ android {
             manifestPlaceholders["environment"] = "dev"
 
             // appAuthRedirectScheme is needed for AppAuth in IDKit and pace_redirect_scheme is needed for deep linking in AppKit
-            manifestPlaceholders["appAuthRedirectScheme"] = "${configuration.client_id}-dev"
+            manifestPlaceholders["appAuthRedirectScheme"] = configuration.client_id
             manifestPlaceholders["pace_redirect_scheme"] = "${configuration.client_id}-dev.${UUID.randomUUID()}"
         }
 
@@ -197,6 +197,7 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:0.36.0")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("com.github.composeuisuite:ohteepee:1.0.3")
+    implementation("androidx.paging:paging-compose:3.3.6")
 
     // Hilt
     implementation("com.google.dagger:hilt-android:2.48.1")

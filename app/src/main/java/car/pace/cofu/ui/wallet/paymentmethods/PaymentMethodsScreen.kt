@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.outlined.ArrowForwardIos
 import androidx.compose.material.icons.outlined.CreditCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -192,7 +192,7 @@ fun PaymentMethodListItem(
                 )
             }
             Icon(
-                imageVector = Icons.Outlined.ArrowForwardIos,
+                imageVector = Icons.AutoMirrored.Outlined.ArrowForwardIos,
                 contentDescription = null,
                 modifier = Modifier
                     .padding(start = 12.dp)
