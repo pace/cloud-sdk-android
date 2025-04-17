@@ -15,6 +15,7 @@ val Success = Color(0XFF76B532)
 val Warning = Color(0xFFFF9601)
 val Error = Color(0xFFE2001A)
 val Shadow = Color(0x4D000000)
+val ShadowLight = Color(0xFFECEFF0)
 val PrimaryButtonText = Primary.contrastColor
 
 val Color.contrastColor: Color

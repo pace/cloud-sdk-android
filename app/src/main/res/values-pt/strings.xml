@@ -188,6 +188,9 @@
     <string name="payment_methods_loading_description">Carregamos os seus métodos de pagamento e cartões de combustível. Aguarde um momento.</string>
     <string name="payment_methods_loading_title">Carregamento de métodos de pagamento e cartões de combustível...</string>
     <string name="search_title">Locais de pesquisa</string>
+    <string name="transactions_details_error_description">Não foi possível carregar os detalhes da transação. Verifique a sua ligação!</string>
+    <string name="transactions_details_loading_description">Estamos a carregar os detalhes da transação. Aguarde um momento.</string>
+    <string name="transactions_details_loading_title">Carregar detalhes da transação...</string>
     <string name="transactions_details_title">Detalhes da transação</string>
     <string name="transactions_empty_description">Após o seu primeiro pagamento com a aplicação, as suas transacções serão apresentadas aqui</string>
     <string name="transactions_empty_title">Ainda não tem nenhuma transação</string>

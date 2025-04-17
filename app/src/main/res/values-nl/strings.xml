@@ -188,6 +188,9 @@
     <string name="payment_methods_loading_description">We laden je betaalmethoden en tankkaarten. Een ogenblik geduld alstublieft.</string>
     <string name="payment_methods_loading_title">Betaalmethoden en tankkaarten laden...</string>
     <string name="search_title">Locaties zoeken</string>
+    <string name="transactions_details_error_description">De transactiegegevens konden niet worden geladen. Controleer uw verbinding!</string>
+    <string name="transactions_details_loading_description">We zijn de transactiegegevens aan het laden. Een ogenblik geduld alstublieft.</string>
+    <string name="transactions_details_loading_title">Transactiegegevens laden...</string>
     <string name="transactions_details_title">Transactiegegevens</string>
     <string name="transactions_empty_description">Na je eerste betaling met de app worden je transacties hier weergegeven</string>
     <string name="transactions_empty_title">Je hebt nog geen transacties</string>

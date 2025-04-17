@@ -97,6 +97,7 @@ enum class Route(
     WALLET(route = "wallet_route", graph = Graph.WALLET),
     PAYMENT_METHODS(route = "payment_methods_route", graph = Graph.WALLET, icon = Icons.Outlined.AccountBalanceWallet, labelRes = R.string.wallet_payment_methods_title),
     TRANSACTIONS(route = "transactions_route", graph = Graph.WALLET, icon = Icons.Outlined.ReceiptLong, labelRes = R.string.wallet_transactions_title, showBottomBar = false),
+    TRANSACTION_DETAIL(route = "transaction_detail_route", graph = Graph.WALLET),
     FUEL_TYPE(route = "fuelType_route", graph = Graph.WALLET, icon = Icons.Outlined.LocalGasStation, labelRes = R.string.wallet_fuel_type_selection_title),
     MORE(route = "more_route", graph = Graph.MORE),
     TERMS(route = "terms_route", graph = Graph.MORE, labelRes = R.string.MENU_ITEMS_TERMS, icon = Icons.Outlined.DeveloperGuide),

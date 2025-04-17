@@ -25,6 +25,8 @@ subprojects {
         }
         filter {
             exclude("**/build.gradle.kts")
+            // TODO: Fix problem that ktlint fails to parse ReceiptShape
+            exclude("**/ReceiptShape.kt")
         }
     }
 }

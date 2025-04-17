@@ -188,6 +188,9 @@
     <string name="payment_methods_loading_description">Načítáme vaše platební metody a palivové karty. Chvíli prosím počkejte.</string>
     <string name="payment_methods_loading_title">Načítání platebních metod a palivových karet...</string>
     <string name="search_title">Vyhledávání lokalit</string>
+    <string name="transactions_details_error_description">Podrobnosti transakce se nepodařilo načíst. Zkontrolujte své připojení!</string>
+    <string name="transactions_details_loading_description">Načítáme údaje o transakci. Chvíli prosím počkejte.</string>
+    <string name="transactions_details_loading_title">Načtení podrobností o transakci...</string>
     <string name="transactions_details_title">Podrobnosti o transakci</string>
     <string name="transactions_empty_description">Po první platbě pomocí aplikace se zde zobrazí vaše transakce.</string>
     <string name="transactions_empty_title">Zatím nemáte žádné transakce</string>

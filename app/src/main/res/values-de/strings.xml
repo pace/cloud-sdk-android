@@ -188,6 +188,9 @@
     <string name="payment_methods_loading_description">Wir laden deine Bezahlmethoden und Tankkarten. Bitte warte einen Moment.</string>
     <string name="payment_methods_loading_title">Lade Bezahlmethoden und Tankkarten...</string>
     <string name="search_title">Orte suchen</string>
+    <string name="transactions_details_error_description">Die Transaktionsdetails konnten nicht geladen werden. Überprüfe deine Verbindung!</string>
+    <string name="transactions_details_loading_description">Wir laden die Transaktionsdetails. Bitte warte einen Moment.</string>
+    <string name="transactions_details_loading_title">Lade Transaktionsdetails...</string>
     <string name="transactions_details_title">Transaktionsdetails</string>
     <string name="transactions_empty_description">Nach deiner ersten Zahlung mit der App werden deine Transaktionen hier angezeigt</string>
     <string name="transactions_empty_title">Du hast noch keine Transaktionen</string>

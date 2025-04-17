@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -41,7 +40,6 @@ import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.util.Constants.PAYMENT_METHOD_LIST_ITEM_CONTENT_TYPE
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.extension.PaymentMethodItem
-import car.pace.cofu.util.extension.name
 import coil.compose.AsyncImage
 import java.util.UUID
 
@@ -164,10 +162,6 @@ fun PaymentMethodListItem(
                 .padding(vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val context = LocalContext.current
-            val name = remember(kind) {
-                name(context, kind)
-            }
             val fallbackIconPainter = forwardingPainter(
                 painter = rememberVectorPainter(Icons.Outlined.CreditCard),
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
@@ -175,7 +169,7 @@ fun PaymentMethodListItem(
 
             AsyncImage(
                 model = imageUrl,
-                contentDescription = name,
+                contentDescription = kind,
                 modifier = Modifier.size(32.dp),
                 placeholder = fallbackIconPainter,
                 error = fallbackIconPainter
@@ -186,12 +180,12 @@ fun PaymentMethodListItem(
                     .weight(1f)
             ) {
                 Text(
-                    text = name,
+                    text = kind.orEmpty(),
                     color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.bodySmall
                 )
                 Text(
-                    text = alias ?: name,
+                    text = alias ?: kind.orEmpty(),
                     modifier = Modifier.padding(top = 8.dp),
                     color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.titleSmall
@@ -221,21 +215,21 @@ fun PaymentMethodsScreenContentPreview() {
                         id = UUID.randomUUID().toString(),
                         vendorId = UUID.randomUUID().toString(),
                         imageUrl = Uri.parse("https://example.com/paypal.png"),
-                        kind = "paypal",
+                        kind = "PayPal",
                         alias = "user@pace.car"
                     ),
                     PaymentMethodItem(
                         id = UUID.randomUUID().toString(),
                         vendorId = UUID.randomUUID().toString(),
-                        imageUrl = Uri.parse("https://example.com/giropay.png"),
-                        kind = "giropay",
-                        alias = "giropay"
+                        imageUrl = Uri.parse("https://example.com/googlepay.png"),
+                        kind = "Google Pay",
+                        alias = "Google Pay"
                     ),
                     PaymentMethodItem(
                         id = UUID.randomUUID().toString(),
                         vendorId = UUID.randomUUID().toString(),
                         imageUrl = Uri.parse("https://example.com/visa.png"),
-                        kind = "creditcard",
+                        kind = "Credit card",
                         alias = "Visa card"
                     )
                 )

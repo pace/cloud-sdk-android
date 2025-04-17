@@ -188,6 +188,9 @@
     <string name="payment_methods_loading_description">We load your payment methods and fuel cards. Please wait a moment.</string>
     <string name="payment_methods_loading_title">Loading payment methods and fuel cards…</string>
     <string name="search_title">Search places</string>
+    <string name="transactions_details_error_description">The transaction details could not be loaded. Check your connection!</string>
+    <string name="transactions_details_loading_description">We are loading the transaction details. Please wait a moment.</string>
+    <string name="transactions_details_loading_title">Load transaction details...</string>
     <string name="transactions_details_title">Transaction details</string>
     <string name="transactions_empty_description">After your first payment with the app, your transactions will appear here</string>
     <string name="transactions_empty_title">You don\'t have any transactions yet</string>

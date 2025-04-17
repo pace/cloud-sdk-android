@@ -9,9 +9,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -113,3 +116,27 @@ fun Modifier.dropShadow(
         }
     }
 )
+
+fun Modifier.shapeDropShadow(shape: Shape, color: Color, blur: Dp = 8.dp, offsetY: Dp = 0.dp, offsetX: Dp = 0.dp, spread: Dp = 0.dp, clip: Boolean = false) = drawBehind {
+    val shadowSize = Size(size.width + spread.toPx(), size.height + spread.toPx())
+    val shadowOutline = shape.createOutline(shadowSize, layoutDirection, this)
+
+    val paint = Paint()
+    paint.color = color
+
+    if (blur.toPx() > 0) {
+        paint.asFrameworkPaint().apply {
+            maskFilter = BlurMaskFilter(blur.toPx(), BlurMaskFilter.Blur.NORMAL)
+        }
+    }
+
+    drawIntoCanvas { canvas ->
+        canvas.save()
+        canvas.translate(offsetX.toPx(), offsetY.toPx())
+        if (clip) {
+            canvas.clipRect(left = 0f, top = 0f - 15.dp.toPx(), right = size.width, bottom = size.height + 15.dp.toPx(), clipOp = ClipOp.Difference)
+        }
+        canvas.drawOutline(shadowOutline, paint)
+        canvas.restore()
+    }
+}

@@ -188,6 +188,9 @@
     <string name="payment_methods_loading_description">Wczytujemy metody płatności i karty paliwowe. Prosimy o chwilę oczekiwania.</string>
     <string name="payment_methods_loading_title">Ładowanie metod płatności i kart paliwowych...</string>
     <string name="search_title">Lokalizacje wyszukiwania</string>
+    <string name="transactions_details_error_description">Nie można załadować szczegółów transakcji. Sprawdź połączenie!</string>
+    <string name="transactions_details_loading_description">Ładujemy szczegóły transakcji. Prosimy o chwilę oczekiwania.</string>
+    <string name="transactions_details_loading_title">Załaduj szczegóły transakcji...</string>
     <string name="transactions_details_title">Szczegóły transakcji</string>
     <string name="transactions_empty_description">Po dokonaniu pierwszej płatności za pomocą aplikacji transakcje zostaną wyświetlone tutaj</string>
     <string name="transactions_empty_title">Nie masz jeszcze żadnych transakcji</string>

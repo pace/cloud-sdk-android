@@ -188,6 +188,9 @@
     <string name="payment_methods_loading_description">Мы загружаем ваши способы оплаты и топливные карты. Пожалуйста, подождите немного.</string>
     <string name="payment_methods_loading_title">Загрузка способов оплаты и топливных карт...</string>
     <string name="search_title">Места поиска</string>
+    <string name="transactions_details_error_description">Детали транзакции не удалось загрузить. Проверьте свое соединение!</string>
+    <string name="transactions_details_loading_description">Мы загружаем данные о транзакции. Пожалуйста, подождите немного.</string>
+    <string name="transactions_details_loading_title">Загрузите детали транзакции...</string>
     <string name="transactions_details_title">Детали сделки</string>
     <string name="transactions_empty_description">После первого платежа с помощью приложения ваши транзакции будут отображаться здесь</string>
     <string name="transactions_empty_title">У вас еще нет транзакций</string>
