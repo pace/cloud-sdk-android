@@ -194,7 +194,9 @@
     <string name="transactions_details_title">Detalles de la transacción</string>
     <string name="transactions_empty_description">Después de su primer pago con la aplicación, sus transacciones se mostrarán aquí</string>
     <string name="transactions_empty_title">Aún no tienes transacciones</string>
+    <string name="transactions_error_description">No se han podido cargar sus transacciones. Compruebe su conexión</string>
     <string name="transactions_last_transaction_title">Su última transacción</string>
+    <string name="transactions_loading_description">Estamos cargando sus transacciones. Por favor, espere un momento.</string>
     <string name="transactions_loading_title">Cargar transacciones</string>
     <string name="transactions_receipt_title">Recibo</string>
     <string name="transactions_station_details_title">Detalles de la estación</string>

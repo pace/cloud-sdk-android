@@ -194,7 +194,9 @@
     <string name="transactions_details_title">Podrobnosti o transakci</string>
     <string name="transactions_empty_description">Po první platbě pomocí aplikace se zde zobrazí vaše transakce.</string>
     <string name="transactions_empty_title">Zatím nemáte žádné transakce</string>
+    <string name="transactions_error_description">Vaše transakce se nepodařilo načíst. Zkontrolujte své připojení!</string>
     <string name="transactions_last_transaction_title">Vaše poslední transakce</string>
+    <string name="transactions_loading_description">Načítáme vaše transakce. Chvíli prosím počkejte.</string>
     <string name="transactions_loading_title">Transakce načítání</string>
     <string name="transactions_receipt_title">Příjem</string>
     <string name="transactions_station_details_title">Podrobnosti o stanici</string>

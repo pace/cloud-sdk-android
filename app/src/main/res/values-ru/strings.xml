@@ -194,7 +194,9 @@
     <string name="transactions_details_title">Детали сделки</string>
     <string name="transactions_empty_description">После первого платежа с помощью приложения ваши транзакции будут отображаться здесь</string>
     <string name="transactions_empty_title">У вас еще нет транзакций</string>
+    <string name="transactions_error_description">Ваши транзакции не удалось загрузить. Проверьте свое соединение!</string>
     <string name="transactions_last_transaction_title">Ваша последняя транзакция</string>
+    <string name="transactions_loading_description">Мы загружаем ваши транзакции. Пожалуйста, подождите немного.</string>
     <string name="transactions_loading_title">Транзакции загрузки</string>
     <string name="transactions_receipt_title">Квитанция</string>
     <string name="transactions_station_details_title">Информация о станции</string>

@@ -194,7 +194,9 @@
     <string name="transactions_details_title">Szczegóły transakcji</string>
     <string name="transactions_empty_description">Po dokonaniu pierwszej płatności za pomocą aplikacji transakcje zostaną wyświetlone tutaj</string>
     <string name="transactions_empty_title">Nie masz jeszcze żadnych transakcji</string>
+    <string name="transactions_error_description">Nie można załadować transakcji. Sprawdź połączenie!</string>
     <string name="transactions_last_transaction_title">Ostatnia transakcja</string>
+    <string name="transactions_loading_description">Trwa ładowanie transakcji. Prosimy o chwilę oczekiwania.</string>
     <string name="transactions_loading_title">Transakcje ładowania</string>
     <string name="transactions_receipt_title">Pokwitowanie</string>
     <string name="transactions_station_details_title">Szczegóły stacji</string>

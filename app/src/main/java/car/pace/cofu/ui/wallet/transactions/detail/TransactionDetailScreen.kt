@@ -46,19 +46,13 @@ import car.pace.cofu.ui.component.TextTopBar
 import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.component.shape.ReceiptShape
 import car.pace.cofu.ui.theme.AppTheme
+import car.pace.cofu.ui.wallet.transactions.Transaction
+import car.pace.cofu.ui.wallet.transactions.createTransaction
 import car.pace.cofu.util.BuildProvider
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.data
 import car.pace.cofu.util.extension.PaymentMethodItem
-import car.pace.cofu.util.extension.formatCreationDate
-import car.pace.cofu.util.extension.formatFuelAmount
-import car.pace.cofu.util.extension.formatPrice
-import car.pace.cofu.util.extension.formatPricePerUnit
 import car.pace.cofu.util.extension.oneLineAddress
-import cloud.pace.sdk.api.pay.generated.model.Fuel
-import cloud.pace.sdk.api.pay.generated.model.ReadOnlyLocation
-import cloud.pace.sdk.api.pay.generated.model.Transaction
-import java.util.Date
 import java.util.UUID
 
 @Composable
@@ -215,32 +209,26 @@ fun DetailsColumn(
             tint = MaterialTheme.colorScheme.onSurface
         )
 
-        val brand = transaction.location?.brand
         Title(
-            text = brand ?: stringResource(id = R.string.gas_station_default_name),
+            text = transaction.stationName ?: stringResource(id = R.string.gas_station_default_name),
             modifier = Modifier.padding(top = 10.dp)
         )
 
-        val address = transaction.location?.address
-        if (address != null) {
+        if (transaction.address != null) {
             Description(
-                text = address.oneLineAddress(),
+                text = transaction.address.oneLineAddress(),
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
 
-        val date = transaction.formatCreationDate()
-        if (date != null) {
-            Description(
-                text = date,
-                modifier = Modifier.padding(top = 20.dp)
-            )
-        }
+        Description(
+            text = transaction.formatCreationDate(showWeekday = true),
+            modifier = Modifier.padding(top = 20.dp)
+        )
 
-        val pumpNo = transaction.fuel?.pumpNumber
-        if (pumpNo != null) {
+        if (transaction.pumpNumber != null) {
             Description(
-                text = "${stringResource(R.string.common_use_pump)} $pumpNo",
+                text = "${stringResource(R.string.common_use_pump)} ${transaction.pumpNumber}",
                 modifier = Modifier.padding(top = 2.dp)
             )
         }
@@ -261,36 +249,25 @@ fun PriceRow(
         Column(
             modifier = Modifier.weight(1f)
         ) {
-            val productName = transaction.fuel?.productName
-            val formattedFuelAmount = transaction.formatFuelAmount()
-            val text = listOfNotNull(productName, formattedFuelAmount)
-            if (text.isNotEmpty()) {
-                Description(
-                    text = text.joinToString(": "),
-                    textAlign = TextAlign.Start
-                )
-            }
+            Description(
+                text = "${transaction.productName}: ${transaction.formatFuelAmount()}",
+                textAlign = TextAlign.Start
+            )
 
-            val pricePerUnit = transaction.formatPricePerUnit()
-            if (pricePerUnit != null) {
-                Description(
-                    text = pricePerUnit,
-                    modifier = Modifier.padding(top = 2.dp),
-                    textAlign = TextAlign.Start
-                )
-            }
-        }
-
-        val formattedPrice = transaction.formatPrice()
-        if (formattedPrice != null) {
-            Text(
-                text = formattedPrice,
-                modifier = Modifier.padding(start = 8.dp),
-                color = MaterialTheme.colorScheme.onPrimary,
-                textAlign = TextAlign.End,
-                style = MaterialTheme.typography.headlineSmall
+            Description(
+                text = transaction.formatPricePerUnit(),
+                modifier = Modifier.padding(top = 2.dp),
+                textAlign = TextAlign.Start
             )
         }
+
+        Text(
+            text = transaction.formatPrice(),
+            modifier = Modifier.padding(start = 8.dp),
+            color = MaterialTheme.colorScheme.onPrimary,
+            textAlign = TextAlign.End,
+            style = MaterialTheme.typography.headlineSmall
+        )
     }
 }
 
@@ -300,26 +277,7 @@ fun TransactionDetailScreenContentPreview() {
     AppTheme {
         TransactionDetailScreenContent(
             transaction = UiState.Success(
-                Transaction().apply {
-                    fuel = Fuel().apply {
-                        amount = 25.85
-                        pumpNumber = 1
-                        pricePerUnit = 1.839
-                        unit = "liter"
-                    }
-                    location = ReadOnlyLocation().apply {
-                        brand = "Gas what"
-                        address = ReadOnlyLocation.Address().apply {
-                            street = "Fakestreet"
-                            houseNo = "123"
-                            postalCode = "76543"
-                            city = "Exampletown"
-                        }
-                    }
-                    createdAt = Date()
-                    priceIncludingVAT = 47.53
-                    currency = "EUR"
-                }
+                createTransaction(price = 47.53, fuelAmount = 25.85)
             ),
             paymentMethod = UiState.Success(
                 PaymentMethodItem(
@@ -349,21 +307,7 @@ fun TransactionDetailScreenContentPreview() {
 fun DetailsColumnPreview() {
     AppTheme {
         DetailsColumn(
-            transaction = Transaction().apply {
-                fuel = Fuel().apply {
-                    pumpNumber = 1
-                }
-                location = ReadOnlyLocation().apply {
-                    brand = "Gas what"
-                    address = ReadOnlyLocation.Address().apply {
-                        street = "Fakestreet"
-                        houseNo = "123"
-                        postalCode = "76543"
-                        city = "Exampletown"
-                    }
-                }
-                createdAt = Date()
-            }
+            createTransaction(price = 47.53, fuelAmount = 25.85)
         )
     }
 }
@@ -373,16 +317,7 @@ fun DetailsColumnPreview() {
 fun PriceRowPreview() {
     AppTheme {
         PriceRow(
-            transaction = Transaction().apply {
-                fuel = Fuel().apply {
-                    amount = 25.85
-                    pumpNumber = 1
-                    pricePerUnit = 1.839
-                    unit = "liter"
-                }
-                priceIncludingVAT = 47.53
-                currency = "EUR"
-            }
+            transaction = createTransaction()
         )
     }
 }

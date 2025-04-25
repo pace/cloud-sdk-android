@@ -1,8 +1,10 @@
 package car.pace.cofu.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -66,6 +68,39 @@ fun ErrorCard(
 }
 
 @Composable
+fun SmallErrorCard(
+    title: String,
+    modifier: Modifier = Modifier,
+    imageVector: ImageVector = Icons.Outlined.ErrorOutline
+) {
+    Box(
+        modifier = modifier
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .dropShadow()
+                .background(color = MaterialTheme.colorScheme.background, shape = RoundedCornerShape(12.dp))
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = imageVector,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+                tint = MaterialTheme.colorScheme.error
+            )
+
+            Description(
+                text = title,
+                modifier = Modifier.padding(start = 10.dp)
+            )
+        }
+    }
+}
+
+@Composable
 fun NoContentCard(
     modifier: Modifier = Modifier,
     header: @Composable () -> Unit = {},
@@ -91,6 +126,7 @@ fun NoContentCard(
                 text = title,
                 modifier = Modifier.padding(top = 20.dp)
             )
+
             Description(
                 text = description,
                 modifier = Modifier.padding(top = 20.dp)
@@ -126,6 +162,17 @@ fun ErrorCardPreview() {
         ErrorCard(
             title = stringResource(id = R.string.general_error_title),
             description = stringResource(id = R.string.HOME_LOADING_FAILED_TEXT),
+            modifier = Modifier.padding(20.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun SmallErrorCardPreview() {
+    AppTheme {
+        SmallErrorCard(
+            title = stringResource(id = R.string.general_error_title),
             modifier = Modifier.padding(20.dp)
         )
     }
