@@ -1,4 +1,6 @@
 import com.google.protobuf.gradle.id
+import org.jreleaser.model.Active
+import java.time.LocalDate
 
 plugins {
     id("com.android.library")
@@ -8,7 +10,7 @@ plugins {
     id(Libs.DOKKA)
     id(Libs.GOOGLE_PROTOBUF_GRADLE_PLUGIN)
     `maven-publish`
-    signing
+    id(Libs.JRELEASER_GRADLE_PLUGIN)
 }
 
 android {
@@ -90,26 +92,33 @@ android {
             }
         }
     }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
     // Kotlin
-    implementation(Libs.KOTLIN_COROUTINES_ANDROID)
-    implementation(Libs.KOTLIN_COROUTINES_PLAY_SERVICES)
+    api(Libs.KOTLIN_COROUTINES_ANDROID)
+    api(Libs.KOTLIN_COROUTINES_PLAY_SERVICES)
 
     // Android
-    implementation(Libs.CORE_KTX)
-    implementation(Libs.APPCOMPAT)
-    implementation(Libs.CONSTRAINT_LAYOUT)
-    implementation(Libs.PREFERENCE_KTX)
-    implementation(Libs.FRAGMENT_KTX)
-    implementation(Libs.LIFECYCLE_LIVE_DATA_KTX)
-    implementation(Libs.LIFECYCLE_PROCESS_KTX)
-    implementation(Libs.BIOMETRIC)
-    implementation(Libs.BROWSER)
-    implementation(Libs.ACTIVITY)
+    api(Libs.CORE_KTX)
+    api(Libs.APPCOMPAT)
+    api(Libs.CONSTRAINT_LAYOUT)
+    api(Libs.PREFERENCE_KTX)
+    api(Libs.FRAGMENT_KTX)
+    api(Libs.LIFECYCLE_LIVE_DATA_KTX)
+    api(Libs.LIFECYCLE_PROCESS_KTX)
+    api(Libs.BIOMETRIC)
+    api(Libs.BROWSER)
+    api(Libs.ACTIVITY)
 
     // Jetpack Compose
     // The api declaration and the animation dependency is needed for clients without Jetpack Compose
@@ -124,9 +133,9 @@ dependencies {
     // Google
     api(Libs.GOOGLE_PLAY_SERVICES_LOCATION)
     api(Libs.GOOGLE_PLAY_SERVICES_MAPS)
-    implementation(Libs.GOOGLE_MAPS_UTILS)
-    implementation(Libs.GOOGLE_PROTOBUF_JAVALITE)
-    implementation(Libs.GOOGLE_PAY)
+    api(Libs.GOOGLE_MAPS_UTILS)
+    api(Libs.GOOGLE_PROTOBUF_JAVALITE)
+    api(Libs.GOOGLE_PAY)
 
     // Dependency injection
     api(Libs.KOIN_ANDROID)
@@ -135,24 +144,24 @@ dependencies {
 
     // Networking
     api(Libs.RETROFIT)
-    implementation(Libs.RETROFIT_CONVERTER_MOSHI)
-    implementation(Libs.RETROFIT_CONVERTER_GSON)
-    implementation(Libs.RETROFIT_ADAPTER_RXJAVA)
-    implementation(Libs.OKHTTP_LOGGING_INTERCEPTOR)
-    implementation(Libs.MOSHI_KOTLIN)
-    implementation(Libs.MOSHI_ADAPTERS)
+    api(Libs.RETROFIT_CONVERTER_MOSHI)
+    api(Libs.RETROFIT_CONVERTER_GSON)
+    api(Libs.RETROFIT_ADAPTER_RXJAVA)
+    api(Libs.OKHTTP_LOGGING_INTERCEPTOR)
+    api(Libs.MOSHI_KOTLIN)
+    api(Libs.MOSHI_ADAPTERS)
     // The moshi-jsonapi dependency is now added as JAR so that JCenter is not used as dependency repository anymore
     api(files(Libs.MOSHI_JSONAPI_JAR))
     api(files(Libs.MOSHI_JSONAPI_RETROFIT_CONVERTER_JAR))
-    implementation(Libs.GSON)
+    api(Libs.GSON)
     api(Libs.RXJAVA)
     api(Libs.RXANDROID)
 
     // Others
     api(Libs.APPAUTH)
-    implementation(Libs.ONE_TIME_PASSWORD)
-    implementation(Libs.COMMONS_CODEC)
-    implementation(Libs.TIMBER)
+    api(Libs.ONE_TIME_PASSWORD)
+    api(Libs.COMMONS_CODEC)
+    api(Libs.TIMBER)
 
     // Testing
     testImplementation(Libs.ARCH_TESTING)
@@ -195,52 +204,20 @@ protobuf {
 }
 
 /* Publishing to Maven Central */
-val sourcesJar by tasks.creating(Jar::class) {
-    from(android.sourceSets["main"].java.srcDirs)
-    archiveClassifier.set("sources")
-}
-
-val javadoc by tasks.creating(Javadoc::class) {
-    source(android.sourceSets["main"].java.srcDirs)
-    classpath += project.files(android.bootClasspath.joinToString(File.separator))
-}
-
-val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
-
-val javadocJar by tasks.creating(Jar::class) {
-    dependsOn(dokkaHtml)
-    group = "jar"
-    archiveClassifier.set("javadoc")
-    from(dokkaHtml.outputDirectory)
-}
-
-artifacts {
-    archives(sourcesJar)
-    archives(javadocJar)
-}
-
-configurations.create("javadocDeps")
-
 publishing {
     publications {
-        create<MavenPublication>("debug") {
+        register<MavenPublication>("release") {
             groupId = Config.GROUP_ID
             artifactId = Config.ARTIFACT_ID
             version = properties.getOrDefault("versionName", Versions.DEFAULT_VERSION_NAME_LIBRARY)!!.toString()
 
-            artifact("$buildDir/outputs/aar/${project.name}-debug.aar") {
-                builtBy(tasks.getByName("assemble"))
+            afterEvaluate {
+                from(components["release"])
             }
-            artifact(sourcesJar)
-            artifact(javadocJar)
 
             pom {
-                name.set("PACE Cloud SDK Android")
-                description.set(
-                    "PACE Cloud SDK is a client SDK that allows your app to easily connect to PACE\'s Connected Fueling. The SDK consists of the IDKit to manage the OpenID (OID) authorization and " +
-                        "general session flow with its token handling. It also consists of the AppKit, with which you can fetch and display location based apps, apps by URL or ID. Furthermore " +
-                        "it contains the POIKit, which allows you to fetch Point of Interests (e.g. gas stations)."
-                )
+                name.set(Config.SDK_NAME)
+                description.set(Config.SDK_DESCRIPTION)
                 url.set("https://github.com/pace/cloud-sdk-android")
                 licenses {
                     license {
@@ -250,9 +227,9 @@ publishing {
                 }
                 developers {
                     developer {
-                        name.set("PACE Telematics GmbH")
+                        name.set(Config.SDK_VEND0R)
                         email.set("android-dev@pace.car")
-                        organization.set("PACE Telematics GmbH")
+                        organization.set(Config.SDK_VEND0R)
                         organizationUrl.set("https://www.pace.car")
                     }
                 }
@@ -260,78 +237,69 @@ publishing {
                     connection.set("scm:git:github.com/pace/cloud-sdk-android.git")
                     developerConnection.set("scm:git:ssh://github.com/pace/cloud-sdk-android.git")
                     url.set("https://github.com/pace/cloud-sdk-android/tree/master")
-                }
-                withXml {
-                    val dependenciesNode = asNode().appendNode("dependencies")
-
-                    project.configurations.implementation.get().allDependencies.forEach {
-                        if (it.name != "unspecified") {
-                            val dependencyNode = dependenciesNode.appendNode("dependency")
-                            dependencyNode.appendNode("groupId", it.group)
-                            dependencyNode.appendNode("artifactId", it.name)
-                            dependencyNode.appendNode("version", it.version)
-                        }
-                    }
-                }
-            }
-        }
-        create<MavenPublication>("release") {
-            groupId = Config.GROUP_ID
-            artifactId = Config.ARTIFACT_ID
-            version = properties.getOrDefault("versionName", Versions.DEFAULT_VERSION_NAME_LIBRARY)!!.toString()
-
-            artifact("$buildDir/outputs/aar/${project.name}-release.aar") {
-                builtBy(tasks.getByName("assemble"))
-            }
-            artifact(sourcesJar)
-            artifact(javadocJar)
-
-            pom {
-                name.set("PACE Cloud SDK Android")
-                description.set(
-                    "PACE Cloud SDK is a client SDK that allows your app to easily connect to PACE\'s Connected Fueling. The SDK consists of the IDKit to manage the OpenID (OID) authorization and " +
-                        "general session flow with its token handling. It also consists of the AppKit, with which you can fetch and display location based apps, apps by URL or ID. Furthermore " +
-                        "it contains the POIKit, which allows you to fetch Point of Interests (e.g. gas stations)."
-                )
-                url.set("https://github.com/pace/cloud-sdk-android")
-                licenses {
-                    license {
-                        name.set("The MIT License (MIT)")
-                        url.set("https://github.com/pace/cloud-sdk-android/blob/master/LICENSE.md")
-                    }
-                }
-                developers {
-                    developer {
-                        name.set("PACE Telematics GmbH")
-                        email.set("android-dev@pace.car")
-                        organization.set("PACE Telematics GmbH")
-                        organizationUrl.set("https://www.pace.car")
-                    }
-                }
-                scm {
-                    connection.set("scm:git:github.com/pace/cloud-sdk-android.git")
-                    developerConnection.set("scm:git:ssh://github.com/pace/cloud-sdk-android.git")
-                    url.set("https://github.com/pace/cloud-sdk-android/tree/master")
-                }
-                withXml {
-                    val dependenciesNode = asNode().appendNode("dependencies")
-
-                    project.configurations.implementation.get().allDependencies.forEach {
-                        if (it.name != "unspecified") {
-                            val dependencyNode = dependenciesNode.appendNode("dependency")
-                            dependencyNode.appendNode("groupId", it.group)
-                            dependencyNode.appendNode("artifactId", it.name)
-                            dependencyNode.appendNode("version", it.version)
-                        }
-                    }
                 }
             }
         }
     }
+
+    repositories {
+        maven {
+            setUrl(layout.buildDirectory.dir("staging-deploy"))
+        }
+    }
 }
 
-signing {
-    // Signing is only mandatory for release publications.
-    // Publish to mavenLocal can be executed with the publishDebugPublicationToMavenLocal Gradle task (unsigned).
-    sign(publishing.publications["release"])
+jreleaser {
+    gitRootSearch = true
+
+    project {
+        author(Config.SDK_VEND0R)
+        vendor = Config.SDK_VEND0R
+        copyright = "Copyright (c) ${LocalDate.now().year} ${Config.SDK_VEND0R}"
+        name = Config.ARTIFACT_ID
+        group = Config.GROUP_ID
+        description = Config.SDK_DESCRIPTION
+        license = "MIT"
+        links {
+            homepage = "https://github.com/pace/cloud-sdk-android"
+            bugTracker = "https://github.com/pace/cloud-sdk-android/issues"
+            vcsBrowser = "https://github.com/pace/cloud-sdk-android"
+            documentation = "https://docs.pace.cloud/integrating/mobile-app"
+            contact = "https://www.pace.car"
+        }
+    }
+
+    signing {
+        active = Active.ALWAYS
+        armored = true
+        verify = true
+    }
+
+    deploy {
+        maven {
+            mavenCentral {
+                register("release-deploy") {
+                    active = Active.RELEASE
+                    url = "https://central.sonatype.com/api/v1/publisher"
+                    applyMavenCentralRules = true
+                    verifyPom = false
+                    stagingRepository(layout.buildDirectory.dir("staging-deploy").get().toString())
+                }
+            }
+
+            nexus2 {
+                register("snapshot-deploy") {
+                    active = Active.SNAPSHOT
+                    url = "https://central.sonatype.com/repository/maven-snapshots"
+                    snapshotUrl = "https://central.sonatype.com/repository/maven-snapshots"
+                    applyMavenCentralRules = true
+                    verifyPom = false
+                    snapshotSupported = true
+                    closeRepository = true
+                    releaseRepository = true
+                    stagingRepository(layout.buildDirectory.dir("staging-deploy").get().toString())
+                }
+            }
+        }
+    }
 }
