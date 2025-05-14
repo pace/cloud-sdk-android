@@ -129,11 +129,6 @@ build_and_publish_snapshot:
   <<: *snapshot_version
   <<: *rules_schedule
 
-close_and_release_snapshot:
-  extends: .close_and_release_library
-  <<: *snapshot_version
-  <<: *rules_schedule
-
 # GitHub release
 framework_publish_github:
   script:
