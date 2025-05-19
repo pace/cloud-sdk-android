@@ -27,12 +27,11 @@ class TimeTable {
         if (sameOpeningTimesDaily()) {
             entries.add(OpeningHoursItem(daily, this.days[0].toHumanReadableString(closed, alwaysOpened, is24HourFormat)))
         } else {
-            var daysString = ""
             var firstSameTimeIndex = 0
 
             this.days.forEachIndexed { index, day ->
                 if (!day.sameOpeningTimesAs(this.days[firstSameTimeIndex])) {
-                    daysString = days[firstSameTimeIndex]
+                    var daysString = days[firstSameTimeIndex]
                     if (firstSameTimeIndex != index - 1) {
                         daysString += " $DASH "
                         daysString += days[index - 1]
@@ -45,7 +44,7 @@ class TimeTable {
             }
 
             // check sunday
-            daysString = days[firstSameTimeIndex]
+            var daysString = days[firstSameTimeIndex]
             if (firstSameTimeIndex != this.days.lastIndex) {
                 daysString += " $DASH "
                 daysString += days.last()

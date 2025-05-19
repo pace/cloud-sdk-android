@@ -3,7 +3,7 @@ package car.pace.cofu.ui.component
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Logout
+import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -114,7 +114,7 @@ fun DefaultDialogPreview() {
             text = "Dialog text",
             confirmButtonText = "Confirm",
             dismissButtonText = "Cancel",
-            imageVector = Icons.Outlined.Logout
+            imageVector = Icons.AutoMirrored.Outlined.Logout
         )
     }
 }

@@ -3,17 +3,19 @@ package car.pace.cofu.ui.onboarding.legal
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Balance
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import car.pace.cofu.R
 import car.pace.cofu.ui.Route
-import car.pace.cofu.ui.component.ClickableText
 import car.pace.cofu.ui.onboarding.PageScaffold
 import car.pace.cofu.ui.theme.AppTheme
 
@@ -54,9 +56,13 @@ fun LegalPage(
                     end = termEndIndex
                 )
 
-                addStringAnnotation(
-                    tag = Route.ONBOARDING_TERMS.name,
-                    annotation = Route.ONBOARDING_TERMS.name,
+                addLink(
+                    clickable = LinkAnnotation.Clickable(
+                        tag = Route.ONBOARDING_TERMS.name,
+                        linkInteractionListener = {
+                            onNavigate(Route.ONBOARDING_TERMS)
+                        }
+                    ),
                     start = termStartIndex,
                     end = termEndIndex
                 )
@@ -71,17 +77,24 @@ fun LegalPage(
                     end = privacyEndIndex
                 )
 
-                addStringAnnotation(
-                    tag = Route.ONBOARDING_PRIVACY.name,
-                    annotation = Route.ONBOARDING_PRIVACY.name,
+                addLink(
+                    clickable = LinkAnnotation.Clickable(
+                        tag = Route.ONBOARDING_PRIVACY.name,
+                        linkInteractionListener = {
+                            onNavigate(Route.ONBOARDING_PRIVACY)
+                        }
+                    ),
                     start = privacyStartIndex,
                     end = privacyEndIndex
                 )
             }
 
-            ClickableText(
-                annotatedText = annotatedText,
-                onNavigate = onNavigate
+            Text(
+                text = annotatedText,
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    textAlign = TextAlign.Center
+                )
             )
         }
     )

@@ -5,7 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -70,42 +70,26 @@ fun ClickableText(
             end = trackingEndIndex
         )
 
-        addStringAnnotation(
-            tag = linkTextRoute.name,
-            annotation = linkTextRoute.name,
+        addLink(
+            clickable = LinkAnnotation.Clickable(
+                tag = linkTextRoute.name,
+                linkInteractionListener = {
+                    onNavigate(linkTextRoute)
+                }
+            ),
             start = trackingStartIndex,
             end = trackingEndIndex
         )
     }
 
-    ClickableText(
-        annotatedText = annotatedText,
-        modifier = modifier,
-        onNavigate = onNavigate
-    )
-}
-
-@Composable
-fun ClickableText(
-    annotatedText: AnnotatedString,
-    modifier: Modifier = Modifier,
-    onNavigate: (Route) -> Unit
-) {
-    androidx.compose.foundation.text.ClickableText(
+    Text(
         text = annotatedText,
         modifier = modifier,
         style = MaterialTheme.typography.bodyLarge.copy(
             color = MaterialTheme.colorScheme.onPrimary,
             textAlign = TextAlign.Center
         )
-    ) {
-        annotatedText
-            .getStringAnnotations(start = it, end = it)
-            .firstOrNull()?.let { annotation ->
-                val route = Route.valueOf(annotation.item)
-                onNavigate(route)
-            }
-    }
+    )
 }
 
 @Preview

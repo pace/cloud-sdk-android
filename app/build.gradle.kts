@@ -6,7 +6,7 @@ import com.google.gson.Gson
 import java.util.UUID
 
 private val menuEntriesTask = "generateMenuEntries"
-private val menuEntriesDir = File(buildDir, "generated/menu_entries/src/main")
+private val menuEntriesDir = layout.buildDirectory.file("generated/menu_entries/src/main").get().asFile
 private val configurationFileReader = rootProject.file(CONFIGURATION_FILE_NAME).reader()
 private val configuration: Configuration = Gson().fromJson(configurationFileReader, Configuration::class.java)
 
@@ -27,7 +27,7 @@ project.tasks.preBuild.dependsOn(menuEntriesTask)
 
 android {
     namespace = "car.pace.cofu"
-    compileSdk = 34
+    compileSdk = 35
 
     signingConfigs {
         getByName("debug") {
@@ -48,7 +48,7 @@ android {
     defaultConfig {
         applicationId = configuration.application_id_android
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = properties.getOrDefault("buildNumber", 1)?.toString()?.toIntOrNull()
         versionName = properties.getOrDefault("versionName", "1")?.toString()
 
@@ -72,7 +72,7 @@ android {
         buildConfigField("String", "PRIMARY_COLOR", "\"" + configuration.primary_branding_color + "\"")
         buildConfigField("String", "SECONDARY_COLOR", "\"" + configuration.secondary_branding_color + "\"")
 
-        resourceConfigurations += arrayOf("en", "cs", "de", "es", "fr", "it", "nl", "pl", "pt", "ro", "ru")
+        androidResources.localeFilters += arrayOf("en", "cs", "de", "es", "fr", "it", "nl", "pl", "pt", "ro", "ru")
 
         // Setup crash and analytics reporting
         buildConfigField("Boolean", "SENTRY_ENABLED", configuration.sentry_enabled.toString())
@@ -153,6 +153,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
