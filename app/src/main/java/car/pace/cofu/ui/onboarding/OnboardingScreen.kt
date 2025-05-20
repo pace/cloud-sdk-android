@@ -1,6 +1,5 @@
 package car.pace.cofu.ui.onboarding
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
@@ -18,7 +17,6 @@ import car.pace.cofu.ui.onboarding.twofactor.TwoFactorPage
 import kotlin.math.absoluteValue
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun OnboardingScreen(
     viewModel: OnboardingViewModel = hiltViewModel(),

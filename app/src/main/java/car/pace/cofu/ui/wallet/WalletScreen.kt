@@ -15,8 +15,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -219,7 +219,7 @@ fun LogoutDialog(
         text = stringResource(id = R.string.DASHBOARD_LOGOUT_CONFIRM_DESCRIPTION),
         confirmButtonText = stringResource(id = R.string.DASHBOARD_LOGOUT_CONFIRM_ACTION_LOGOUT),
         dismissButtonText = stringResource(id = R.string.common_use_cancel),
-        imageVector = Icons.Outlined.Logout,
+        imageVector = Icons.AutoMirrored.Outlined.Logout,
         onConfirm = onLogout,
         onDismiss = onDismiss
     )

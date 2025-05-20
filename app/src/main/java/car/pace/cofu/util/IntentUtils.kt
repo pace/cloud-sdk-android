@@ -42,6 +42,7 @@ object IntentUtils {
         }
     }
 
+    @Suppress("DEPRECATION")
     fun openBiometricSettings(context: Context): Result<Unit> {
         return try {
             val intent = when {

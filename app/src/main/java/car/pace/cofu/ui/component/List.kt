@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowForwardIos
-import androidx.compose.material.icons.outlined.ReceiptLong
+import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -110,7 +110,7 @@ data class SwitchInfo(val checked: Boolean, val onCheckChanged: ((Boolean) -> Un
 fun DefaultListItemPreview() {
     AppTheme {
         DefaultListItem(
-            icon = Icons.Outlined.ReceiptLong,
+            icon = Icons.AutoMirrored.Outlined.ReceiptLong,
             title = "List item label"
         )
     }
@@ -121,7 +121,7 @@ fun DefaultListItemPreview() {
 fun DefaultListItemWithDescriptionPreview() {
     AppTheme {
         DefaultListItem(
-            icon = Icons.Outlined.ReceiptLong,
+            icon = Icons.AutoMirrored.Outlined.ReceiptLong,
             title = "List item label",
             description = "Explains what the item does"
         )
@@ -133,7 +133,7 @@ fun DefaultListItemWithDescriptionPreview() {
 fun DefaultCheckedSwitchListItemPreview() {
     AppTheme {
         DefaultListItem(
-            icon = Icons.Outlined.ReceiptLong,
+            icon = Icons.AutoMirrored.Outlined.ReceiptLong,
             title = "List item label",
             switchInfo = SwitchInfo(true) {}
         )
@@ -145,7 +145,7 @@ fun DefaultCheckedSwitchListItemPreview() {
 fun DefaultUncheckedSwitchListItemPreview() {
     AppTheme {
         DefaultListItem(
-            icon = Icons.Outlined.ReceiptLong,
+            icon = Icons.AutoMirrored.Outlined.ReceiptLong,
             title = "List item label",
             switchInfo = SwitchInfo(false) {}
         )

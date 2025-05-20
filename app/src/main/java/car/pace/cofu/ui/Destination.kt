@@ -2,11 +2,11 @@ package car.pace.cofu.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.Domain
 import androidx.compose.material.icons.outlined.Language
-import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.LocalGasStation
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.MoreHoriz
@@ -58,7 +58,7 @@ enum class Graph(
     ),
     LIST(
         "list_graph",
-        Icons.Outlined.List,
+        Icons.AutoMirrored.Outlined.List,
         R.string.list_tab_label
     ),
     MAP(

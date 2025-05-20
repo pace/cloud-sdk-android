@@ -4,7 +4,6 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -39,7 +38,6 @@ import car.pace.cofu.ui.component.Title
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.util.LogAndBreadcrumb
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ConsentScreen(
     viewModel: ConsentViewModel = hiltViewModel(),
