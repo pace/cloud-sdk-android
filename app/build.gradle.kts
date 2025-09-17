@@ -15,7 +15,7 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
-    id("io.sentry.android.gradle") version "3.14.0"
+    id("io.sentry.android.gradle") version "5.11.0"
     id("com.mikepenz.aboutlibraries.plugin")
 }
 
