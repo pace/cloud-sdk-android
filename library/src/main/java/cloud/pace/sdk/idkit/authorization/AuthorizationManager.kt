@@ -19,9 +19,11 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.R
 import cloud.pace.sdk.api.API
+import cloud.pace.sdk.api.user.PACETokenExchangeAPI.tokenExchange
 import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.idkit.authorization.integrated.AuthorizationWebViewActivity
 import cloud.pace.sdk.idkit.model.FailedRetrievingConfigurationWhileDiscovering
+import cloud.pace.sdk.idkit.model.FailedRetrievingExchangedToken
 import cloud.pace.sdk.idkit.model.FailedRetrievingSessionWhileAuthorizing
 import cloud.pace.sdk.idkit.model.FailedRetrievingSessionWhileEnding
 import cloud.pace.sdk.idkit.model.InternalError
@@ -30,6 +32,7 @@ import cloud.pace.sdk.idkit.model.NoSupportedBrowser
 import cloud.pace.sdk.idkit.model.OIDConfiguration
 import cloud.pace.sdk.idkit.model.OperationCanceled
 import cloud.pace.sdk.idkit.model.ServiceConfiguration
+import cloud.pace.sdk.idkit.model.TokenExchangeConfiguration
 import cloud.pace.sdk.idkit.model.toAuthorizationServiceConfiguration
 import cloud.pace.sdk.idkit.userinfo.UserInfoApiClient
 import cloud.pace.sdk.idkit.userinfo.UserInfoResponse
@@ -42,6 +45,7 @@ import cloud.pace.sdk.utils.Ok
 import cloud.pace.sdk.utils.SetupLogger
 import cloud.pace.sdk.utils.Success
 import cloud.pace.sdk.utils.Theme
+import cloud.pace.sdk.utils.enqueue
 import cloud.pace.sdk.utils.getResultFor
 import cloud.pace.sdk.utils.resumeIfActive
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -68,6 +72,7 @@ internal class AuthorizationManager(
     private lateinit var clientId: String
     private lateinit var configuration: OIDConfiguration
     private lateinit var authorizationRequest: AuthorizationRequest
+    private var exchangedAccessToken: String? = null
 
     internal fun setup(clientId: String, configuration: OIDConfiguration) {
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
@@ -315,8 +320,7 @@ internal class AuthorizationManager(
                 completion(Failure(exception))
             }
             response != null -> {
-                API.addAuthorizationHeader(null)
-                sessionHolder.clearSessionAndPreferences()
+                clearSession()
                 completion(Success(Unit))
             }
             else -> {
@@ -335,7 +339,13 @@ internal class AuthorizationManager(
 
     internal fun containsException(intent: Intent) = intent.hasExtra(AuthorizationException.EXTRA_EXCEPTION)
 
-    internal fun cachedToken() = sessionHolder.cachedToken()
+    internal fun cachedToken(): String? {
+        return if (configuration.tokenExchangeConfig == null) {
+            sessionHolder.cachedToken()
+        } else {
+            exchangedAccessToken
+        }
+    }
 
     internal fun userInfo(additionalHeaders: Map<String, String>? = null, additionalParameters: Map<String, String>? = null, completion: (Completion<UserInfoResponse>) -> Unit) {
         userInfoApi.getUserInfo(additionalHeaders, additionalParameters, completion)
@@ -398,15 +408,55 @@ internal class AuthorizationManager(
                 completion(Failure(exception))
             }
             tokenResponse != null -> {
-                val accessToken = sessionHolder.cachedToken()
-                accessToken?.let { API.addAuthorizationHeader(it) }
-                completion(Success(accessToken))
-                Timber.i("Token refresh successful")
+                val tokenExchangeConfig = configuration.tokenExchangeConfig
+                if (tokenExchangeConfig == null) {
+                    val accessToken = sessionHolder.cachedToken()
+                    accessToken?.let { API.addAuthorizationHeader(it) }
+                    completion(Success(accessToken))
+                    Timber.i("Token refresh successful")
+                } else {
+                    Timber.i("Try to exchange token...")
+                    exchangeToken(sessionHolder.cachedToken(), tokenExchangeConfig, completion)
+                }
             }
             else -> {
                 val throwable = FailedRetrievingSessionWhileAuthorizing
                 Timber.w(throwable, "Failed to handle token response")
                 completion(Failure(throwable))
+            }
+        }
+    }
+
+    private fun exchangeToken(externalToken: String?, tokenExchangeConfiguration: TokenExchangeConfiguration, completion: (Completion<String?>) -> Unit) {
+        if (externalToken == null) {
+            val throwable = FailedRetrievingSessionWhileAuthorizing
+            Timber.w(throwable, "Failed to handle token response")
+            completion(Failure(throwable))
+            return
+        }
+
+        tokenExchange(
+            clientId = tokenExchangeConfiguration.clientId,
+            clientSecret = tokenExchangeConfiguration.clientSecret,
+            subjectIssuer = tokenExchangeConfiguration.issuerId,
+            subjectToken = externalToken
+        ).enqueue {
+            onResponse = {
+                val accessToken = it.body()?.accessToken
+                if (accessToken != null) {
+                    API.addAuthorizationHeader(accessToken)
+                    exchangedAccessToken = accessToken
+                    completion(Success(accessToken))
+                    Timber.i("Token exchange successful")
+                } else {
+                    clearSession()
+                    completion(Failure(FailedRetrievingExchangedToken))
+                }
+            }
+
+            onFailure = {
+                clearSession()
+                completion(Failure(FailedRetrievingExchangedToken))
             }
         }
     }
@@ -432,6 +482,12 @@ internal class AuthorizationManager(
             Theme.LIGHT -> COLOR_SCHEME_LIGHT
         }
         return authorizationService.createCustomTabsIntentBuilder().setColorScheme(colorScheme).build()
+    }
+
+    private fun clearSession() {
+        API.addAuthorizationHeader(null)
+        sessionHolder.clearSessionAndPreferences()
+        exchangedAccessToken = null
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
