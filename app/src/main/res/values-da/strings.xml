@@ -114,6 +114,8 @@
     <string name="legal_update_tracking_title">Brugsanalysen har ændret sig</string>
     <string name="list_price_not_available">Pris ikke tilgængelig</string>
     <string name="list_tab_label">Liste</string>
+    <string name="managed_payment_methods_empty_description">Kontakt din flådechef for at få mulighed for at bruge et brændstofkort.</string>
+    <string name="managed_payment_methods_empty_title">Intet brændstofkort tilgængeligt endnu</string>
     <string name="map_tab_label">Kort</string>
     <string name="menu_items_analytics">Analyse af udnyttelse</string>
     <string name="menu_items_permissions">Tilladelser</string>

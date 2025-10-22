@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Impostazioni aperte</string>
+    <string name="ALERT.LOCATION_PERMISSION.ACTIONS.OPEN_SETTINGS">Impostazioni</string>
     <string name="DASHBOARD.EMPTY_VIEW.DESCRIPTION">Non sono state trovate stazioni di rifornimento vicino a voi.</string>
     <string name="DASHBOARD.EMPTY_VIEW.TITLE">Purtroppo non ci sono stazioni di rifornimento nelle vostre vicinanze</string>
-    <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Cercheremo le stazioni di rifornimento più vicine alla vostra zona. L\'operazione potrebbe richiedere un attimo.</string>
+    <string name="DASHBOARD.LOADING_VIEW.DESCRIPTION">Cercheremo le stazioni di rifornimento più vicine alla tua zona. L\'operazione potrebbe richiedere qualche secondo.</string>
     <string name="DASHBOARD.LOADING_VIEW.TITLE">Ricerca stazioni di rifornimento...</string>
     <string name="DASHBOARD.LOCATION.SETTINGS_ERROR">Non è stato possibile aprire le impostazioni di localizzazione. Attivare manualmente i servizi di localizzazione nelle impostazioni di sistema.</string>
     <string name="DASHBOARD.LOGOUT.CONFIRM.ACTION.LOGOUT">Registrazione</string>
-    <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">I vostri dati sono ancora memorizzati nel vostro account PACE-ID.</string>
-    <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Vuoi davvero firmare per uscire?</string>
+    <string name="DASHBOARD.LOGOUT.CONFIRM.DESCRIPTION">I tuo dati sono ancora memorizzati nel tuo account PACE-ID.</string>
+    <string name="DASHBOARD.LOGOUT.CONFIRM.TITLE">Vuoi davvero cancellarti?</string>
     <string name="DASHBOARD.NAVIGATION.ERROR">Nessuna applicazione di navigazione trovata</string>
     <string name="DASHBOARD.PERMISSION.SETTINGS_ERROR">Non è stato possibile aprire le impostazioni di autorizzazione. Si prega di consentire l\'accesso alla propria posizione manualmente nelle impostazioni del sistema.</string>
     <string name="DASHBOARD.SECTIONS.NEAREST_GAS_STATION">Stazione di rifornimento più vicina</string>
@@ -26,7 +26,7 @@
     <string name="LOCATION_DIALOG.DISABLED_TEXT">Per mostrarti le stazioni di servizio vicino a te, i servizi di localizzazione devono essere abilitati.</string>
     <string name="LOCATION_DIALOG.DISABLED_TITLE">Servizi di localizzazione disabilitati</string>
     <string name="LOCATION_DIALOG.PERMISSION_DENIED_TEXT">Per mostrarti la stazione di rifornimento più vicina, abbiamo bisogno dell\'accesso alla tua posizione attuale.</string>
-    <string name="LOCATION_DIALOG.PERMISSION_DENIED_TITLE">Autorizzazione alla posizione non concessa</string>
+    <string name="LOCATION_DIALOG.PERMISSION_DENIED_TITLE">Non è possibile utilizzare il pagamento mobile senza la tua approvazione della geolocalizzazione</string>
     <string name="MENU.ITEMS.CONTACT">Contattaci</string>
     <string name="MENU.ITEMS.FUEL_TYPE">Cambiare il tipo di carburante</string>
     <string name="MENU.ITEMS.IMPRINT">Impronta</string>
@@ -48,7 +48,7 @@
     <string name="analytics_accepted_text">Analisi dell\'utilizzo attivato</string>
     <string name="analytics_declined_text">Analisi dell\'utilizzo disattivato</string>
     <string name="closed_label">CHIUSO</string>
-    <string name="common_pay_here_now">Pagate qui ora!</string>
+    <string name="common_pay_here_now">Paga qui adesso con la tua app!</string>
     <string name="common_start_fueling">Inizia a fare rifornimento</string>
     <string name="common_start_navigation">Inizia la navigazione</string>
     <string name="common_use_accept">Accettare</string>
@@ -85,7 +85,7 @@
     <string name="fueling_legal_warning_description">La legge nazionale vieta l\'uso di smartphone sul piazzale. Vi preghiamo di utilizzare il telefono solo nel vostro veicolo.</string>
     <string name="fueling_tab_label">Rifornimento di carburante</string>
     <string name="gas_station_closed_hint">La stazione di rifornimento è attualmente chiusa.</string>
-    <string name="gas_station_closes_soon_hint">La stazione di servizio chiude al %s</string>
+    <string name="gas_station_closes_soon_hint">La stazione di servizio chiude alle %s</string>
     <string name="gas_station_default_name">Stazione di rifornimento</string>
     <string name="gas_station_error_description">Non è stato possibile caricare i dati della stazione di rifornimento. Controllare la connessione!</string>
     <string name="gas_station_fuel_prices_not_available">I prezzi del carburante non sono purtroppo disponibili.</string>
@@ -101,7 +101,7 @@
     <string name="gas_station_opening_hours_hint">Gli orari di apertura possono variare nei giorni festivi.</string>
     <string name="gas_station_opening_hours_not_available">Gli orari di apertura non sono attualmente disponibili.</string>
     <string name="gas_station_opening_hours_title">Orari di apertura</string>
-    <string name="gas_stations_near_you_section_title">Le stazioni di servizio più vicine a voi</string>
+    <string name="gas_stations_near_you_section_title">Le stazioni di servizio più vicine per te</string>
     <string name="general_error_title">Caricamento non riuscito</string>
     <string name="good_day_message">Ciao!</string>
     <string name="good_evening_message">Buona sera!</string>
@@ -114,10 +114,12 @@
     <string name="legal_update_tracking_title">L\'analisi dell\'utilizzo è cambiata</string>
     <string name="list_price_not_available">Prezzo non disponibile</string>
     <string name="list_tab_label">Elenco</string>
+    <string name="managed_payment_methods_empty_description">Per poter utilizzare una carta carburante, contattare il responsabile della flotta.</string>
+    <string name="managed_payment_methods_empty_title">Non è ancora disponibile una carta carburante</string>
     <string name="map_tab_label">Mappa</string>
     <string name="menu_items_analytics">Analisi dell\'utilizzo</string>
     <string name="menu_items_permissions">Permessi</string>
-    <string name="menu_permissions_location_description">Per vedere la stazione di rifornimento più vicina, abbiamo bisogno di accedere alla vostra posizione esatta.</string>
+    <string name="menu_permissions_location_description">Per vedere la stazione di rifornimento più vicina, abbiamo bisogno di accedere alla tua posizione esatta.</string>
     <string name="menu_permissions_location_title">Posizione</string>
     <string name="menu_permissions_notifications_description">Vi informiamo tramite notifica push sulle stazioni di rifornimento nella vostra zona e sulle notizie generali.</string>
     <string name="menu_permissions_notifications_title">Notifiche</string>
@@ -126,8 +128,8 @@
     <string name="no_supported_browser_toast">Attivare Google Chrome e riavviare l\'applicazione per continuare.</string>
     <string name="notification_permission_request_title">Si desidera consentire le notifiche?</string>
     <string name="onboarding_authentication_action">Accedi o registrati</string>
-    <string name="onboarding_authentication_description">Per effettuare un semplice pagamento con l\'app, è necessario registrarsi o accedere con il proprio ID PACE.</string>
-    <string name="onboarding_authentication_title">Profilo del negozio</string>
+    <string name="onboarding_authentication_description">Per effettuare un semplice pagamento con l\'app, è necessario registrarsi o accedere con il tuo PACE ID.</string>
+    <string name="onboarding_authentication_title">Inserisci il tu profilo personale</string>
     <string name="onboarding_authorization_request_fingerprint">Confermare l\'impronta digitale</string>
     <string name="onboarding_create_pin_description">Selezionare un PIN di quattro cifre da utilizzare per confermare i pagamenti.</string>
     <string name="onboarding_create_pin_title">Selezionare il PIN</string>
@@ -163,7 +165,7 @@
     <string name="onboarding_pin_error_too_few_digits">Il PIN deve contenere almeno tre cifre diverse.</string>
     <string name="onboarding_retry_login">Provare ad accedere di nuovo</string>
     <string name="onboarding_tracking_app_tracking">l\'analisi dell\'utilizzo</string>
-    <string name="onboarding_tracking_description">Accettate l\'analisi dell\'utilizzo in modo da poter ottimizzare ulteriormente l\'applicazione per voi.</string>
+    <string name="onboarding_tracking_description">Accetto l\'analisi dell\'utilizzo in modo da poter ottimizzare ulteriormente l\'applicazione per voi.</string>
     <string name="onboarding_tracking_title">Migliorare l\'esperienza</string>
     <string name="onboarding_two_factor_authentication_biometry">Utilizzare la biometria</string>
     <string name="onboarding_two_factor_authentication_description">Gli scanner biometrici sono il modo più rapido e sicuro per confermare le transazioni di pagamento.</string>
@@ -206,13 +208,13 @@
     <string name="wallet_fuel_type_selection_title">Selezione del carburante</string>
     <string name="wallet_header_text">L\'utente ha effettuato l\'accesso come</string>
     <string name="wallet_payment_methods_title">Metodi di pagamento e carte carburante</string>
-    <string name="wallet_tab_label">Portafoglio</string>
+    <string name="wallet_tab_label">Wallet</string>
     <string name="wallet_transactions_title">Transazioni</string>
     <string name="wallet_two_factor_authentication_biometry_disable_text">Senza l\'autenticazione biometrica, i pagamenti possono essere autorizzati solo con il PIN PACE o la password.</string>
     <string name="wallet_two_factor_authentication_biometry_disable_title">È davvero possibile disattivare l\'autenticazione biometrica?</string>
     <string name="wallet_two_factor_authentication_biometry_error">Errore nel riconoscimento dell\'impronta digitale</string>
     <string name="wallet_two_factor_authentication_biometry_setup_successful">La biometria è stata impostata con successo</string>
-    <string name="wallet_two_factor_authentication_biometry_title">Biometria</string>
+    <string name="wallet_two_factor_authentication_biometry_title">Riconoscimento biometrico</string>
     <string name="wallet_two_factor_authentication_pin_setup_successful">PIN impostato con successo</string>
     <string name="wallet_two_factor_authentication_pin_title">Impostare il PIN</string>
     <string name="wallet_two_factor_authentication_title">Procedura di autorizzazione</string>

@@ -114,6 +114,8 @@
     <string name="legal_update_tracking_title">The usage analysis has changed</string>
     <string name="list_price_not_available">Price not available</string>
     <string name="list_tab_label">List</string>
+    <string name="managed_payment_methods_empty_description">Please contact your fleet manager to be able to use a fuel card.</string>
+    <string name="managed_payment_methods_empty_title">No fuel card available yet</string>
     <string name="map_tab_label">Map</string>
     <string name="menu_items_analytics">Usage analysis</string>
     <string name="menu_items_permissions">Permissions</string>

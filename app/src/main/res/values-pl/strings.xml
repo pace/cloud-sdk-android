@@ -114,6 +114,8 @@
     <string name="legal_update_tracking_title">Analiza użytkowania uległa zmianie</string>
     <string name="list_price_not_available">Cena niedostępna</string>
     <string name="list_tab_label">Lista</string>
+    <string name="managed_payment_methods_empty_description">Aby móc korzystać z karty paliwowej, należy skontaktować się z menedżerem floty.</string>
+    <string name="managed_payment_methods_empty_title">Karta paliwowa nie jest jeszcze dostępna</string>
     <string name="map_tab_label">Mapa</string>
     <string name="menu_items_analytics">Analiza wykorzystania</string>
     <string name="menu_items_permissions">Uprawnienia</string>

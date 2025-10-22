@@ -114,6 +114,8 @@
     <string name="legal_update_tracking_title">Analiza utilizării s-a schimbat</string>
     <string name="list_price_not_available">Prețul nu este disponibil</string>
     <string name="list_tab_label">Lista</string>
+    <string name="managed_payment_methods_empty_description">Vă rugăm să contactați managerul flotei pentru a putea utiliza un card de combustibil.</string>
+    <string name="managed_payment_methods_empty_title">Cardul de combustibil nu este încă disponibil</string>
     <string name="map_tab_label">Hartă</string>
     <string name="menu_items_analytics">Analiza utilizării</string>
     <string name="menu_items_permissions">Permisiuni</string>

@@ -114,6 +114,8 @@
     <string name="legal_update_tracking_title">Анализ использования изменился</string>
     <string name="list_price_not_available">Цена недоступна</string>
     <string name="list_tab_label">Список</string>
+    <string name="managed_payment_methods_empty_description">Чтобы получить возможность использовать топливную карту, обратитесь к менеджеру автопарка.</string>
+    <string name="managed_payment_methods_empty_title">Топливная карта пока не доступна</string>
     <string name="map_tab_label">Карта</string>
     <string name="menu_items_analytics">Анализ использования</string>
     <string name="menu_items_permissions">Разрешения</string>

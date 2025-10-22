@@ -97,9 +97,11 @@ fun PaymentMethodsScreenContent(
                         Box(
                             modifier = Modifier.weight(1f)
                         ) {
+                            val emptyTitleRes = if (canAddPaymentMethods) R.string.payment_methods_empty_title else R.string.managed_payment_methods_empty_title
+                            val emptyDescriptionRes = if (canAddPaymentMethods) R.string.payment_methods_empty_description else R.string.managed_payment_methods_empty_description
                             ErrorCard(
-                                title = stringResource(id = R.string.payment_methods_empty_title),
-                                description = stringResource(id = R.string.payment_methods_empty_description),
+                                title = stringResource(id = emptyTitleRes),
+                                description = stringResource(id = emptyDescriptionRes),
                                 imageVector = Icons.Outlined.CreditCard
                             )
                         }
@@ -235,6 +237,23 @@ fun PaymentMethodsScreenContentPreview() {
                 )
             ),
             canAddPaymentMethods = true,
+            onNavigateUp = {},
+            onItemClick = {},
+            onAddClick = {},
+            onRefresh = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ManagedEmptyPaymentMethodsScreenContentPreview() {
+    AppTheme {
+        PaymentMethodsScreenContent(
+            uiState = UiState.Success(
+                listOf()
+            ),
+            canAddPaymentMethods = false,
             onNavigateUp = {},
             onItemClick = {},
             onAddClick = {},

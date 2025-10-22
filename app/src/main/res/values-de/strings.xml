@@ -114,6 +114,8 @@
     <string name="legal_update_tracking_title">Die Nutzungsanalyse hat sich geändert</string>
     <string name="list_price_not_available">Preis nicht verfügbar</string>
     <string name="list_tab_label">Liste</string>
+    <string name="managed_payment_methods_empty_description">Bitte wende Dich an Deinen Flottenmanager, um eine Tankkarte nutzen zu können.</string>
+    <string name="managed_payment_methods_empty_title">Noch keine Tankkarte vorhanden</string>
     <string name="map_tab_label">Karte</string>
     <string name="menu_items_analytics">Nutzungsanalyse</string>
     <string name="menu_items_permissions">Berechtigungen</string>

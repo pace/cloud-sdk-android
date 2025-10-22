@@ -114,6 +114,8 @@
     <string name="legal_update_tracking_title">El análisis de uso ha cambiado</string>
     <string name="list_price_not_available">Precio no disponible</string>
     <string name="list_tab_label">Lista</string>
+    <string name="managed_payment_methods_empty_description">Póngase en contacto con su gestor de flota para poder utilizar una tarjeta de combustible.</string>
+    <string name="managed_payment_methods_empty_title">Aún no hay tarjeta de carburante disponible</string>
     <string name="map_tab_label">Mapa</string>
     <string name="menu_items_analytics">Análisis de la utilización</string>
     <string name="menu_items_permissions">Permisos</string>

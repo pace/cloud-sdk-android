@@ -114,6 +114,8 @@
     <string name="legal_update_tracking_title">A análise de utilização foi alterada</string>
     <string name="list_price_not_available">Preço não disponível</string>
     <string name="list_tab_label">Lista</string>
+    <string name="managed_payment_methods_empty_description">Contacte o seu gestor de frota para poder utilizar um cartão de combustível.</string>
+    <string name="managed_payment_methods_empty_title">Ainda não está disponível nenhum cartão de combustível</string>
     <string name="map_tab_label">Mapa</string>
     <string name="menu_items_analytics">Análise de utilização</string>
     <string name="menu_items_permissions">Permissões</string>
