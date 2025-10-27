@@ -114,6 +114,8 @@
     <string name="legal_update_tracking_title">De gebruiksanalyse is veranderd</string>
     <string name="list_price_not_available">Prijs niet beschikbaar</string>
     <string name="list_tab_label">Lijst</string>
+    <string name="managed_payment_methods_empty_description">Neem contact op met uw wagenparkbeheerder om een tankkaart te kunnen gebruiken.</string>
+    <string name="managed_payment_methods_empty_title">Nog geen tankkaart beschikbaar</string>
     <string name="map_tab_label">Kaart</string>
     <string name="menu_items_analytics">Gebruiksanalyse</string>
     <string name="menu_items_permissions">Toestemmingen</string>

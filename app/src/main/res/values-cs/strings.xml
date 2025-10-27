@@ -114,6 +114,8 @@
     <string name="legal_update_tracking_title">Analýza použití se změnila</string>
     <string name="list_price_not_available">Cena není k dispozici</string>
     <string name="list_tab_label">Seznam</string>
+    <string name="managed_payment_methods_empty_description">Chcete-li používat palivovou kartu, obraťte se na správce vozového parku.</string>
+    <string name="managed_payment_methods_empty_title">Zatím není k dispozici žádná palivová karta</string>
     <string name="map_tab_label">Mapa</string>
     <string name="menu_items_analytics">Analýza využití</string>
     <string name="menu_items_permissions">Oprávnění</string>
