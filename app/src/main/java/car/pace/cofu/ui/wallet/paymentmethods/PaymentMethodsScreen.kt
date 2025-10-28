@@ -99,6 +99,7 @@ fun PaymentMethodsScreenContent(
                         ) {
                             val emptyTitleRes = if (canAddPaymentMethods) R.string.payment_methods_empty_title else R.string.managed_payment_methods_empty_title
                             val emptyDescriptionRes = if (canAddPaymentMethods) R.string.payment_methods_empty_description else R.string.managed_payment_methods_empty_description
+
                             ErrorCard(
                                 title = stringResource(id = emptyTitleRes),
                                 description = stringResource(id = emptyDescriptionRes),

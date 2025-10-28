@@ -43,6 +43,7 @@ import car.pace.cofu.ui.component.ErrorCard
 import car.pace.cofu.ui.component.FuelingLegalWarningDialog
 import car.pace.cofu.ui.component.LoadingCard
 import car.pace.cofu.ui.component.LogoTopBar
+import car.pace.cofu.ui.component.MissingPaymentMethodDialog
 import car.pace.cofu.ui.component.PrimaryButton
 import car.pace.cofu.ui.component.SecondaryButton
 import car.pace.cofu.ui.component.Title
@@ -54,6 +55,7 @@ import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.ui.theme.Success
 import car.pace.cofu.ui.wallet.fueltype.FuelTypeGroup
 import car.pace.cofu.util.Constants.GAS_STATION_CONTENT_TYPE
+import car.pace.cofu.util.FuelingWarning
 import car.pace.cofu.util.IntentUtils
 import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
@@ -81,23 +83,28 @@ fun ListScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val fuelTypeGroup by viewModel.fuelTypeGroup.collectAsStateWithLifecycle()
+    val showPaymentMethodsHint by viewModel.showPaymentMethodsHint.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val locationState = rememberLocationState(
         onLocationEnabledChanged = viewModel::onLocationEnabledChanged,
         onLocationPermissionChanged = viewModel::onLocationPermissionChanged
     )
-    var showLegalWarning by remember { mutableStateOf<GasStation?>(null) }
+    var showWarning by remember { mutableStateOf<Pair<FuelingWarning, GasStation>?>(null) }
+    val canAddPaymentMethods = viewModel.canAddPaymentMethods
 
     ListScreenContent(
         uiState = uiState,
+        showPaymentMethodsHint = showPaymentMethodsHint,
         fuelTypeGroup = fuelTypeGroup,
+        canAddPaymentMethods = canAddPaymentMethods,
         refresh = viewModel::refresh,
         navigateToDetail = navigateToDetail,
         onRequestPermission = locationState::launchMultiplePermissionRequest,
         onRequestLocationServices = locationState::launchLocationServicesRequest,
         onStartFueling = {
-            if (viewModel.shouldShowLegalWarning(it)) {
-                showLegalWarning = it
+            val fuelingWarning = viewModel.checkForFuelingWarnings(it)
+            if (fuelingWarning != null) {
+                showWarning = fuelingWarning to it
             } else {
                 viewModel.startFueling(context, it)
             }
@@ -107,25 +114,41 @@ fun ListScreen(
         }
     )
 
-    val legalWarningStation = showLegalWarning
-    if (legalWarningStation != null) {
-        FuelingLegalWarningDialog(
-            onConfirm = {
-                showLegalWarning = null
-                viewModel.startFueling(context, legalWarningStation)
-            },
-            onDismiss = {
-                showLegalWarning = null
+    val warning = showWarning?.first
+    val warningStation = showWarning?.second
+    if (warning != null && warningStation != null) {
+        when (warning) {
+            FuelingWarning.PAYMENT_METHODS -> {
+                MissingPaymentMethodDialog(
+                    canAddPaymentMethods = canAddPaymentMethods,
+                    onConfirm = {
+                        showWarning = null
+                    }
+                )
             }
-        )
+
+            FuelingWarning.LEGAL -> {
+                FuelingLegalWarningDialog(
+                    onConfirm = {
+                        showWarning = null
+                        viewModel.startFueling(context, warningStation)
+                    },
+                    onDismiss = {
+                        showWarning = null
+                    }
+                )
+            }
+        }
     }
 }
 
 @Composable
 fun ListScreenContent(
     uiState: UiState<List<ListViewModel.ListStation>>,
+    showPaymentMethodsHint: Boolean,
     showCustomHeader: Boolean = BuildConfig.LIST_SHOW_CUSTOM_HEADER,
     fuelTypeGroup: FuelTypeGroup,
+    canAddPaymentMethods: Boolean,
     refresh: () -> Unit,
     navigateToDetail: (String) -> Unit,
     onRequestPermission: () -> Unit,
@@ -155,6 +178,19 @@ fun ListScreenContent(
             is UiState.Success -> {
                 val gasStations = uiState.data
                 if (gasStations.isNotEmpty()) {
+                    if (showPaymentMethodsHint) {
+                        val emptyTitleRes = if (canAddPaymentMethods) R.string.payment_methods_empty_title else R.string.managed_payment_methods_empty_title
+                        val emptyDescriptionRes = if (canAddPaymentMethods) R.string.payment_methods_empty_description else R.string.managed_payment_methods_empty_description
+
+                        ErrorCard(
+                            title = stringResource(id = emptyTitleRes),
+                            description = stringResource(id = emptyDescriptionRes),
+                            modifier = Modifier
+                                .padding(top = 20.dp)
+                                .padding(horizontal = 20.dp)
+                        )
+                    }
+
                     GasStationList(
                         gasStations = gasStations,
                         fuelTypeGroup = fuelTypeGroup,
@@ -447,8 +483,10 @@ private fun ListScreenContentPreview(
                     )
                 )
             ),
+            showPaymentMethodsHint = false,
             showCustomHeader = showCustomHeader,
             fuelTypeGroup = FuelTypeGroup.DIESEL,
+            canAddPaymentMethods = true,
             refresh = {},
             navigateToDetail = {},
             onRequestPermission = {},
