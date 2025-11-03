@@ -1,15 +1,21 @@
 package car.pace.cofu.ui.detail
 
 import android.content.Context
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.GasStationRepository
+import car.pace.cofu.data.PaymentMethodRepository
+import car.pace.cofu.data.SharedPreferencesRepository
+import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_PAYMENT_METHOD_MANAGEMENT_AVAILABLE
 import car.pace.cofu.data.analytics.Analytics
 import car.pace.cofu.data.analytics.FuelingStarted
 import car.pace.cofu.data.analytics.StationNavigationUsed
 import car.pace.cofu.data.location.LocationRepository
 import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
+import car.pace.cofu.util.FuelingWarning
 import car.pace.cofu.util.IntentUtils
 import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
@@ -35,7 +41,9 @@ class DetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     gasStationRepository: GasStationRepository,
     locationRepository: LocationRepository,
-    private val analytics: Analytics
+    private val analytics: Analytics,
+    sharedPreferencesRepository: SharedPreferencesRepository,
+    private val paymentMethodRepository: PaymentMethodRepository
 ) : ViewModel() {
 
     private val id: String = checkNotNull(savedStateHandle["id"])
@@ -73,18 +81,28 @@ class DetailViewModel @Inject constructor(
             initialValue = null
         )
 
+    val canAddPaymentMethods by mutableStateOf(sharedPreferencesRepository.getBoolean(PREF_KEY_PAYMENT_METHOD_MANAGEMENT_AVAILABLE, true))
+
     fun refresh() {
         viewModelScope.launch {
             refresh.emit(Unit)
         }
     }
 
-    fun shouldShowLegalWarning(gasStation: GasStation): Boolean = gasStation.isInFrance()
-
     fun startFueling(context: Context, gasStation: GasStation) {
         LogAndBreadcrumb.i(LogAndBreadcrumb.DETAIL, "Start fueling")
         analytics.logEvent(FuelingStarted)
         AppKit.openFuelingApp(context = context, id = gasStation.id, callback = analytics.TrackingAppCallback())
+    }
+
+    suspend fun checkForFuelingWarnings(gasStation: GasStation): FuelingWarning? {
+        val noPaymentMethods = paymentMethodRepository.getPaymentMethods(true)?.getOrNull()?.isEmpty() == true
+
+        return when {
+            noPaymentMethods -> FuelingWarning.PAYMENT_METHODS
+            gasStation.isInFrance() -> FuelingWarning.LEGAL
+            else -> null
+        }
     }
 
     fun startNavigation(context: Context, gasStation: GasStation) {

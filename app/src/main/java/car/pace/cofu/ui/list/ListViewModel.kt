@@ -2,11 +2,15 @@ package car.pace.cofu.ui.list
 
 import android.content.Context
 import android.location.Location
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import car.pace.cofu.data.GasStationRepository
+import car.pace.cofu.data.PaymentMethodRepository
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_FUEL_TYPE
+import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_PAYMENT_METHOD_MANAGEMENT_AVAILABLE
 import car.pace.cofu.data.analytics.Analytics
 import car.pace.cofu.data.analytics.FuelingStarted
 import car.pace.cofu.data.analytics.StationNavigationUsed
@@ -14,6 +18,7 @@ import car.pace.cofu.data.analytics.StationNearby
 import car.pace.cofu.data.location.LocationRepository
 import car.pace.cofu.ui.wallet.fueltype.toFuelTypeGroup
 import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
+import car.pace.cofu.util.FuelingWarning
 import car.pace.cofu.util.IntentUtils
 import car.pace.cofu.util.LogAndBreadcrumb
 import car.pace.cofu.util.UiState
@@ -30,6 +35,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel
@@ -37,7 +43,8 @@ class ListViewModel @Inject constructor(
     sharedPreferencesRepository: SharedPreferencesRepository,
     gasStationRepository: GasStationRepository,
     private val locationRepository: LocationRepository,
-    private val analytics: Analytics
+    private val analytics: Analytics,
+    private val paymentMethodRepository: PaymentMethodRepository
 ) : ViewModel() {
 
     data class ListStation(
@@ -73,6 +80,21 @@ class ListViewModel @Inject constructor(
         initialValue = UiState.Loading
     )
 
+    val showPaymentMethodsHint = paymentMethodRepository.paymentMethods
+        .onSubscription {
+            paymentMethodRepository.refreshPaymentMethods()
+        }
+        .map {
+            it.getOrNull()?.isEmpty() == true
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = false
+        )
+
+    val canAddPaymentMethods by mutableStateOf(sharedPreferencesRepository.getBoolean(PREF_KEY_PAYMENT_METHOD_MANAGEMENT_AVAILABLE, true))
+
     private val initialValue = sharedPreferencesRepository.getInt(PREF_KEY_FUEL_TYPE, -1)
     val fuelTypeGroup = sharedPreferencesRepository
         .getValue(PREF_KEY_FUEL_TYPE, initialValue)
@@ -101,7 +123,13 @@ class ListViewModel @Inject constructor(
         AppKit.openFuelingApp(context = context, id = gasStation.id, callback = analytics.TrackingAppCallback())
     }
 
-    fun shouldShowLegalWarning(gasStation: GasStation): Boolean = gasStation.isInFrance()
+    fun checkForFuelingWarnings(gasStation: GasStation): FuelingWarning? {
+        return when {
+            showPaymentMethodsHint.value -> FuelingWarning.PAYMENT_METHODS
+            gasStation.isInFrance() -> FuelingWarning.LEGAL
+            else -> null
+        }
+    }
 
     fun startNavigation(context: Context, gasStation: GasStation) {
         LogAndBreadcrumb.i(LogAndBreadcrumb.LIST, "Start navigation to gas station")

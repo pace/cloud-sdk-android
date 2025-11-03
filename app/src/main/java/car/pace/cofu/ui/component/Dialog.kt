@@ -4,11 +4,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
+import androidx.compose.material.icons.outlined.ErrorOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +26,7 @@ fun DefaultDialog(
     confirmButtonText: String,
     dismissButtonText: String? = null,
     imageVector: ImageVector? = null,
+    imageTint: Color? = null,
     onConfirm: () -> Unit = {},
     onDismiss: () -> Unit = {}
 ) {
@@ -49,7 +53,8 @@ fun DefaultDialog(
                 Icon(
                     imageVector = imageVector,
                     contentDescription = null,
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(40.dp),
+                    tint = imageTint ?: LocalContentColor.current
                 )
             }
         } else {
@@ -91,6 +96,24 @@ fun FuelingLegalWarningDialog(
         dismissButtonText = stringResource(id = R.string.common_use_cancel),
         onConfirm = onConfirm,
         onDismiss = onDismiss
+    )
+}
+
+@Composable
+fun MissingPaymentMethodDialog(
+    canAddPaymentMethods: Boolean,
+    onConfirm: () -> Unit
+) {
+    val title = if (canAddPaymentMethods) R.string.payment_methods_empty_title else R.string.managed_payment_methods_empty_title
+    val text = if (canAddPaymentMethods) R.string.payment_methods_empty_description else R.string.managed_payment_methods_empty_description
+
+    DefaultDialog(
+        title = stringResource(title),
+        text = stringResource(text),
+        confirmButtonText = stringResource(id = R.string.common_use_ok),
+        imageVector = Icons.Outlined.ErrorOutline,
+        imageTint = MaterialTheme.colorScheme.error,
+        onConfirm = onConfirm
     )
 }
 

@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,6 +56,7 @@ import car.pace.cofu.ui.component.FuelingLegalWarningDialog
 import car.pace.cofu.ui.component.LoadingCard
 import car.pace.cofu.ui.component.LoadingMap
 import car.pace.cofu.ui.component.MarkerAnchor
+import car.pace.cofu.ui.component.MissingPaymentMethodDialog
 import car.pace.cofu.ui.component.PrimaryButton
 import car.pace.cofu.ui.component.SecondaryButton
 import car.pace.cofu.ui.component.TextTopBar
@@ -76,6 +78,7 @@ import car.pace.cofu.util.Constants.DETAIL_SPACER_CONTENT_TYPE
 import car.pace.cofu.util.Constants.DETAIL_SPACER_TOP_KEY
 import car.pace.cofu.util.Constants.DETAIL_TOP_CONTENT_CONTENT_TYPE
 import car.pace.cofu.util.Constants.DETAIL_TOP_CONTENT_KEY
+import car.pace.cofu.util.FuelingWarning
 import car.pace.cofu.util.UiState
 import car.pace.cofu.util.extension.canStartFueling
 import car.pace.cofu.util.extension.distanceText
@@ -100,6 +103,7 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import java.util.Date
 import java.util.UUID
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -109,8 +113,10 @@ fun DetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val userLocation by viewModel.userLocation.collectAsStateWithLifecycle()
+    var showWarning by remember { mutableStateOf<Pair<FuelingWarning, GasStation>?>(null) }
+
     val context = LocalContext.current
-    var showLegalWarning by remember { mutableStateOf<GasStation?>(null) }
+    val coroutineScope = rememberCoroutineScope()
 
     DetailScreenContent(
         uiState = uiState,
@@ -118,10 +124,13 @@ fun DetailScreen(
         onNavigateUp = onNavigateUp,
         onRefresh = viewModel::refresh,
         onStartFueling = {
-            if (viewModel.shouldShowLegalWarning(it)) {
-                showLegalWarning = it
-            } else {
-                viewModel.startFueling(context, it)
+            coroutineScope.launch {
+                val fuelingWarning = viewModel.checkForFuelingWarnings(it)
+                if (fuelingWarning != null) {
+                    showWarning = fuelingWarning to it
+                } else {
+                    viewModel.startFueling(context, it)
+                }
             }
         },
         onStartNavigation = {
@@ -129,17 +138,31 @@ fun DetailScreen(
         }
     )
 
-    val legalWarningStation = showLegalWarning
-    if (legalWarningStation != null) {
-        FuelingLegalWarningDialog(
-            onConfirm = {
-                showLegalWarning = null
-                viewModel.startFueling(context, legalWarningStation)
-            },
-            onDismiss = {
-                showLegalWarning = null
+    val warning = showWarning?.first
+    val warningStation = showWarning?.second
+    if (warning != null && warningStation != null) {
+        when (warning) {
+            FuelingWarning.PAYMENT_METHODS -> {
+                MissingPaymentMethodDialog(
+                    canAddPaymentMethods = viewModel.canAddPaymentMethods,
+                    onConfirm = {
+                        showWarning = null
+                    }
+                )
             }
-        )
+
+            FuelingWarning.LEGAL -> {
+                FuelingLegalWarningDialog(
+                    onConfirm = {
+                        showWarning = null
+                        viewModel.startFueling(context, warningStation)
+                    },
+                    onDismiss = {
+                        showWarning = null
+                    }
+                )
+            }
+        }
     }
 }
 
