@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -565,6 +566,8 @@ fun PriceListItem(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        var textLineCount by remember { mutableIntStateOf(1) }
+
         Text(
             text = productName,
             color = MaterialTheme.colorScheme.onPrimary,
@@ -572,11 +575,15 @@ fun PriceListItem(
             lineHeight = 16.sp,
             overflow = TextOverflow.Ellipsis,
             maxLines = 2,
-            style = MaterialTheme.typography.labelMedium
+            style = MaterialTheme.typography.labelMedium,
+            modifier = Modifier.padding(bottom = if (textLineCount == 1) 8.dp else 1.dp),
+            onTextLayout = { textLayoutResult ->
+                textLineCount = textLayoutResult.lineCount
+            }
         )
+
         Text(
             text = formattedPrice,
-            modifier = Modifier.padding(top = 8.dp),
             color = MaterialTheme.colorScheme.onPrimary,
             textAlign = TextAlign.Center,
             overflow = TextOverflow.Ellipsis,
