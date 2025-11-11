@@ -1,11 +1,15 @@
 package car.pace.cofu.ui.wallet
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import car.pace.cofu.BuildConfig
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.UserRepository
 import car.pace.cofu.ui.Route
+import car.pace.cofu.util.IntentUtils
+import car.pace.cofu.util.LogAndBreadcrumb
+import cloud.pace.sdk.appkit.AppKit
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -29,5 +33,17 @@ class WalletViewModel @Inject constructor(
 
     suspend fun resetAppData(activity: AppCompatActivity) {
         userRepository.resetAppData(activity)
+    }
+
+    fun onDeleteAccount(context: Context) {
+        LogAndBreadcrumb.d(LogAndBreadcrumb.WALLET, "Page for account deletion gets displayed")
+
+        val externalAccountLink = BuildConfig.EXTERNAL_OIDC_ACCOUNT_DELETION_URL
+
+        if (externalAccountLink != null) {
+            IntentUtils.launchInCustomTabIfAvailable(context, externalAccountLink)
+        } else {
+            AppKit.openPaceID(context)
+        }
     }
 }

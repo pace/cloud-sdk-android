@@ -59,7 +59,8 @@ android {
         resValue("string", "google_maps_api_key", configuration.google_maps_api_key)
 
         buildConfigField("String", "CLIENT_ID", "\"" + configuration.client_id + "\"")
-        buildConfigField("String", "REDIRECT_URI", "\"${configuration.client_id}://callback\"")
+        val redirectUri = configuration.external_oidc?.redirect_uri ?: "${configuration.client_id}://callback"
+        buildConfigField("String", "REDIRECT_URI", "\"" + redirectUri + "\"")
         buildConfigField("@androidx.annotation.Nullable String", "DEFAULT_IDP", configuration.default_idp?.let { "\"" + it + "\"" }.toString())
         buildConfigField("Boolean", "HIDE_PRICES", configuration.hide_prices.toString())
         buildConfigField("Boolean", "ONBOARDING_SHOW_CUSTOM_HEADER", configuration.onboarding_show_custom_header.toString())
@@ -90,6 +91,20 @@ android {
                 apply(plugin = "com.google.firebase.crashlytics")
             }
         }
+
+        // Token exchange
+        buildConfigField("Boolean", "TOKEN_EXCHANGE_ENABLED", (configuration.token_exchange != null).toString())
+        buildConfigField("@androidx.annotation.Nullable String", "TOKEN_EXCHANGE_CLIENT_ID", configuration.token_exchange?.client_id?.let { "\"" + it + "\"" }.toString())
+        buildConfigField("@androidx.annotation.Nullable String", "TOKEN_EXCHANGE_ISSUER_ID", configuration.token_exchange?.issuer_id?.let { "\"" + it + "\"" }.toString())
+        buildConfigField("@androidx.annotation.Nullable String", "TOKEN_EXCHANGE_CLIENT_SECRET", configuration.token_exchange?.client_secret?.let { "\"" + it + "\"" }.toString())
+
+        // External OIDC
+        buildConfigField("Boolean", "EXTERNAL_OIDC_ENABLED", (configuration.external_oidc != null).toString())
+        buildConfigField("@androidx.annotation.Nullable String", "EXTERNAL_OIDC_AUTH_ENDPOINT", configuration.external_oidc?.auth_endpoint?.let { "\"" + it + "\"" }.toString())
+        buildConfigField("@androidx.annotation.Nullable String", "EXTERNAL_OIDC_TOKEN_ENDPOINT", configuration.external_oidc?.token_endpoint?.let { "\"" + it + "\"" }.toString())
+        buildConfigField("@androidx.annotation.Nullable String", "EXTERNAL_OIDC_END_SESSION_ENDPOINT", configuration.external_oidc?.end_session_endpoint?.let { "\"" + it + "\"" }.toString())
+        buildConfigField("@androidx.annotation.Nullable String", "EXTERNAL_OIDC_CLIENT_SECRET", configuration.external_oidc?.client_secret?.let { "\"" + it + "\"" }.toString())
+        buildConfigField("@androidx.annotation.Nullable String", "EXTERNAL_OIDC_ACCOUNT_DELETION_URL", configuration.external_oidc?.account_deletion_url?.let { "\"" + it + "\"" }.toString())
     }
 
     buildTypes {
@@ -179,7 +194,7 @@ android {
 
 dependencies {
     // PACE Cloud SDK
-    implementation("cloud.pace:sdk:25.0.0")
+    implementation("cloud.pace:sdk:25.1.1")
 
     // Jetpack Compose
     val composeBom = platform("androidx.compose:compose-bom:2024.10.00")
