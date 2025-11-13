@@ -14,7 +14,8 @@ data class OIDConfiguration @JvmOverloads constructor(
     val redirectUri: String,
     val responseType: String = ResponseTypeValues.CODE,
     var additionalParameters: Map<String, String>? = null,
-    val integrated: Boolean = false
+    val integrated: Boolean = false,
+    val tokenExchangeConfig: TokenExchangeConfiguration? = null
 )
 
 fun OIDConfiguration.toAuthorizationServiceConfiguration() = AuthorizationServiceConfiguration(

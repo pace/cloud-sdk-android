@@ -32,6 +32,20 @@ android {
         }
     }
 
+    flavorDimensions += "version"
+
+    productFlavors {
+        create("default") {
+            dimension = "version"
+            buildConfigField("boolean", "TOKEN_EXCHANGE", "false")
+        }
+
+        create("tokenExchange") {
+            dimension = "version"
+            buildConfigField("boolean", "TOKEN_EXCHANGE", "true")
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

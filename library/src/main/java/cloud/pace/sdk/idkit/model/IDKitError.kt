@@ -4,6 +4,7 @@ object InvalidSession : Exception("The current session is either invalid or expi
 object FailedRetrievingSessionWhileAuthorizing : Exception("The authorization request failed because the session couldn't be retrieved.")
 object FailedRetrievingConfigurationWhileDiscovering : Exception("The discovery failed because the configuration couldn't be retrieved.")
 object FailedRetrievingSessionWhileEnding : Exception("The end session request failed because the session couldn't be retrieved.")
+object FailedRetrievingExchangedToken : Exception("The exchanged token couldn't be retrieved.")
 object UserEndpointNotDefined : Exception("The user endpoint was not defined.")
 object InternalError : Exception("An internal error occurred.")
 object BiometricAuthenticationNotSupported : Exception("The device doesn't have biometric authentication.")

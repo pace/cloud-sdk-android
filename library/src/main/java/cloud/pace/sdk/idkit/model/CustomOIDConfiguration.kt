@@ -13,8 +13,11 @@ data class CustomOIDConfiguration @JvmOverloads constructor(
     val scopes: List<String>? = null,
     val responseType: String = ResponseTypeValues.CODE,
     var additionalParameters: Map<String, String>? = null,
-    val integrated: Boolean = false
+    val integrated: Boolean = false,
+    val tokenExchangeConfig: TokenExchangeConfiguration? = null
 )
+
+data class TokenExchangeConfiguration(val issuerId: String, val clientId: String, val clientSecret: String)
 
 fun CustomOIDConfiguration.oidConfiguration(environment: Environment) =
     when (environment) {
@@ -28,7 +31,8 @@ fun CustomOIDConfiguration.oidConfiguration(environment: Environment) =
             redirectUri = redirectUri,
             responseType = responseType,
             additionalParameters = additionalParameters,
-            integrated = integrated
+            integrated = integrated,
+            tokenExchangeConfig = tokenExchangeConfig
         )
         Environment.SANDBOX -> OIDConfiguration(
             authorizationEndpoint = authorizationEndpoint ?: "https://id.sandbox.pace.cloud/auth/realms/pace/protocol/openid-connect/auth",
@@ -40,7 +44,8 @@ fun CustomOIDConfiguration.oidConfiguration(environment: Environment) =
             redirectUri = redirectUri,
             responseType = responseType,
             additionalParameters = additionalParameters,
-            integrated = integrated
+            integrated = integrated,
+            tokenExchangeConfig = tokenExchangeConfig
         )
         Environment.DEVELOPMENT -> OIDConfiguration(
             authorizationEndpoint = authorizationEndpoint ?: "https://id.dev.pace.cloud/auth/realms/pace/protocol/openid-connect/auth",
@@ -52,6 +57,7 @@ fun CustomOIDConfiguration.oidConfiguration(environment: Environment) =
             redirectUri = redirectUri,
             responseType = responseType,
             additionalParameters = additionalParameters,
-            integrated = integrated
+            integrated = integrated,
+            tokenExchangeConfig = tokenExchangeConfig
         )
     }
