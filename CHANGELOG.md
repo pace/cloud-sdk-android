@@ -1,3 +1,17 @@
+25.1.0 Release notes (2025-11-17)
+=============================================================
+
+### Enhancements
+
+* Add token exchange
+
+### Internal
+
+* Adjust geo apps scope for token exchange
+* Remove unused snapshot close and release job
+* Migrate to Sonatype Publisher Portal API
+* Regenerate communication code
+
 25.0.1 Release notes (2025-01-23)
 =============================================================
 
