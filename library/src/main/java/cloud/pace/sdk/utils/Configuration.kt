@@ -15,9 +15,9 @@ data class Configuration @JvmOverloads constructor(
     var domainACL: List<String> = listOf("pace.cloud", "fuel.site"),
     var locationAccuracy: Int? = null,
     var speedThresholdInKmPerHour: Int = 50,
-    var geoAppsScope: String = clientId,
-    var appsDistanceThresholdInMeters: Int = 150,
     var oidConfiguration: CustomOIDConfiguration? = null,
+    var geoAppsScope: String = oidConfiguration?.tokenExchangeConfig?.clientId ?: clientId,
+    var appsDistanceThresholdInMeters: Int = 150,
     var isMetaCollectorEnabled: Boolean = true
 )
 
