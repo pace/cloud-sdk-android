@@ -19,7 +19,7 @@ object PACETokenExchangeAPI {
         fun tokenExchange(
             @HeaderMap headers: Map<String, String>,
             @Field("client_id") clientId: String,
-            @Field("client_secret") clientSecret: String,
+            @Field("client_secret") clientSecret: String?,
             @Field("grant_type") grantType: String,
             @Field("subject_issuer") subjectIssuer: String,
             @Field("subject_token") subjectToken: String,
@@ -30,7 +30,7 @@ object PACETokenExchangeAPI {
     open class Request : BaseRequest() {
         fun tokenExchange(
             clientId: String,
-            clientSecret: String,
+            clientSecret: String?,
             grantType: String,
             subjectIssuer: String,
             subjectToken: String,
@@ -54,7 +54,7 @@ object PACETokenExchangeAPI {
 
     fun tokenExchange(
         clientId: String,
-        clientSecret: String,
+        clientSecret: String?,
         grantType: String = "urn:ietf:params:oauth:grant-type:token-exchange",
         subjectIssuer: String,
         subjectToken: String,
