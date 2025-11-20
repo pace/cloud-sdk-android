@@ -17,7 +17,7 @@ data class CustomOIDConfiguration @JvmOverloads constructor(
     val tokenExchangeConfig: TokenExchangeConfiguration? = null
 )
 
-data class TokenExchangeConfiguration(val issuerId: String, val clientId: String, val clientSecret: String)
+data class TokenExchangeConfiguration(val issuerId: String, val clientId: String, val clientSecret: String? = null)
 
 fun CustomOIDConfiguration.oidConfiguration(environment: Environment) =
     when (environment) {
