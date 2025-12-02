@@ -49,7 +49,6 @@ import car.pace.cofu.util.Constants.USER_HEADER_CONTENT_TYPE
 import car.pace.cofu.util.Constants.USER_HEADER_KEY
 import car.pace.cofu.util.JWTUtils
 import car.pace.cofu.util.LogAndBreadcrumb
-import cloud.pace.sdk.appkit.AppKit
 import cloud.pace.sdk.idkit.IDKit
 import kotlinx.coroutines.launch
 
@@ -77,7 +76,8 @@ fun WalletScreen(
                 onLogout()
             }
         },
-        onNavigate = onNavigate
+        onNavigate = onNavigate,
+        onDeleteAccount = { viewModel.onDeleteAccount(context) }
     )
 }
 
@@ -86,7 +86,8 @@ fun WalletScreenContent(
     email: String,
     items: List<Route>,
     onLogout: () -> Unit,
-    onNavigate: (Route) -> Unit
+    onNavigate: (Route) -> Unit,
+    onDeleteAccount: () -> Unit
 ) {
     Column {
         TextTopBar(
@@ -128,8 +129,7 @@ fun WalletScreenContent(
                         onClick = {
                             when (it) {
                                 Route.DELETE_ACCOUNT -> {
-                                    LogAndBreadcrumb.d(LogAndBreadcrumb.WALLET, "PACE ID gets displayed")
-                                    AppKit.openPaceID(context)
+                                    onDeleteAccount()
                                 }
 
                                 else -> onNavigate(it)
@@ -233,7 +233,8 @@ fun WalletScreenContentPreview() {
             email = "user@pace.car",
             items = listOf(Route.PAYMENT_METHODS, Route.TRANSACTIONS, Route.FUEL_TYPE),
             onLogout = {},
-            onNavigate = {}
+            onNavigate = {},
+            onDeleteAccount = {}
         )
     }
 }

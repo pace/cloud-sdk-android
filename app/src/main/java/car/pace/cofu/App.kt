@@ -8,6 +8,7 @@ import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.analytics.Analytics
 import cloud.pace.sdk.PACECloudSDK
 import cloud.pace.sdk.idkit.model.CustomOIDConfiguration
+import cloud.pace.sdk.idkit.model.TokenExchangeConfiguration
 import cloud.pace.sdk.utils.AuthenticationMode
 import cloud.pace.sdk.utils.Configuration
 import cloud.pace.sdk.utils.DeviceUtils
@@ -60,14 +61,41 @@ class App : Application() {
                 apiKey = "none",
                 authenticationMode = AuthenticationMode.NATIVE,
                 environment = environment,
-                oidConfiguration = CustomOIDConfiguration(
-                    redirectUri = BuildConfig.REDIRECT_URI,
-                    additionalParameters = BuildConfig.DEFAULT_IDP?.let { mapOf("kc_idp_hint" to it) }
-                )
+                oidConfiguration = getCustomOIDConfiguration()
             )
         )
 
         logAppSessionStart(analyticsEnabled)
+    }
+
+    private fun getCustomOIDConfiguration(): CustomOIDConfiguration {
+        val defaultConfig = CustomOIDConfiguration(
+            redirectUri = BuildConfig.REDIRECT_URI,
+            additionalParameters = BuildConfig.DEFAULT_IDP?.let { mapOf("kc_idp_hint" to it) }
+        )
+
+        return try {
+            if (BuildConfig.TOKEN_EXCHANGE_ENABLED && BuildConfig.EXTERNAL_OIDC_ENABLED) {
+                CustomOIDConfiguration(
+                    redirectUri = BuildConfig.REDIRECT_URI,
+                    additionalParameters = mapOf("kc_idp_hint" to (BuildConfig.DEFAULT_IDP ?: "")),
+                    authorizationEndpoint = BuildConfig.EXTERNAL_OIDC_AUTH_ENDPOINT,
+                    tokenEndpoint = BuildConfig.EXTERNAL_OIDC_TOKEN_ENDPOINT,
+                    endSessionEndpoint = BuildConfig.EXTERNAL_OIDC_END_SESSION_ENDPOINT,
+                    clientSecret = BuildConfig.EXTERNAL_OIDC_CLIENT_SECRET,
+                    tokenExchangeConfig = TokenExchangeConfiguration(
+                        clientId = BuildConfig.TOKEN_EXCHANGE_CLIENT_ID ?: throw IllegalStateException("TOKEN_EXCHANGE_CLIENT_ID is required when TOKEN_EXCHANGE_ENABLED is true"),
+                        issuerId = BuildConfig.TOKEN_EXCHANGE_ISSUER_ID ?: throw IllegalStateException("TOKEN_EXCHANGE_ISSUER_ID is required when TOKEN_EXCHANGE_ENABLED is true"),
+                        clientSecret = BuildConfig.TOKEN_EXCHANGE_CLIENT_SECRET
+                    )
+                )
+            } else {
+                defaultConfig
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Error creating token exchange configuration, falling back to default configuration")
+            defaultConfig
+        }
     }
 
     private fun createNotificationChannel() {
