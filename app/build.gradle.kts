@@ -212,7 +212,6 @@ dependencies {
     implementation("com.google.maps.android:maps-compose-utils:4.3.2")
     implementation("com.google.accompanist:accompanist-permissions:0.36.0")
     implementation("io.coil-kt:coil-compose:2.5.0")
-    implementation("com.github.composeuisuite:ohteepee:1.0.3")
     implementation("androidx.paging:paging-compose:3.3.6")
 
     // Hilt

@@ -1,6 +1,7 @@
 package car.pace.cofu.ui.onboarding.twofactor.setup
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -92,6 +93,11 @@ fun TwoFactorSetup(
             onSuccess {
                 changeStep(true)
             }.onFailure {
+                when (page) {
+                    TwoFactorSetupPage.PIN_INPUT -> pinInput = ""
+                    TwoFactorSetupPage.PIN_CONFIRMATION -> pinConfirmation = ""
+                    TwoFactorSetupPage.OTP_INPUT -> otpInput = ""
+                }
                 uiState = UiState.Error(it)
             }
         }
@@ -170,7 +176,7 @@ fun TwoFactorSetupContent(
                 modifier = Modifier.padding(top = 20.dp)
             )
 
-            val modifier = Modifier.padding(top = 28.dp)
+            val modifier = Modifier.padding(top = 28.dp, start = 10.dp, end = 10.dp)
             when (page) {
                 TwoFactorSetupPage.PIN_INPUT -> {
                     PinInputField(
@@ -178,7 +184,8 @@ fun TwoFactorSetupContent(
                         modifier = modifier,
                         isValueInvalid = uiState is UiState.Error,
                         enabled = uiState !is UiState.Loading,
-                        onValueChange = onValueChange
+                        onValueChange = onValueChange,
+                        onConfirm = onButtonClick
                     )
                 }
 
@@ -188,7 +195,8 @@ fun TwoFactorSetupContent(
                         modifier = modifier,
                         isValueInvalid = uiState is UiState.Error,
                         enabled = uiState !is UiState.Loading,
-                        onValueChange = onValueChange
+                        onValueChange = onValueChange,
+                        onConfirm = onButtonClick
                     )
                 }
 
@@ -198,7 +206,8 @@ fun TwoFactorSetupContent(
                         modifier = modifier,
                         isValueInvalid = uiState is UiState.Error,
                         enabled = uiState !is UiState.Loading,
-                        onValueChange = onValueChange
+                        onValueChange = onValueChange,
+                        onConfirm = onButtonClick
                     )
                 }
             }
@@ -231,7 +240,8 @@ fun PinInputField(
     modifier: Modifier = Modifier,
     isValueInvalid: Boolean = false,
     enabled: Boolean = true,
-    onValueChange: (newValue: String, isValid: Boolean) -> Unit
+    onValueChange: (newValue: String, isValid: Boolean) -> Unit,
+    onConfirm: () -> Unit
 ) {
     OtpInput(
         value = value,
@@ -239,7 +249,8 @@ fun PinInputField(
         modifier = modifier,
         isValueInvalid = isValueInvalid,
         enabled = enabled,
-        onValueChange = onValueChange
+        onValueChange = onValueChange,
+        onConfirm = onConfirm
     )
 }
 
@@ -249,7 +260,8 @@ fun PinConfirmationInputField(
     modifier: Modifier = Modifier,
     isValueInvalid: Boolean = false,
     enabled: Boolean = true,
-    onValueChange: (newValue: String, isValid: Boolean) -> Unit
+    onValueChange: (newValue: String, isValid: Boolean) -> Unit,
+    onConfirm: () -> Unit
 ) {
     OtpInput(
         value = value,
@@ -257,17 +269,20 @@ fun PinConfirmationInputField(
         modifier = modifier,
         isValueInvalid = isValueInvalid,
         enabled = enabled,
-        onValueChange = onValueChange
+        onValueChange = onValueChange,
+        onConfirm = onConfirm
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun OtpInputField(
     value: String,
     modifier: Modifier = Modifier,
     isValueInvalid: Boolean = false,
     enabled: Boolean = true,
-    onValueChange: (newValue: String, isValid: Boolean) -> Unit
+    onValueChange: (newValue: String, isValid: Boolean) -> Unit,
+    onConfirm: () -> Unit
 ) {
     OtpInput(
         value = value,
@@ -275,7 +290,8 @@ fun OtpInputField(
         modifier = modifier,
         isValueInvalid = isValueInvalid,
         enabled = enabled,
-        onValueChange = onValueChange
+        onValueChange = onValueChange,
+        onConfirm = onConfirm
     )
 }
 
