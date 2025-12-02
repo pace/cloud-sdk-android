@@ -8,6 +8,7 @@ import cloud.pace.sdk.api.pay.generated.model.PaymentMethods
 
 const val APPLE_PAY = "applepay"
 const val GOOGLE_PAY = "googlepay"
+const val PACE_DRIVE_BUSINESS = "pacedrivebusiness"
 
 val unsupportedPaymentMethods = listOf(APPLE_PAY)
 
@@ -18,7 +19,8 @@ fun PaymentMethod.toPaymentMethodItem() = PaymentMethodItem(
     vendorId = getPaymentMethodVendor().id,
     imageUrl = getPaymentMethodVendor().logo?.href?.let { Uri.parse(it) },
     kind = getPaymentMethodKind().name ?: kind?.capitalize(Locale.current),
-    alias = alias ?: identificationString
+    alias = alias ?: identificationString,
+    rawKind = kind
 )
 
 data class PaymentMethodItem(
@@ -26,5 +28,6 @@ data class PaymentMethodItem(
     val vendorId: String,
     val imageUrl: Uri?,
     val kind: String?,
-    val alias: String?
+    val alias: String?,
+    val rawKind: String? = null
 )
