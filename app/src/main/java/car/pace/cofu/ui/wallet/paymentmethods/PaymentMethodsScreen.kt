@@ -39,6 +39,7 @@ import car.pace.cofu.ui.component.forwardingPainter
 import car.pace.cofu.ui.theme.AppTheme
 import car.pace.cofu.util.Constants.PAYMENT_METHOD_LIST_ITEM_CONTENT_TYPE
 import car.pace.cofu.util.UiState
+import car.pace.cofu.util.extension.PACE_DRIVE_BUSINESS
 import car.pace.cofu.util.extension.PaymentMethodItem
 import coil.compose.AsyncImage
 import java.util.UUID
@@ -122,7 +123,8 @@ fun PaymentMethodsScreenContent(
                                     ),
                                     imageUrl = it.imageUrl,
                                     kind = it.kind,
-                                    alias = it.alias
+                                    alias = it.alias,
+                                    rawKind = it.rawKind
                                 )
                             }
                         }
@@ -154,7 +156,8 @@ fun PaymentMethodListItem(
     modifier: Modifier = Modifier,
     imageUrl: Uri?,
     kind: String?,
-    alias: String?
+    alias: String?,
+    rawKind: String? = null
 ) {
     Column(
         modifier = modifier
@@ -170,8 +173,12 @@ fun PaymentMethodListItem(
                 colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
             )
 
+            // Use local ic_pdb_logo for pacedrivebusiness payment methods
+            val isPaceDriveBusiness = rawKind == PACE_DRIVE_BUSINESS
+            val imageModel = if (isPaceDriveBusiness) R.drawable.ic_pdb_logo else imageUrl
+
             AsyncImage(
-                model = imageUrl,
+                model = imageModel,
                 contentDescription = kind,
                 modifier = Modifier.size(32.dp),
                 placeholder = fallbackIconPainter,
@@ -182,13 +189,20 @@ fun PaymentMethodListItem(
                     .padding(start = 12.dp)
                     .weight(1f)
             ) {
+                // Use localized string for pacedrivebusiness payment methods
+                val displayKind = if (isPaceDriveBusiness) {
+                    stringResource(id = R.string.payment_method_kind_pacedrivebusiness)
+                } else {
+                    kind.orEmpty()
+                }
+
                 Text(
-                    text = kind.orEmpty(),
+                    text = displayKind,
                     color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.bodySmall
                 )
                 Text(
-                    text = alias ?: kind.orEmpty(),
+                    text = alias ?: displayKind,
                     modifier = Modifier.padding(top = 8.dp),
                     color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.titleSmall

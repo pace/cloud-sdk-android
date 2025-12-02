@@ -180,6 +180,7 @@
     <string name="payment_method_kind_giropay">giropay</string>
     <string name="payment_method_kind_googlepay">Google Pay</string>
     <string name="payment_method_kind_hoyer">Carte Hoyer</string>
+    <string name="payment_method_kind_pacedrivebusiness">DKV InstantFuel</string>
     <string name="payment_method_kind_paypal">PayPal</string>
     <string name="payment_method_kind_sepa">Prélèvement SEPA</string>
     <string name="payment_method_kind_zgm">Carte ZGM</string>
