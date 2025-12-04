@@ -23,7 +23,9 @@ object DisableDiscountsForPaymentMethodAPI {
         fun disableDiscountsForPaymentMethod(
             @HeaderMap headers: Map<String, String>,
             /* ID of the paymentMethod */
-            @Path("paymentMethodId") paymentMethodId: String
+            @Path("paymentMethodId") paymentMethodId: String,
+            /* ID of the user */
+            @Path("filter[userId]") filteruserId: String
         ): Call<ResponseBody>
     }
 
@@ -31,6 +33,7 @@ object DisableDiscountsForPaymentMethodAPI {
 
         fun disableDiscountsForPaymentMethod(
             paymentMethodId: String,
+            filteruserId: String,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
@@ -41,18 +44,21 @@ object DisableDiscountsForPaymentMethodAPI {
                 .create(DisableDiscountsForPaymentMethodService::class.java)
                 .disableDiscountsForPaymentMethod(
                     headers,
-                    paymentMethodId
+                    paymentMethodId,
+                    filteruserId
                 )
         }
     }
 
     fun PayAPI.PaymentMethodsAPI.disableDiscountsForPaymentMethod(
         paymentMethodId: String,
+        filteruserId: String,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
     ) = Request().disableDiscountsForPaymentMethod(
         paymentMethodId,
+        filteruserId,
         readTimeout,
         additionalHeaders,
         additionalParameters

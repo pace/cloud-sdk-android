@@ -20,6 +20,9 @@ class PaymentTokenCreateApplePay : Resource() {
     /* PACE resource name(s) of one or multiple resources, for which the payment should be authorized. */
     lateinit var purposePRNs: List<String>
     lateinit var applePay: ApplePay
+
+    /* The billing e-mail address */
+    var billingEmail: String? = null
     var discountTokens: List<String>? = null
 
     /* The code and method for two factor authentication, if required by the payment method */

@@ -5,65 +5,61 @@
  * https://github.com/pace/SwagGen
  */
 
-package cloud.pace.sdk.api.pay.generated.request.paymentMethods
+package cloud.pace.sdk.api.pay.generated.request.paceDriveBusiness
 
 import cloud.pace.sdk.api.pay.PayAPI
-import cloud.pace.sdk.api.pay.generated.model.PaymentMethodModel
-import cloud.pace.sdk.api.pay.generated.model.RequestPaymentMethodModelBody
 import cloud.pace.sdk.api.request.BaseRequest
+import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.http.DELETE
 import retrofit2.http.HeaderMap
-import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
-object PaymentMethodModelAPI {
+object DeletePaymentMethodPaceDriveBusinessAPI {
 
-    interface PaymentMethodModelService {
-        /* Returns the model of the Payment Method e.g. "reseller" */
-        @POST("payment-methods/{paymentMethodId}/model")
-        fun paymentMethodModel(
+    interface DeletePaymentMethodPaceDriveBusinessService {
+        /* Delete a payment method */
+        @DELETE("payment-methods/pace-drive-business/{paymentMethodId}")
+        fun deletePaymentMethodPaceDriveBusiness(
             @HeaderMap headers: Map<String, String>,
             /* ID of the paymentMethod */
             @Path("paymentMethodId") paymentMethodId: String,
-            @retrofit2.http.Body body: Body
-        ): Call<PaymentMethodModel>
-    }
-
-    class Body {
-
-        var data: RequestPaymentMethodModelBody? = null
+            /* ID of the user for which the payment method is deleted. */
+            @Query("userId") userId: String
+        ): Call<ResponseBody>
     }
 
     open class Request : BaseRequest() {
 
-        fun paymentMethodModel(
+        fun deletePaymentMethodPaceDriveBusiness(
             paymentMethodId: String,
-            body: Body,
+            userId: String,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
-        ): Call<PaymentMethodModel> {
-            val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
+        ): Call<ResponseBody> {
+            val headers = headers(true, "application/json", "application/json", additionalHeaders)
 
             return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout)
-                .create(PaymentMethodModelService::class.java)
-                .paymentMethodModel(
+                .create(DeletePaymentMethodPaceDriveBusinessService::class.java)
+                .deletePaymentMethodPaceDriveBusiness(
                     headers,
                     paymentMethodId,
-                    body
+                    userId
                 )
         }
     }
 
-    fun PayAPI.PaymentMethodsAPI.paymentMethodModel(
+    fun PayAPI.PaceDriveBusinessAPI.deletePaymentMethodPaceDriveBusiness(
         paymentMethodId: String,
-        body: Body,
+        userId: String,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ) = Request().paymentMethodModel(
+    ) = Request().deletePaymentMethodPaceDriveBusiness(
         paymentMethodId,
-        body,
+        userId,
         readTimeout,
         additionalHeaders,
         additionalParameters

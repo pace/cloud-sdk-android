@@ -39,6 +39,9 @@ class Transaction : Resource() {
     /* Amount that was discounted. Only if any discounts were applied earlier. */
     var discountAmount: Double? = null
 
+    /* Driver code of the driver. Must not exceed 4 digits. */
+    var driverCode: String? = null
+
     /* Driver/vehicle identification */
     var driverVehicleID: String? = null
 

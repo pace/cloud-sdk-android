@@ -18,6 +18,7 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.HeaderMap
+import retrofit2.http.Query
 
 object GetPaymentMethodsAPI {
 
@@ -27,7 +28,8 @@ object GetPaymentMethodsAPI {
         fun getPaymentMethods(
             @HeaderMap headers: Map<String, String>,
             /* Language preference of localized response properties. The full standard of RFC 7231 (https://tools.ietf.org/html/rfc7231#section-5.3.5) is supported. */
-            @Header("Accept-Language") acceptLanguage: String? = null
+            @Header("Accept-Language") acceptLanguage: String? = null,
+            @Query("filter[userID]") filteruserID: String? = null
         ): Call<PaymentMethods>
     }
 
@@ -35,6 +37,7 @@ object GetPaymentMethodsAPI {
 
         fun getPaymentMethods(
             acceptLanguage: String? = null,
+            filteruserID: String? = null,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
@@ -46,18 +49,21 @@ object GetPaymentMethodsAPI {
                 .create(GetPaymentMethodsService::class.java)
                 .getPaymentMethods(
                     headers,
-                    acceptLanguage
+                    acceptLanguage,
+                    filteruserID
                 )
         }
     }
 
     fun PayAPI.PaymentMethodsAPI.getPaymentMethods(
         acceptLanguage: String? = null,
+        filteruserID: String? = null,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
     ) = Request().getPaymentMethods(
         acceptLanguage,
+        filteruserID,
         readTimeout,
         additionalHeaders,
         additionalParameters

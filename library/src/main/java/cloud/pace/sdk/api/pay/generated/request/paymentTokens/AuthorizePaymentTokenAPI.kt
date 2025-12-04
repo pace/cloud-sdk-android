@@ -15,7 +15,9 @@ import cloud.pace.sdk.api.pay.generated.model.PaymentToken
 import cloud.pace.sdk.api.pay.generated.model.PaymentTokenCreateBody
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.HeaderMap
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 object AuthorizePaymentTokenAPI {
 

@@ -21,6 +21,15 @@ class PaymentMethod : Resource() {
     var links: Links? = null
     var meta: Meta? = null
 
+    /* The datetime (iso8601) when the payment method was created */
+    var createdAt: Date? = null
+
+    /* The datetime (iso8601) when the payment method was updated */
+    var updatedAt: Date? = null
+
+    /* client of our utm partner */
+    var utmPartnerClient: String? = null
+
     /* Customer chosen alias for the payment method */
     var alias: String? = null
 
@@ -34,7 +43,7 @@ class PaymentMethod : Resource() {
     /* Implicit (`true`) payment methods are read-only and cannot be deleted, e.g., ApplePay */
     var implicit: Boolean? = null
 
-    /* Indicates if the payment method is eligible for discounts. */
+    /* Indicates if the payment method is eligible for  discounts. */
     var isEligibleForDiscounts: Boolean? = null
 
     /* one of sepa, creditcard, paypal, paydirekt, dkv, applepay, ... */

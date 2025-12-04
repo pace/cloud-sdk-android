@@ -15,7 +15,8 @@ import cloud.pace.sdk.api.pay.generated.model.PaymentMethodVendor
 import cloud.pace.sdk.api.pay.generated.model.PaymentToken
 import cloud.pace.sdk.api.request.BaseRequest
 import retrofit2.Call
-import retrofit2.http.*
+import retrofit2.http.HeaderMap
+import retrofit2.http.POST
 
 object CreatePaymentMethodTFCAPI {
 
