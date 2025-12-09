@@ -10,7 +10,7 @@ package cloud.pace.sdk.api.pay.generated.request.newPaymentMethods
 import cloud.pace.sdk.api.pay.PayAPI
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethod
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethodKind
-import cloud.pace.sdk.api.pay.generated.model.PaymentMethodSepaCreateBody
+import cloud.pace.sdk.api.pay.generated.model.PaymentMethodPFCCreateBody
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethodVendor
 import cloud.pace.sdk.api.pay.generated.model.PaymentToken
 import cloud.pace.sdk.api.request.BaseRequest
@@ -18,31 +18,31 @@ import retrofit2.Call
 import retrofit2.http.HeaderMap
 import retrofit2.http.POST
 
-object CreatePaymentMethodSEPAAPI {
+object CreatePaymentMethodPFCAPI {
 
-    interface CreatePaymentMethodSEPAService {
-        /* Register SEPA direct debit as a payment method */
-        /* By registering you allow the user to use SEPA direct debit as a payment method.
+    interface CreatePaymentMethodPFCService {
+        /* Register a PFC Card as a payment method */
+        /* By registering you allow the user to use a PFC Card as a payment method.
 The payment method ID is optional when posting data.
  */
-        @POST("payment-methods/sepa-direct-debit")
-        fun createPaymentMethodSEPA(
+        @POST("payment-methods/pfc")
+        fun createPaymentMethodPFC(
             @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: Body
         ): Call<PaymentMethod>
     }
 
-    /* By registering you allow the user to use SEPA direct debit as a payment method.
+    /* By registering you allow the user to use a PFC Card as a payment method.
     The payment method ID is optional when posting data.
      */
     class Body {
 
-        var data: PaymentMethodSepaCreateBody? = null
+        var data: PaymentMethodPFCCreateBody? = null
     }
 
     open class Request : BaseRequest() {
 
-        fun createPaymentMethodSEPA(
+        fun createPaymentMethodPFC(
             body: Body,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
@@ -52,20 +52,20 @@ The payment method ID is optional when posting data.
             val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout, resources)
-                .create(CreatePaymentMethodSEPAService::class.java)
-                .createPaymentMethodSEPA(
+                .create(CreatePaymentMethodPFCService::class.java)
+                .createPaymentMethodPFC(
                     headers,
                     body
                 )
         }
     }
 
-    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodSEPA(
+    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodPFC(
         body: Body,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ) = Request().createPaymentMethodSEPA(
+    ) = Request().createPaymentMethodPFC(
         body,
         readTimeout,
         additionalHeaders,

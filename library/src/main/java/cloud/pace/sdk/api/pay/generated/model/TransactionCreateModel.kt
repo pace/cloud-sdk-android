@@ -9,6 +9,7 @@ package cloud.pace.sdk.api.pay.generated.model
 
 import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
+import java.util.Date
 
 @JsonApi(type = "transaction")
 class TransactionCreate : Resource() {
@@ -26,8 +27,14 @@ class TransactionCreate : Resource() {
     /* additional data for omv */
     var additionalData: String? = null
 
+    /* The date and time the transaction was created */
+    var createdAt: Date? = null
+
     /* Currency as specified in ISO-4217. */
     var currency: String? = null
+
+    /* Driver code of the driver. Must not exceed 4 digits. */
+    var driverCode: String? = null
 
     /* Driver/vehicle identification */
     var driverVehicleID: String? = null
@@ -62,6 +69,9 @@ class TransactionCreate : Resource() {
 
     /* Set to true if the payment is for an unattended process */
     var unattended: Boolean? = null
+
+    /* User uuid in case we need different user to update transaction */
+    var userUuid: String? = null
 
     /* Vehicle identification number */
     var vin: String? = null

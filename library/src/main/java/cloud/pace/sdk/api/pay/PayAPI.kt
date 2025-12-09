@@ -14,11 +14,12 @@ The PACE Payment API is responsible for managing payment methods for users as we
  */
 object PayAPI {
 
-    const val VERSION = "2024-3"
+    const val VERSION = "2025-1"
     internal val baseUrl = "${API.baseUrl}/pay/$VERSION/"
 
     class FleetPaymentMethodsAPI
     class NewPaymentMethodsAPI
+    class PaceDriveBusinessAPI
     class PaymentMethodKindsAPI
     class PaymentMethodsAPI
     class PaymentTokensAPI
@@ -26,6 +27,7 @@ object PayAPI {
 
     val API.fleetPaymentMethods: FleetPaymentMethodsAPI by lazy { FleetPaymentMethodsAPI() }
     val API.newPaymentMethods: NewPaymentMethodsAPI by lazy { NewPaymentMethodsAPI() }
+    val API.paceDriveBusiness: PaceDriveBusinessAPI by lazy { PaceDriveBusinessAPI() }
     val API.paymentMethodKinds: PaymentMethodKindsAPI by lazy { PaymentMethodKindsAPI() }
     val API.paymentMethods: PaymentMethodsAPI by lazy { PaymentMethodsAPI() }
     val API.paymentTokens: PaymentTokensAPI by lazy { PaymentTokensAPI() }

@@ -5,12 +5,12 @@
  * https://github.com/pace/SwagGen
  */
 
-package cloud.pace.sdk.api.pay.generated.request.newPaymentMethods
+package cloud.pace.sdk.api.pay.generated.request.paceDriveBusiness
 
 import cloud.pace.sdk.api.pay.PayAPI
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethod
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethodKind
-import cloud.pace.sdk.api.pay.generated.model.PaymentMethodSepaCreateBody
+import cloud.pace.sdk.api.pay.generated.model.PaymentMethodPaceDriveBusinessCreateBody
 import cloud.pace.sdk.api.pay.generated.model.PaymentMethodVendor
 import cloud.pace.sdk.api.pay.generated.model.PaymentToken
 import cloud.pace.sdk.api.request.BaseRequest
@@ -18,31 +18,25 @@ import retrofit2.Call
 import retrofit2.http.HeaderMap
 import retrofit2.http.POST
 
-object CreatePaymentMethodSEPAAPI {
+object CreatePaymentMethodPaceDriveBusinessAPI {
 
-    interface CreatePaymentMethodSEPAService {
-        /* Register SEPA direct debit as a payment method */
-        /* By registering you allow the user to use SEPA direct debit as a payment method.
-The payment method ID is optional when posting data.
- */
-        @POST("payment-methods/sepa-direct-debit")
-        fun createPaymentMethodSEPA(
+    interface CreatePaymentMethodPaceDriveBusinessService {
+        /* Register a Pace Drive Business card as a payment method */
+        @POST("payment-methods/pace-drive-business")
+        fun createPaymentMethodPaceDriveBusiness(
             @HeaderMap headers: Map<String, String>,
             @retrofit2.http.Body body: Body
         ): Call<PaymentMethod>
     }
 
-    /* By registering you allow the user to use SEPA direct debit as a payment method.
-    The payment method ID is optional when posting data.
-     */
     class Body {
 
-        var data: PaymentMethodSepaCreateBody? = null
+        var data: PaymentMethodPaceDriveBusinessCreateBody? = null
     }
 
     open class Request : BaseRequest() {
 
-        fun createPaymentMethodSEPA(
+        fun createPaymentMethodPaceDriveBusiness(
             body: Body,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
@@ -52,20 +46,20 @@ The payment method ID is optional when posting data.
             val headers = headers(true, "application/vnd.api+json", "application/vnd.api+json", additionalHeaders)
 
             return retrofit(PayAPI.baseUrl, additionalParameters, readTimeout, resources)
-                .create(CreatePaymentMethodSEPAService::class.java)
-                .createPaymentMethodSEPA(
+                .create(CreatePaymentMethodPaceDriveBusinessService::class.java)
+                .createPaymentMethodPaceDriveBusiness(
                     headers,
                     body
                 )
         }
     }
 
-    fun PayAPI.NewPaymentMethodsAPI.createPaymentMethodSEPA(
+    fun PayAPI.PaceDriveBusinessAPI.createPaymentMethodPaceDriveBusiness(
         body: Body,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
-    ) = Request().createPaymentMethodSEPA(
+    ) = Request().createPaymentMethodPaceDriveBusiness(
         body,
         readTimeout,
         additionalHeaders,

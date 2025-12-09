@@ -17,6 +17,7 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.HeaderMap
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 object GetPaymentMethodAPI {
 
@@ -26,7 +27,9 @@ object GetPaymentMethodAPI {
         fun getPaymentMethod(
             @HeaderMap headers: Map<String, String>,
             /* ID of the paymentMethod */
-            @Path("paymentMethodId") paymentMethodId: String
+            @Path("paymentMethodId") paymentMethodId: String,
+            /* ID of the user to which the payment method is linked, only available with scope `pay:payment-methods-per-user:read:one`. */
+            @Query("filter[userID]") filteruserID: String? = null
         ): Call<PaymentMethod>
     }
 
@@ -34,6 +37,7 @@ object GetPaymentMethodAPI {
 
         fun getPaymentMethod(
             paymentMethodId: String,
+            filteruserID: String? = null,
             readTimeout: Long? = null,
             additionalHeaders: Map<String, String>? = null,
             additionalParameters: Map<String, String>? = null
@@ -45,18 +49,21 @@ object GetPaymentMethodAPI {
                 .create(GetPaymentMethodService::class.java)
                 .getPaymentMethod(
                     headers,
-                    paymentMethodId
+                    paymentMethodId,
+                    filteruserID
                 )
         }
     }
 
     fun PayAPI.PaymentMethodsAPI.getPaymentMethod(
         paymentMethodId: String,
+        filteruserID: String? = null,
         readTimeout: Long? = null,
         additionalHeaders: Map<String, String>? = null,
         additionalParameters: Map<String, String>? = null
     ) = Request().getPaymentMethod(
         paymentMethodId,
+        filteruserID,
         readTimeout,
         additionalHeaders,
         additionalParameters
