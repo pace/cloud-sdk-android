@@ -22,13 +22,13 @@ class PaymentMethod : Resource() {
     var meta: Meta? = null
 
     /* The datetime (iso8601) when the payment method was created */
-    var createdAt: Date? = null
+    var CreatedAt: Date? = null
 
     /* The datetime (iso8601) when the payment method was updated */
-    var updatedAt: Date? = null
+    var UpdatedAt: Date? = null
 
     /* client of our utm partner */
-    var utmPartnerClient: String? = null
+    var UtmPartnerClient: String? = null
 
     /* Customer chosen alias for the payment method */
     var alias: String? = null
