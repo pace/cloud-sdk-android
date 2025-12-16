@@ -1,3 +1,14 @@
+25.1.2 Release notes (2025-12-16)
+=============================================================
+
+### Fixes
+
+* Fix pay payment method model properties
+
+### Internal
+
+* Update pay api to 2025-1
+
 25.1.1 Release notes (2025-11-20)
 =============================================================
 
