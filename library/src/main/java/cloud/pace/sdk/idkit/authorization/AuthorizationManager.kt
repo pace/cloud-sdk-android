@@ -340,10 +340,10 @@ internal class AuthorizationManager(
     internal fun containsException(intent: Intent) = intent.hasExtra(AuthorizationException.EXTRA_EXCEPTION)
 
     internal fun cachedToken(): String? {
-        return if (configuration.tokenExchangeConfig == null) {
-            sessionHolder.cachedToken()
-        } else {
+        return if (::configuration.isInitialized && configuration.tokenExchangeConfig != null) {
             exchangedAccessToken
+        } else {
+            sessionHolder.cachedToken()
         }
     }
 
