@@ -75,7 +75,7 @@ class App : Application() {
         )
 
         return try {
-            if (BuildConfig.TOKEN_EXCHANGE_ENABLED && BuildConfig.EXTERNAL_OIDC_ENABLED) {
+            if (BuildConfig.TOKEN_EXCHANGE_ENABLED) {
                 CustomOIDConfiguration(
                     redirectUri = BuildConfig.REDIRECT_URI,
                     additionalParameters = mapOf("kc_idp_hint" to (BuildConfig.DEFAULT_IDP ?: "")),

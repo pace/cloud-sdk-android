@@ -10,6 +10,19 @@ private val menuEntriesDir = layout.buildDirectory.file("generated/menu_entries/
 private val configurationFileReader = rootProject.file(CONFIGURATION_FILE_NAME).reader()
 private val configuration: Configuration = Gson().fromJson(configurationFileReader, Configuration::class.java)
 
+private val tokenExchangeClientId = configuration.token_exchange_client_id
+private val tokenExchangeIssuerId = configuration.token_exchange_issuer_id
+private val tokenExchangeClientSecret = configuration.token_exchange_client_secret
+private val externalAuthEndpoint = configuration.external_oidc_auth_endpoint
+private val externalTokenEndpoint = configuration.external_oidc_token_endpoint
+private val externalEndSessionEndpoint = configuration.external_oidc_end_session_endpoint
+private val externalClientSecret = configuration.external_oidc_client_secret
+private val externalClientId = configuration.external_oidc_client_id
+private val externalAccountDeletionUrl = configuration.external_oidc_account_deletion_url
+private val tokenExchangeEnabled = tokenExchangeClientId != null && tokenExchangeIssuerId != null && externalAuthEndpoint != null && externalTokenEndpoint != null && externalEndSessionEndpoint != null && externalClientSecret != null && externalClientId != null && externalAccountDeletionUrl != null
+
+private val clientId = if (tokenExchangeEnabled) externalClientId ?: configuration.client_id else configuration.client_id
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -58,8 +71,8 @@ android {
         resValue("color", "notification_color", configuration.primary_branding_color)
         resValue("string", "google_maps_api_key", configuration.google_maps_api_key)
 
-        buildConfigField("String", "CLIENT_ID", "\"" + configuration.client_id + "\"")
-        val redirectUri = configuration.external_oidc?.redirect_uri ?: "${configuration.client_id}://callback"
+        buildConfigField("String", "CLIENT_ID", "\"" + clientId + "\"")
+        val redirectUri = configuration.external_oidc_redirect_uri ?: "${configuration.client_id}://callback"
         buildConfigField("String", "REDIRECT_URI", "\"" + redirectUri + "\"")
         buildConfigField("@androidx.annotation.Nullable String", "DEFAULT_IDP", configuration.default_idp?.let { "\"" + it + "\"" }.toString())
         buildConfigField("Boolean", "HIDE_PRICES", configuration.hide_prices.toString())
@@ -93,18 +106,17 @@ android {
         }
 
         // Token exchange
-        buildConfigField("Boolean", "TOKEN_EXCHANGE_ENABLED", (configuration.token_exchange != null).toString())
-        buildConfigField("@androidx.annotation.Nullable String", "TOKEN_EXCHANGE_CLIENT_ID", configuration.token_exchange?.client_id?.let { "\"" + it + "\"" }.toString())
-        buildConfigField("@androidx.annotation.Nullable String", "TOKEN_EXCHANGE_ISSUER_ID", configuration.token_exchange?.issuer_id?.let { "\"" + it + "\"" }.toString())
-        buildConfigField("@androidx.annotation.Nullable String", "TOKEN_EXCHANGE_CLIENT_SECRET", configuration.token_exchange?.client_secret?.let { "\"" + it + "\"" }.toString())
+        buildConfigField("Boolean", "TOKEN_EXCHANGE_ENABLED", tokenExchangeEnabled.toString())
+        buildConfigField("@androidx.annotation.Nullable String", "TOKEN_EXCHANGE_CLIENT_ID", tokenExchangeClientId?.let { "\"" + it + "\"" }.toString())
+        buildConfigField("@androidx.annotation.Nullable String", "TOKEN_EXCHANGE_ISSUER_ID", tokenExchangeIssuerId?.let { "\"" + it + "\"" }.toString())
+        buildConfigField("@androidx.annotation.Nullable String", "TOKEN_EXCHANGE_CLIENT_SECRET", tokenExchangeClientSecret?.let { "\"" + it + "\"" }.toString())
 
         // External OIDC
-        buildConfigField("Boolean", "EXTERNAL_OIDC_ENABLED", (configuration.external_oidc != null).toString())
-        buildConfigField("@androidx.annotation.Nullable String", "EXTERNAL_OIDC_AUTH_ENDPOINT", configuration.external_oidc?.auth_endpoint?.let { "\"" + it + "\"" }.toString())
-        buildConfigField("@androidx.annotation.Nullable String", "EXTERNAL_OIDC_TOKEN_ENDPOINT", configuration.external_oidc?.token_endpoint?.let { "\"" + it + "\"" }.toString())
-        buildConfigField("@androidx.annotation.Nullable String", "EXTERNAL_OIDC_END_SESSION_ENDPOINT", configuration.external_oidc?.end_session_endpoint?.let { "\"" + it + "\"" }.toString())
-        buildConfigField("@androidx.annotation.Nullable String", "EXTERNAL_OIDC_CLIENT_SECRET", configuration.external_oidc?.client_secret?.let { "\"" + it + "\"" }.toString())
-        buildConfigField("@androidx.annotation.Nullable String", "EXTERNAL_OIDC_ACCOUNT_DELETION_URL", configuration.external_oidc?.account_deletion_url?.let { "\"" + it + "\"" }.toString())
+        buildConfigField("@androidx.annotation.Nullable String", "EXTERNAL_OIDC_AUTH_ENDPOINT", externalAuthEndpoint?.let { "\"" + it + "\"" }.toString())
+        buildConfigField("@androidx.annotation.Nullable String", "EXTERNAL_OIDC_TOKEN_ENDPOINT", externalTokenEndpoint?.let { "\"" + it + "\"" }.toString())
+        buildConfigField("@androidx.annotation.Nullable String", "EXTERNAL_OIDC_END_SESSION_ENDPOINT", externalEndSessionEndpoint?.let { "\"" + it + "\"" }.toString())
+        buildConfigField("@androidx.annotation.Nullable String", "EXTERNAL_OIDC_CLIENT_SECRET", externalClientSecret?.let { "\"" + it + "\"" }.toString())
+        buildConfigField("@androidx.annotation.Nullable String", "EXTERNAL_OIDC_ACCOUNT_DELETION_URL", externalAccountDeletionUrl?.let { "\"" + it + "\"" }.toString())
     }
 
     buildTypes {
@@ -131,8 +143,8 @@ android {
             manifestPlaceholders["environment"] = "dev"
 
             // appAuthRedirectScheme is needed for AppAuth in IDKit and pace_redirect_scheme is needed for deep linking in AppKit
-            manifestPlaceholders["appAuthRedirectScheme"] = configuration.client_id
-            manifestPlaceholders["pace_redirect_scheme"] = "${configuration.client_id}-dev.${UUID.randomUUID()}"
+            manifestPlaceholders["appAuthRedirectScheme"] = clientId
+            manifestPlaceholders["pace_redirect_scheme"] = "$clientId-dev.${UUID.randomUUID()}"
         }
 
         create("production") {
@@ -141,8 +153,8 @@ android {
 
             manifestPlaceholders["environment"] = "prod"
             // appAuthRedirectScheme is needed for AppAuth in IDKit and pace_redirect_scheme is needed for deep linking in AppKit
-            manifestPlaceholders["appAuthRedirectScheme"] = configuration.client_id
-            manifestPlaceholders["pace_redirect_scheme"] = "${configuration.client_id}.${UUID.randomUUID()}"
+            manifestPlaceholders["appAuthRedirectScheme"] = clientId
+            manifestPlaceholders["pace_redirect_scheme"] = "$clientId.${UUID.randomUUID()}"
         }
 
         create("sandbox") {
@@ -152,8 +164,8 @@ android {
 
             manifestPlaceholders["environment"] = "sandbox"
             // appAuthRedirectScheme is needed for AppAuth in IDKit and pace_redirect_scheme is needed for deep linking in AppKit
-            manifestPlaceholders["appAuthRedirectScheme"] = "${configuration.client_id}-sandbox"
-            manifestPlaceholders["pace_redirect_scheme"] = "${configuration.client_id}-sandbox.${UUID.randomUUID()}"
+            manifestPlaceholders["appAuthRedirectScheme"] = "$clientId-sandbox"
+            manifestPlaceholders["pace_redirect_scheme"] = "$clientId-sandbox.${UUID.randomUUID()}"
         }
     }
 

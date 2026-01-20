@@ -27,8 +27,16 @@ data class Configuration(
     val list_show_custom_header: Boolean,
     val detail_screen_show_icon: Boolean,
     val menu_entries: List<MenuEntry>,
-    val token_exchange: TokenExchange?,
-    val external_oidc: ExternalOIDC?
+    val external_oidc_account_deletion_url: String?,
+    val external_oidc_auth_endpoint: String?,
+    val external_oidc_client_id: String?,
+    val external_oidc_client_secret: String?,
+    val external_oidc_end_session_endpoint: String?,
+    val external_oidc_redirect_uri: String?,
+    val external_oidc_token_endpoint: String?,
+    val token_exchange_client_id: String?,
+    val token_exchange_client_secret: String?,
+    val token_exchange_issuer_id: String?
 )
 
 data class MenuEntry(
@@ -45,19 +53,4 @@ data class MenuEntryLocalization(
     val name: String,
     val url: String,
     val html: Any?
-)
-
-data class TokenExchange(
-    val client_id: String,
-    val issuer_id: String,
-    val client_secret: String?
-)
-
-data class ExternalOIDC(
-    val auth_endpoint: String,
-    val token_endpoint: String,
-    val end_session_endpoint: String,
-    val client_secret: String,
-    val redirect_uri: String,
-    val account_deletion_url: String
 )
