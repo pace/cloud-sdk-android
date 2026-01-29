@@ -56,7 +56,7 @@ class Transaction(
     fun formatPricePerUnit(minFractionPlaces: Int = 2, maxFractionPlaces: Int = 3): String {
         val fuelUnit = FuelUnit.fromValue(fuelUnit)
         return remember(pricePerFuelUnit, currency, fuelUnit, minFractionPlaces, maxFractionPlaces) {
-            val priceWithoutCurrency = formatPrice(price, null, minFractionPlaces, maxFractionPlaces).trim()
+            val priceWithoutCurrency = formatPrice(pricePerFuelUnit, null, minFractionPlaces, maxFractionPlaces).trim()
             val currencySymbol = PriceFormatter.getCurrencySymbol(currency, Locale.getDefault())
             val fuelUnitSymbol = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 MeasureFormat.getInstance(Locale.getDefault(), MeasureFormat.FormatWidth.NARROW).getUnitDisplayName(fuelUnit.toMeasureUnit())
