@@ -1,7 +1,6 @@
 package car.pace.cofu.ui.onboarding
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -43,6 +41,7 @@ import car.pace.cofu.util.Constants.ONBOARDING_DESCRIPTION_KEY
 import car.pace.cofu.util.Constants.ONBOARDING_IMAGE_KEY
 import car.pace.cofu.util.Constants.ONBOARDING_TITLE_KEY
 import car.pace.cofu.util.Constants.TITLE_CONTENT_TYPE
+import coil.compose.AsyncImage
 
 @Composable
 fun PageScaffold(
@@ -77,8 +76,8 @@ fun PageScaffold(
                         modifier = Modifier.fillParentMaxHeight(heightFraction),
                         contentAlignment = Alignment.BottomCenter
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_onboarding_header),
+                        AsyncImage(
+                            model = R.drawable.ic_onboarding_header,
                             contentDescription = null,
                             modifier = Modifier
                                 .padding(bottom = 47.dp)
