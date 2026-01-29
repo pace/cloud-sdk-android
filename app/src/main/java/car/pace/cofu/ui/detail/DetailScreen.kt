@@ -1,6 +1,5 @@
 package car.pace.cofu.ui.detail
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -96,7 +95,7 @@ import cloud.pace.sdk.poikit.poi.OpeningHour
 import cloud.pace.sdk.poikit.poi.OpeningHours
 import cloud.pace.sdk.poikit.poi.OpeningRule
 import cloud.pace.sdk.poikit.poi.Price
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import coil.compose.AsyncImage
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.MarkerComposable
@@ -106,7 +105,6 @@ import java.util.Date
 import java.util.UUID
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun DetailScreen(
     onNavigateUp: () -> Unit,
@@ -383,8 +381,8 @@ fun AddressRow(
             }
         }
         if (showIcon) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_brand_logo),
+            AsyncImage(
+                model = R.drawable.ic_brand_logo,
                 contentDescription = null,
                 modifier = Modifier
                     .padding(start = 12.dp)

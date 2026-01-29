@@ -1,7 +1,6 @@
 package car.pace.cofu.ui.list
 
 import android.app.Activity
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -71,6 +69,7 @@ import car.pace.cofu.util.openinghours.openingHoursStatus
 import cloud.pace.sdk.poikit.poi.Address
 import cloud.pace.sdk.poikit.poi.GasStation
 import cloud.pace.sdk.poikit.poi.Price
+import coil.compose.AsyncImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import java.util.UUID
 import kotlinx.coroutines.launch
@@ -160,8 +159,8 @@ fun ListScreenContent(
         modifier = Modifier.background(MaterialTheme.colorScheme.surface)
     ) {
         if (showCustomHeader) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_list_header),
+            AsyncImage(
+                model = R.drawable.ic_list_header,
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(0.25f),

@@ -3,7 +3,6 @@ package car.pace.cofu.ui.wallet.transactions.detail
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -26,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -53,6 +51,7 @@ import car.pace.cofu.util.UiState
 import car.pace.cofu.util.data
 import car.pace.cofu.util.extension.PaymentMethodItem
 import car.pace.cofu.util.extension.oneLineAddress
+import coil.compose.AsyncImage
 import java.util.UUID
 
 @Composable
@@ -138,8 +137,8 @@ fun TransactionDetailScreenContent(
                         .padding(start = 20.dp, top = 24.dp, end = 20.dp)
                         .clickable(role = Role.Button, onClick = onDownload)
                 ) {
-                    Image(
-                        bitmap = receiptImage.data.asImageBitmap(),
+                    AsyncImage(
+                        model = receiptImage.data,
                         contentDescription = null,
                         contentScale = ContentScale.FillWidth,
                         modifier = Modifier
