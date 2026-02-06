@@ -177,22 +177,11 @@ fun ListScreenContent(
             is UiState.Success -> {
                 val gasStations = uiState.data
                 if (gasStations.isNotEmpty()) {
-                    if (showPaymentMethodsHint) {
-                        val emptyTitleRes = if (canAddPaymentMethods) R.string.payment_methods_empty_title else R.string.managed_payment_methods_empty_title
-                        val emptyDescriptionRes = if (canAddPaymentMethods) R.string.payment_methods_empty_description else R.string.managed_payment_methods_empty_description
-
-                        ErrorCard(
-                            title = stringResource(id = emptyTitleRes),
-                            description = stringResource(id = emptyDescriptionRes),
-                            modifier = Modifier
-                                .padding(top = 20.dp)
-                                .padding(horizontal = 20.dp)
-                        )
-                    }
-
                     GasStationList(
                         gasStations = gasStations,
                         fuelTypeGroup = fuelTypeGroup,
+                        showPaymentMethodsHint = showPaymentMethodsHint,
+                        canAddPaymentMethods = canAddPaymentMethods,
                         onStartFueling = onStartFueling,
                         onStartNavigation = {
                             onStartNavigation(it)
@@ -221,6 +210,8 @@ fun ListScreenContent(
 fun GasStationList(
     gasStations: List<ListViewModel.ListStation>,
     fuelTypeGroup: FuelTypeGroup,
+    showPaymentMethodsHint: Boolean,
+    canAddPaymentMethods: Boolean,
     onStartFueling: (GasStation) -> Unit,
     onStartNavigation: (GasStation) -> Unit,
     onClick: (GasStation) -> Unit
@@ -229,6 +220,18 @@ fun GasStationList(
         contentPadding = PaddingValues(20.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
+        if (showPaymentMethodsHint) {
+            val emptyTitleRes = if (canAddPaymentMethods) R.string.payment_methods_empty_title else R.string.managed_payment_methods_empty_title
+            val emptyDescriptionRes = if (canAddPaymentMethods) R.string.payment_methods_empty_description else R.string.managed_payment_methods_empty_description
+
+            item {
+                ErrorCard(
+                    title = stringResource(id = emptyTitleRes),
+                    description = stringResource(id = emptyDescriptionRes)
+                )
+            }
+        }
+
         items(
             items = gasStations,
             key = { it.gasStation.id },
