@@ -74,6 +74,11 @@ internal class AuthorizationManager(
     private lateinit var authorizationRequest: AuthorizationRequest
     private var exchangedAccessToken: String? = null
 
+    // Token refresh deduplication: when non-null, a refresh is in flight and new callers
+    // are appended to this list instead of firing another HTTP request.
+    private val refreshLock = Any()
+    private var pendingRefreshCompletions: MutableList<(Completion<String?>) -> Unit>? = null
+
     internal fun setup(clientId: String, configuration: OIDConfiguration) {
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 
@@ -204,12 +209,12 @@ internal class AuthorizationManager(
 
         when {
             exception != null -> {
-                sessionHolder.session?.update(response, exception)
+                sessionHolder.withSession { it?.update(response, exception) }
                 Timber.e(exception, "Failed to handle authorization response")
                 completion(Failure(exception))
             }
             response != null -> {
-                sessionHolder.session?.update(response, exception)
+                sessionHolder.withSession { it?.update(response, exception) }
                 performTokenRequest(response.createTokenExchangeRequest(), completion)
             }
             else -> {
@@ -221,14 +226,38 @@ internal class AuthorizationManager(
     }
 
     internal fun refreshToken(force: Boolean = false, completion: (Completion<String?>) -> Unit) {
-        if (isAuthorizationValid()) {
-            if (force) {
-                sessionHolder.session?.needsTokenRefresh = true
+        synchronized(refreshLock) {
+            val pending = pendingRefreshCompletions
+            if (pending != null) {
+                // A refresh is already in flight — queue this caller's completion
+                pending.add(completion)
+                Timber.d("Token refresh already in flight, queuing completion (${pending.size} waiting)")
+                return
             }
-            sessionHolder.session?.createTokenRefreshRequest()?.let { performTokenRequest(it, completion) } ?: completion(Failure(InvalidSession))
-        } else {
-            completion(Failure(InvalidSession))
+            // First caller — create the list and proceed with the actual refresh
+            pendingRefreshCompletions = mutableListOf(completion)
         }
+
+        if (isAuthorizationValid()) {
+            val tokenRequest = sessionHolder.withSession { session ->
+                if (force) {
+                    session?.needsTokenRefresh = true
+                }
+                session?.createTokenRefreshRequest()
+            }
+            tokenRequest?.let { performTokenRequest(it, ::completeRefresh) } ?: completeRefresh(Failure(InvalidSession))
+        } else {
+            completeRefresh(Failure(InvalidSession))
+        }
+    }
+
+    private fun completeRefresh(result: Completion<String?>) {
+        val completions: List<(Completion<String?>) -> Unit>
+        synchronized(refreshLock) {
+            completions = pendingRefreshCompletions?.toList() ?: emptyList()
+            pendingRefreshCompletions = null
+        }
+        completions.forEach { it(result) }
     }
 
     internal suspend fun endSession(activity: AppCompatActivity): Completion<Unit> {
@@ -365,7 +394,7 @@ internal class AuthorizationManager(
     }
 
     private fun createEndSessionRequest(): EndSessionRequest? {
-        return sessionHolder.session?.idToken?.let {
+        return sessionHolder.withSession { it?.idToken }?.let {
             EndSessionRequest.Builder(configuration.toAuthorizationServiceConfiguration())
                 .setIdTokenHint(it)
                 .setPostLogoutRedirectUri(Uri.parse(configuration.redirectUri))
@@ -381,7 +410,7 @@ internal class AuthorizationManager(
             ClientSecretBasic(clientSecret)
         } else {
             try {
-                sessionHolder.session?.clientAuthentication
+                sessionHolder.withSession { it?.clientAuthentication }
             } catch (e: ClientAuthentication.UnsupportedAuthenticationMethod) {
                 Timber.e(e, "Token request cannot be made, client authentication for the token endpoint could not be constructed")
                 completion(Failure(e))
@@ -399,7 +428,7 @@ internal class AuthorizationManager(
     }
 
     private fun handleTokenResponse(tokenResponse: TokenResponse?, exception: AuthorizationException?, completion: (Completion<String?>) -> Unit) {
-        sessionHolder.session?.update(tokenResponse, exception)
+        sessionHolder.withSession { it?.update(tokenResponse, exception) }
         sessionHolder.persistSession()
 
         when {
