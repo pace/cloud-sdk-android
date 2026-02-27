@@ -20,7 +20,7 @@ class AuthenticationInterceptor : Interceptor {
         return if (response.code == HttpURLConnection.HTTP_UNAUTHORIZED && IDKit.isInitialized && IDKit.isAuthorizationValid()) {
             val oldToken = IDKit.cachedToken()
             // Make sure that the token is only refreshed once for multiple requests
-            synchronized(this) {
+            synchronized(lock) {
                 try {
                     val cachedToken = IDKit.cachedToken()
                     val newToken = if (oldToken == cachedToken) {
@@ -59,5 +59,9 @@ class AuthenticationInterceptor : Interceptor {
         IDKit.refreshToken {
             continuation.resume(it)
         }
+    }
+
+    companion object {
+        private val lock = Any()
     }
 }

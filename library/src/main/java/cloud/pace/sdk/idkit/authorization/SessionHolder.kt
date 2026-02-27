@@ -6,6 +6,9 @@ import androidx.preference.PreferenceManager
 import cloud.pace.sdk.appkit.persistence.SharedPreferencesImpl
 import cloud.pace.sdk.idkit.model.OIDConfiguration
 import cloud.pace.sdk.idkit.model.toAuthorizationServiceConfiguration
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 import net.openid.appauth.AuthState
 import org.json.JSONException
 import timber.log.Timber
@@ -13,23 +16,26 @@ import timber.log.Timber
 class SessionHolder(private val context: Context) {
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    private val lock = ReentrantReadWriteLock()
     var session = loadSession()
         private set
 
-    fun isAuthorizationValid() = session?.isAuthorized ?: false
+    fun isAuthorizationValid() = lock.read { session?.isAuthorized ?: false }
 
-    fun cachedToken() = session?.accessToken
+    fun cachedToken() = lock.read { session?.accessToken }
 
-    fun updateSession(configuration: OIDConfiguration) {
+    fun <T> withSession(block: (AuthState?) -> T): T = lock.write { block(session) }
+
+    fun updateSession(configuration: OIDConfiguration) = lock.write {
         session = loadSession() ?: AuthState(configuration.toAuthorizationServiceConfiguration())
     }
 
-    fun persistSession() {
+    fun persistSession() = lock.read {
         Timber.i("Persisting session to SharedPreferences")
         sharedPreferences.edit { putString(SESSION_CACHE, session?.jsonSerializeString()) }
     }
 
-    fun clearSessionAndPreferences() {
+    fun clearSessionAndPreferences() = lock.write {
         SharedPreferencesImpl.removeUserPreferences(context, cachedToken())
 
         val serviceConfiguration = session?.authorizationServiceConfiguration
