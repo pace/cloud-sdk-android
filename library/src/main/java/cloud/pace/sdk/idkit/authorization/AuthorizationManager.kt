@@ -48,12 +48,6 @@ import cloud.pace.sdk.utils.Theme
 import cloud.pace.sdk.utils.enqueue
 import cloud.pace.sdk.utils.getResultFor
 import cloud.pace.sdk.utils.resumeIfActive
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.FormBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import java.io.IOException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationRequest
@@ -75,7 +69,6 @@ internal class AuthorizationManager(
     private val userInfoApi: UserInfoApiClient
 ) : CloudSDKKoinComponent, DefaultLifecycleObserver {
 
-    private val httpClient = OkHttpClient()
     private lateinit var clientId: String
     private lateinit var configuration: OIDConfiguration
     private lateinit var authorizationRequest: AuthorizationRequest
@@ -356,7 +349,6 @@ internal class AuthorizationManager(
                 completion(Failure(exception))
             }
             response != null -> {
-                revokeToken()
                 clearSession()
                 completion(Success(Unit))
             }
@@ -519,43 +511,6 @@ internal class AuthorizationManager(
             Theme.LIGHT -> COLOR_SCHEME_LIGHT
         }
         return authorizationService.createCustomTabsIntentBuilder().setColorScheme(colorScheme).build()
-    }
-
-    private fun revokeToken() {
-        val refreshToken = sessionHolder.withSession { it?.refreshToken }
-        if (refreshToken == null) {
-            Timber.w("[TokenRevocation] Skipping: no refresh token available")
-            return
-        }
-        val endpoint = configuration.tokenRevocationEndpoint
-        if (endpoint == null) {
-            Timber.w("[TokenRevocation] Skipping: tokenRevocationEndpoint not configured")
-            return
-        }
-        val body = FormBody.Builder()
-            .add("client_id", clientId)
-            .add("token", refreshToken)
-            .add("token_type_hint", "refresh_token")
-            .build()
-        val request = Request.Builder()
-            .url(endpoint)
-            .post(body)
-            .build()
-        httpClient.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Timber.w("[TokenRevocation] Failed: ${e.message}")
-            }
-
-            override fun onResponse(call: Call, response: okhttp3.Response) {
-                Timber.i("[TokenRevocation] Completed with status ${response.code}")
-                response.close()
-            }
-        })
-    }
-
-    internal fun resetSession() {
-        revokeToken()
-        clearSession()
     }
 
     private fun clearSession() {

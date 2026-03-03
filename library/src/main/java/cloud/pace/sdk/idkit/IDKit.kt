@@ -209,14 +209,6 @@ object IDKit : CloudSDKKoinComponent {
     }
 
     /**
-     * Revokes the current refresh token server-side (fire-and-forget) and clears the local session
-     * without browser interaction. Use this for force-logout scenarios (e.g. invalid session, 401).
-     */
-    fun resetSession() {
-        authorizationManager.resetSession()
-    }
-
-    /**
      * Checks the current authorization state. Returning `true` does not mean that the access is fresh - just that it was valid the last time it was used.
      *
      * @return The current state of the authorization.
