@@ -171,6 +171,7 @@ dependencies {
     testImplementation(Libs.MOCKITO_INLINE)
     testImplementation(Libs.MOCKITO_KOTLIN)
     testImplementation(Libs.MOCKK)
+    testImplementation(Libs.OKHTTP_MOCKWEBSERVER)
     testImplementation(Libs.ROBOLECTRIC)
 
     androidTestImplementation(Libs.TEST_CORE)
