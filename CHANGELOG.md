@@ -1,3 +1,14 @@
+25.2.0 Release notes (2026-03-04)
+=============================================================
+
+### Enhancements
+
+* Add RFC 7009 token revocation to IDKit logout and resetSession
+
+### Fixes
+
+* Deduplicate concurrent token refresh requests
+
 25.1.3 Release notes (2026-01-05)
 =============================================================
 
