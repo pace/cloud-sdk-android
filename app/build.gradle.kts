@@ -26,7 +26,8 @@ private val clientId = if (tokenExchangeEnabled) externalClientId ?: configurati
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
+    id("org.jetbrains.kotlin.plugin.compose")
+    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("io.sentry.android.gradle") version "5.11.0"
     id("com.mikepenz.aboutlibraries.plugin")
@@ -183,17 +184,8 @@ android {
         buildConfig = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
-    }
-
     lint {
         disable.addAll(listOf("LogNotTimber", "StringFormatInTimber", "ThrowableNotAtBeginning", "BinaryOperationInTimber", "TimberArgCount", "TimberArgTypes", "TimberTagLength"))
-    }
-
-    kapt {
-        // Allow references to generated code
-        correctErrorTypes = true
     }
 
     sourceSets {
@@ -205,7 +197,8 @@ android {
 }
 
 dependencies {
-    // PACE Cloud SDK
+    // PACE
+    implementation("car.pace:api-kit:1.0.0")
     implementation("cloud.pace:sdk:25.1.1")
 
     // Jetpack Compose
@@ -227,8 +220,8 @@ dependencies {
     implementation("androidx.paging:paging-compose:3.3.6")
 
     // Hilt
-    implementation("com.google.dagger:hilt-android:2.48.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.48.1")
+    implementation("com.google.dagger:hilt-android:2.57.1")
+    ksp("com.google.dagger:hilt-android-compiler:2.57.1")
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
@@ -247,8 +240,8 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    testImplementation("com.google.dagger:hilt-android-testing:2.48.1")
-    kaptTest("com.google.dagger:hilt-android-compiler:2.48.1")
+    testImplementation("com.google.dagger:hilt-android-testing:2.57.1")
+    kspTest("com.google.dagger:hilt-android-compiler:2.57.1")
     testImplementation("io.mockk:mockk:1.13.9")
 }
 

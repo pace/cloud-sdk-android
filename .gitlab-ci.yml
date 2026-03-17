@@ -82,6 +82,22 @@ pace_cloud_sdk_version_check:
             fi
     <<: *only_merge_requests
 
+pace_api_kit_version_check:
+    extends: .docker_image
+    retry: 0
+    script:
+        - export PACE_API_KIT=$(grep -m 1 "car.pace:api-kit" app/build.gradle.kts | cut -d':' -f 3 | cut -d'"' -f 1)
+        - "echo PACE API Kit version: $PACE_API_KIT"
+        - >
+            if [[ "$PACE_API_KIT" == *-SNAPSHOT* ]]; then
+              echo "Please use a stable PACE API Kit version before merging. Snapshot versions are only allowed during development."
+              exit 1
+            else
+              echo "The PACE API Kit version is already a stable version. No adjustments needed."
+              exit 0
+            fi
+    <<: *only_merge_requests
+
 trigger_github_mirroring:
     interruptible: true
     script:
