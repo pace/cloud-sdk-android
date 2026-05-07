@@ -47,6 +47,12 @@ stages:
     rules:
         -   if: $CI_COMMIT_TAG =~ /^connectedfueling-app-/
 
+.pnpm_setup: &pnpm_setup
+    - apt-get update
+    - apt-get install -y git
+    - corepack enable
+    - corepack prepare pnpm@latest-10 --activate
+
 code_style:
     extends: .docker_image
     script:
@@ -107,9 +113,10 @@ trigger_github_mirroring:
 
 create_release:
     extends: .docker_image
-    image: node:latest
+    image: node:24.13.0-slim
     stage: release
     <<: *release_schedule_rule
+    before_script: *pnpm_setup
     script:
         - export TAG_COMMIT_TIME=$(git show -s --format=%ct $CI_COMMIT_SHA)
         - echo "CI_COMMIT_SHA:" $CI_COMMIT_SHA
@@ -123,16 +130,18 @@ create_release:
         - echo "Creating tag with tag name:" $CUSTOM_TAG_NAME
         - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/pace/mobile/common.git tmp/common
         - cd tmp/common/scripts/release
-        - yarn install
+        - pnpm config set store-dir .pnpm-store
+        - pnpm install
         - node --unhandled-rejections=strict create.js
     variables:
         TAG_PREFIX: "connectedfueling-app-"
 
 create_empty_release:
   extends: .docker_image
-  image: node:latest
+  image: node:24.13.0-slim
   stage: release
   <<: *empty_release_schedule_rule
+  before_script: *pnpm_setup
   script:
     - if $(eval $CONDITION); then echo "Releasing..."; else echo "Nothing to do"; exit 0; fi
     - echo "Current time to be used as new build and version number"
@@ -143,7 +152,8 @@ create_empty_release:
     - echo "Creating tag with tag name:" $CUSTOM_TAG_NAME
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/pace/mobile/common.git tmp/common
     - cd tmp/common/scripts/release
-    - yarn install
+    - pnpm config set store-dir .pnpm-store
+    - pnpm install
     - node --unhandled-rejections=strict create.js
   variables:
     TAG_PREFIX: "connectedfueling-app-"
