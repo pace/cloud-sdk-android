@@ -3,8 +3,8 @@ object Versions {
     const val DEFAULT_VERSION_CODE_LIBRARY = 1
     const val DEFAULT_VERSION_NAME_LIBRARY = "18.0.0"
 
-    const val COMPILE_SDK = 35
-    const val TARGET_SDK = 35
+    const val COMPILE_SDK = 36
+    const val TARGET_SDK = 36
     const val MIN_SDK = 26
 
     const val ACTIVITY = "1.9.3"
