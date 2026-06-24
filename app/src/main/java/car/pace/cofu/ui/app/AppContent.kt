@@ -30,7 +30,7 @@ fun AppContent(
     AppTheme {
         val startDestination by viewModel.startDestination.collectAsStateWithLifecycle()
         val context = LocalContext.current
-        val appState = rememberAppState()
+        val appState = rememberAppState(viewModel.analytics)
         val coroutineScope = rememberCoroutineScope()
 
         LifecycleEventEffect(event = Lifecycle.Event.ON_RESUME) {
