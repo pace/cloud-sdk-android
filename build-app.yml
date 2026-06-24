@@ -7,7 +7,7 @@ spec:
             type: string
 ---
 
-image: softartdev/android-fastlane
+image: $CI_REGISTRY/pace/mobile/android/drive/android-build:latest
 
 stages:
     - build
