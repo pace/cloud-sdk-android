@@ -41,7 +41,7 @@ project.tasks.preBuild.dependsOn(menuEntriesTask)
 
 android {
     namespace = "car.pace.cofu"
-    compileSdk = 35
+    compileSdk = 36
 
     signingConfigs {
         getByName("debug") {
@@ -62,7 +62,7 @@ android {
     defaultConfig {
         applicationId = configuration.application_id_android
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = properties.getOrDefault("buildNumber", 1)?.toString()?.toIntOrNull()
         versionName = properties.getOrDefault("versionName", "1")?.toString()
 
