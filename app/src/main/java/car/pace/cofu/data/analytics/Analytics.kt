@@ -1,10 +1,12 @@
 package car.pace.cofu.data.analytics
 
+import androidx.core.os.bundleOf
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.util.BuildProvider
 import car.pace.cofu.util.LogAndBreadcrumb
 import cloud.pace.sdk.appkit.communication.AppCallbackImpl
 import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.google.firebase.inappmessaging.inAppMessaging
 import com.google.firebase.messaging.messaging
@@ -77,6 +79,13 @@ class Analytics @Inject constructor(
         }
 
         return isEnabled
+    }
+
+    fun logScreenView(screenName: String) {
+        if (BuildProvider.isAnalyticsEnabled()) {
+            Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundleOf(FirebaseAnalytics.Param.SCREEN_NAME to screenName, FirebaseAnalytics.Param.SCREEN_CLASS to screenName))
+            Timber.d("Log screen view: $screenName")
+        }
     }
 
     fun logEvent(analyticEvent: AnalyticEvent) {

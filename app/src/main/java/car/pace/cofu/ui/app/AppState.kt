@@ -8,6 +8,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import car.pace.cofu.data.analytics.Analytics
 import car.pace.cofu.ui.Graph
 import car.pace.cofu.ui.Route
 import car.pace.cofu.ui.navigate
@@ -15,20 +16,23 @@ import car.pace.cofu.util.LogAndBreadcrumb
 
 @Composable
 fun rememberAppState(
+    analytics: Analytics,
     navController: NavHostController = rememberNavController()
 ) = remember(navController) {
-    AppState(navController)
+    AppState(analytics, navController)
 }
 
 @Stable
 class AppState(
+    private val analytics: Analytics,
     val navController: NavHostController
 ) {
-
     init {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val route = Route.fromRoute(destination.route)
-            LogAndBreadcrumb.d("Navigation", "${route?.name ?: destination.route} gets displayed")
+            val screenName = route?.name ?: destination.route
+            LogAndBreadcrumb.d("Navigation", "$screenName gets displayed")
+            screenName?.let { analytics.logScreenView(it) }
         }
     }
 

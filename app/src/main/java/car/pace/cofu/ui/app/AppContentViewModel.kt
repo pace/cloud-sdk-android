@@ -9,6 +9,7 @@ import car.pace.cofu.data.PermissionRepository
 import car.pace.cofu.data.SharedPreferencesRepository
 import car.pace.cofu.data.SharedPreferencesRepository.Companion.PREF_KEY_ONBOARDING_DONE
 import car.pace.cofu.data.UserRepository
+import car.pace.cofu.data.analytics.Analytics
 import car.pace.cofu.ui.Graph
 import car.pace.cofu.util.Constants.STOP_TIMEOUT_MILLIS
 import car.pace.cofu.util.LogAndBreadcrumb
@@ -26,7 +27,8 @@ class AppContentViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val paymentMethodKindsRepository: PaymentMethodKindsRepository,
     private val documentRepository: DocumentRepository,
-    private val permissionRepository: PermissionRepository
+    private val permissionRepository: PermissionRepository,
+    val analytics: Analytics
 ) : ViewModel() {
 
     private val isOnboardingDone = isOnboardingDone()
