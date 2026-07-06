@@ -15,7 +15,9 @@ import cloud.pace.sdk.utils.DeviceUtils
 import cloud.pace.sdk.utils.Environment
 import com.google.android.libraries.places.api.Places
 import dagger.hilt.android.HiltAndroidApp
+import io.sentry.SentryLevel
 import io.sentry.android.core.SentryAndroid
+import io.sentry.android.timber.SentryTimberIntegration
 import java.util.Locale
 import javax.inject.Inject
 import timber.log.Timber
@@ -40,6 +42,12 @@ class App : Application() {
             SentryAndroid.init(this) { options ->
                 options.dsn = BuildConfig.SENTRY_DSN
                 options.isAttachScreenshot = false
+                options.addIntegration(
+                    SentryTimberIntegration(
+                        minEventLevel = SentryLevel.FATAL,
+                        minBreadcrumbLevel = SentryLevel.DEBUG
+                    )
+                )
             }
         }
 
