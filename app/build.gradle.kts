@@ -29,7 +29,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
-    id("io.sentry.android.gradle") version "5.11.0"
+    id("io.sentry.android.gradle") version "6.14.0"
     id("com.mikepenz.aboutlibraries.plugin")
 }
 
