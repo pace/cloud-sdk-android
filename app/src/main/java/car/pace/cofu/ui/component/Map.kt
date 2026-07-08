@@ -10,16 +10,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import car.pace.cofu.R
 import car.pace.cofu.data.PermissionRepository.Companion.locationPermissions
 import car.pace.cofu.util.Constants.FADE_DURATION
@@ -40,8 +38,6 @@ import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.MapsComposeExperimentalApi
 import com.google.maps.android.compose.clustering.Clustering
-import com.google.maps.android.compose.clustering.rememberClusterManager
-import com.google.maps.android.compose.clustering.rememberClusterRenderer
 import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
@@ -159,46 +155,22 @@ fun <T : ClusterItem> NonHierarchicalClustering(
     clusterContent: @Composable ((Cluster<T>) -> Unit)? = null,
     clusterItemContent: @Composable ((T) -> Unit)? = null
 ) {
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
-    val screenHeight = configuration.screenHeightDp.dp
+    val containerSize = LocalWindowInfo.current.containerSize
+    val screenWidth = containerSize.width
+    val screenHeight = containerSize.height
     val algorithm = remember(screenWidth, screenHeight) {
-        NonHierarchicalViewBasedAlgorithm<T>(
-            screenWidth.value.toInt(),
-            screenHeight.value.toInt()
-        )
+        NonHierarchicalViewBasedAlgorithm<T>(screenWidth, screenHeight)
     }
 
-    val clusterManager = rememberClusterManager<T>()
-    val renderer = rememberClusterRenderer(
+    Clustering(
+        items = items,
+        onClusterItemClick = onClusterItemClick,
         clusterContent = clusterContent,
         clusterItemContent = clusterItemContent,
-        clusterManager = clusterManager
+        onClusterManager = {
+            it.algorithm = algorithm
+        }
     )
-
-    SideEffect {
-        clusterManager ?: return@SideEffect
-        clusterManager.setOnClusterItemClickListener(onClusterItemClick)
-    }
-
-    SideEffect {
-        // Here the clusterManager is being customized with a NonHierarchicalViewBasedAlgorithm.
-        // This speeds up by a factor the rendering of items on the screen.
-        if (clusterManager?.algorithm != algorithm) {
-            clusterManager?.algorithm = algorithm
-        }
-
-        if (clusterManager?.renderer != renderer) {
-            clusterManager?.renderer = renderer ?: return@SideEffect
-        }
-    }
-
-    if (clusterManager != null) {
-        Clustering(
-            items = items,
-            clusterManager = clusterManager
-        )
-    }
 }
 
 @Preview

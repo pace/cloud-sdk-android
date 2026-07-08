@@ -202,7 +202,7 @@ dependencies {
     implementation("cloud.pace:sdk:25.1.1")
 
     // Jetpack Compose
-    val composeBom = platform("androidx.compose:compose-bom:2024.10.00")
+    val composeBom = platform("androidx.compose:compose-bom:2025.05.01")
     implementation(composeBom)
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
@@ -213,8 +213,8 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
-    implementation("com.google.maps.android:maps-compose:4.3.2")
-    implementation("com.google.maps.android:maps-compose-utils:4.3.2")
+    implementation("com.google.maps.android:maps-compose:6.6.0")
+    implementation("com.google.maps.android:maps-compose-utils:6.6.0")
     implementation("com.google.accompanist:accompanist-permissions:0.36.0")
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation("androidx.paging:paging-compose:3.3.6")
